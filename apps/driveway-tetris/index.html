@@ -215,7 +215,7 @@
           <div class="row" style="justify-content: space-between;">
             <div>
               <div style="font-weight: 900; font-size: 14px;">Cars</div>
-              <div class="sub" style="margin-top: 6px;">3 residents + unlimited guests.</div>
+              <div class="sub" style="margin-top: 6px;">Residents + unlimited guests.</div>
             </div>
           </div>
 
@@ -288,8 +288,9 @@
 
     const DEFAULT_RESIDENTS = [
       { id: 'resident_alex', label: 'Alex', color: '#86b7ff', kind: 'resident' },
-      { id: 'resident_partner', label: 'Partner', color: '#ffcc66', kind: 'resident' },
-      { id: 'resident_roommate', label: 'Roommate', color: '#35d07f', kind: 'resident' },
+      { id: 'resident_maria', label: 'Maria', color: '#ffcc66', kind: 'resident' },
+      { id: 'resident_jon', label: 'Jon', color: '#35d07f', kind: 'resident' },
+      { id: 'resident_ashley', label: 'Ashley', color: '#ff7aa2', kind: 'resident' },
     ];
 
     const ZONES = ['driveway_a','driveway_b','across','block','away'];
@@ -370,11 +371,28 @@
         c.style.background = car.color || '#9bb0c7';
 
         const label = document.createElement('div');
-        label.innerHTML = `<div>${escapeHtml(car.label || 'Car')}</div>` +
-          (car.kind === 'guest' ? `<div class="mini">guest</div>` : `<div class="mini">resident</div>`);
+        const note = (car.note || '').trim();
+        label.innerHTML =
+          `<div>${escapeHtml(car.label || 'Car')}</div>` +
+          (note ? `<div class="mini">${escapeHtml(note)}</div>` : (car.kind === 'guest' ? `<div class="mini">guest</div>` : `<div class="mini">resident</div>`));
+
+        const btn = document.createElement('button');
+        btn.textContent = '✎';
+        btn.title = 'Set note / ETA';
+        btn.style.marginLeft = '6px';
+        btn.style.padding = '6px 8px';
+        btn.style.borderRadius = '10px';
+        btn.style.fontWeight = '900';
+        btn.style.background = 'rgba(0,0,0,.18)';
+
+        btn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          editNote(car.id);
+        });
 
         t.appendChild(c);
         t.appendChild(label);
+        t.appendChild(btn);
 
         t.addEventListener('dragstart', (ev) => {
           t.classList.add('dragging');
@@ -536,7 +554,24 @@
         renderLock();
         return;
       }
+
       const who = els.displayName.value.trim();
+      const prev = (state.cars.find(c => c.id === carId) || {}).zone || 'away';
+
+      // Enforce: max 1 car per driveway spot.
+      // If the target driveway spot is occupied, swap the other car into the mover's previous zone.
+      if(zone === 'driveway_a' || zone === 'driveway_b') {
+        const occupant = state.cars.find(c => c.id !== carId && c.zone === zone);
+        if(occupant) {
+          state.cars = state.cars.map(c => {
+            if(c.id === occupant.id) {
+              return { ...c, zone: prev, updatedAt: nowIso(), updatedBy: who };
+            }
+            return c;
+          });
+        }
+      }
+
       state.cars = state.cars.map(c => c.id === carId ? ({ ...c, zone, updatedAt: nowIso(), updatedBy: who }) : c);
       await pushShared();
       render();
@@ -555,6 +590,23 @@
       const color = colors[Math.floor(Math.random()*colors.length)];
       const who = els.displayName.value.trim();
       state.cars.push({ id, label: label.trim() || 'Guest', color, kind: 'guest', zone: 'away', updatedAt: nowIso(), updatedBy: who, note: '' });
+      await pushShared();
+      render();
+    }
+
+    async function editNote(carId){
+      if(!isUnlocked()) {
+        alert('Passcode required to edit notes.');
+        renderLock();
+        return;
+      }
+      const car = state.cars.find(c => c.id === carId);
+      if(!car) return;
+      const current = (car.note || '').trim();
+      const next = prompt('Note / ETA (e.g., "Back ~7pm" or "Gone overnight")', current);
+      if(next === null) return;
+      const who = els.displayName.value.trim();
+      state.cars = state.cars.map(c => c.id === carId ? ({ ...c, note: (next || '').trim(), updatedAt: nowIso(), updatedBy: who }) : c);
       await pushShared();
       render();
     }

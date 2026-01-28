@@ -13,7 +13,9 @@ A fun shared “where are the cars?” board.
 - Enter the house passcode (currently **18355**) to unlock editing.
 - Drag car tokens between zones.
 - Tap a token on mobile to cycle through zones.
+- Max 1 car per driveway spot (dropping into an occupied driveway spot swaps the other car out).
 - Unlimited guest cars (Add guest).
+- Add a note/ETA to any car with the ✎ button (e.g., "Back ~7pm").
 
 ## Shared mode (Supabase)
 This repo is hosted on GitHub Pages (static), so shared state needs a backend.
