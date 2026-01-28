@@ -1,5 +1,10 @@
 {
-  "generatedAt": "2026-01-28T18:04:43.079Z",
-  "apps": [],
+  "generatedAt": "2026-01-28T18:33:17.819Z",
+  "apps": [
+    {
+      "name": "status",
+      "hasIndex": true
+    }
+  ],
   "tools": []
 }
