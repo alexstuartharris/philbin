@@ -287,8 +287,7 @@
     // { houseId, cars: [{id, label, color, kind: 'resident'|'guest', zone, updatedAt, updatedBy, note}] }
 
     const DEFAULT_RESIDENTS = [
-      { id: 'resident_alex', label: 'Alex', color: '#86b7ff', kind: 'resident' },
-      { id: 'resident_maria', label: 'Maria', color: '#ffcc66', kind: 'resident' },
+      { id: 'resident_alex_maria', label: 'Alex+Maria', color: '#86b7ff', kind: 'resident' },
       { id: 'resident_jon', label: 'Jon', color: '#35d07f', kind: 'resident' },
       { id: 'resident_ashley', label: 'Ashley', color: '#ff7aa2', kind: 'resident' },
     ];
@@ -438,7 +437,7 @@
       if(!state.cars || !state.cars.length){
         state.cars = DEFAULT_RESIDENTS.map((c, idx) => ({
           ...c,
-          zone: idx === 0 ? 'driveway_a' : (idx === 1 ? 'driveway_b' : 'away'),
+          zone: idx === 0 ? 'driveway_a' : 'away',
           updatedAt: nowIso(),
           updatedBy: '',
           note: ''
