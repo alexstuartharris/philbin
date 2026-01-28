@@ -191,6 +191,7 @@
             <div class="row">
               <span class="pill" id="availabilityPill"><span class="dot" id="availabilityDot"></span><span id="availabilityText">Loading…</span></span>
               <span class="pill" id="syncPill"><span class="dot" id="syncDot"></span><span id="syncText">Sync: …</span></span>
+              <span class="pill" id="lockPill"><span class="dot" id="lockDot"></span><span id="lockText">Lock: …</span></span>
             </div>
             <div class="row">
               <button id="btnRefresh">Refresh</button>
@@ -199,8 +200,9 @@
           </div>
 
           <div class="row" style="margin-top: 12px;">
-            <input id="houseId" placeholder="House code (shared)" style="flex: 1; min-width: 240px;" />
-            <input id="displayName" placeholder="Your name (optional)" style="flex: 1; min-width: 220px;" />
+            <input id="houseId" placeholder="House code (shared)" style="flex: 1; min-width: 200px;" />
+            <input id="displayName" placeholder="Your name (optional)" style="flex: 1; min-width: 180px;" />
+            <input id="passcode" placeholder="Passcode" inputmode="numeric" style="width: 140px;" />
             <button id="btnJoin">Join / Save</button>
           </div>
 
@@ -295,6 +297,7 @@
     const els = {
       houseId: document.getElementById('houseId'),
       displayName: document.getElementById('displayName'),
+      passcode: document.getElementById('passcode'),
       btnJoin: document.getElementById('btnJoin'),
       btnRefresh: document.getElementById('btnRefresh'),
       btnCopyLink: document.getElementById('btnCopyLink'),
@@ -304,6 +307,8 @@
       availabilityDot: document.getElementById('availabilityDot'),
       syncText: document.getElementById('syncText'),
       syncDot: document.getElementById('syncDot'),
+      lockText: document.getElementById('lockText'),
+      lockDot: document.getElementById('lockDot'),
       debug: document.getElementById('debug'),
     };
 
@@ -401,11 +406,15 @@
       } else {
         setPill(els.syncDot, els.syncText, 'warn', 'Sync: demo (local only)');
       }
+
+      renderLock();
     }
 
     function escapeHtml(s){
       return (s ?? '').toString().replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
+
+    const REQUIRED_PASSCODE = '18355';
 
     function ensureDefaults(){
       if(!state.cars || !state.cars.length){
@@ -423,12 +432,25 @@
       }
     }
 
+    function isUnlocked(){
+      return (els.passcode.value || '').trim() === REQUIRED_PASSCODE;
+    }
+
+    function renderLock(){
+      if(isUnlocked()) {
+        setPill(els.lockDot, els.lockText, 'ok', 'Lock: unlocked');
+      } else {
+        setPill(els.lockDot, els.lockText, 'bad', 'Lock: passcode required');
+      }
+    }
+
     function saveLocal(){
       const saved = local.load();
       local.save({
         ...saved,
         houseId: state.houseId,
         displayName: els.displayName.value.trim(),
+        passcode: (els.passcode.value || '').trim(),
         state: state,
       });
     }
@@ -509,6 +531,11 @@
 
     async function moveCar(carId, zone){
       if(!ZONES.includes(zone)) return;
+      if(!isUnlocked()) {
+        alert('Passcode required to move cars.');
+        renderLock();
+        return;
+      }
       const who = els.displayName.value.trim();
       state.cars = state.cars.map(c => c.id === carId ? ({ ...c, zone, updatedAt: nowIso(), updatedBy: who }) : c);
       await pushShared();
@@ -516,6 +543,11 @@
     }
 
     async function addGuest(){
+      if(!isUnlocked()) {
+        alert('Passcode required to add guests.');
+        renderLock();
+        return;
+      }
       const label = prompt('Guest name (short):', 'Guest');
       if(label === null) return;
       const id = 'guest_' + Math.random().toString(16).slice(2);
@@ -528,6 +560,11 @@
     }
 
     async function resetLayout(){
+      if(!isUnlocked()) {
+        alert('Passcode required to reset.');
+        renderLock();
+        return;
+      }
       if(!confirm('Reset to default resident cars + clear guests?')) return;
       state.cars = [];
       ensureDefaults();
@@ -563,6 +600,8 @@
       const house = initialHouse || saved.houseId || randomHouse();
       els.houseId.value = house;
       els.displayName.value = saved.displayName || '';
+      els.passcode.value = saved.passcode || '';
+      els.passcode.addEventListener('input', () => { saveLocal(); renderLock(); });
 
       state.houseId = sanitizeHouse(house);
       ensureDefaults();

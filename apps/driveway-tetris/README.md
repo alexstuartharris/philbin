@@ -10,6 +10,7 @@ A fun shared “where are the cars?” board.
 - Away
 
 ## How it works
+- Enter the house passcode (currently **18355**) to unlock editing.
 - Drag car tokens between zones.
 - Tap a token on mobile to cycle through zones.
 - Unlimited guest cars (Add guest).
