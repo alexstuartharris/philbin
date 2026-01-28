@@ -213,6 +213,7 @@
       const BASE_PATH = "/philbin";
       const repoUrl = `https://github.com/${OWNER}/${REPO}`;
       const apiBase = `https://api.github.com/repos/${OWNER}/${REPO}/contents`;
+      const manifestUrl = `${BASE_PATH}/manifest.json`;
 
       const appsList = document.getElementById("apps-list");
       const toolsList = document.getElementById("tools-list");
@@ -242,6 +243,14 @@
         links.appendChild(linkChip(section, `${repoUrl}/tree/main/${section}`));
         wrapper.appendChild(links);
         target.appendChild(wrapper);
+      }
+
+      async function fetchManifest() {
+        const response = await fetch(manifestUrl, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`Manifest error ${response.status}`);
+        }
+        return response.json();
       }
 
       async function fetchDirectory(path) {
@@ -278,6 +287,29 @@
         setStatus(appsStatus, "Fetching app folders...");
         appsList.innerHTML = "";
         try {
+          // Prefer same-origin manifest (works even when repo is private).
+          try {
+            const manifest = await fetchManifest();
+            const dirs = (manifest.apps || []);
+            if (!dirs.length) {
+              setStatus(appsStatus, "No app folders found.");
+              return;
+            }
+            setStatus(appsStatus, "");
+            for (const dir of dirs) {
+              const pagesLink = `${BASE_PATH}/${dir.name}/`;
+              const githubLink = `${repoUrl}/tree/main/apps/${dir.name}`;
+              const links = [linkChip("GitHub", githubLink)];
+              if (dir.hasIndex) {
+                links.unshift(linkChip("Open", pagesLink));
+              }
+              renderItem(appsList, dir.name, links);
+            }
+            return;
+          } catch (err) {
+            // manifest missing/unavailable: fall back to GitHub API below
+          }
+
           const entries = await fetchDirectory("apps");
           const dirs = entries.filter((entry) => entry.type === "dir");
           if (!dirs.length) {
@@ -296,7 +328,7 @@
             renderItem(appsList, dir.name, links);
           }
         } catch (err) {
-          setStatus(appsStatus, "GitHub API unavailable.");
+          setStatus(appsStatus, "Directory listing unavailable (manifest missing or GitHub API blocked)." );
           renderFallback(appsList, "apps");
         }
       }
@@ -305,6 +337,28 @@
         setStatus(toolsStatus, "Fetching tool folders...");
         toolsList.innerHTML = "";
         try {
+          // Prefer same-origin manifest (works even when repo is private).
+          try {
+            const manifest = await fetchManifest();
+            const dirs = (manifest.tools || []);
+            if (!dirs.length) {
+              setStatus(toolsStatus, "No tools folders found.");
+              return;
+            }
+            setStatus(toolsStatus, "");
+            for (const dir of dirs) {
+              const githubLink = `${repoUrl}/tree/main/tools/${dir.name}`;
+              const links = [linkChip("GitHub", githubLink)];
+              if (dir.hasReadme) {
+                links.push(linkChip("README", `${repoUrl}/blob/main/tools/${dir.name}/README.md`));
+              }
+              renderItem(toolsList, dir.name, links);
+            }
+            return;
+          } catch (err) {
+            // manifest missing/unavailable: fall back to GitHub API below
+          }
+
           const entries = await fetchDirectory("tools");
           const dirs = entries.filter((entry) => entry.type === "dir");
           if (!dirs.length) {
@@ -322,7 +376,7 @@
             renderItem(toolsList, dir.name, links);
           }
         } catch (err) {
-          setStatus(toolsStatus, "GitHub API unavailable.");
+          setStatus(toolsStatus, "Directory listing unavailable (manifest missing or GitHub API blocked)." );
           renderFallback(toolsList, "tools");
         }
       }
