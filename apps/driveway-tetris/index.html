@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Driveway Tetris</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #121924;
+      --text: #e7eef8;
+      --muted: #9bb0c7;
+      --line: #223042;
+      --ok: #35d07f;
+      --warn: #ffcc66;
+      --bad: #ff5c5c;
+      --chip: rgba(255,255,255,.06);
+      --shadow: 0 16px 50px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(circle at 20% 0%, rgba(134,183,255,.18) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(53,208,127,.16) 0%, transparent 45%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      padding: 18px 16px 14px;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,15,20,.72);
+      z-index: 10;
+    }
+
+    .wrap { max-width: 1100px; margin: 0 auto; }
+
+    h1 { margin: 0; font-size: 18px; letter-spacing: .2px; }
+    .sub { margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+
+    main { padding: 16px; }
+
+    .top {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 920px) {
+      .top { grid-template-columns: 1.2fr .8fr; }
+    }
+
+    .card {
+      background: rgba(18,25,36,.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      font-size: 13px;
+      color: var(--text);
+    }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+    .dot.ok { background: var(--ok); }
+    .dot.warn { background: var(--warn); }
+    .dot.bad { background: var(--bad); }
+
+    input, button, select {
+      font: inherit;
+      color: var(--text);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    input::placeholder { color: rgba(231,238,248,.55); }
+
+    button { cursor: pointer; font-weight: 700; }
+    button:active { transform: translateY(1px); }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .zone {
+      min-height: 170px;
+      background: rgba(255,255,255,.03);
+      border: 1px dashed rgba(155,176,199,.35);
+      border-radius: 16px;
+      padding: 12px;
+      position: relative;
+    }
+
+    .zone h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .zone .hint {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tokens { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+
+    .token {
+      user-select: none;
+      touch-action: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: var(--chip);
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .token .mini {
+      font-weight: 700;
+      font-size: 12px;
+      color: rgba(231,238,248,.78);
+    }
+
+    .token.dragging { opacity: .8; transform: scale(1.02); }
+
+    .color {
+      width: 12px; height: 12px; border-radius: 999px;
+      box-shadow: 0 0 0 2px rgba(255,255,255,.12);
+    }
+
+    .footer {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.22);
+    }
+
+    summary { cursor: pointer; font-weight: 800; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; }
+
+    .danger { border-color: rgba(255,92,92,.35); }
+    .danger button { border-color: rgba(255,92,92,.35); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Driveway Tetris</h1>
+      <div class="sub">Drag cars between spots so everyone knows where to park. Shared room state uses Supabase (optional). No login required.</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section class="top">
+        <div class="card">
+          <div class="row" style="justify-content: space-between;">
+            <div class="row">
+              <span class="pill" id="availabilityPill"><span class="dot" id="availabilityDot"></span><span id="availabilityText">Loading…</span></span>
+              <span class="pill" id="syncPill"><span class="dot" id="syncDot"></span><span id="syncText">Sync: …</span></span>
+              <span class="pill" id="lockPill"><span class="dot" id="lockDot"></span><span id="lockText">Lock: …</span></span>
+            </div>
+            <div class="row">
+              <button id="btnRefresh">Refresh</button>
+              <button id="btnCopyLink">Copy house link</button>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 12px;">
+            <input id="houseId" placeholder="House code (shared)" style="flex: 1; min-width: 200px;" />
+            <input id="displayName" placeholder="Your name (optional)" style="flex: 1; min-width: 180px;" />
+            <input id="passcode" placeholder="Passcode" inputmode="numeric" style="width: 140px;" />
+            <button id="btnJoin">Join / Save</button>
+          </div>
+
+          <div class="footer">
+            Tip: share a link like <code>?house=your-code</code> in the house chat. Anyone can drag a car; it updates everyone.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="row" style="justify-content: space-between;">
+            <div>
+              <div style="font-weight: 900; font-size: 14px;">Cars</div>
+              <div class="sub" style="margin-top: 6px;">Residents + unlimited guests.</div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 10px;">
+            <button id="btnAddGuest">Add guest car</button>
+            <button id="btnReset">Reset layout</button>
+          </div>
+
+          <details style="margin-top: 10px;">
+            <summary>Supabase setup (for real sharing)</summary>
+            <div class="sub" style="margin-top: 8px;">
+              This app can run in local-only demo mode. For shared state, set <code>SUPABASE_URL</code> + <code>SUPABASE_ANON_KEY</code> in <code>config.js</code>.
+            </div>
+            <div class="sub" style="margin-top: 8px;">
+              We’ll wire this up after the UI is solid.
+            </div>
+          </details>
+
+          <details class="danger" style="margin-top: 10px;">
+            <summary>Privacy / safety</summary>
+            <div class="sub" style="margin-top: 8px;">
+              Don’t put addresses, license plates, or full names. Use nicknames only.
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card zone" data-zone="driveway_a">
+          <h3>Driveway Spot A</h3>
+          <p class="hint">One of the two driveway spots.</p>
+          <div class="tokens" id="zone-driveway_a"></div>
+        </div>
+
+        <div class="card zone" data-zone="driveway_b">
+          <h3>Driveway Spot B</h3>
+          <p class="hint">The other driveway spot.</p>
+          <div class="tokens" id="zone-driveway_b"></div>
+        </div>
+
+        <div class="card zone" data-zone="across">
+          <h3>Visitor with pass</h3>
+          <p class="hint">Visitor pass spot (across the street).</p>
+          <div class="tokens" id="zone-across"></div>
+        </div>
+
+        <div class="card zone" data-zone="block">
+          <h3>Around the block</h3>
+          <p class="hint">Street parking around the block.</p>
+          <div class="tokens" id="zone-block"></div>
+        </div>
+
+        <div class="card zone" data-zone="away">
+          <h3>Away</h3>
+          <p class="hint">Gone for a while (trip / out all day).</p>
+          <div class="tokens" id="zone-away"></div>
+        </div>
+      </section>
+
+      <div class="footer" id="debug"></div>
+    </div>
+  </main>
+
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // --- Minimal shared model ---
+    // State format:
+    // { houseId, cars: [{id, label, color, kind: 'resident'|'guest', zone, updatedAt, updatedBy, note}] }
+
+    const DEFAULT_RESIDENTS = [
+      { id: 'resident_alex_maria', label: 'Alex+Maria', color: '#86b7ff', kind: 'resident' },
+      { id: 'resident_jon', label: 'Jon', color: '#35d07f', kind: 'resident' },
+      { id: 'resident_ashley', label: 'Ashley', color: '#ff7aa2', kind: 'resident' },
+    ];
+
+    const ZONES = ['driveway_a','driveway_b','across','block','away'];
+
+    const els = {
+      houseId: document.getElementById('houseId'),
+      displayName: document.getElementById('displayName'),
+      passcode: document.getElementById('passcode'),
+      btnJoin: document.getElementById('btnJoin'),
+      btnRefresh: document.getElementById('btnRefresh'),
+      btnCopyLink: document.getElementById('btnCopyLink'),
+      btnAddGuest: document.getElementById('btnAddGuest'),
+      btnReset: document.getElementById('btnReset'),
+      availabilityText: document.getElementById('availabilityText'),
+      availabilityDot: document.getElementById('availabilityDot'),
+      syncText: document.getElementById('syncText'),
+      syncDot: document.getElementById('syncDot'),
+      lockText: document.getElementById('lockText'),
+      lockDot: document.getElementById('lockDot'),
+      debug: document.getElementById('debug'),
+    };
+
+    const q = new URLSearchParams(location.search);
+    const initialHouse = q.get('house') || '';
+
+    const storageKey = 'driveway-tetris.v1';
+    const local = {
+      load(){
+        try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { return {}; }
+      },
+      save(obj){
+        localStorage.setItem(storageKey, JSON.stringify(obj));
+      }
+    };
+
+    let state = {
+      houseId: '',
+      cars: [],
+    };
+
+    let client = null;
+    let channel = null;
+    let syncMode = 'demo'; // demo|supabase
+
+    function nowIso(){ return new Date().toISOString(); }
+
+    function setPill(dot, textEl, kind, text){
+      dot.classList.remove('ok','warn','bad');
+      if(kind) dot.classList.add(kind);
+      textEl.textContent = text;
+    }
+
+    function computeAvailability(){
+      const used = new Set(state.cars.filter(c => c.zone === 'driveway_a' || c.zone === 'driveway_b').map(c => c.zone));
+      const open = 2 - used.size;
+      return { open, used: used.size };
+    }
+
+    function render(){
+      for(const z of ZONES){
+        document.getElementById('zone-' + z).innerHTML = '';
+      }
+
+      const sorted = [...state.cars].sort((a,b) => (a.kind === b.kind ? a.label.localeCompare(b.label) : (a.kind === 'resident' ? -1 : 1)));
+
+      for(const car of sorted){
+        const zone = car.zone || 'away';
+        const wrap = document.getElementById('zone-' + zone);
+        if(!wrap) continue;
+
+        const t = document.createElement('div');
+        t.className = 'token';
+        t.draggable = true;
+        t.dataset.carId = car.id;
+
+        const c = document.createElement('span');
+        c.className = 'color';
+        c.style.background = car.color || '#9bb0c7';
+
+        const label = document.createElement('div');
+        const note = (car.note || '').trim();
+        label.innerHTML =
+          `<div>${escapeHtml(car.label || 'Car')}</div>` +
+          (note ? `<div class="mini">${escapeHtml(note)}</div>` : (car.kind === 'guest' ? `<div class="mini">guest</div>` : `<div class="mini">resident</div>`));
+
+        const btn = document.createElement('button');
+        btn.textContent = '✎';
+        btn.title = 'Set note / ETA';
+        btn.style.marginLeft = '6px';
+        btn.style.padding = '6px 8px';
+        btn.style.borderRadius = '10px';
+        btn.style.fontWeight = '900';
+        btn.style.background = 'rgba(0,0,0,.18)';
+
+        btn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          editNote(car.id);
+        });
+
+        t.appendChild(c);
+        t.appendChild(label);
+        t.appendChild(btn);
+
+        t.addEventListener('dragstart', (ev) => {
+          t.classList.add('dragging');
+          ev.dataTransfer.setData('text/plain', car.id);
+          ev.dataTransfer.effectAllowed = 'move';
+        });
+        t.addEventListener('dragend', () => t.classList.remove('dragging'));
+
+        // Tap-to-cycle on mobile as a fallback.
+        t.addEventListener('click', () => {
+          const i = ZONES.indexOf(zone);
+          const next = ZONES[(i + 1) % ZONES.length];
+          moveCar(car.id, next);
+        });
+
+        wrap.appendChild(t);
+      }
+
+      // Update availability pill
+      const a = computeAvailability();
+      let kind = 'ok';
+      if(a.open === 0) kind = 'bad';
+      else if(a.open === 1) kind = 'warn';
+      setPill(els.availabilityDot, els.availabilityText, kind, `${a.open}/2 driveway spots open`);
+
+      // Sync pill
+      if(syncMode === 'supabase') {
+        setPill(els.syncDot, els.syncText, 'ok', `Sync: shared (${state.houseId})`);
+      } else {
+        setPill(els.syncDot, els.syncText, 'warn', 'Sync: demo (local only)');
+      }
+
+      renderLock();
+    }
+
+    function escapeHtml(s){
+      return (s ?? '').toString().replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    const REQUIRED_PASSCODE = '18355';
+
+    function ensureDefaults(){
+      if(!state.cars || !state.cars.length){
+        state.cars = DEFAULT_RESIDENTS.map((c, idx) => ({
+          ...c,
+          zone: idx === 0 ? 'driveway_a' : 'away',
+          updatedAt: nowIso(),
+          updatedBy: '',
+          note: ''
+        }));
+      }
+      // Keep zones sane
+      for(const car of state.cars){
+        if(!ZONES.includes(car.zone)) car.zone = 'away';
+      }
+    }
+
+    function isUnlocked(){
+      return (els.passcode.value || '').trim() === REQUIRED_PASSCODE;
+    }
+
+    function renderLock(){
+      if(isUnlocked()) {
+        setPill(els.lockDot, els.lockText, 'ok', 'Lock: unlocked');
+      } else {
+        setPill(els.lockDot, els.lockText, 'bad', 'Lock: passcode required');
+      }
+    }
+
+    function saveLocal(){
+      const saved = local.load();
+      local.save({
+        ...saved,
+        houseId: state.houseId,
+        displayName: els.displayName.value.trim(),
+        passcode: (els.passcode.value || '').trim(),
+        state: state,
+      });
+    }
+
+    async function initSupabase(){
+      if(!window.DRIVEWAY_TETRIS || !DRIVEWAY_TETRIS.SUPABASE_URL || !DRIVEWAY_TETRIS.SUPABASE_ANON_KEY) {
+        syncMode = 'demo';
+        return false;
+      }
+
+      client = window.supabase.createClient(DRIVEWAY_TETRIS.SUPABASE_URL, DRIVEWAY_TETRIS.SUPABASE_ANON_KEY);
+      syncMode = 'supabase';
+      return true;
+    }
+
+    async function loadShared(){
+      // demo: restore local
+      if(syncMode !== 'supabase') {
+        const saved = local.load();
+        if(saved.state && saved.state.houseId === state.houseId) {
+          state = saved.state;
+        }
+        ensureDefaults();
+        render();
+        return;
+      }
+
+      // supabase: fetch or create
+      const house = state.houseId;
+      const { data, error } = await client
+        .from('driveway_states')
+        .select('house_id, state')
+        .eq('house_id', house)
+        .maybeSingle();
+
+      if(error) {
+        els.debug.textContent = 'Load error: ' + error.message;
+        syncMode = 'demo';
+        ensureDefaults();
+        render();
+        return;
+      }
+
+      if(data && data.state) {
+        state = data.state;
+      } else {
+        ensureDefaults();
+        await client.from('driveway_states').upsert({ house_id: house, state });
+      }
+
+      // Subscribe to realtime
+      if(channel) {
+        await client.removeChannel(channel);
+        channel = null;
+      }
+
+      channel = client.channel('driveway:' + house)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'driveway_states', filter: `house_id=eq.${house}` }, (payload) => {
+          if(payload && payload.new && payload.new.state) {
+            state = payload.new.state;
+            render();
+          }
+        })
+        .subscribe();
+
+      render();
+    }
+
+    async function pushShared(){
+      if(syncMode !== 'supabase') {
+        saveLocal();
+        render();
+        return;
+      }
+      const house = state.houseId;
+      await client.from('driveway_states').upsert({ house_id: house, state });
+    }
+
+    async function moveCar(carId, zone){
+      if(!ZONES.includes(zone)) return;
+      if(!isUnlocked()) {
+        alert('Passcode required to move cars.');
+        renderLock();
+        return;
+      }
+
+      const who = els.displayName.value.trim();
+      const prev = (state.cars.find(c => c.id === carId) || {}).zone || 'away';
+
+      // Enforce: max 1 car per driveway spot.
+      // If the target driveway spot is occupied, swap the other car into the mover's previous zone.
+      if(zone === 'driveway_a' || zone === 'driveway_b') {
+        const occupant = state.cars.find(c => c.id !== carId && c.zone === zone);
+        if(occupant) {
+          state.cars = state.cars.map(c => {
+            if(c.id === occupant.id) {
+              return { ...c, zone: prev, updatedAt: nowIso(), updatedBy: who };
+            }
+            return c;
+          });
+        }
+      }
+
+      state.cars = state.cars.map(c => c.id === carId ? ({ ...c, zone, updatedAt: nowIso(), updatedBy: who }) : c);
+      await pushShared();
+      render();
+    }
+
+    async function addGuest(){
+      if(!isUnlocked()) {
+        alert('Passcode required to add guests.');
+        renderLock();
+        return;
+      }
+      const label = prompt('Guest name (short):', 'Guest');
+      if(label === null) return;
+      const id = 'guest_' + Math.random().toString(16).slice(2);
+      const colors = ['#ff7aa2','#86b7ff','#35d07f','#ffcc66','#c28cff','#7ee7ff'];
+      const color = colors[Math.floor(Math.random()*colors.length)];
+      const who = els.displayName.value.trim();
+      state.cars.push({ id, label: label.trim() || 'Guest', color, kind: 'guest', zone: 'away', updatedAt: nowIso(), updatedBy: who, note: '' });
+      await pushShared();
+      render();
+    }
+
+    async function editNote(carId){
+      if(!isUnlocked()) {
+        alert('Passcode required to edit notes.');
+        renderLock();
+        return;
+      }
+      const car = state.cars.find(c => c.id === carId);
+      if(!car) return;
+      const current = (car.note || '').trim();
+      const next = prompt('Note / ETA (e.g., "Back ~7pm" or "Gone overnight")', current);
+      if(next === null) return;
+      const who = els.displayName.value.trim();
+      state.cars = state.cars.map(c => c.id === carId ? ({ ...c, note: (next || '').trim(), updatedAt: nowIso(), updatedBy: who }) : c);
+      await pushShared();
+      render();
+    }
+
+    async function resetLayout(){
+      if(!isUnlocked()) {
+        alert('Passcode required to reset.');
+        renderLock();
+        return;
+      }
+      if(!confirm('Reset to default resident cars + clear guests?')) return;
+      state.cars = [];
+      ensureDefaults();
+      await pushShared();
+      render();
+    }
+
+    function wireDropZones(){
+      document.querySelectorAll('.zone').forEach((z) => {
+        z.addEventListener('dragover', (ev) => {
+          ev.preventDefault();
+          ev.dataTransfer.dropEffect = 'move';
+        });
+        z.addEventListener('drop', (ev) => {
+          ev.preventDefault();
+          const carId = ev.dataTransfer.getData('text/plain');
+          const zone = z.dataset.zone;
+          moveCar(carId, zone);
+        });
+      });
+    }
+
+    function copyHouseLink(){
+      const url = new URL(location.href);
+      if(state.houseId) url.searchParams.set('house', state.houseId);
+      navigator.clipboard.writeText(url.toString());
+      alert('Copied link!');
+    }
+
+    async function boot(){
+      // initial local load
+      const saved = local.load();
+      const house = initialHouse || saved.houseId || randomHouse();
+      els.houseId.value = house;
+      els.displayName.value = saved.displayName || '';
+      els.passcode.value = saved.passcode || '';
+      els.passcode.addEventListener('input', () => { saveLocal(); renderLock(); });
+
+      state.houseId = sanitizeHouse(house);
+      ensureDefaults();
+
+      wireDropZones();
+
+      await initSupabase();
+      await loadShared();
+
+      els.btnJoin.onclick = async () => {
+        state.houseId = sanitizeHouse(els.houseId.value.trim() || randomHouse());
+        els.houseId.value = state.houseId;
+        saveLocal();
+        await initSupabase();
+        await loadShared();
+      };
+
+      els.btnRefresh.onclick = async () => {
+        await loadShared();
+      };
+
+      els.btnCopyLink.onclick = () => copyHouseLink();
+      els.btnAddGuest.onclick = () => addGuest();
+      els.btnReset.onclick = () => resetLayout();
+
+      // Auto-refresh occasionally
+      setInterval(() => { if(syncMode !== 'supabase') render(); }, 15000);
+    }
+
+    function randomHouse(){
+      // short, not-guessable enough for "house link" usage
+      return 'house-' + Math.random().toString(36).slice(2, 8) + '-' + Math.random().toString(36).slice(2, 6);
+    }
+
+    function sanitizeHouse(s){
+      return (s || '').toLowerCase().replace(/[^a-z0-9\-]/g,'').slice(0, 40) || randomHouse();
+    }
+
+    boot();
+  </script>
+</body>
+</html>

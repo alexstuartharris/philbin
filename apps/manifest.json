@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-01-29T06:33:04.978Z",
+  "apps": [
+    {
+      "name": "driveway-tetris",
+      "hasIndex": true
+    },
+    {
+      "name": "field-kit-planner",
+      "hasIndex": true
+    },
+    {
+      "name": "status",
+      "hasIndex": true
+    },
+    {
+      "name": "trip-brief",
+      "hasIndex": true
+    }
+  ],
+  "tools": []
+}

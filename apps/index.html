@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Philbin Apps + Tools</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f4ef;
+        --panel: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #5c5c5c;
+        --accent: #2451ff;
+        --accent-soft: rgba(36, 81, 255, 0.1);
+        --border: #e3dfd8;
+        --shadow: 0 10px 35px rgba(19, 15, 10, 0.12);
+        --radius: 18px;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+          radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+          var(--bg);
+      }
+
+      header {
+        padding: 48px 20px 28px;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin: 0 0 12px;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        font-size: 1.05rem;
+        color: var(--muted);
+        max-width: 46ch;
+        line-height: 1.5;
+      }
+
+      code {
+        background: #f1ede6;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-size: 0.95em;
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px 64px;
+        display: grid;
+        gap: 28px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px 22px 18px;
+        box-shadow: var(--shadow);
+        animation: fadeUp 0.6s ease both;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+      }
+
+      .note {
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin: 0 0 18px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.6);
+        transition: border 0.2s ease, transform 0.2s ease;
+      }
+
+      .item:hover {
+        border: 1px solid var(--border);
+        transform: translateY(-2px);
+      }
+
+      .item span {
+        font-weight: 600;
+      }
+
+      .links {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+        background: var(--accent-soft);
+        padding: 6px 10px;
+        border-radius: 999px;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .status {
+        margin-top: 12px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .fallback {
+        border: 1px dashed var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        background: #fffdfa;
+        color: var(--muted);
+      }
+
+      .vacation {
+        background: #1c1c1c;
+        color: #f7f3ea;
+        border-radius: var(--radius);
+        padding: 20px;
+      }
+
+      .vacation p {
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      footer {
+        text-align: center;
+        padding: 40px 20px 50px;
+        color: var(--muted);
+      }
+
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @media (max-width: 720px) {
+        header, main { padding-left: 16px; padding-right: 16px; }
+        .item { flex-direction: column; align-items: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Philbin Apps + Tools</h1>
+      <p class="subtitle">
+        A lightweight index of everything deployed in this repo. Apps that have their own
+        <code>index.html</code> get a direct Pages link; everything else stays on GitHub.
+      </p>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="apps-title">
+        <h2 id="apps-title">Apps</h2>
+        <p class="note">Live Pages routes when available, plus quick access to the folder.</p>
+        <div id="apps-list" class="grid" aria-live="polite"></div>
+        <div id="apps-status" class="status"></div>
+      </section>
+
+      <section class="card" aria-labelledby="tools-title">
+        <h2 id="tools-title">Tools</h2>
+        <p class="note">Workflow helpers and scripts. README links appear when available.</p>
+        <div id="tools-list" class="grid" aria-live="polite"></div>
+        <div id="tools-status" class="status"></div>
+      </section>
+
+      <section class="vacation">
+        <p>
+          While Alex is on vacation, anything new should be web-viewable via GitHub Pages or the PR link.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      Built from the GitHub Contents API, with a graceful fallback if requests are limited.
+    </footer>
+
+    <script>
+      const OWNER = "alexstuartharris";
+      const REPO = "philbin";
+      const BASE_PATH = "/philbin";
+      const repoUrl = `https://github.com/${OWNER}/${REPO}`;
+      const apiBase = `https://api.github.com/repos/${OWNER}/${REPO}/contents`;
+      const manifestUrl = `${BASE_PATH}/manifest.json`;
+
+      const appsList = document.getElementById("apps-list");
+      const toolsList = document.getElementById("tools-list");
+      const appsStatus = document.getElementById("apps-status");
+      const toolsStatus = document.getElementById("tools-status");
+
+      function setStatus(target, message) {
+        target.textContent = message;
+      }
+
+      function linkChip(label, href) {
+        const link = document.createElement("a");
+        link.href = href;
+        link.textContent = label;
+        link.target = "_blank";
+        link.rel = "noopener";
+        return link;
+      }
+
+      function renderFallback(target, section) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "fallback";
+        wrapper.innerHTML = `Can\'t reach GitHub right now. Browse ${section} on GitHub:`;
+        const links = document.createElement("div");
+        links.className = "links";
+        links.appendChild(linkChip("Repo", repoUrl));
+        links.appendChild(linkChip(section, `${repoUrl}/tree/main/${section}`));
+        wrapper.appendChild(links);
+        target.appendChild(wrapper);
+      }
+
+      async function fetchManifest() {
+        const response = await fetch(manifestUrl, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`Manifest error ${response.status}`);
+        }
+        return response.json();
+      }
+
+      async function fetchDirectory(path) {
+        const response = await fetch(`${apiBase}/${path}`);
+        if (!response.ok) {
+          throw new Error(`GitHub API error ${response.status}`);
+        }
+        return response.json();
+      }
+
+      async function hasFile(path, fileName) {
+        try {
+          const entries = await fetchDirectory(path);
+          return entries.some((entry) => entry.name.toLowerCase() === fileName.toLowerCase());
+        } catch {
+          return false;
+        }
+      }
+
+      function renderItem(target, name, links) {
+        const row = document.createElement("div");
+        row.className = "item";
+        const label = document.createElement("span");
+        label.textContent = name;
+        const linkWrap = document.createElement("div");
+        linkWrap.className = "links";
+        links.forEach((link) => linkWrap.appendChild(link));
+        row.appendChild(label);
+        row.appendChild(linkWrap);
+        target.appendChild(row);
+      }
+
+      async function loadApps() {
+        setStatus(appsStatus, "Fetching app folders...");
+        appsList.innerHTML = "";
+        try {
+          // Prefer same-origin manifest (works even when repo is private).
+          try {
+            const manifest = await fetchManifest();
+            const dirs = (manifest.apps || []);
+            if (!dirs.length) {
+              setStatus(appsStatus, "No app folders found.");
+              return;
+            }
+            setStatus(appsStatus, "");
+            for (const dir of dirs) {
+              const pagesLink = `${BASE_PATH}/${dir.name}/`;
+              const githubLink = `${repoUrl}/tree/main/apps/${dir.name}`;
+              const links = [linkChip("GitHub", githubLink)];
+              if (dir.hasIndex) {
+                links.unshift(linkChip("Open", pagesLink));
+              }
+              renderItem(appsList, dir.name, links);
+            }
+            return;
+          } catch (err) {
+            // manifest missing/unavailable: fall back to GitHub API below
+          }
+
+          const entries = await fetchDirectory("apps");
+          const dirs = entries.filter((entry) => entry.type === "dir");
+          if (!dirs.length) {
+            setStatus(appsStatus, "No app folders found.");
+            return;
+          }
+          setStatus(appsStatus, "");
+          for (const dir of dirs) {
+            const pagesLink = `${BASE_PATH}/${dir.name}/`;
+            const githubLink = `${repoUrl}/tree/main/apps/${dir.name}`;
+            const hasIndex = await hasFile(`apps/${dir.name}`, "index.html");
+            const links = [linkChip("GitHub", githubLink)];
+            if (hasIndex) {
+              links.unshift(linkChip("Open", pagesLink));
+            }
+            renderItem(appsList, dir.name, links);
+          }
+        } catch (err) {
+          setStatus(appsStatus, "Directory listing unavailable (manifest missing or GitHub API blocked)." );
+          renderFallback(appsList, "apps");
+        }
+      }
+
+      async function loadTools() {
+        setStatus(toolsStatus, "Fetching tool folders...");
+        toolsList.innerHTML = "";
+        try {
+          // Prefer same-origin manifest (works even when repo is private).
+          try {
+            const manifest = await fetchManifest();
+            const dirs = (manifest.tools || []);
+            if (!dirs.length) {
+              setStatus(toolsStatus, "No tools folders found.");
+              return;
+            }
+            setStatus(toolsStatus, "");
+            for (const dir of dirs) {
+              const githubLink = `${repoUrl}/tree/main/tools/${dir.name}`;
+              const links = [linkChip("GitHub", githubLink)];
+              if (dir.hasReadme) {
+                links.push(linkChip("README", `${repoUrl}/blob/main/tools/${dir.name}/README.md`));
+              }
+              renderItem(toolsList, dir.name, links);
+            }
+            return;
+          } catch (err) {
+            // manifest missing/unavailable: fall back to GitHub API below
+          }
+
+          const entries = await fetchDirectory("tools");
+          const dirs = entries.filter((entry) => entry.type === "dir");
+          if (!dirs.length) {
+            setStatus(toolsStatus, "No tools folders found.");
+            return;
+          }
+          setStatus(toolsStatus, "");
+          for (const dir of dirs) {
+            const githubLink = `${repoUrl}/tree/main/tools/${dir.name}`;
+            const links = [linkChip("GitHub", githubLink)];
+            const hasReadme = await hasFile(`tools/${dir.name}`, "README.md");
+            if (hasReadme) {
+              links.push(linkChip("README", `${repoUrl}/blob/main/tools/${dir.name}/README.md`));
+            }
+            renderItem(toolsList, dir.name, links);
+          }
+        } catch (err) {
+          setStatus(toolsStatus, "Directory listing unavailable (manifest missing or GitHub API blocked)." );
+          renderFallback(toolsList, "tools");
+        }
+      }
+
+      loadApps();
+      loadTools();
+    </script>
+  </body>
+</html>

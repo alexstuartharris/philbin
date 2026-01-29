@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trip Brief</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f4ef;
+        --panel: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #5c5c5c;
+        --accent: #2451ff;
+        --accent-soft: rgba(36, 81, 255, 0.1);
+        --border: #e3dfd8;
+        --shadow: 0 10px 35px rgba(19, 15, 10, 0.12);
+        --radius: 18px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+          radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+          var(--bg);
+      }
+
+      header {
+        padding: 42px 20px 18px;
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        font-size: 1.05rem;
+        color: var(--muted);
+        max-width: 70ch;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 20px 64px;
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        gap: 18px;
+        align-items: start;
+      }
+
+      @media (max-width: 980px) {
+        main { grid-template-columns: 1fr; }
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 1.25rem;
+      }
+
+      label {
+        display: block;
+        font-weight: 700;
+        margin: 12px 0 6px;
+      }
+
+      input, select, textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: 1rem;
+        font-family: inherit;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 120px;
+        font-family: var(--mono);
+        font-size: 0.92rem;
+        line-height: 1.35;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .btnRow {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid transparent;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 800;
+        padding: 10px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        background: #fff;
+        border-color: var(--border);
+        color: var(--ink);
+      }
+
+      button.ghost {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--ink);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .hint {
+        font-size: 0.95rem;
+        color: var(--muted);
+        line-height: 1.45;
+        margin: 8px 0 0;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.7);
+        border: 1px solid var(--border);
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .output {
+        white-space: pre-wrap;
+        font-family: var(--mono);
+        font-size: 0.92rem;
+        line-height: 1.4;
+        background: #111;
+        color: #f7f3ea;
+        padding: 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.12);
+        min-height: 320px;
+      }
+
+      .status {
+        margin-top: 10px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .status strong { color: var(--ink); }
+
+      .small {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .topLinks {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 700;
+        background: var(--accent-soft);
+        padding: 6px 10px;
+        border-radius: 999px;
+      }
+
+      a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Trip Brief</h1>
+      <p class="subtitle">
+        One-page field/travel brief: weather snapshot (Open-Meteo), sunrise/sunset, checklist, notes, and
+        a downloadable <span style="font-family: var(--mono)">.ics</span> calendar event. Everything runs locally in your browser.
+      </p>
+      <div class="topLinks">
+        <a href="../" target="_blank" rel="noopener">Apps index</a>
+        <a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data: Open‑Meteo</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="inputs-title">
+        <h2 id="inputs-title">Inputs</h2>
+
+        <label for="tripName">Trip name</label>
+        <input id="tripName" placeholder="e.g., Mamquam field visit" />
+
+        <div class="row">
+          <div>
+            <label for="startDate">Start date</label>
+            <input id="startDate" type="date" />
+          </div>
+          <div>
+            <label for="endDate">End date</label>
+            <input id="endDate" type="date" />
+          </div>
+        </div>
+
+        <label for="timezone">Timezone (for forecast + sunrise/sunset)</label>
+        <select id="timezone">
+          <option value="auto">auto</option>
+          <option value="America/Vancouver">America/Vancouver</option>
+          <option value="America/Los_Angeles">America/Los_Angeles</option>
+          <option value="America/Denver">America/Denver</option>
+          <option value="America/Chicago">America/Chicago</option>
+          <option value="America/New_York">America/New_York</option>
+          <option value="UTC">UTC</option>
+        </select>
+        <p class="hint">If <strong>auto</strong> is selected, we use your browser timezone.</p>
+
+        <label>Location (lat/lon)</label>
+        <div class="row">
+          <div>
+            <input id="lat" inputmode="decimal" placeholder="Latitude (e.g., 49.70)" />
+          </div>
+          <div>
+            <input id="lon" inputmode="decimal" placeholder="Longitude (e.g., -123.16)" />
+          </div>
+        </div>
+
+        <div class="btnRow">
+          <button id="btnGeolocate" class="secondary" type="button">Use my location</button>
+          <button id="btnFetch" type="button">Fetch forecast</button>
+          <button id="btnBuild" class="secondary" type="button">Build brief</button>
+        </div>
+
+        <label for="template">Checklist template</label>
+        <select id="template">
+          <option value="field">Fieldwork (hydro/ecology)</option>
+          <option value="outdoors">Outdoors daytrip</option>
+          <option value="travel">Travel / logistics</option>
+          <option value="blank">Blank</option>
+        </select>
+
+        <label for="customChecklist">Checklist (one per line)</label>
+        <textarea id="customChecklist" spellcheck="false"></textarea>
+
+        <label for="notes">Notes</label>
+        <textarea id="notes" placeholder="e.g., access notes, contacts, hazards, permits..." spellcheck="false"></textarea>
+
+        <div class="btnRow">
+          <button id="btnSave" class="ghost" type="button">Save locally</button>
+          <button id="btnLoad" class="ghost" type="button">Load saved</button>
+          <button id="btnDownloadIcs" class="secondary" type="button" disabled>Download .ics</button>
+          <button id="btnCopy" class="secondary" type="button" disabled>Copy brief</button>
+        </div>
+
+        <div id="miniStatus" class="status"></div>
+      </section>
+
+      <section class="card" aria-labelledby="output-title">
+        <h2 id="output-title">Brief</h2>
+        <div class="pill" id="forecastPill">No forecast loaded yet.</div>
+        <div style="height: 12px"></div>
+        <div id="output" class="output" aria-live="polite"></div>
+        <div class="status small" id="footnote"></div>
+      </section>
+    </main>
+
+    <script>
+      const STORAGE_KEY = 'trip-brief:v1';
+
+      const els = {
+        tripName: document.getElementById('tripName'),
+        startDate: document.getElementById('startDate'),
+        endDate: document.getElementById('endDate'),
+        timezone: document.getElementById('timezone'),
+        lat: document.getElementById('lat'),
+        lon: document.getElementById('lon'),
+        template: document.getElementById('template'),
+        customChecklist: document.getElementById('customChecklist'),
+        notes: document.getElementById('notes'),
+        btnGeolocate: document.getElementById('btnGeolocate'),
+        btnFetch: document.getElementById('btnFetch'),
+        btnBuild: document.getElementById('btnBuild'),
+        btnSave: document.getElementById('btnSave'),
+        btnLoad: document.getElementById('btnLoad'),
+        btnDownloadIcs: document.getElementById('btnDownloadIcs'),
+        btnCopy: document.getElementById('btnCopy'),
+        miniStatus: document.getElementById('miniStatus'),
+        forecastPill: document.getElementById('forecastPill'),
+        output: document.getElementById('output'),
+        footnote: document.getElementById('footnote'),
+      };
+
+      const TEMPLATE_ITEMS = {
+        field: [
+          'PPE: waders/boots, gloves, safety glasses',
+          'Rain gear + warm layer',
+          'Field notebook + pencils',
+          'Phone + backup battery',
+          'GPS / maps offline',
+          'First aid kit',
+          'Bear spray / wildlife plan (if relevant)',
+          'Sampling gear (as needed): bottles, labels, sharpies',
+          'Meters (as needed): conductivity/temp, pH, DO',
+          'Calibration solutions',
+          'Camera + scale card',
+          'Permits / access docs',
+          'Contacts: landowner/site lead',
+          'Vehicle: fuel + keys + spare tire',
+        ],
+        outdoors: [
+          'Water + electrolytes',
+          'Food/snacks',
+          'Layers (warm + rain)',
+          'Headlamp',
+          'Navigation (map + offline)',
+          'First aid kit',
+          'Sun protection',
+          'Emergency blanket',
+          'Knife / multi-tool',
+          'Bear spray / whistle',
+        ],
+        travel: [
+          'ID + wallet',
+          'Phone + charger + power bank',
+          'Keys',
+          'Tickets/reservations',
+          'Medications',
+          'Toiletries',
+          'Clothes (layers)',
+          'Work laptop + adapters',
+        ],
+        blank: []
+      };
+
+      let forecast = null; // filled after fetch
+      let lastBriefText = '';
+      let lastIcs = '';
+
+      function browserTz() {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+      }
+
+      function effectiveTz() {
+        return els.timezone.value === 'auto' ? browserTz() : els.timezone.value;
+      }
+
+      function setMiniStatus(msg) {
+        els.miniStatus.innerHTML = msg || '';
+      }
+
+      function toNumber(x) {
+        const n = Number(String(x).trim());
+        return Number.isFinite(n) ? n : null;
+      }
+
+      function ymd(d) {
+        const pad = (v) => String(v).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      }
+
+      function clampDateRange(start, end) {
+        if (!start || !end) return { start, end };
+        if (end < start) return { start, end: start };
+        return { start, end };
+      }
+
+      function isoDateOnlyToUtcIcs(dateStr) {
+        // dateStr is YYYY-MM-DD. For all-day ICS we use VALUE=DATE.
+        return dateStr.replaceAll('-', '');
+      }
+
+      function addDays(dateStr, days) {
+        const d = new Date(`${dateStr}T00:00:00`);
+        d.setDate(d.getDate() + days);
+        return ymd(d);
+      }
+
+      function escapeIcsText(text) {
+        return String(text || '')
+          .replace(/\\/g, '\\\\')
+          .replace(/\n/g, '\\n')
+          .replace(/,/g, '\\,')
+          .replace(/;/g, '\\;');
+      }
+
+      function buildIcs({ title, startDate, endDateExclusive, description, location }) {
+        const uid = `trip-brief-${Math.random().toString(16).slice(2)}@philbin`;
+        const dtstamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, 'Z');
+
+        return [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//Philbin//Trip Brief//EN',
+          'CALSCALE:GREGORIAN',
+          'BEGIN:VEVENT',
+          `UID:${uid}`,
+          `DTSTAMP:${dtstamp}`,
+          `SUMMARY:${escapeIcsText(title)}`,
+          `DTSTART;VALUE=DATE:${isoDateOnlyToUtcIcs(startDate)}`,
+          `DTEND;VALUE=DATE:${isoDateOnlyToUtcIcs(endDateExclusive)}`,
+          location ? `LOCATION:${escapeIcsText(location)}` : null,
+          description ? `DESCRIPTION:${escapeIcsText(description)}` : null,
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ].filter(Boolean).join('\r\n') + '\r\n';
+      }
+
+      function downloadText(filename, text, mime) {
+        const blob = new Blob([text], { type: mime || 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 250);
+      }
+
+      function checklistFromTextarea() {
+        return els.customChecklist.value
+          .split(/\r?\n/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+
+      function setChecklist(items) {
+        els.customChecklist.value = (items || []).join('\n');
+      }
+
+      function applyTemplate(name) {
+        setChecklist(TEMPLATE_ITEMS[name] || []);
+      }
+
+      function summarizeForecast(f) {
+        if (!f) return 'No forecast loaded yet.';
+        const src = f?.meta?.source || 'Open‑Meteo';
+        const tz = f?.meta?.timezone;
+        const range = f?.meta?.range;
+        return `${src} • ${tz} • ${range}`;
+      }
+
+      async function fetchForecast() {
+        const lat = toNumber(els.lat.value);
+        const lon = toNumber(els.lon.value);
+        if (lat === null || lon === null) {
+          setMiniStatus('<strong>Missing</strong>: valid latitude/longitude.');
+          return;
+        }
+
+        const tz = effectiveTz();
+
+        // Use Open-Meteo (no key) — daily summaries are easiest for a one-page brief.
+        const daily = [
+          'weather_code',
+          'temperature_2m_max',
+          'temperature_2m_min',
+          'precipitation_probability_max',
+          'precipitation_sum',
+          'wind_speed_10m_max',
+          'wind_gusts_10m_max',
+          'sunrise',
+          'sunset'
+        ].join(',');
+
+        const params = new URLSearchParams({
+          latitude: String(lat),
+          longitude: String(lon),
+          timezone: tz,
+          daily,
+          forecast_days: '7'
+        });
+
+        setMiniStatus('Fetching forecast…');
+        els.btnFetch.disabled = true;
+        try {
+          const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`Forecast HTTP ${res.status}`);
+          const data = await res.json();
+
+          // Normalize.
+          forecast = {
+            meta: {
+              source: 'Open‑Meteo',
+              timezone: data.timezone,
+              range: `${data.daily?.time?.[0] || '…'} → ${data.daily?.time?.[Math.max(0,(data.daily?.time?.length||1)-1)] || '…'}`,
+              lat: data.latitude,
+              lon: data.longitude,
+            },
+            daily: data.daily || null,
+          };
+
+          els.forecastPill.textContent = summarizeForecast(forecast);
+          setMiniStatus('Forecast loaded.');
+        } catch (err) {
+          forecast = null;
+          els.forecastPill.textContent = 'No forecast loaded yet.';
+          setMiniStatus(`<strong>Forecast failed</strong>: ${String(err?.message || err)}`);
+        } finally {
+          els.btnFetch.disabled = false;
+        }
+      }
+
+      function weatherCodeLabel(code) {
+        // Minimal: https://open-meteo.com/en/docs#weathervariables
+        const map = new Map([
+          [0, 'Clear'],
+          [1, 'Mainly clear'],
+          [2, 'Partly cloudy'],
+          [3, 'Overcast'],
+          [45, 'Fog'],
+          [48, 'Rime fog'],
+          [51, 'Light drizzle'],
+          [53, 'Drizzle'],
+          [55, 'Dense drizzle'],
+          [56, 'Freezing drizzle'],
+          [57, 'Freezing drizzle'],
+          [61, 'Light rain'],
+          [63, 'Rain'],
+          [65, 'Heavy rain'],
+          [66, 'Freezing rain'],
+          [67, 'Freezing rain'],
+          [71, 'Light snow'],
+          [73, 'Snow'],
+          [75, 'Heavy snow'],
+          [77, 'Snow grains'],
+          [80, 'Rain showers'],
+          [81, 'Rain showers'],
+          [82, 'Violent showers'],
+          [85, 'Snow showers'],
+          [86, 'Snow showers'],
+          [95, 'Thunderstorm'],
+          [96, 'Thunderstorm + hail'],
+          [99, 'Thunderstorm + hail'],
+        ]);
+        return map.get(code) || `Weather code ${code}`;
+      }
+
+      function formatDailySummary(f, startDate, endDate) {
+        if (!f?.daily?.time?.length) return 'Forecast: (none loaded)';
+
+        const rows = [];
+        const d = f.daily;
+
+        for (let i = 0; i < d.time.length; i++) {
+          const day = d.time[i];
+          if (startDate && day < startDate) continue;
+          if (endDate && day > endDate) continue;
+
+          const tMax = d.temperature_2m_max?.[i];
+          const tMin = d.temperature_2m_min?.[i];
+          const pProb = d.precipitation_probability_max?.[i];
+          const pSum = d.precipitation_sum?.[i];
+          const wind = d.wind_speed_10m_max?.[i];
+          const gust = d.wind_gusts_10m_max?.[i];
+          const code = d.weather_code?.[i];
+          const sunrise = d.sunrise?.[i];
+          const sunset = d.sunset?.[i];
+
+          const parts = [];
+          if (code !== undefined && code !== null) parts.push(weatherCodeLabel(code));
+          if (tMin !== undefined && tMax !== undefined) parts.push(`${Math.round(tMin)}–${Math.round(tMax)}°C`);
+          if (pProb !== undefined && pProb !== null) parts.push(`${Math.round(pProb)}% precip`);
+          if (pSum !== undefined && pSum !== null) parts.push(`${pSum} mm`);
+          if (wind !== undefined && wind !== null) parts.push(`${Math.round(wind)} km/h wind`);
+          if (gust !== undefined && gust !== null) parts.push(`${Math.round(gust)} km/h gust`);
+          if (sunrise && sunset) {
+            const sr = sunrise.split('T')[1]?.slice(0,5);
+            const ss = sunset.split('T')[1]?.slice(0,5);
+            if (sr && ss) parts.push(`sun ${sr}–${ss}`);
+          }
+
+          rows.push(`- ${day}: ${parts.join(' • ')}`);
+        }
+
+        return rows.length ? rows.join('\n') : '(No forecast rows match your date range.)';
+      }
+
+      function buildBrief() {
+        const name = (els.tripName.value || '').trim() || 'Trip';
+        const tz = effectiveTz();
+
+        const rawStart = (els.startDate.value || '').trim();
+        const rawEnd = (els.endDate.value || '').trim();
+        const { start, end } = clampDateRange(rawStart, rawEnd);
+
+        const lat = toNumber(els.lat.value);
+        const lon = toNumber(els.lon.value);
+        const loc = (lat !== null && lon !== null) ? `${lat.toFixed(5)}, ${lon.toFixed(5)}` : '(no coords)';
+
+        const checklist = checklistFromTextarea();
+        const notes = (els.notes.value || '').trim();
+
+        const dateLine = start && end
+          ? (start === end ? start : `${start} → ${end}`)
+          : '(dates not set)';
+
+        const forecastBlock = formatDailySummary(forecast, start || null, end || null);
+
+        const checklistBlock = checklist.length
+          ? checklist.map((x) => `- [ ] ${x}`).join('\n')
+          : '_No checklist items yet._';
+
+        const text = [
+          `# ${name}`,
+          '',
+          `**Dates:** ${dateLine}`,
+          `**Timezone:** ${tz}`,
+          `**Location:** ${loc}`,
+          '',
+          '## Weather snapshot (daily)',
+          forecastBlock,
+          '',
+          '## Checklist',
+          checklistBlock,
+          '',
+          '## Notes',
+          notes || '_—_',
+          '',
+          `Generated: ${new Date().toLocaleString()}`
+        ].join('\n');
+
+        lastBriefText = text;
+        els.output.textContent = text;
+        els.btnCopy.disabled = false;
+
+        // Build ICS (all-day event; DTEND is exclusive).
+        if (start) {
+          const endExclusive = end ? addDays(end, 1) : addDays(start, 1);
+          lastIcs = buildIcs({
+            title: name,
+            startDate: start,
+            endDateExclusive: endExclusive,
+            description: text,
+            location: (lat !== null && lon !== null) ? loc : ''
+          });
+          els.btnDownloadIcs.disabled = false;
+        } else {
+          lastIcs = '';
+          els.btnDownloadIcs.disabled = true;
+        }
+
+        els.footnote.textContent = forecast
+          ? `Forecast uses Open‑Meteo (no API key). Remember microclimates + elevation.`
+          : `Tip: fetch a forecast (optional) for sunrise/sunset + precip/wind.`;
+      }
+
+      function saveState() {
+        const payload = {
+          tripName: els.tripName.value,
+          startDate: els.startDate.value,
+          endDate: els.endDate.value,
+          timezone: els.timezone.value,
+          lat: els.lat.value,
+          lon: els.lon.value,
+          template: els.template.value,
+          customChecklist: els.customChecklist.value,
+          notes: els.notes.value,
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        setMiniStatus('Saved locally in this browser.');
+      }
+
+      function loadState() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          setMiniStatus('No saved trip found in this browser.');
+          return;
+        }
+        try {
+          const payload = JSON.parse(raw);
+          els.tripName.value = payload.tripName || '';
+          els.startDate.value = payload.startDate || '';
+          els.endDate.value = payload.endDate || '';
+          els.timezone.value = payload.timezone || 'auto';
+          els.lat.value = payload.lat || '';
+          els.lon.value = payload.lon || '';
+          els.template.value = payload.template || 'field';
+          els.customChecklist.value = payload.customChecklist || '';
+          els.notes.value = payload.notes || '';
+          setMiniStatus('Loaded saved trip.');
+        } catch (err) {
+          setMiniStatus(`Could not load saved trip: ${String(err?.message || err)}`);
+        }
+      }
+
+      async function copyBrief() {
+        if (!lastBriefText) return;
+        await navigator.clipboard.writeText(lastBriefText);
+        setMiniStatus('Copied to clipboard.');
+      }
+
+      function downloadIcs() {
+        if (!lastIcs) return;
+        const safe = (els.tripName.value || 'trip').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g,'');
+        downloadText(`${safe || 'trip'}.ics`, lastIcs, 'text/calendar');
+        setMiniStatus('Downloaded .ics');
+      }
+
+      async function geolocate() {
+        if (!navigator.geolocation) {
+          setMiniStatus('Geolocation not supported in this browser.');
+          return;
+        }
+        setMiniStatus('Requesting location…');
+        els.btnGeolocate.disabled = true;
+        try {
+          const pos = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 12000 });
+          });
+          const { latitude, longitude } = pos.coords;
+          els.lat.value = String(latitude.toFixed(5));
+          els.lon.value = String(longitude.toFixed(5));
+          setMiniStatus('Location filled in.');
+        } catch (err) {
+          setMiniStatus(`Location failed: ${String(err?.message || err)}`);
+        } finally {
+          els.btnGeolocate.disabled = false;
+        }
+      }
+
+      // Wire up.
+      els.template.addEventListener('change', () => applyTemplate(els.template.value));
+      els.btnGeolocate.addEventListener('click', geolocate);
+      els.btnFetch.addEventListener('click', fetchForecast);
+      els.btnBuild.addEventListener('click', buildBrief);
+      els.btnSave.addEventListener('click', saveState);
+      els.btnLoad.addEventListener('click', loadState);
+      els.btnCopy.addEventListener('click', () => copyBrief().catch((e) => setMiniStatus(String(e))));
+      els.btnDownloadIcs.addEventListener('click', downloadIcs);
+
+      // Defaults.
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      els.startDate.value = ymd(today);
+      els.endDate.value = ymd(today);
+      els.timezone.value = 'America/Vancouver';
+      els.template.value = 'field';
+      applyTemplate('field');
+      els.output.textContent = 'Build a brief to see output here.';
+      els.forecastPill.textContent = summarizeForecast(null);
+    </script>
+  </body>
+</html>
