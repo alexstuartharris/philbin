@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Field Kit Planner</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f4ef;
+        --panel: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #5c5c5c;
+        --accent: #2451ff;
+        --accent-2: #0f766e;
+        --border: #e3dfd8;
+        --shadow: 0 10px 35px rgba(19, 15, 10, 0.12);
+        --radius: 18px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+          radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+          var(--bg);
+      }
+
+      header {
+        padding: 40px 20px 18px;
+        max-width: 1080px;
+        margin: 0 auto;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 3vw, 2.4rem);
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .sub {
+        margin: 8px 0 0;
+        color: var(--muted);
+        max-width: 70ch;
+        line-height: 1.5;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 20px 64px;
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        gap: 18px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 1.25rem;
+      }
+
+      label {
+        font-size: 0.95rem;
+        font-weight: 650;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      input, select, textarea, button {
+        font: inherit;
+      }
+
+      input, select, textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: #fffdfa;
+        border-radius: 14px;
+        padding: 10px 12px;
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+        font-family: var(--mono);
+        font-size: 0.92rem;
+        line-height: 1.35;
+      }
+
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .grid.two {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .btn {
+        border: 1px solid var(--border);
+        background: #ffffff;
+        border-radius: 999px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      .btn.primary {
+        background: rgba(36, 81, 255, 0.12);
+        border-color: rgba(36, 81, 255, 0.22);
+        color: var(--accent);
+      }
+
+      .btn.good {
+        background: rgba(15, 118, 110, 0.12);
+        border-color: rgba(15, 118, 110, 0.22);
+        color: var(--accent-2);
+      }
+
+      .btn.danger {
+        background: rgba(239, 68, 68, 0.10);
+        border-color: rgba(239, 68, 68, 0.22);
+        color: #b91c1c;
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .tiny {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 10px;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 22px 1fr auto;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid rgba(227, 223, 216, 0.9);
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 14px;
+        padding: 10px 10px;
+      }
+
+      .item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+      }
+
+      .item .text {
+        font-weight: 600;
+      }
+
+      .item .tag {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+
+      .item button {
+        padding: 6px 10px;
+        border-radius: 999px;
+      }
+
+      .output {
+        min-height: 300px;
+      }
+
+      footer {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 20px 40px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 900px) {
+        main { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Field Kit Planner</h1>
+        <p class="sub">
+          Quick plan + checklist for field days, hikes, or travel legs. Everything is local to your browser
+          (<span style="font-family: var(--mono)">localStorage</span>) and exportable.
+        </p>
+      </div>
+      <div class="row">
+        <a class="btn" href="../" style="text-decoration:none; display:inline-block;">Apps index</a>
+        <button class="btn danger" id="reset">Reset</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="setup-title">
+        <h2 id="setup-title">Setup</h2>
+        <div class="grid">
+          <div class="grid two">
+            <div>
+              <label for="template">Template</label>
+              <select id="template"></select>
+              <div class="tiny" style="margin-top:6px;">Changing the template will overwrite the checklist (after confirmation).</div>
+            </div>
+            <div>
+              <label for="title">Trip / job name</label>
+              <input id="title" placeholder="e.g., Mamquam electrofishing day 2" />
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div>
+              <label for="location">Location</label>
+              <input id="location" placeholder="e.g., Squamish River / Reach 3" />
+            </div>
+            <div>
+              <label for="link">Link (map / doc)</label>
+              <input id="link" placeholder="https://..." />
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div>
+              <label for="start">Start</label>
+              <input id="start" type="datetime-local" />
+            </div>
+            <div>
+              <label for="end">End</label>
+              <input id="end" type="datetime-local" />
+            </div>
+          </div>
+
+          <div>
+            <label for="notes">Notes</label>
+            <textarea id="notes" placeholder="Site access, hazards, contacts, gear notes..."></textarea>
+            <div class="tiny" style="margin-top:6px;">Tip: put phone numbers here; export will include them.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="checklist-title">
+        <h2 id="checklist-title">Checklist</h2>
+        <div class="row" style="margin-bottom: 12px;">
+          <input id="new-item" placeholder="Add checklist item…" style="flex:1; min-width: 240px;" />
+          <select id="new-tag" style="width: 170px;">
+            <option value="">tag…</option>
+            <option value="safety">safety</option>
+            <option value="gear">gear</option>
+            <option value="data">data</option>
+            <option value="food">food</option>
+            <option value="travel">travel</option>
+            <option value="client">client</option>
+          </select>
+          <button class="btn primary" id="add">Add</button>
+        </div>
+
+        <div class="row" style="margin-bottom: 14px;">
+          <button class="btn" id="toggle-all">Toggle all</button>
+          <button class="btn" id="clear-checked">Remove checked</button>
+          <span class="muted" id="progress"></span>
+        </div>
+
+        <div class="checklist" id="list"></div>
+      </section>
+
+      <section class="card" aria-labelledby="export-title">
+        <h2 id="export-title">Export</h2>
+        <p class="muted" style="margin-top:0;">
+          Generate a plan you can paste into messages / notes, plus optional downloads.
+        </p>
+        <div class="row" style="margin-bottom: 12px;">
+          <button class="btn good" id="generate">Generate</button>
+          <button class="btn" id="copy">Copy</button>
+          <button class="btn" id="download-txt">Download .txt</button>
+          <button class="btn" id="download-ics">Download .ics</button>
+        </div>
+        <textarea id="output" class="output" spellcheck="false" placeholder="Click Generate…"></textarea>
+        <div class="tiny" id="export-status" style="margin-top: 8px;"></div>
+      </section>
+
+      <section class="card" aria-labelledby="about-title">
+        <h2 id="about-title">About</h2>
+        <p class="muted" style="margin-top:0;">
+          This is intentionally boring and dependable: no accounts, no tracking, no backend.
+          If you clear browser storage, it resets.
+        </p>
+        <ul class="muted">
+          <li><strong>.ics export:</strong> uses your local timezone for display in calendar apps.</li>
+          <li><strong>Reminder:</strong> includes a default 60-minute alarm.</li>
+          <li><strong>Next ideas:</strong> multiple saved trips, printable layout, QR code to share plan text.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      Built for <code>/philbin/apps/</code>. Source in <code>apps/field-kit-planner</code>.
+    </footer>
+
+    <script>
+      const STORAGE_KEY = "field-kit-planner:v1";
+
+      const TEMPLATES = {
+        "Field day (aquatic / GIS)": {
+          notes: "Contacts:\n- \n\nAccess / parking:\n- \n\nHazards + controls:\n- \n\nData plan:\n- \n",
+          items: [
+            { text: "PPE (waders/boots, gloves, glasses)", tag: "safety" },
+            { text: "First aid kit", tag: "safety" },
+            { text: "Satellite messenger / radio / charged phone", tag: "safety" },
+            { text: "Bear spray (if needed) + practice", tag: "safety" },
+            { text: "Sampling kit (as required)", tag: "gear" },
+            { text: "GPS / GNSS + spare batteries", tag: "gear" },
+            { text: "Camera / photos plan", tag: "data" },
+            { text: "Field notebook + pens", tag: "data" },
+            { text: "Data sheets / forms", tag: "data" },
+            { text: "Laptop/tablet + offline maps (if needed)", tag: "data" },
+            { text: "Lunch + snacks + 2L water", tag: "food" },
+            { text: "Client update expectations (who/when)", tag: "client" },
+          ],
+        },
+        "Hike / day trip": {
+          notes: "Route + turnaround time:\n- \n\nWeather + avalanche / wildfire notes:\n- \n\nCar plan / key location:\n- \n",
+          items: [
+            { text: "Ten essentials (baseline)", tag: "gear" },
+            { text: "Extra layer + rain shell", tag: "gear" },
+            { text: "Headlamp", tag: "gear" },
+            { text: "Water + snacks", tag: "food" },
+            { text: "Offline map downloaded", tag: "travel" },
+            { text: "Tell someone your plan", tag: "safety" },
+            { text: "Emergency contact info in notes", tag: "safety" },
+          ],
+        },
+        "Travel day": {
+          notes: "Itinerary:\n- \n\nLodging check-in info:\n- \n\nImportant docs:\n- \n",
+          items: [
+            { text: "Wallet (ID, cards) + backup", tag: "travel" },
+            { text: "Tickets / confirmations", tag: "travel" },
+            { text: "Chargers + battery bank", tag: "gear" },
+            { text: "Headphones", tag: "gear" },
+            { text: "Medications", tag: "safety" },
+            { text: "Download offline maps / boarding passes", tag: "travel" },
+          ],
+        },
+      };
+
+      const el = {
+        template: document.getElementById("template"),
+        title: document.getElementById("title"),
+        location: document.getElementById("location"),
+        link: document.getElementById("link"),
+        start: document.getElementById("start"),
+        end: document.getElementById("end"),
+        notes: document.getElementById("notes"),
+        list: document.getElementById("list"),
+        newItem: document.getElementById("new-item"),
+        newTag: document.getElementById("new-tag"),
+        add: document.getElementById("add"),
+        toggleAll: document.getElementById("toggle-all"),
+        clearChecked: document.getElementById("clear-checked"),
+        progress: document.getElementById("progress"),
+        output: document.getElementById("output"),
+        generate: document.getElementById("generate"),
+        copy: document.getElementById("copy"),
+        dlTxt: document.getElementById("download-txt"),
+        dlIcs: document.getElementById("download-ics"),
+        exportStatus: document.getElementById("export-status"),
+        reset: document.getElementById("reset"),
+      };
+
+      function nowLocalRounded(hoursFromNow = 1) {
+        const d = new Date();
+        d.setMinutes(0, 0, 0);
+        d.setHours(d.getHours() + hoursFromNow);
+        return d;
+      }
+
+      function toDatetimeLocalValue(date) {
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      }
+
+      function escapeIcs(text) {
+        return String(text || "")
+          .replace(/\\/g, "\\\\")
+          .replace(/\n/g, "\\n")
+          .replace(/,/g, "\\,")
+          .replace(/;/g, "\\;");
+      }
+
+      function icsDate(date) {
+        // UTC format (basic). Calendar apps will render in local tz.
+        const d = new Date(date);
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
+      }
+
+      function downloadFile(filename, content, mime) {
+        const blob = new Blob([content], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch {
+          return null;
+        }
+      }
+
+      function saveState(state) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function defaultState() {
+        const start = nowLocalRounded(1);
+        const end = new Date(start);
+        end.setHours(end.getHours() + 6);
+        return {
+          templateName: Object.keys(TEMPLATES)[0],
+          title: "",
+          location: "",
+          link: "",
+          start: toDatetimeLocalValue(start),
+          end: toDatetimeLocalValue(end),
+          notes: TEMPLATES[Object.keys(TEMPLATES)[0]].notes,
+          items: TEMPLATES[Object.keys(TEMPLATES)[0]].items.map((i) => ({...i, done: false, id: crypto.randomUUID() })),
+        };
+      }
+
+      let state = loadState() || defaultState();
+
+      function renderTemplateOptions() {
+        el.template.innerHTML = "";
+        for (const name of Object.keys(TEMPLATES)) {
+          const opt = document.createElement("option");
+          opt.value = name;
+          opt.textContent = name;
+          el.template.appendChild(opt);
+        }
+      }
+
+      function renderChecklist() {
+        el.list.innerHTML = "";
+        const total = state.items.length;
+        const done = state.items.filter((i) => i.done).length;
+        el.progress.textContent = total ? `${done}/${total} complete` : "No items yet";
+
+        for (const item of state.items) {
+          const row = document.createElement("div");
+          row.className = "item";
+
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.checked = !!item.done;
+          cb.addEventListener("change", () => {
+            item.done = cb.checked;
+            saveState(state);
+            renderChecklist();
+          });
+
+          const textWrap = document.createElement("div");
+          const text = document.createElement("div");
+          text.className = "text";
+          text.textContent = item.text;
+          const tag = document.createElement("div");
+          tag.className = "tag";
+          tag.textContent = item.tag ? `#${item.tag}` : "";
+          textWrap.appendChild(text);
+          textWrap.appendChild(tag);
+
+          const del = document.createElement("button");
+          del.className = "btn";
+          del.textContent = "Remove";
+          del.addEventListener("click", () => {
+            state.items = state.items.filter((i) => i.id !== item.id);
+            saveState(state);
+            renderChecklist();
+          });
+
+          row.appendChild(cb);
+          row.appendChild(textWrap);
+          row.appendChild(del);
+          el.list.appendChild(row);
+        }
+      }
+
+      function syncFormFromState() {
+        el.template.value = state.templateName;
+        el.title.value = state.title;
+        el.location.value = state.location;
+        el.link.value = state.link;
+        el.start.value = state.start;
+        el.end.value = state.end;
+        el.notes.value = state.notes;
+      }
+
+      function syncStateFromForm() {
+        state.templateName = el.template.value;
+        state.title = el.title.value;
+        state.location = el.location.value;
+        state.link = el.link.value;
+        state.start = el.start.value;
+        state.end = el.end.value;
+        state.notes = el.notes.value;
+        saveState(state);
+      }
+
+      function buildMarkdown() {
+        const title = state.title?.trim() || "(untitled)";
+        const location = state.location?.trim();
+        const link = state.link?.trim();
+
+        const start = state.start ? new Date(state.start) : null;
+        const end = state.end ? new Date(state.end) : null;
+
+        const fmt = (d) => d ? d.toLocaleString(undefined, { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+
+        const lines = [];
+        lines.push(`# ${title}`);
+        lines.push("");
+        if (location) lines.push(`**Location:** ${location}`);
+        if (start) lines.push(`**Start:** ${fmt(start)}`);
+        if (end) lines.push(`**End:** ${fmt(end)}`);
+        if (link) lines.push(`**Link:** ${link}`);
+        if (location || start || end || link) lines.push("");
+
+        const remaining = state.items.filter((i) => !i.done);
+        const done = state.items.filter((i) => i.done);
+
+        lines.push("## Checklist");
+        for (const item of remaining) {
+          lines.push(`- [ ] ${item.text}${item.tag ? ` _( #${item.tag} )_` : ""}`);
+        }
+        for (const item of done) {
+          lines.push(`- [x] ${item.text}${item.tag ? ` _( #${item.tag} )_` : ""}`);
+        }
+
+        lines.push("");
+        lines.push("## Notes");
+        lines.push(state.notes?.trim() ? state.notes.trim() : "(none)");
+        lines.push("");
+        lines.push("---");
+        lines.push("Generated by Field Kit Planner (static app).\n");
+
+        return lines.join("\n");
+      }
+
+      function buildIcs() {
+        const start = state.start ? new Date(state.start) : null;
+        const end = state.end ? new Date(state.end) : null;
+        if (!start || !end || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+          throw new Error("Start/end required for .ics export.");
+        }
+
+        const uid = `${crypto.randomUUID()}@philbin`;
+        const dtstamp = icsDate(new Date());
+        const summary = escapeIcs(state.title?.trim() || "Field plan");
+
+        const parts = [];
+        if (state.location?.trim()) parts.push(`Location: ${state.location.trim()}`);
+        if (state.link?.trim()) parts.push(`Link: ${state.link.trim()}`);
+
+        const remaining = state.items.filter((i) => !i.done).map((i) => `- ${i.text}${i.tag ? ` (#${i.tag})` : ""}`);
+        if (remaining.length) {
+          parts.push("Checklist:");
+          parts.push(...remaining);
+        }
+        if (state.notes?.trim()) {
+          parts.push("\nNotes:");
+          parts.push(state.notes.trim());
+        }
+
+        const description = escapeIcs(parts.join("\n"));
+        const location = escapeIcs(state.location?.trim() || "");
+
+        // RFC 5545 basic VCALENDAR
+        return [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "PRODID:-//Philbin//Field Kit Planner//EN",
+          "CALSCALE:GREGORIAN",
+          "BEGIN:VEVENT",
+          `UID:${uid}`,
+          `DTSTAMP:${dtstamp}`,
+          `DTSTART:${icsDate(start)}`,
+          `DTEND:${icsDate(end)}`,
+          `SUMMARY:${summary}`,
+          location ? `LOCATION:${location}` : null,
+          `DESCRIPTION:${description}`,
+          "BEGIN:VALARM",
+          "TRIGGER:-PT60M",
+          "ACTION:DISPLAY",
+          "DESCRIPTION:Reminder",
+          "END:VALARM",
+          "END:VEVENT",
+          "END:VCALENDAR",
+          "",
+        ].filter(Boolean).join("\r\n");
+      }
+
+      function setExportStatus(msg) {
+        el.exportStatus.textContent = msg;
+        if (!msg) return;
+        setTimeout(() => {
+          if (el.exportStatus.textContent === msg) el.exportStatus.textContent = "";
+        }, 2400);
+      }
+
+      function applyTemplate(name) {
+        const tpl = TEMPLATES[name];
+        state.templateName = name;
+        state.notes = tpl.notes;
+        state.items = tpl.items.map((i) => ({...i, done: false, id: crypto.randomUUID()}));
+        saveState(state);
+        syncFormFromState();
+        renderChecklist();
+        el.output.value = "";
+        setExportStatus("Template applied.");
+      }
+
+      // init
+      renderTemplateOptions();
+      syncFormFromState();
+      renderChecklist();
+
+      // autosave on inputs
+      [el.title, el.location, el.link, el.start, el.end, el.notes].forEach((input) => {
+        input.addEventListener("input", syncStateFromForm);
+        input.addEventListener("change", syncStateFromForm);
+      });
+
+      el.template.addEventListener("change", () => {
+        const next = el.template.value;
+        if (next === state.templateName) return;
+        const ok = confirm("Switching templates will replace the checklist + notes. Continue?");
+        if (!ok) {
+          el.template.value = state.templateName;
+          return;
+        }
+        applyTemplate(next);
+      });
+
+      el.add.addEventListener("click", () => {
+        const text = el.newItem.value.trim();
+        const tag = el.newTag.value.trim();
+        if (!text) return;
+        state.items.unshift({ id: crypto.randomUUID(), text, tag: tag || "", done: false });
+        el.newItem.value = "";
+        el.newTag.value = "";
+        saveState(state);
+        renderChecklist();
+      });
+
+      el.newItem.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          el.add.click();
+        }
+      });
+
+      el.toggleAll.addEventListener("click", () => {
+        const anyUndone = state.items.some((i) => !i.done);
+        state.items.forEach((i) => i.done = anyUndone);
+        saveState(state);
+        renderChecklist();
+      });
+
+      el.clearChecked.addEventListener("click", () => {
+        const before = state.items.length;
+        state.items = state.items.filter((i) => !i.done);
+        const removed = before - state.items.length;
+        saveState(state);
+        renderChecklist();
+        setExportStatus(removed ? `Removed ${removed} checked item(s).` : "No checked items.");
+      });
+
+      el.generate.addEventListener("click", () => {
+        syncStateFromForm();
+        el.output.value = buildMarkdown();
+        setExportStatus("Generated.");
+      });
+
+      el.copy.addEventListener("click", async () => {
+        if (!el.output.value.trim()) {
+          el.output.value = buildMarkdown();
+        }
+        try {
+          await navigator.clipboard.writeText(el.output.value);
+          setExportStatus("Copied to clipboard.");
+        } catch {
+          setExportStatus("Copy failed (browser blocked clipboard). Select all + copy manually.");
+        }
+      });
+
+      el.dlTxt.addEventListener("click", () => {
+        if (!el.output.value.trim()) {
+          el.output.value = buildMarkdown();
+        }
+        const safeTitle = (state.title?.trim() || "plan").replace(/[^a-z0-9\-\_]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+        downloadFile(`${safeTitle || "plan"}.txt`, el.output.value, "text/plain;charset=utf-8");
+        setExportStatus("Downloaded .txt");
+      });
+
+      el.dlIcs.addEventListener("click", () => {
+        syncStateFromForm();
+        try {
+          const ics = buildIcs();
+          const safeTitle = (state.title?.trim() || "event").replace(/[^a-z0-9\-\_]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+          downloadFile(`${safeTitle || "event"}.ics`, ics, "text/calendar;charset=utf-8");
+          setExportStatus("Downloaded .ics");
+        } catch (err) {
+          setExportStatus(err.message || "Couldn't create .ics");
+        }
+      });
+
+      el.reset.addEventListener("click", () => {
+        const ok = confirm("Reset Field Kit Planner? This clears saved data in this browser.");
+        if (!ok) return;
+        localStorage.removeItem(STORAGE_KEY);
+        state = defaultState();
+        saveState(state);
+        syncFormFromState();
+        renderChecklist();
+        el.output.value = "";
+        setExportStatus("Reset complete.");
+      });
+    </script>
+  </body>
+</html>
