@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-29T06:06:00.000Z",
+  "generatedAt": "2026-01-29T06:33:04.978Z",
   "apps": [
     {
       "name": "driveway-tetris",
@@ -11,6 +11,10 @@
     },
     {
       "name": "status",
+      "hasIndex": true
+    },
+    {
+      "name": "trip-brief",
       "hasIndex": true
     }
   ],
