@@ -320,6 +320,8 @@
           <div class="actions">
             <button id="convert" disabled>Convert →</button>
             <button id="download" class="secondary" disabled>Download GeoJSON</button>
+            <button id="downloadKml" class="secondary" disabled>Download KML</button>
+            <button id="downloadKmz" class="secondary" disabled>Download KMZ</button>
             <button id="copy" class="secondary" disabled>Copy GeoJSON</button>
             <button id="reset" class="danger" disabled>Reset</button>
           </div>
@@ -361,6 +363,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/proj4@2.11.0/dist/proj4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script>
       const el = (id) => document.getElementById(id);
 
@@ -378,6 +381,8 @@
       const precisionEl = el('precision');
       const convertBtn = el('convert');
       const downloadBtn = el('download');
+      const downloadKmlBtn = el('downloadKml');
+      const downloadKmzBtn = el('downloadKmz');
       const copyBtn = el('copy');
       const resetBtn = el('reset');
       const previewEl = el('preview');
@@ -389,6 +394,8 @@
 
       let parsed = null; // { header: string[], rows: object[] }
       let geojsonText = '';
+      let kmlText = '';
+      let kmzBlob = null;
 
       function setMsg(kind, text) {
         messagesEl.innerHTML = '';
@@ -404,12 +411,16 @@
       function enableControls(enabled) {
         [coordModeEl, utmZoneEl, utmHemEl, latColEl, lonColEl, idColEl, strictEl, outNameEl, precisionEl, convertBtn, resetBtn].forEach((x) => (x.disabled = !enabled));
         downloadBtn.disabled = true;
+        downloadKmlBtn.disabled = true;
+        downloadKmzBtn.disabled = true;
         copyBtn.disabled = true;
       }
 
       function resetAll() {
         parsed = null;
         geojsonText = '';
+        kmlText = '';
+        kmzBlob = null;
         fileEl.value = '';
         coordModeEl.value = 'auto';
         utmSettingsEl.style.display = 'none';
@@ -731,16 +742,61 @@
         }
       }
 
-      function downloadText(filename, text) {
-        const blob = new Blob([text], { type: 'application/geo+json' });
+      function downloadBlob(filename, blob) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = filename || 'points.geojson';
+        a.download = filename || 'download.bin';
         document.body.appendChild(a);
         a.click();
         a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function downloadText(filename, text, mime = 'text/plain') {
+        const blob = new Blob([text], { type: mime });
+        downloadBlob(filename, blob);
+      }
+
+      function escapeXml(s){
+        return String(s)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&apos;');
+      }
+
+      function geojsonToKml(geojson, docName = 'Points'){
+        const placemarks = (geojson.features || []).map((f, idx) => {
+          const coords = (f.geometry && f.geometry.type === 'Point') ? f.geometry.coordinates : null;
+          if(!coords) return '';
+          const lon = coords[0];
+          const lat = coords[1];
+          const props = f.properties || {};
+          const name = escapeXml(String(props.name || props.Name || props.NAME || `Point ${idx+1}`));
+
+          const lines = [];
+          for(const [k,v] of Object.entries(props)){
+            if(v === null || v === undefined || v === '') continue;
+            lines.push(`<tr><td><b>${escapeXml(k)}</b></td><td>${escapeXml(v)}</td></tr>`);
+          }
+          const desc = lines.length ? `<![CDATA[<table>${lines.join('')}</table>]]>` : '';
+
+          return `
+  <Placemark>
+    <name>${name}</name>
+    ${desc ? `<description>${desc}</description>` : ''}
+    <Point><coordinates>${lon},${lat},0</coordinates></Point>
+  </Placemark>`;
+        }).join('');
+
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>${escapeXml(docName)}</name>${placemarks}
+</Document>
+</kml>`;
       }
 
       fileEl.addEventListener('change', async (e) => {
@@ -759,6 +815,8 @@
 
           const { geojson, stats } = buildGeoJSON();
           geojsonText = JSON.stringify(geojson, null, 2);
+          kmlText = geojsonToKml(geojson, (outNameEl.value || 'points.geojson').replace(/\.[^.]+$/, ''));
+          kmzBlob = null;
           previewEl.textContent = geojsonText.slice(0, 2000) + (geojsonText.length > 2000 ? '\n\n… (truncated preview)' : '');
 
           rowsEl.textContent = String(stats.rows);
@@ -766,12 +824,16 @@
           skippedEl.textContent = String(stats.skipped);
 
           downloadBtn.disabled = false;
+          downloadKmlBtn.disabled = false;
+          downloadKmzBtn.disabled = false;
           copyBtn.disabled = false;
 
           coordModeEl.value = prev;
         } catch (err) {
           geojsonText = '';
           downloadBtn.disabled = true;
+          downloadKmlBtn.disabled = true;
+          downloadKmzBtn.disabled = true;
           copyBtn.disabled = true;
           setMsg('error', err?.message || String(err));
         }
@@ -780,7 +842,27 @@
       downloadBtn.addEventListener('click', () => {
         if (!geojsonText) return;
         const name = (outNameEl.value || 'points.geojson').trim();
-        downloadText(name, geojsonText);
+        downloadText(name, geojsonText, 'application/geo+json');
+      });
+
+      downloadKmlBtn.addEventListener('click', () => {
+        if (!kmlText) return;
+        const base = (outNameEl.value || 'points.geojson').trim().replace(/\.[^.]+$/, '') || 'points';
+        downloadText(base + '.kml', kmlText, 'application/vnd.google-earth.kml+xml');
+      });
+
+      downloadKmzBtn.addEventListener('click', async () => {
+        if (!kmlText) return;
+        try {
+          if(!window.JSZip) throw new Error('JSZip failed to load (KMZ unavailable).');
+          const base = (outNameEl.value || 'points.geojson').trim().replace(/\.[^.]+$/, '') || 'points';
+          const zip = new window.JSZip();
+          zip.file('doc.kml', kmlText);
+          kmzBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+          downloadBlob(base + '.kmz', kmzBlob);
+        } catch (err) {
+          setMsg('error', err?.message || String(err));
+        }
       });
 
       copyBtn.addEventListener('click', async () => {
