@@ -426,12 +426,8 @@
         });
         t.addEventListener('dragend', () => t.classList.remove('dragging'));
 
-        // Tap-to-cycle on mobile as a fallback.
-        t.addEventListener('click', () => {
-          const i = ZONES.indexOf(zone);
-          const next = ZONES[(i + 1) % ZONES.length];
-          moveCar(car.id, next);
-        });
+        // Tap behavior: do NOT move cars on tap (it caused accidental swaps on mobile).
+        // Movement should be drag-and-drop only. Notes/delete have explicit buttons.
 
         wrap.appendChild(t);
       }
