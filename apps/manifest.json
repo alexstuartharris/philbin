@@ -1,6 +1,10 @@
 {
-  "generatedAt": "2026-01-30T06:10:19.871Z",
+  "generatedAt": "2026-01-30T06:32:18.587Z",
   "apps": [
+    {
+      "name": "csv-to-geojson",
+      "hasIndex": true
+    },
     {
       "name": "driveway-tetris",
       "hasIndex": true
