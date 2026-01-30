@@ -246,14 +246,43 @@
 
           <div class="row" style="margin-top: 14px;">
             <div>
-              <label for="latCol">Latitude column</label>
+              <label for="coordMode">Coordinate type</label>
+              <select id="coordMode" disabled>
+                <option value="auto">Auto-detect</option>
+                <option value="latlon">Latitude / Longitude (EPSG:4326)</option>
+                <option value="utm">UTM Easting / Northing</option>
+              </select>
+              <p class="small">Auto-detect tries common column names: Latitude/Longitude, Lat/Long, Easting/Northing, X/Y.</p>
+            </div>
+            <div id="utmSettings" style="display:none;">
+              <label>UTM settings</label>
+              <div class="row" style="grid-template-columns: 0.7fr 0.7fr;">
+                <div>
+                  <select id="utmZone" disabled>
+                    <option value="">Zone…</option>
+                  </select>
+                </div>
+                <div>
+                  <select id="utmHem" disabled>
+                    <option value="N">N</option>
+                    <option value="S">S</option>
+                  </select>
+                </div>
+              </div>
+              <p class="small">Example (Sea-to-Sky): Zone 10N. Output is GeoJSON in WGS84 (EPSG:4326).</p>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 10px;">
+            <div>
+              <label for="latCol">Latitude column (or Northing)</label>
               <select id="latCol" disabled></select>
-              <p class="small">Examples: <span class="mono">lat</span>, <span class="mono">latitude</span>, <span class="mono">y</span></p>
+              <p class="small">Examples: <span class="mono">latitude</span>, <span class="mono">lat</span>, <span class="mono">northing</span>, <span class="mono">y</span></p>
             </div>
             <div>
-              <label for="lonCol">Longitude column</label>
+              <label for="lonCol">Longitude column (or Easting)</label>
               <select id="lonCol" disabled></select>
-              <p class="small">Examples: <span class="mono">lon</span>, <span class="mono">lng</span>, <span class="mono">longitude</span>, <span class="mono">x</span></p>
+              <p class="small">Examples: <span class="mono">longitude</span>, <span class="mono">lon</span>, <span class="mono">easting</span>, <span class="mono">x</span></p>
             </div>
           </div>
 
@@ -304,8 +333,8 @@
           </div>
 
           <div class="footer">
-            Notes: output CRS is assumed WGS84 (<span class="mono">EPSG:4326</span>).
-            If your CSV is in UTM / local projection, reproject first (e.g., QGIS).
+            Notes: output is GeoJSON in WGS84 (<span class="mono">EPSG:4326</span>).
+            This tool supports <span class="mono">lat/lon</span> and basic <span class="mono">UTM easting/northing</span> (choose the right zone).
           </div>
         </div>
 
@@ -331,11 +360,16 @@
       </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/proj4@2.11.0/dist/proj4.min.js"></script>
     <script>
       const el = (id) => document.getElementById(id);
 
       const fileEl = el('file');
       const dropEl = el('drop');
+      const coordModeEl = el('coordMode');
+      const utmSettingsEl = el('utmSettings');
+      const utmZoneEl = el('utmZone');
+      const utmHemEl = el('utmHem');
       const latColEl = el('latCol');
       const lonColEl = el('lonCol');
       const idColEl = el('idCol');
@@ -368,7 +402,7 @@
       }
 
       function enableControls(enabled) {
-        [latColEl, lonColEl, idColEl, strictEl, outNameEl, precisionEl, convertBtn, resetBtn].forEach((x) => (x.disabled = !enabled));
+        [coordModeEl, utmZoneEl, utmHemEl, latColEl, lonColEl, idColEl, strictEl, outNameEl, precisionEl, convertBtn, resetBtn].forEach((x) => (x.disabled = !enabled));
         downloadBtn.disabled = true;
         copyBtn.disabled = true;
       }
@@ -377,6 +411,8 @@
         parsed = null;
         geojsonText = '';
         fileEl.value = '';
+        coordModeEl.value = 'auto';
+        utmSettingsEl.style.display = 'none';
         latColEl.innerHTML = '';
         lonColEl.innerHTML = '';
         idColEl.innerHTML = '<option value="">(none)</option>';
@@ -396,10 +432,25 @@
         }
         // fuzzy contains
         for (const cand of candidates) {
-          const idx = lower.findIndex((h) => h.replace(/[^a-z0-9]/g,'').includes(cand.replace(/[^a-z0-9]/g,'')));
+          const want = cand.replace(/[^a-z0-9]/g,'');
+          const idx = lower.findIndex((h) => h.replace(/[^a-z0-9]/g,'').includes(want));
           if (idx >= 0) return header[idx];
         }
         return '';
+      }
+
+      function detectCoordMode(header){
+        // Prefer explicit lat/lon if present; otherwise fall back to easting/northing.
+        const lat = guessColumn(header, ['latitude','lat','y','ycoord','y_coord','ycoordinate','y_coordinate']);
+        const lon = guessColumn(header, ['longitude','lon','lng','x','xcoord','x_coord','xcoordinate','x_coordinate']);
+
+        const north = guessColumn(header, ['northing','north','n','utm_northing','utm_n','yutm','y_utm']);
+        const east = guessColumn(header, ['easting','east','e','utm_easting','utm_e','xutm','x_utm']);
+
+        if(lat && lon) return { mode: 'latlon', lat, lon };
+        if(north && east) return { mode: 'utm', lat: north, lon: east };
+        // If we only have one of each, still default to latlon and let user choose.
+        return { mode: 'latlon', lat: lat || north || '', lon: lon || east || '' };
       }
 
       // Minimal CSV parser: handles commas, quotes, CRLF/LF.
@@ -507,22 +558,59 @@
       function buildGeoJSON() {
         if (!parsed) throw new Error('No CSV loaded.');
 
+        const mode = coordModeEl.value;
         const latKey = latColEl.value;
         const lonKey = lonColEl.value;
         const idKey = idColEl.value;
         const strict = strictEl.value === 'strict';
         const prec = Math.max(0, Math.min(12, Number(precisionEl.value || 6)));
 
-        if (!latKey || !lonKey) throw new Error('Choose latitude and longitude columns.');
+        if (!latKey || !lonKey) throw new Error('Choose coordinate columns.');
 
         let kept = 0;
         let skipped = 0;
         const features = [];
 
+        // For UTM conversion we rely on proj4 (loaded via CDN below).
+        const zone = Number(utmZoneEl.value || '');
+        const hem = (utmHemEl.value || 'N').toUpperCase();
+        const needUtm = mode === 'utm';
+        if(needUtm) {
+          if(!window.proj4) throw new Error('proj4 failed to load (UTM conversion unavailable).');
+          if(!(zone >= 1 && zone <= 60)) throw new Error('Choose a valid UTM zone (1–60).');
+        }
+
+        const srcUtmDef = needUtm ? `+proj=utm +zone=${zone} ${hem === 'S' ? '+south ' : ''}+datum=WGS84 +units=m +no_defs` : null;
+        const dstWgs84 = '+proj=longlat +datum=WGS84 +no_defs';
+
         for (let i = 0; i < parsed.rows.length; i++) {
           const r = parsed.rows[i];
-          const lat = toNumber(r[latKey]);
-          const lon = toNumber(r[lonKey]);
+
+          let lat = NaN;
+          let lon = NaN;
+
+          if(needUtm) {
+            const northing = toNumber(r[latKey]);
+            const easting = toNumber(r[lonKey]);
+            const ok = Number.isFinite(northing) && Number.isFinite(easting);
+            if(!ok) {
+              skipped++;
+              if(strict) throw new Error(`Invalid UTM coordinate on data row ${i + 2} (N=${r[latKey]}, E=${r[lonKey]}).`);
+              continue;
+            }
+            try {
+              const out = window.proj4(srcUtmDef, dstWgs84, [easting, northing]);
+              lon = out[0];
+              lat = out[1];
+            } catch (e) {
+              skipped++;
+              if(strict) throw new Error(`Could not reproject UTM on data row ${i + 2}. Check zone/hemisphere.`);
+              continue;
+            }
+          } else {
+            lat = toNumber(r[latKey]);
+            lon = toNumber(r[lonKey]);
+          }
 
           const ok = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
           if (!ok) {
@@ -562,12 +650,16 @@
         lonColEl.innerHTML = opts;
         idColEl.innerHTML = '<option value="">(none)</option>' + opts;
 
-        const guessLat = guessColumn(header, ['lat', 'latitude', 'y', 'northing']);
-        const guessLon = guessColumn(header, ['lon', 'lng', 'long', 'longitude', 'x', 'easting']);
-        const guessId = guessColumn(header, ['name', 'site', 'station', 'id', 'site_id', 'station_id']);
+        const det = detectCoordMode(header);
+        if(det.lat) latColEl.value = det.lat;
+        if(det.lon) lonColEl.value = det.lon;
 
-        if (guessLat) latColEl.value = guessLat;
-        if (guessLon) lonColEl.value = guessLon;
+        // Auto mode follows detection.
+        coordModeEl.value = 'auto';
+        coordModeEl.dataset.detected = det.mode;
+        updateCoordUi();
+
+        const guessId = guessColumn(header, ['name', 'site', 'station', 'id', 'site_id', 'station_id', 'siteid', 'stationid']);
         if (guessId) idColEl.value = guessId;
       }
 
@@ -584,6 +676,31 @@
         return await file.text();
       }
 
+      function populateUtmZones(){
+        if(utmZoneEl.options.length > 1) return;
+        let html = '<option value="">Zone…</option>';
+        for(let z=1; z<=60; z++) html += `<option value="${z}">${z}</option>`;
+        utmZoneEl.innerHTML = html;
+        // Default for Squamish/Sea-to-Sky.
+        utmZoneEl.value = '10';
+        utmHemEl.value = 'N';
+      }
+
+      function effectiveMode(){
+        if(coordModeEl.value !== 'auto') return coordModeEl.value;
+        return coordModeEl.dataset.detected || 'latlon';
+      }
+
+      function updateCoordUi(){
+        const m = effectiveMode();
+        if(m === 'utm') {
+          utmSettingsEl.style.display = '';
+          populateUtmZones();
+        } else {
+          utmSettingsEl.style.display = 'none';
+        }
+      }
+
       async function handleFile(file) {
         try {
           setMsg('', '');
@@ -595,6 +712,7 @@
 
           setHeaderOptions(parsed.header);
           enableControls(true);
+          updateCoordUi();
 
           rowsEl.textContent = String(parsed.rows.length);
           keptEl.textContent = '—';
@@ -602,7 +720,9 @@
 
           const base = (file.name || 'points.csv').replace(/\.[^.]+$/, '');
           outNameEl.value = base + '.geojson';
-          previewEl.textContent = 'Ready. Click Convert →';
+
+          const det = coordModeEl.dataset.detected || 'latlon';
+          previewEl.textContent = det === 'utm' ? 'Detected Easting/Northing. Choose UTM zone then click Convert →' : 'Ready. Click Convert →';
         } catch (err) {
           parsed = null;
           enableControls(false);
@@ -631,6 +751,12 @@
       convertBtn.addEventListener('click', () => {
         try {
           setMsg('', '');
+          // If auto, mirror the detected mode into the build step.
+          const m = effectiveMode();
+          // (We keep coordModeEl value as "auto" for UX, but buildGeoJSON reads the select.)
+          const prev = coordModeEl.value;
+          if(prev === 'auto') coordModeEl.value = m;
+
           const { geojson, stats } = buildGeoJSON();
           geojsonText = JSON.stringify(geojson, null, 2);
           previewEl.textContent = geojsonText.slice(0, 2000) + (geojsonText.length > 2000 ? '\n\n… (truncated preview)' : '');
@@ -641,6 +767,8 @@
 
           downloadBtn.disabled = false;
           copyBtn.disabled = false;
+
+          coordModeEl.value = prev;
         } catch (err) {
           geojsonText = '';
           downloadBtn.disabled = true;
@@ -664,6 +792,10 @@
         } catch (err) {
           setMsg('error', 'Could not copy to clipboard in this browser. Use Download instead.');
         }
+      });
+
+      coordModeEl.addEventListener('change', () => {
+        updateCoordUi();
       });
 
       resetBtn.addEventListener('click', resetAll);
