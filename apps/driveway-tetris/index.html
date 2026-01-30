@@ -206,9 +206,7 @@
           </div>
 
           <div class="row" style="margin-top: 12px;">
-            <input id="houseId" placeholder="House code (shared)" style="flex: 1; min-width: 200px;" />
             <input id="passcode" placeholder="Passcode" inputmode="numeric" style="width: 140px;" />
-            <button id="btnJoin">Join / Save</button>
           </div>
 
           <div class="footer">
@@ -270,6 +268,14 @@
             <div class="sub" style="margin-top: 8px; font-weight: 900;">Privacy / safety</div>
             <div class="sub" style="margin-top: 6px;">
               Don’t put addresses, license plates, or full names. Use nicknames only.
+            </div>
+
+            <div class="sub" style="margin-top: 12px; font-weight: 900;">House</div>
+            <div class="sub" style="margin-top: 6px;">Set the shared house code (and join). This is the "room" everyone syncs within.</div>
+
+            <div class="row" style="margin-top: 10px;">
+              <input id="houseId" placeholder="House code (shared)" style="flex: 1; min-width: 200px;" />
+              <button id="btnJoin">Join house</button>
             </div>
 
             <div class="sub" style="margin-top: 12px; font-weight: 900;">Supabase setup (for real sharing)</div>
