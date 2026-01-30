@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UNG Trader — Weather + Price Context (WIP)</title>
+  <style>
+    :root{
+      color-scheme: light;
+      --bg:#f7f4ef;
+      --panel:#ffffff;
+      --ink:#161616;
+      --muted:#5a5a5a;
+      --border:#e3dfd8;
+      --accent:#2451ff;
+      --ok:#1f8b4c;
+      --warn:#c06a00;
+      --bad:#b42318;
+      --shadow:0 10px 35px rgba(19,15,10,.12);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+        radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+        var(--bg);
+    }
+    header{padding:34px 18px 14px; max-width:1200px; margin:0 auto;}
+    h1{margin:0 0 8px; font-size: clamp(1.7rem, 3.4vw, 2.3rem); letter-spacing:-.02em;}
+    .sub{margin:0; color:var(--muted); line-height:1.45; max-width:90ch;}
+    main{max-width:1200px; margin:0 auto; padding:0 18px 70px; display:grid; gap:14px;}
+    .card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);}
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+    .pill{display:inline-flex; gap:8px; align-items:center; border:1px solid var(--border); border-radius:999px; padding:8px 12px; background:rgba(0,0,0,.03); font-size:13px;}
+    .dot{width:9px;height:9px;border-radius:50%;background:#999;}
+    .dot.ok{background:var(--ok);} .dot.warn{background:var(--warn);} .dot.bad{background:var(--bad);} 
+    .grid{display:grid; gap:14px; grid-template-columns: 1.1fr .9fr; align-items:start;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
+    h2{margin:0 0 10px; font-size:1.1rem;}
+    label{display:block; font-weight:700; margin:0 0 6px;}
+    input, select, button, textarea{font:inherit;}
+    input, select, textarea{
+      width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background:#fff;
+    }
+    textarea{min-height: 84px; resize: vertical;}
+    button{border:0; border-radius:999px; padding:10px 14px; background:var(--accent); color:#fff; font-weight:800; cursor:pointer;}
+    button.secondary{background:transparent; color:var(--accent); border:1px solid var(--border);} 
+    .small{color:var(--muted); font-size:.95rem; line-height:1.45; margin:6px 0 0;}
+    pre{background:#111; color:#f4f4f4; border-radius:14px; padding:12px; overflow:auto; max-height: 260px; font-family:var(--mono); font-size:12px;}
+    .two{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
+    @media (max-width: 720px){ .two{grid-template-columns:1fr;} }
+    a{color:var(--accent); font-weight:650; text-decoration:none;} a:hover{text-decoration:underline;}
+    .warnBox{border-left:3px solid rgba(192,106,0,.55); padding:10px 12px; background: rgba(192,106,0,.08); border-radius:14px; color:#3a2411;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>UNG Trader (WIP)</h1>
+    <p class="sub">
+      A lightweight decision-support dashboard for <b>UNG options (1–3 week)</b>: weather context + price context + a repeatable pre-trade checklist.
+      <br />
+      <span style="font-weight:800">Not financial advice.</span> This is for organizing information and your own thesis.
+    </p>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div class="row">
+          <span class="pill"><span id="weatherDot" class="dot"></span><span id="weatherStatus">Weather: not loaded</span></span>
+          <span class="pill"><span class="dot ok"></span><span>Market: charts embedded</span></span>
+          <span class="pill"><span class="dot warn"></span><span>Data sources: public / no-API-key</span></span>
+        </div>
+        <div class="row">
+          <button id="btnRefresh">Refresh weather</button>
+          <button id="btnCopy" class="secondary">Copy summary</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Market context (charts)</h2>
+        <p class="small">Uses TradingView widgets (no key). If symbols don’t load, tell me which brokerage/symbol format you prefer.</p>
+        <div class="two">
+          <div>
+            <div style="font-weight:800; margin-bottom:8px;">UNG</div>
+            <div id="tvUng"></div>
+          </div>
+          <div>
+            <div style="font-weight:800; margin-bottom:8px;">NYMEX Natural Gas (continuous)</div>
+            <div id="tvNg"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Weather context (GFS via Open‑Meteo)</h2>
+        <p class="small">
+          MVP focus: a few gas-sensitive hubs + a simple “next 14 days” HDD/CDD read.
+          We’ll refine regions and weights once you tell me what you watch (Midwest? Northeast? US pop-weighted?).
+        </p>
+
+        <div class="two" style="margin-top:10px;">
+          <div>
+            <label for="hub">Hub / region preset</label>
+            <select id="hub">
+              <option value="chicago">Chicago</option>
+              <option value="newyork">New York City</option>
+              <option value="boston">Boston</option>
+              <option value="houston">Houston</option>
+              <option value="denver">Denver</option>
+            </select>
+            <p class="small">These are just proxies; we can switch to region averages later.</p>
+          </div>
+          <div>
+            <label for="base">Degree-day base (°F)</label>
+            <select id="base">
+              <option value="65">65°F (standard)</option>
+              <option value="60">60°F</option>
+            </select>
+            <p class="small">HDD = max(0, base - Tmean). CDD = max(0, Tmean - base).</p>
+          </div>
+        </div>
+
+        <div class="two" style="margin-top:10px;">
+          <div>
+            <div class="pill"><span class="dot" id="hddDot"></span><span id="hddKpi">HDD(14d): —</span></div>
+            <p class="small" id="hddExplain"></p>
+          </div>
+          <div>
+            <div class="pill"><span class="dot" id="cddDot"></span><span id="cddKpi">CDD(14d): —</span></div>
+            <p class="small" id="cddExplain"></p>
+          </div>
+        </div>
+
+        <details style="margin-top:10px;">
+          <summary style="cursor:pointer; font-weight:800;">Show raw weather data</summary>
+          <pre id="weatherRaw">(none)</pre>
+        </details>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Pre‑trade checklist (1–3 week options)</h2>
+      <div class="warnBox">
+        Goal: turn “I feel like it” into a repeatable decision. This section will later store a small journal entry per trade.
+      </div>
+
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <label for="thesis">Thesis (2–5 sentences)</label>
+          <textarea id="thesis" placeholder="e.g., Cold risk building in NE in 8–12d; storage draw surprise; NG1! breaking above X; looking at UNG calls 2w out…"></textarea>
+        </div>
+        <div>
+          <label for="plan">Plan</label>
+          <textarea id="plan" placeholder="Entry criteria, stop/exit, what would falsify the thesis, max loss…"></textarea>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <label for="expiry">Target expiry (days)</label>
+          <select id="expiry">
+            <option>7–10</option>
+            <option selected>10–15</option>
+            <option>15–21</option>
+          </select>
+        </div>
+        <div>
+          <label for="notes">Notes / news hooks</label>
+          <textarea id="notes" placeholder="EIA storage report date, freeze-offs, LNG outage, pipeline, storms, model shift, etc."></textarea>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px;">
+        <button id="btnSave" class="secondary">Save locally</button>
+        <span class="small" id="saveStatus"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Next steps (what I need from you)</h2>
+      <ol class="small">
+        <li>Which region matters most to you for price moves? (Northeast / Midwest / Texas / US total)</li>
+        <li>Do you want <b>HDD/CDD vs normal</b> (requires climatology) or just raw degree-days for now?</li>
+        <li>What’s your data tolerance: OK to embed TradingView for price, or should we pull OHLC via a paid API (Polygon/Tradier) with BYO key?</li>
+        <li>Which broker do you place trades with (IBKR, Questrade, etc.)? (Only for symbol formatting + options chain access.)</li>
+      </ol>
+      <p class="small">Back to <a href="../">apps index</a>.</p>
+    </section>
+  </main>
+
+  <!-- TradingView widgets -->
+  <script src="https://s3.tradingview.com/tv.js"></script>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+
+    const storageKey = 'ung-trader.v1';
+
+    const hubs = {
+      chicago: { name: 'Chicago', lat: 41.8781, lon: -87.6298 },
+      newyork: { name: 'New York', lat: 40.7128, lon: -74.0060 },
+      boston: { name: 'Boston', lat: 42.3601, lon: -71.0589 },
+      houston: { name: 'Houston', lat: 29.7604, lon: -95.3698 },
+      denver: { name: 'Denver', lat: 39.7392, lon: -104.9903 },
+    };
+
+    function setDot(dotEl, kind){
+      dotEl.classList.remove('ok','warn','bad');
+      if(kind) dotEl.classList.add(kind);
+    }
+
+    function loadLocal(){
+      try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { return {}; }
+    }
+
+    function saveLocal(obj){
+      localStorage.setItem(storageKey, JSON.stringify(obj));
+    }
+
+    function fToC(f){ return (f - 32) * 5/9; }
+    function cToF(c){ return (c * 9/5) + 32; }
+
+    function degreeDaysF(tMeanF, baseF){
+      const hdd = Math.max(0, baseF - tMeanF);
+      const cdd = Math.max(0, tMeanF - baseF);
+      return { hdd, cdd };
+    }
+
+    async function fetchGfsDaily(lat, lon){
+      // Open-Meteo: https://open-meteo.com/en/docs
+      // Use their GFS model option (global). They return in metric by default.
+      const url = new URL('https://api.open-meteo.com/v1/forecast');
+      url.searchParams.set('latitude', String(lat));
+      url.searchParams.set('longitude', String(lon));
+      url.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min');
+      url.searchParams.set('forecast_days', '14');
+      url.searchParams.set('timezone', 'UTC');
+      url.searchParams.set('models', 'gfs_global');
+
+      const r = await fetch(url.toString());
+      if(!r.ok) throw new Error('Weather fetch failed: ' + r.status);
+      return await r.json();
+    }
+
+    function computeFromDaily(daily, baseF){
+      const dates = daily.time;
+      const tmaxC = daily.temperature_2m_max;
+      const tminC = daily.temperature_2m_min;
+      let hddSum = 0;
+      let cddSum = 0;
+      const rows = [];
+      for(let i=0; i<dates.length; i++){
+        const tmeanC = (Number(tmaxC[i]) + Number(tminC[i])) / 2;
+        const tmeanF = cToF(tmeanC);
+        const {hdd, cdd} = degreeDaysF(tmeanF, baseF);
+        hddSum += hdd;
+        cddSum += cdd;
+        rows.push({ date: dates[i], tmeanF: Number(tmeanF.toFixed(1)), hdd: Number(hdd.toFixed(1)), cdd: Number(cdd.toFixed(1)) });
+      }
+      return { hddSum: Number(hddSum.toFixed(1)), cddSum: Number(cddSum.toFixed(1)), rows };
+    }
+
+    async function refreshWeather(){
+      const hubKey = el('hub').value;
+      const baseF = Number(el('base').value);
+      const hub = hubs[hubKey];
+
+      setDot(el('weatherDot'), 'warn');
+      el('weatherStatus').textContent = `Weather: loading (${hub.name})…`;
+
+      try {
+        const data = await fetchGfsDaily(hub.lat, hub.lon);
+        const daily = data.daily;
+        const comp = computeFromDaily(daily, baseF);
+
+        // KPI display
+        el('hddKpi').textContent = `HDD(14d): ${comp.hddSum}`;
+        el('cddKpi').textContent = `CDD(14d): ${comp.cddSum}`;
+
+        setDot(el('hddDot'), comp.hddSum > 100 ? 'warn' : 'ok');
+        setDot(el('cddDot'), comp.cddSum > 80 ? 'warn' : 'ok');
+
+        el('hddExplain').textContent = `Base ${baseF}°F. Higher HDD generally = higher heating demand risk.`;
+        el('cddExplain').textContent = `Base ${baseF}°F. Higher CDD generally = higher cooling demand risk.`;
+
+        setDot(el('weatherDot'), 'ok');
+        el('weatherStatus').textContent = `Weather: loaded (GFS, ${hub.name})`;
+
+        el('weatherRaw').textContent = JSON.stringify({ hub: hub.name, baseF, ...comp }, null, 2);
+      } catch (e){
+        setDot(el('weatherDot'), 'bad');
+        el('weatherStatus').textContent = 'Weather: error';
+        el('weatherRaw').textContent = String(e?.message || e);
+      }
+    }
+
+    function initTradingView(){
+      // UNG
+      if(window.TradingView && window.TradingView.widget){
+        new TradingView.widget({
+          container_id: 'tvUng',
+          width: '100%',
+          height: 420,
+          symbol: 'AMEX:UNG',
+          interval: 'D',
+          timezone: 'Etc/UTC',
+          theme: 'light',
+          style: '1',
+          locale: 'en',
+          withdateranges: true,
+          hide_side_toolbar: false,
+          allow_symbol_change: true,
+        });
+
+        // Natural gas continuous (symbol choices vary; this is usually good)
+        new TradingView.widget({
+          container_id: 'tvNg',
+          width: '100%',
+          height: 420,
+          symbol: 'NYMEX:NG1!',
+          interval: 'D',
+          timezone: 'Etc/UTC',
+          theme: 'light',
+          style: '1',
+          locale: 'en',
+          withdateranges: true,
+          hide_side_toolbar: false,
+          allow_symbol_change: true,
+        });
+      }
+    }
+
+    function copySummary(){
+      const hubKey = el('hub').value;
+      const hub = hubs[hubKey];
+      const baseF = el('base').value;
+      const hdd = el('hddKpi').textContent;
+      const cdd = el('cddKpi').textContent;
+      const thesis = el('thesis').value.trim();
+      const plan = el('plan').value.trim();
+      const expiry = el('expiry').value;
+      const notes = el('notes').value.trim();
+
+      const txt = [
+        `UNG options (1–3 week) — snapshot`,
+        `Hub: ${hub.name} | Base: ${baseF}F`,
+        `${hdd} | ${cdd}`,
+        `Expiry target: ${expiry} days`,
+        thesis ? `Thesis: ${thesis}` : null,
+        plan ? `Plan: ${plan}` : null,
+        notes ? `Notes: ${notes}` : null,
+        `Charts: AMEX:UNG + NYMEX:NG1! (TradingView)`
+      ].filter(Boolean).join('\n');
+
+      navigator.clipboard.writeText(txt);
+    }
+
+    function boot(){
+      const saved = loadLocal();
+      el('hub').value = saved.hub || 'chicago';
+      el('base').value = saved.base || '65';
+      el('thesis').value = saved.thesis || '';
+      el('plan').value = saved.plan || '';
+      el('expiry').value = saved.expiry || '10–15';
+      el('notes').value = saved.notes || '';
+
+      el('btnRefresh').addEventListener('click', refreshWeather);
+      el('hub').addEventListener('change', refreshWeather);
+      el('base').addEventListener('change', refreshWeather);
+
+      el('btnSave').addEventListener('click', () => {
+        saveLocal({
+          hub: el('hub').value,
+          base: el('base').value,
+          thesis: el('thesis').value,
+          plan: el('plan').value,
+          expiry: el('expiry').value,
+          notes: el('notes').value,
+          savedAt: new Date().toISOString(),
+        });
+        el('saveStatus').textContent = 'Saved locally.';
+        setTimeout(() => el('saveStatus').textContent = '', 1500);
+      });
+
+      el('btnCopy').addEventListener('click', () => {
+        try{ copySummary(); } catch {}
+      });
+
+      initTradingView();
+      refreshWeather();
+    }
+
+    boot();
+  </script>
+</body>
+</html>
