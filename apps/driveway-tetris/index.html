@@ -229,24 +229,7 @@
             <button id="btnReset">Reset layout</button>
           </div>
 
-          <details style="margin-top: 10px;">
-            <summary>Supabase setup (for real sharing)</summary>
-            <div class="sub" style="margin-top: 8px;">
-              Optional: enter a Supabase URL + anon key to enable shared syncing for your house code.
-              Stored locally in your browser (not sent anywhere except Supabase).
-            </div>
-
-            <div class="row" style="margin-top: 10px;">
-              <input id="sbUrl" placeholder="Supabase URL (https://...supabase.co)" style="flex: 1; min-width: 260px;" />
-              <input id="sbAnon" placeholder="Supabase anon key" style="flex: 1; min-width: 260px;" />
-              <button id="btnSaveSupabase">Save</button>
-              <button id="btnClearSupabase" class="secondary">Clear</button>
-            </div>
-
-            <div class="sub" style="margin-top: 8px;">
-              Requires a table named <code>driveway_states</code> (see README / instructions).
-            </div>
-          </details>
+          <!-- Supabase setup moved to bottom -->
 
           <details class="danger" style="margin-top: 10px;">
             <summary>Privacy / safety</summary>
@@ -280,6 +263,29 @@
           <h3>Away</h3>
           <p class="hint">Gone for a while (trip / out all day).</p>
           <div class="tokens" id="zone-away"></div>
+        </div>
+      </section>
+
+      <section style="margin-top: 14px;">
+        <div class="card">
+          <details>
+            <summary>Supabase setup (for real sharing)</summary>
+            <div class="sub" style="margin-top: 8px;">
+              Optional: enter a Supabase URL + anon key to enable shared syncing for your house code.
+              Stored locally in your browser (not sent anywhere except Supabase).
+            </div>
+
+            <div class="row" style="margin-top: 10px;">
+              <input id="sbUrl" placeholder="Supabase URL (https://...supabase.co)" style="flex: 1; min-width: 260px;" />
+              <input id="sbAnon" placeholder="Supabase anon key" style="flex: 1; min-width: 260px;" />
+              <button id="btnSaveSupabase">Save</button>
+              <button id="btnClearSupabase" class="secondary">Clear</button>
+            </div>
+
+            <div class="sub" style="margin-top: 8px;">
+              Requires a table named <code>driveway_states</code>.
+            </div>
+          </details>
         </div>
       </section>
 
