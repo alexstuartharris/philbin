@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>UNG Trader — Weather + Price Context (WIP)</title>
+  <title>UNG Trader — Weather + Price Context</title>
   <style>
     :root{
       color-scheme: light;
@@ -32,7 +32,7 @@
     }
     header{padding:34px 18px 14px; max-width:1200px; margin:0 auto;}
     h1{margin:0 0 8px; font-size: clamp(1.7rem, 3.4vw, 2.3rem); letter-spacing:-.02em;}
-    .sub{margin:0; color:var(--muted); line-height:1.45; max-width:90ch;}
+    .sub{margin:0; color:var(--muted); line-height:1.45; max-width:95ch;}
     main{max-width:1200px; margin:0 auto; padding:0 18px 70px; display:grid; gap:14px;}
     .card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);}
     .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
@@ -42,28 +42,32 @@
     .grid{display:grid; gap:14px; grid-template-columns: 1.1fr .9fr; align-items:start;}
     @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
     h2{margin:0 0 10px; font-size:1.1rem;}
+    h3{margin:0 0 6px; font-size:1rem;}
     label{display:block; font-weight:700; margin:0 0 6px;}
     input, select, button, textarea{font:inherit;}
-    input, select, textarea{
-      width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
-      background:#fff;
-    }
+    input, select, textarea{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:#fff; }
     textarea{min-height: 84px; resize: vertical;}
     button{border:0; border-radius:999px; padding:10px 14px; background:var(--accent); color:#fff; font-weight:800; cursor:pointer;}
     button.secondary{background:transparent; color:var(--accent); border:1px solid var(--border);} 
     .small{color:var(--muted); font-size:.95rem; line-height:1.45; margin:6px 0 0;}
-    pre{background:#111; color:#f4f4f4; border-radius:14px; padding:12px; overflow:auto; max-height: 260px; font-family:var(--mono); font-size:12px;}
+    pre{background:#111; color:#f4f4f4; border-radius:14px; padding:12px; overflow:auto; max-height: 320px; font-family:var(--mono); font-size:12px;}
     .two{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
     @media (max-width: 720px){ .two{grid-template-columns:1fr;} }
+    .three{display:grid; gap:12px; grid-template-columns: repeat(3, minmax(0,1fr));}
+    @media (max-width: 980px){ .three{grid-template-columns: 1fr;} }
     a{color:var(--accent); font-weight:650; text-decoration:none;} a:hover{text-decoration:underline;}
     .warnBox{border-left:3px solid rgba(192,106,0,.55); padding:10px 12px; background: rgba(192,106,0,.08); border-radius:14px; color:#3a2411;}
+    .kpi{font-weight:900; font-size: 1.05rem; letter-spacing:-.01em;}
+    .muted{color:var(--muted);}
+    .mini{font-size:.92rem; color:var(--muted); line-height:1.35;}
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
   </style>
 </head>
 <body>
   <header>
-    <h1>UNG Trader (WIP)</h1>
+    <h1>UNG Trader</h1>
     <p class="sub">
-      A lightweight decision-support dashboard for <b>UNG options (1–3 week)</b>: weather context + price context + a repeatable pre-trade checklist.
+      Decision-support dashboard for <b>UNG options (1–3 week)</b>: weather regime (NE + Midwest + South cold-breakout) + price context + checklist.
       <br />
       <span style="font-weight:800">Not financial advice.</span> This is for organizing information and your own thesis.
     </p>
@@ -75,7 +79,7 @@
         <div class="row">
           <span class="pill"><span id="weatherDot" class="dot"></span><span id="weatherStatus">Weather: not loaded</span></span>
           <span class="pill"><span class="dot ok"></span><span>Market: charts embedded</span></span>
-          <span class="pill"><span class="dot warn"></span><span>Data sources: public / no-API-key</span></span>
+          <span class="pill"><span class="dot warn"></span><span>No API keys required (for now)</span></span>
         </div>
         <div class="row">
           <button id="btnRefresh">Refresh weather</button>
@@ -87,61 +91,77 @@
     <section class="grid">
       <div class="card">
         <h2>Market context (charts)</h2>
-        <p class="small">Uses TradingView widgets (no key). If symbols don’t load, tell me which brokerage/symbol format you prefer.</p>
+        <p class="small">TradingView widgets (no key): UNG + a natural gas proxy chart. (NG futures often require a paid data subscription.) If symbols don’t load, tell me what your platform calls them.</p>
         <div class="two">
           <div>
             <div style="font-weight:800; margin-bottom:8px;">UNG</div>
             <div id="tvUng"></div>
           </div>
           <div>
-            <div style="font-weight:800; margin-bottom:8px;">NYMEX Natural Gas (continuous)</div>
+            <div style="font-weight:800; margin-bottom:8px;">Natural Gas (proxy chart)</div>
             <div id="tvNg"></div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h2>Weather context (GFS via Open‑Meteo)</h2>
+        <h2>Weather signals (GFS) + anomalies</h2>
         <p class="small">
-          MVP focus: a few gas-sensitive hubs + a simple “next 14 days” HDD/CDD read.
-          We’ll refine regions and weights once you tell me what you watch (Midwest? Northeast? US pop-weighted?).
+          Uses GFS daily forecasts via Open‑Meteo (forecast endpoint) and a simple climatology built from recent years via Open‑Meteo Archive.
+          Anomaly = forecast HDD/CDD minus "normal" HDD/CDD for the same day-of-year.
         </p>
 
         <div class="two" style="margin-top:10px;">
-          <div>
-            <label for="hub">Hub / region preset</label>
-            <select id="hub">
-              <option value="chicago">Chicago</option>
-              <option value="newyork">New York City</option>
-              <option value="boston">Boston</option>
-              <option value="houston">Houston</option>
-              <option value="denver">Denver</option>
-            </select>
-            <p class="small">These are just proxies; we can switch to region averages later.</p>
-          </div>
           <div>
             <label for="base">Degree-day base (°F)</label>
             <select id="base">
               <option value="65">65°F (standard)</option>
               <option value="60">60°F</option>
             </select>
-            <p class="small">HDD = max(0, base - Tmean). CDD = max(0, Tmean - base).</p>
+            <p class="small">HDD = max(0, base − Tmean). CDD = max(0, Tmean − base).</p>
+          </div>
+          <div>
+            <label for="climoYears">Climatology window</label>
+            <select id="climoYears">
+              <option value="2016-2025">2016–2025 (10y)</option>
+              <option value="2011-2020">2011–2020 (10y)</option>
+            </select>
+            <p class="small">Used to compute expected daily mean temperature by day-of-year.</p>
           </div>
         </div>
 
-        <div class="two" style="margin-top:10px;">
-          <div>
-            <div class="pill"><span class="dot" id="hddDot"></span><span id="hddKpi">HDD(14d): —</span></div>
-            <p class="small" id="hddExplain"></p>
+        <div class="three" style="margin-top:12px;">
+          <div class="card" style="box-shadow:none;">
+            <h3>Northeast (demand proxy)</h3>
+            <div class="mini" id="neCities">—</div>
+            <div class="row" style="margin-top:10px;">
+              <div class="pill"><span id="neDot" class="dot"></span><span class="kpi" id="neHdd">HDD14: —</span></div>
+              <div class="pill"><span id="neADot" class="dot"></span><span class="kpi" id="neAnom">ΔHDD14: —</span></div>
+            </div>
           </div>
-          <div>
-            <div class="pill"><span class="dot" id="cddDot"></span><span id="cddKpi">CDD(14d): —</span></div>
-            <p class="small" id="cddExplain"></p>
+
+          <div class="card" style="box-shadow:none;">
+            <h3>Midwest (demand proxy)</h3>
+            <div class="mini" id="mwCities">—</div>
+            <div class="row" style="margin-top:10px;">
+              <div class="pill"><span id="mwDot" class="dot"></span><span class="kpi" id="mwHdd">HDD14: —</span></div>
+              <div class="pill"><span id="mwADot" class="dot"></span><span class="kpi" id="mwAnom">ΔHDD14: —</span></div>
+            </div>
+          </div>
+
+          <div class="card" style="box-shadow:none;">
+            <h3>South cold-breakout</h3>
+            <div class="mini" id="sCities">—</div>
+            <div class="row" style="margin-top:10px;">
+              <div class="pill"><span id="sDot" class="dot"></span><span class="kpi" id="sHdd">HDD14: —</span></div>
+              <div class="pill"><span id="sADot" class="dot"></span><span class="kpi" id="sAnom">ΔHDD14: —</span></div>
+            </div>
+            <div class="mini" style="margin-top:8px;" id="southAlert">Cold-breakout: —</div>
           </div>
         </div>
 
-        <details style="margin-top:10px;">
-          <summary style="cursor:pointer; font-weight:800;">Show raw weather data</summary>
+        <details style="margin-top:12px;">
+          <summary style="cursor:pointer; font-weight:800;">Show raw weather debug</summary>
           <pre id="weatherRaw">(none)</pre>
         </details>
       </div>
@@ -150,13 +170,13 @@
     <section class="card">
       <h2>Pre‑trade checklist (1–3 week options)</h2>
       <div class="warnBox">
-        Goal: turn “I feel like it” into a repeatable decision. This section will later store a small journal entry per trade.
+        Goal: turn “I feel like it” into a repeatable decision.
       </div>
 
       <div class="two" style="margin-top:12px;">
         <div>
           <label for="thesis">Thesis (2–5 sentences)</label>
-          <textarea id="thesis" placeholder="e.g., Cold risk building in NE in 8–12d; storage draw surprise; NG1! breaking above X; looking at UNG calls 2w out…"></textarea>
+          <textarea id="thesis" placeholder="e.g., NE/MW HDD anomaly building; storage draw; nat gas trend break; looking at UNG calls 2w out…"></textarea>
         </div>
         <div>
           <label for="plan">Plan</label>
@@ -174,43 +194,58 @@
           </select>
         </div>
         <div>
-          <label for="notes">Notes / news hooks</label>
-          <textarea id="notes" placeholder="EIA storage report date, freeze-offs, LNG outage, pipeline, storms, model shift, etc."></textarea>
+          <label for="notes">Notes / catalysts</label>
+          <textarea id="notes" placeholder="EIA storage date, freeze-offs, LNG outage, pipeline, storms, model shift, etc."></textarea>
         </div>
       </div>
 
-      <div class="row" style="margin-top:12px;">
+      <div class="btnRow" style="margin-top:12px;">
         <button id="btnSave" class="secondary">Save locally</button>
         <span class="small" id="saveStatus"></span>
       </div>
     </section>
 
     <section class="card">
-      <h2>Next steps (what I need from you)</h2>
+      <h2>What I’ll add next</h2>
       <ol class="small">
-        <li>Which region matters most to you for price moves? (Northeast / Midwest / Texas / US total)</li>
-        <li>Do you want <b>HDD/CDD vs normal</b> (requires climatology) or just raw degree-days for now?</li>
-        <li>What’s your data tolerance: OK to embed TradingView for price, or should we pull OHLC via a paid API (Polygon/Tradier) with BYO key?</li>
-        <li>Which broker do you place trades with (IBKR, Questrade, etc.)? (Only for symbol formatting + options chain access.)</li>
+        <li>CDD anomaly + summer-focused view (useful later in the year).</li>
+        <li>"Model change" tracking (yesterday vs today forecast) for each region.</li>
+        <li>EIA storage calendar reminders and a simple journal of trades.</li>
+        <li>Optional BYO-key market data (options chain / IV) via a paid API.</li>
       </ol>
       <p class="small">Back to <a href="../">apps index</a>.</p>
     </section>
   </main>
 
-  <!-- TradingView widgets -->
   <script src="https://s3.tradingview.com/tv.js"></script>
-
   <script>
     const el = (id) => document.getElementById(id);
+    const storageKey = 'ung-trader.v2';
 
-    const storageKey = 'ung-trader.v1';
-
-    const hubs = {
-      chicago: { name: 'Chicago', lat: 41.8781, lon: -87.6298 },
-      newyork: { name: 'New York', lat: 40.7128, lon: -74.0060 },
+    const cities = {
+      // Northeast
+      nyc: { name: 'NYC', lat: 40.7128, lon: -74.0060 },
       boston: { name: 'Boston', lat: 42.3601, lon: -71.0589 },
+      philadelphia: { name: 'Philadelphia', lat: 39.9526, lon: -75.1652 },
+      dc: { name: 'Washington DC', lat: 38.9072, lon: -77.0369 },
+
+      // Midwest
+      chicago: { name: 'Chicago', lat: 41.8781, lon: -87.6298 },
+      detroit: { name: 'Detroit', lat: 42.3314, lon: -83.0458 },
+      minneapolis: { name: 'Minneapolis', lat: 44.9778, lon: -93.2650 },
+
+      // South / TX + Southeast
       houston: { name: 'Houston', lat: 29.7604, lon: -95.3698 },
-      denver: { name: 'Denver', lat: 39.7392, lon: -104.9903 },
+      dallas: { name: 'Dallas', lat: 32.7767, lon: -96.7970 },
+      atlanta: { name: 'Atlanta', lat: 33.7490, lon: -84.3880 },
+      nashville: { name: 'Nashville', lat: 36.1627, lon: -86.7816 },
+      charlotte: { name: 'Charlotte', lat: 35.2271, lon: -80.8431 },
+    };
+
+    const regions = {
+      ne: { name: 'Northeast', keys: ['nyc','boston','philadelphia','dc'] },
+      mw: { name: 'Midwest', keys: ['chicago','detroit','minneapolis'] },
+      s:  { name: 'South', keys: ['houston','dallas','atlanta','nashville','charlotte'] },
     };
 
     function setDot(dotEl, kind){
@@ -221,12 +256,8 @@
     function loadLocal(){
       try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { return {}; }
     }
+    function saveLocal(obj){ localStorage.setItem(storageKey, JSON.stringify(obj)); }
 
-    function saveLocal(obj){
-      localStorage.setItem(storageKey, JSON.stringify(obj));
-    }
-
-    function fToC(f){ return (f - 32) * 5/9; }
     function cToF(c){ return (c * 9/5) + 32; }
 
     function degreeDaysF(tMeanF, baseF){
@@ -235,9 +266,22 @@
       return { hdd, cdd };
     }
 
+    function ymd(d){
+      const z = new Date(d);
+      const y = z.getUTCFullYear();
+      const m = String(z.getUTCMonth()+1).padStart(2,'0');
+      const da = String(z.getUTCDate()).padStart(2,'0');
+      return `${y}-${m}-${da}`;
+    }
+
+    function doyFromYmd(s){
+      const [y,m,d] = s.split('-').map(Number);
+      const dt = new Date(Date.UTC(y,m-1,d));
+      const start = new Date(Date.UTC(y,0,1));
+      return Math.floor((dt - start) / 86400000) + 1; // 1..366
+    }
+
     async function fetchGfsDaily(lat, lon){
-      // Open-Meteo: https://open-meteo.com/en/docs
-      // Use their GFS model option (global). They return in metric by default.
       const url = new URL('https://api.open-meteo.com/v1/forecast');
       url.searchParams.set('latitude', String(lat));
       url.searchParams.set('longitude', String(lon));
@@ -245,58 +289,225 @@
       url.searchParams.set('forecast_days', '14');
       url.searchParams.set('timezone', 'UTC');
       url.searchParams.set('models', 'gfs_global');
-
       const r = await fetch(url.toString());
-      if(!r.ok) throw new Error('Weather fetch failed: ' + r.status);
+      if(!r.ok) throw new Error('Forecast fetch failed: ' + r.status);
       return await r.json();
     }
 
-    function computeFromDaily(daily, baseF){
+    async function fetchArchiveDaily(lat, lon, startDate, endDate){
+      // Open-Meteo Archive API
+      const url = new URL('https://archive-api.open-meteo.com/v1/archive');
+      url.searchParams.set('latitude', String(lat));
+      url.searchParams.set('longitude', String(lon));
+      url.searchParams.set('start_date', startDate);
+      url.searchParams.set('end_date', endDate);
+      url.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min');
+      url.searchParams.set('timezone', 'UTC');
+      const r = await fetch(url.toString());
+      if(!r.ok) throw new Error('Archive fetch failed: ' + r.status);
+      return await r.json();
+    }
+
+    function computeDailyTable(daily){
       const dates = daily.time;
       const tmaxC = daily.temperature_2m_max;
       const tminC = daily.temperature_2m_min;
-      let hddSum = 0;
-      let cddSum = 0;
       const rows = [];
-      for(let i=0; i<dates.length; i++){
+      for(let i=0;i<dates.length;i++){
         const tmeanC = (Number(tmaxC[i]) + Number(tminC[i])) / 2;
-        const tmeanF = cToF(tmeanC);
-        const {hdd, cdd} = degreeDaysF(tmeanF, baseF);
-        hddSum += hdd;
-        cddSum += cdd;
-        rows.push({ date: dates[i], tmeanF: Number(tmeanF.toFixed(1)), hdd: Number(hdd.toFixed(1)), cdd: Number(cdd.toFixed(1)) });
+        rows.push({ date: dates[i], tmeanC });
       }
-      return { hddSum: Number(hddSum.toFixed(1)), cddSum: Number(cddSum.toFixed(1)), rows };
+      return rows;
+    }
+
+    function buildClimatology(rows){
+      // returns day-of-year -> mean tmeanF
+      const acc = new Map();
+      for(const r of rows){
+        const doy = doyFromYmd(r.date);
+        const v = cToF(r.tmeanC);
+        if(!acc.has(doy)) acc.set(doy, { sum:0, n:0 });
+        const a = acc.get(doy);
+        a.sum += v;
+        a.n += 1;
+      }
+      const out = {};
+      for(const [doy, a] of acc.entries()){
+        out[String(doy)] = a.sum / Math.max(1,a.n);
+      }
+      return out;
+    }
+
+    async function getCityClimo(cityKey, windowKey){
+      const cacheKey = `ung-trader.climo.${cityKey}.${windowKey}`;
+      try{
+        const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+        if(cached && cached.builtAt && cached.climo) return cached;
+      } catch {}
+
+      const city = cities[cityKey];
+      const [startY,endY] = windowKey.split('-').map(Number);
+      const startDate = `${startY}-01-01`;
+      const endDate = `${endY}-12-31`;
+      const data = await fetchArchiveDaily(city.lat, city.lon, startDate, endDate);
+      const rows = computeDailyTable(data.daily);
+      const climo = buildClimatology(rows);
+      const payload = { city: city.name, windowKey, builtAt: new Date().toISOString(), climo };
+      localStorage.setItem(cacheKey, JSON.stringify(payload));
+      return payload;
+    }
+
+    function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
+
+    async function computeRegion(regionKey, baseF, windowKey){
+      const reg = regions[regionKey];
+      const cityKeys = reg.keys;
+
+      // Fetch forecast for each city (parallel)
+      const forecasts = await Promise.all(cityKeys.map(async (ck) => {
+        const c = cities[ck];
+        const f = await fetchGfsDaily(c.lat, c.lon);
+        const rows = computeDailyTable(f.daily); // {date, tmeanC}
+        return { ck, city: c, rows };
+      }));
+
+      // Climo for each city (parallel)
+      const climos = await Promise.all(cityKeys.map((ck) => getCityClimo(ck, windowKey)));
+      const climoMap = new Map(cityKeys.map((ck, i) => [ck, climos[i].climo]));
+
+      // For each day i=0..13, average HDD/CDD across cities
+      const dayCount = forecasts[0]?.rows?.length || 0;
+      const daily = [];
+
+      for(let i=0;i<dayCount;i++){
+        const date = forecasts[0].rows[i].date;
+        const doy = String(doyFromYmd(date));
+
+        const hdds = [];
+        const cdds = [];
+        const hddNorm = [];
+        const cddNorm = [];
+
+        for(const f of forecasts){
+          const tF = cToF(f.rows[i].tmeanC);
+          const {hdd, cdd} = degreeDaysF(tF, baseF);
+          hdds.push(hdd);
+          cdds.push(cdd);
+
+          const climT = climoMap.get(f.ck)[doy];
+          if(Number.isFinite(climT)){
+            const ddn = degreeDaysF(climT, baseF);
+            hddNorm.push(ddn.hdd);
+            cddNorm.push(ddn.cdd);
+          }
+        }
+
+        const avg = (xs) => xs.length ? sum(xs)/xs.length : NaN;
+        daily.push({
+          date,
+          hdd: avg(hdds),
+          cdd: avg(cdds),
+          hddNorm: avg(hddNorm),
+          cddNorm: avg(cddNorm),
+        });
+      }
+
+      const hdd14 = sum(daily.map(d => d.hdd));
+      const cdd14 = sum(daily.map(d => d.cdd));
+      const hddNorm14 = sum(daily.map(d => d.hddNorm));
+      const cddNorm14 = sum(daily.map(d => d.cddNorm));
+
+      const out = {
+        region: reg.name,
+        cities: cityKeys.map(k => cities[k].name),
+        baseF,
+        windowKey,
+        hdd14: Number(hdd14.toFixed(1)),
+        cdd14: Number(cdd14.toFixed(1)),
+        dhdd14: Number((hdd14 - hddNorm14).toFixed(1)),
+        dcdd14: Number((cdd14 - cddNorm14).toFixed(1)),
+        daily: daily.map(d => ({
+          date: d.date,
+          hdd: Number(d.hdd.toFixed(2)),
+          hddNorm: Number(d.hddNorm.toFixed(2)),
+          dhdd: Number((d.hdd - d.hddNorm).toFixed(2)),
+          cdd: Number(d.cdd.toFixed(2)),
+          cddNorm: Number(d.cddNorm.toFixed(2)),
+          dcdd: Number((d.cdd - d.cddNorm).toFixed(2)),
+        }))
+      };
+
+      return out;
+    }
+
+    function classifyHddAnom(dhdd){
+      // rough cut: > +20 = meaningful cold anomaly; > +40 = big
+      if(dhdd >= 40) return 'bad';
+      if(dhdd >= 20) return 'warn';
+      return 'ok';
+    }
+
+    function southColdBreakoutSignal(regionOut){
+      // A simple alert for the south: look for strongest 3-day HDD anomaly burst.
+      const dd = regionOut.daily;
+      let best = { idx: -1, sum: -1e9 };
+      for(let i=0;i<dd.length;i++){
+        const w = dd.slice(i, i+3);
+        if(w.length < 3) break;
+        const s = sum(w.map(x => x.dhdd));
+        if(s > best.sum) best = { idx: i, sum: s };
+      }
+      if(best.idx < 0) return { label: '—', kind: 'ok' };
+      const start = dd[best.idx].date;
+      const end = dd[best.idx+2].date;
+      const val = Number(best.sum.toFixed(1));
+      const kind = val >= 18 ? 'bad' : (val >= 10 ? 'warn' : 'ok');
+      const label = `Cold-breakout (best 3-day ΔHDD): ${val} (${start} → ${end})`;
+      return { label, kind };
     }
 
     async function refreshWeather(){
-      const hubKey = el('hub').value;
       const baseF = Number(el('base').value);
-      const hub = hubs[hubKey];
+      const windowKey = el('climoYears').value;
 
       setDot(el('weatherDot'), 'warn');
-      el('weatherStatus').textContent = `Weather: loading (${hub.name})…`;
+      el('weatherStatus').textContent = 'Weather: loading (regions)…';
 
-      try {
-        const data = await fetchGfsDaily(hub.lat, hub.lon);
-        const daily = data.daily;
-        const comp = computeFromDaily(daily, baseF);
+      try{
+        // show city lists
+        el('neCities').textContent = regions.ne.keys.map(k => cities[k].name).join(' · ');
+        el('mwCities').textContent = regions.mw.keys.map(k => cities[k].name).join(' · ');
+        el('sCities').textContent = regions.s.keys.map(k => cities[k].name).join(' · ');
 
-        // KPI display
-        el('hddKpi').textContent = `HDD(14d): ${comp.hddSum}`;
-        el('cddKpi').textContent = `CDD(14d): ${comp.cddSum}`;
+        const [ne, mw, s] = await Promise.all([
+          computeRegion('ne', baseF, windowKey),
+          computeRegion('mw', baseF, windowKey),
+          computeRegion('s', baseF, windowKey),
+        ]);
 
-        setDot(el('hddDot'), comp.hddSum > 100 ? 'warn' : 'ok');
-        setDot(el('cddDot'), comp.cddSum > 80 ? 'warn' : 'ok');
+        el('neHdd').textContent = `HDD14: ${ne.hdd14}`;
+        el('neAnom').textContent = `ΔHDD14: ${ne.dhdd14}`;
+        setDot(el('neDot'), ne.hdd14 >= 120 ? 'warn' : 'ok');
+        setDot(el('neADot'), classifyHddAnom(ne.dhdd14));
 
-        el('hddExplain').textContent = `Base ${baseF}°F. Higher HDD generally = higher heating demand risk.`;
-        el('cddExplain').textContent = `Base ${baseF}°F. Higher CDD generally = higher cooling demand risk.`;
+        el('mwHdd').textContent = `HDD14: ${mw.hdd14}`;
+        el('mwAnom').textContent = `ΔHDD14: ${mw.dhdd14}`;
+        setDot(el('mwDot'), mw.hdd14 >= 140 ? 'warn' : 'ok');
+        setDot(el('mwADot'), classifyHddAnom(mw.dhdd14));
+
+        el('sHdd').textContent = `HDD14: ${s.hdd14}`;
+        el('sAnom').textContent = `ΔHDD14: ${s.dhdd14}`;
+        setDot(el('sDot'), s.hdd14 >= 60 ? 'warn' : 'ok');
+        setDot(el('sADot'), classifyHddAnom(s.dhdd14));
+
+        const sig = southColdBreakoutSignal(s);
+        el('southAlert').textContent = sig.label;
 
         setDot(el('weatherDot'), 'ok');
-        el('weatherStatus').textContent = `Weather: loaded (GFS, ${hub.name})`;
+        el('weatherStatus').textContent = `Weather: loaded (GFS + archive normals)`;
+        el('weatherRaw').textContent = JSON.stringify({ baseF, windowKey, ne, mw, south: s }, null, 2);
 
-        el('weatherRaw').textContent = JSON.stringify({ hub: hub.name, baseF, ...comp }, null, 2);
-      } catch (e){
+      } catch(e){
         setDot(el('weatherDot'), 'bad');
         el('weatherStatus').textContent = 'Weather: error';
         el('weatherRaw').textContent = String(e?.message || e);
@@ -304,7 +515,6 @@
     }
 
     function initTradingView(){
-      // UNG
       if(window.TradingView && window.TradingView.widget){
         new TradingView.widget({
           container_id: 'tvUng',
@@ -321,12 +531,13 @@
           allow_symbol_change: true,
         });
 
-        // Natural gas continuous (symbol choices vary; this is usually good)
         new TradingView.widget({
           container_id: 'tvNg',
           width: '100%',
           height: 420,
-          symbol: 'NYMEX:NG1!',
+          // NOTE: TradingView futures data often requires a paid market data subscription.
+          // This proxy symbol is usually free and tracks spot/CFD nat gas reasonably well for trend context.
+          symbol: 'OANDA:NATGASUSD',
           interval: 'D',
           timezone: 'Etc/UTC',
           theme: 'light',
@@ -340,47 +551,56 @@
     }
 
     function copySummary(){
-      const hubKey = el('hub').value;
-      const hub = hubs[hubKey];
       const baseF = el('base').value;
-      const hdd = el('hddKpi').textContent;
-      const cdd = el('cddKpi').textContent;
+      const windowKey = el('climoYears').value;
+      const raw = el('weatherRaw').textContent;
+      let snap = null;
+      try{ snap = JSON.parse(raw); } catch {}
+
       const thesis = el('thesis').value.trim();
       const plan = el('plan').value.trim();
       const expiry = el('expiry').value;
       const notes = el('notes').value.trim();
 
-      const txt = [
+      const lines = [
         `UNG options (1–3 week) — snapshot`,
-        `Hub: ${hub.name} | Base: ${baseF}F`,
-        `${hdd} | ${cdd}`,
-        `Expiry target: ${expiry} days`,
-        thesis ? `Thesis: ${thesis}` : null,
-        plan ? `Plan: ${plan}` : null,
-        notes ? `Notes: ${notes}` : null,
-        `Charts: AMEX:UNG + NYMEX:NG1! (TradingView)`
-      ].filter(Boolean).join('\n');
+        `Base: ${baseF}F | Climo: ${windowKey}`,
+      ];
 
-      navigator.clipboard.writeText(txt);
+      if(snap?.ne && snap?.mw && snap?.south){
+        lines.push(`NE HDD14 ${snap.ne.hdd14} (Δ${snap.ne.dhdd14})`);
+        lines.push(`MW HDD14 ${snap.mw.hdd14} (Δ${snap.mw.dhdd14})`);
+        lines.push(`South HDD14 ${snap.south.hdd14} (Δ${snap.south.dhdd14})`);
+        const sig = southColdBreakoutSignal(snap.south);
+        if(sig?.label && sig.label !== '—') lines.push(sig.label);
+      }
+
+      lines.push(`Expiry target: ${expiry} days`);
+      if(thesis) lines.push(`Thesis: ${thesis}`);
+      if(plan) lines.push(`Plan: ${plan}`);
+      if(notes) lines.push(`Notes: ${notes}`);
+      lines.push(`Charts: AMEX:UNG + OANDA:NATGASUSD (TradingView)`);
+
+      navigator.clipboard.writeText(lines.join('\n'));
     }
 
     function boot(){
       const saved = loadLocal();
-      el('hub').value = saved.hub || 'chicago';
       el('base').value = saved.base || '65';
+      el('climoYears').value = saved.climoYears || '2016-2025';
       el('thesis').value = saved.thesis || '';
       el('plan').value = saved.plan || '';
       el('expiry').value = saved.expiry || '10–15';
       el('notes').value = saved.notes || '';
 
       el('btnRefresh').addEventListener('click', refreshWeather);
-      el('hub').addEventListener('change', refreshWeather);
       el('base').addEventListener('change', refreshWeather);
+      el('climoYears').addEventListener('change', refreshWeather);
 
       el('btnSave').addEventListener('click', () => {
         saveLocal({
-          hub: el('hub').value,
           base: el('base').value,
+          climoYears: el('climoYears').value,
           thesis: el('thesis').value,
           plan: el('plan').value,
           expiry: el('expiry').value,
