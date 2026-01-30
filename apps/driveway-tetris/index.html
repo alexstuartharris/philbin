@@ -426,8 +426,12 @@
         });
         t.addEventListener('dragend', () => t.classList.remove('dragging'));
 
-        // Tap behavior: do NOT move cars on tap (it caused accidental swaps on mobile).
-        // Movement should be drag-and-drop only. Notes/delete have explicit buttons.
+        // Tap-to-cycle on mobile: allowed, but should NEVER bump a car out of a driveway spot.
+        // If the next zone is a driveway spot that's occupied, we skip to the next available zone.
+        t.addEventListener('click', () => {
+          const next = nextZoneForTap(zone, car.id);
+          moveCar(car.id, next, { allowSwap: false });
+        });
 
         wrap.appendChild(t);
       }
@@ -568,7 +572,11 @@
       await client.from('driveway_states').upsert({ house_id: house, state });
     }
 
-    async function moveCar(carId, zone){
+    function drivewayOccupied(zone, carId){
+      return !!state.cars.find(c => c.id !== carId && c.zone === zone);
+    }
+
+    async function moveCar(carId, zone, opts = { allowSwap: true }){
       if(!ZONES.includes(zone)) return;
       if(!isUnlocked()) {
         alert('Passcode required to move cars.');
@@ -580,22 +588,40 @@
       const prev = (state.cars.find(c => c.id === carId) || {}).zone || 'away';
 
       // Enforce: max 1 car per driveway spot.
-      // If the target driveway spot is occupied, swap the other car into the mover's previous zone.
+      // Drag moves can swap; tap moves should NOT bump a car out of a driveway spot.
       if(zone === 'driveway_a' || zone === 'driveway_b') {
-        const occupant = state.cars.find(c => c.id !== carId && c.zone === zone);
-        if(occupant) {
-          state.cars = state.cars.map(c => {
-            if(c.id === occupant.id) {
-              return { ...c, zone: prev, updatedAt: nowIso(), updatedBy: who };
-            }
-            return c;
-          });
+        const occupied = drivewayOccupied(zone, carId);
+        if(occupied) {
+          if(!opts.allowSwap) {
+            // Can't move here; keep state unchanged.
+            return;
+          }
+          const occupant = state.cars.find(c => c.id !== carId && c.zone === zone);
+          if(occupant) {
+            state.cars = state.cars.map(c => {
+              if(c.id === occupant.id) {
+                return { ...c, zone: prev, updatedAt: nowIso(), updatedBy: who };
+              }
+              return c;
+            });
+          }
         }
       }
 
       state.cars = state.cars.map(c => c.id === carId ? ({ ...c, zone, updatedAt: nowIso(), updatedBy: who }) : c);
       await pushShared();
       render();
+    }
+
+    function nextZoneForTap(currentZone, carId){
+      const start = Math.max(0, ZONES.indexOf(currentZone));
+      // Try each zone in order after the current one, skipping occupied driveways.
+      for(let step=1; step<=ZONES.length; step++){
+        const z = ZONES[(start + step) % ZONES.length];
+        if((z === 'driveway_a' || z === 'driveway_b') && drivewayOccupied(z, carId)) continue;
+        return z;
+      }
+      return currentZone;
     }
 
     async function addGuest(){
