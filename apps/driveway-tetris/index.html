@@ -221,6 +221,7 @@
             <div>
               <div style="font-weight: 900; font-size: 14px;">Cars</div>
               <div class="sub" style="margin-top: 6px;">Residents + unlimited guests.</div>
+              <div class="sub" style="margin-top: 6px;">Current guest cars: <span id="guestCount" style="font-weight: 900;">0</span></div>
             </div>
           </div>
 
@@ -231,12 +232,7 @@
 
           <!-- Supabase setup moved to bottom -->
 
-          <details class="danger" style="margin-top: 10px;">
-            <summary>Privacy / safety</summary>
-            <div class="sub" style="margin-top: 8px;">
-              Don’t put addresses, license plates, or full names. Use nicknames only.
-            </div>
-          </details>
+          <!-- Privacy moved to Setup/Info at bottom -->
         </div>
       </section>
 
@@ -269,8 +265,15 @@
       <section style="margin-top: 14px;">
         <div class="card">
           <details>
-            <summary>Supabase setup (for real sharing)</summary>
-            <div class="sub" style="margin-top: 8px;">
+            <summary>Setup / Info</summary>
+
+            <div class="sub" style="margin-top: 8px; font-weight: 900;">Privacy / safety</div>
+            <div class="sub" style="margin-top: 6px;">
+              Don’t put addresses, license plates, or full names. Use nicknames only.
+            </div>
+
+            <div class="sub" style="margin-top: 12px; font-weight: 900;">Supabase setup (for real sharing)</div>
+            <div class="sub" style="margin-top: 6px;">
               Optional: enter a Supabase URL + anon key to enable shared syncing for your house code.
               Stored locally in your browser (not sent anywhere except Supabase).
             </div>
@@ -326,6 +329,7 @@
       availabilityDot: document.getElementById('availabilityDot'),
       syncText: document.getElementById('syncText'),
       syncDot: document.getElementById('syncDot'),
+      guestCount: document.getElementById('guestCount'),
       lockText: document.getElementById('lockText'),
       lockDot: document.getElementById('lockDot'),
       debug: document.getElementById('debug'),
@@ -467,6 +471,11 @@
         setPill(els.syncDot, els.syncText, 'ok', `Sync: shared (${state.houseId})`);
       } else {
         setPill(els.syncDot, els.syncText, 'warn', 'Sync: local only (no Supabase)');
+      }
+
+      // Guest count
+      if(els.guestCount) {
+        els.guestCount.textContent = String(state.cars.filter(c => c.kind === 'guest').length);
       }
 
       renderLock();
