@@ -139,6 +139,7 @@
             <div class="row" style="margin-top:10px;">
               <div class="pill"><span id="neDot" class="dot"></span><span class="kpi" id="neHdd">HDD14: —</span></div>
               <div class="pill"><span id="neADot" class="dot"></span><span class="kpi" id="neAnom">ΔHDD14: —</span></div>
+              <div class="pill"><span id="neChgDot" class="dot"></span><span class="kpi" id="neChg">ΔΔ: —</span></div>
             </div>
           </div>
 
@@ -148,6 +149,7 @@
             <div class="row" style="margin-top:10px;">
               <div class="pill"><span id="mwDot" class="dot"></span><span class="kpi" id="mwHdd">HDD14: —</span></div>
               <div class="pill"><span id="mwADot" class="dot"></span><span class="kpi" id="mwAnom">ΔHDD14: —</span></div>
+              <div class="pill"><span id="mwChgDot" class="dot"></span><span class="kpi" id="mwChg">ΔΔ: —</span></div>
             </div>
           </div>
 
@@ -157,10 +159,13 @@
             <div class="row" style="margin-top:10px;">
               <div class="pill"><span id="sDot" class="dot"></span><span class="kpi" id="sHdd">HDD14: —</span></div>
               <div class="pill"><span id="sADot" class="dot"></span><span class="kpi" id="sAnom">ΔHDD14: —</span></div>
+              <div class="pill"><span id="sChgDot" class="dot"></span><span class="kpi" id="sChg">ΔΔ: —</span></div>
             </div>
             <div class="mini" style="margin-top:8px;" id="southAlert">Cold-breakout: —</div>
           </div>
         </div>
+
+        <div class="mini" id="modelChangeNote" style="margin-top:10px;">Model change: —</div>
 
         <details style="margin-top:12px;">
           <summary style="cursor:pointer; font-weight:800;">Show raw weather debug</summary>
@@ -468,6 +473,33 @@
       return { label, kind };
     }
 
+    const modelKey = 'ung-trader.model-snapshots.v1';
+
+    function loadModelSnapshots(){
+      try { return JSON.parse(localStorage.getItem(modelKey) || '[]'); } catch { return []; }
+    }
+
+    function saveModelSnapshots(list){
+      localStorage.setItem(modelKey, JSON.stringify(list.slice(-30)));
+    }
+
+    function todayKeyUTC(){
+      return new Date().toISOString().slice(0,10);
+    }
+
+    function setChange(elText, elDot, val){
+      const v = (val === null || val === undefined || Number.isNaN(val)) ? null : Number(val);
+      if(v === null){
+        elText.textContent = 'ΔΔ: —';
+        setDot(elDot, 'warn');
+        return;
+      }
+      const sign = v > 0 ? '+' : '';
+      elText.textContent = 'ΔΔ: ' + sign + v.toFixed(1);
+      const a = Math.abs(v);
+      setDot(elDot, a >= 20 ? 'bad' : (a >= 10 ? 'warn' : 'ok'));
+    }
+
     async function refreshWeather(){
       const baseF = Number(el('base').value);
       const windowKey = el('climoYears').value;
@@ -504,6 +536,30 @@
 
         const sig = southColdBreakoutSignal(s);
         el('southAlert').textContent = sig.label;
+
+
+        // Model change tracking: compare today's ΔHDD14 against last saved snapshot (usually yesterday).
+        const snaps = loadModelSnapshots();
+        const latest = snaps.length ? snaps[snaps.length - 1] : null;
+        const prev = (latest && latest.day === todayKeyUTC()) ? (snaps.length > 1 ? snaps[snaps.length - 2] : null) : latest;
+
+        const neChg = prev ? (ne.dhdd14 - prev.neDhdd14) : NaN;
+        const mwChg = prev ? (mw.dhdd14 - prev.mwDhdd14) : NaN;
+        const sChg  = prev ? (s.dhdd14  - prev.sDhdd14)  : NaN;
+
+        setChange(el('neChg'), el('neChgDot'), neChg);
+        setChange(el('mwChg'), el('mwChgDot'), mwChg);
+        setChange(el('sChg'),  el('sChgDot'),  sChg);
+
+        const ref = prev ? ('since ' + prev.day) : 'no prior snapshot yet';
+        el('modelChangeNote').textContent = `Model change (ΔΔHDD14): ${ref}. Saved snapshots: ${snaps.length}.`;
+
+        // Auto-save one snapshot per UTC day (first time you refresh that day).
+        const day = todayKeyUTC();
+        if(!snaps.length || snaps[snaps.length - 1].day !== day){
+          snaps.push({ day, baseF, windowKey, neDhdd14: ne.dhdd14, mwDhdd14: mw.dhdd14, sDhdd14: s.dhdd14 });
+          saveModelSnapshots(snaps);
+        }
 
         setDot(el('weatherDot'), 'ok');
         el('weatherStatus').textContent = `Weather: loaded (GFS + archive normals)`;
