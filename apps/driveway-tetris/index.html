@@ -97,6 +97,16 @@
 
     input::placeholder { color: rgba(231,238,248,.55); }
 
+    /* Passcode feedback */
+    #passcode.ok {
+      border-color: rgba(53, 208, 127, .65);
+      box-shadow: 0 0 0 4px rgba(53, 208, 127, .12);
+    }
+    #passcode.bad {
+      border-color: rgba(255, 92, 92, .70);
+      box-shadow: 0 0 0 4px rgba(255, 92, 92, .12);
+    }
+
     button { cursor: pointer; font-weight: 700; }
     button:active { transform: translateY(1px); }
 
@@ -205,8 +215,11 @@
             <span class="pill" id="syncPill"><span class="dot" id="syncDot"></span><span id="syncText">Sync: …</span></span>
           </div>
 
-          <div class="row" style="margin-top: 12px;">
-            <input id="passcode" placeholder="Passcode" inputmode="numeric" style="width: 140px;" />
+          <div class="row" style="margin-top: 12px; align-items: flex-start;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <input id="passcode" placeholder="Passcode" inputmode="numeric" style="width: 160px;" />
+              <div id="passcodeHint" class="sub" style="margin: 0 0 0 2px; font-size: 12px;">Enter code to unlock</div>
+            </div>
           </div>
 
           <div class="footer">
@@ -338,6 +351,7 @@
       guestCount: document.getElementById('guestCount'),
       lockText: document.getElementById('lockText'),
       lockDot: document.getElementById('lockDot'),
+      passcodeHint: document.getElementById('passcodeHint'),
       debug: document.getElementById('debug'),
     };
 
@@ -514,10 +528,25 @@
     }
 
     function renderLock(){
-      if(isUnlocked()) {
+      const code = (els.passcode.value || '').trim();
+      const unlocked = isUnlocked();
+
+      if(unlocked) {
         setPill(els.lockDot, els.lockText, 'ok', 'Lock: unlocked');
       } else {
         setPill(els.lockDot, els.lockText, 'bad', 'Lock: passcode required');
+      }
+
+      // Passcode input feedback
+      els.passcode.classList.remove('ok','bad');
+      if(!code) {
+        if(els.passcodeHint) els.passcodeHint.textContent = 'Enter code to unlock';
+      } else if(unlocked) {
+        els.passcode.classList.add('ok');
+        if(els.passcodeHint) els.passcodeHint.textContent = 'Code OK!';
+      } else {
+        els.passcode.classList.add('bad');
+        if(els.passcodeHint) els.passcodeHint.textContent = 'Wrong code';
       }
     }
 
