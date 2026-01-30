@@ -91,14 +91,14 @@
     <section class="grid">
       <div class="card">
         <h2>Market context (charts)</h2>
-        <p class="small">TradingView widgets (no key): UNG + NG1! (continuous). If symbols don’t load, tell me what your platform calls them.</p>
+        <p class="small">TradingView widgets (no key): UNG + a natural gas proxy chart. (NG futures often require a paid data subscription.) If symbols don’t load, tell me what your platform calls them.</p>
         <div class="two">
           <div>
             <div style="font-weight:800; margin-bottom:8px;">UNG</div>
             <div id="tvUng"></div>
           </div>
           <div>
-            <div style="font-weight:800; margin-bottom:8px;">NYMEX Natural Gas (continuous)</div>
+            <div style="font-weight:800; margin-bottom:8px;">Natural Gas (proxy chart)</div>
             <div id="tvNg"></div>
           </div>
         </div>
@@ -176,7 +176,7 @@
       <div class="two" style="margin-top:12px;">
         <div>
           <label for="thesis">Thesis (2–5 sentences)</label>
-          <textarea id="thesis" placeholder="e.g., NE/MW HDD anomaly building; storage draw; NG1! trend break; looking at UNG calls 2w out…"></textarea>
+          <textarea id="thesis" placeholder="e.g., NE/MW HDD anomaly building; storage draw; nat gas trend break; looking at UNG calls 2w out…"></textarea>
         </div>
         <div>
           <label for="plan">Plan</label>
@@ -535,7 +535,9 @@
           container_id: 'tvNg',
           width: '100%',
           height: 420,
-          symbol: 'NYMEX:NG1!',
+          // NOTE: TradingView futures data often requires a paid market data subscription.
+          // This proxy symbol is usually free and tracks spot/CFD nat gas reasonably well for trend context.
+          symbol: 'OANDA:NATGASUSD',
           interval: 'D',
           timezone: 'Etc/UTC',
           theme: 'light',
@@ -577,7 +579,7 @@
       if(thesis) lines.push(`Thesis: ${thesis}`);
       if(plan) lines.push(`Plan: ${plan}`);
       if(notes) lines.push(`Notes: ${notes}`);
-      lines.push(`Charts: AMEX:UNG + NYMEX:NG1! (TradingView)`);
+      lines.push(`Charts: AMEX:UNG + OANDA:NATGASUSD (TradingView)`);
 
       navigator.clipboard.writeText(lines.join('\n'));
     }
