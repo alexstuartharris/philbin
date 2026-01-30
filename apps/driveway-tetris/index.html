@@ -244,16 +244,10 @@
       </section>
 
       <section class="grid">
-        <div class="card zone" data-zone="driveway_a">
-          <h3>Driveway Spot A</h3>
-          <p class="hint">One of the two driveway spots.</p>
-          <div class="tokens" id="zone-driveway_a"></div>
-        </div>
-
-        <div class="card zone" data-zone="driveway_b">
-          <h3>Driveway Spot B</h3>
-          <p class="hint">The other driveway spot.</p>
-          <div class="tokens" id="zone-driveway_b"></div>
+        <div class="card zone" data-zone="driveway">
+          <h3>Driveway (2 spots)</h3>
+          <p class="hint">Capacity: 2 cars max.</p>
+          <div class="tokens" id="zone-driveway"></div>
         </div>
 
         <div class="card zone" data-zone="across">
@@ -292,7 +286,8 @@
       { id: 'resident_ashley', label: 'Ashley', color: '#d4af37', kind: 'resident' },
     ];
 
-    const ZONES = ['driveway_a','driveway_b','across','block','away'];
+    const ZONES = ['driveway','across','block','away'];
+    const DRIVEWAY_CAPACITY = 2;
 
     const els = {
       houseId: document.getElementById('houseId'),
@@ -343,9 +338,9 @@
     }
 
     function computeAvailability(){
-      const used = new Set(state.cars.filter(c => c.zone === 'driveway_a' || c.zone === 'driveway_b').map(c => c.zone));
-      const open = 2 - used.size;
-      return { open, used: used.size };
+      const used = state.cars.filter(c => c.zone === 'driveway').length;
+      const open = Math.max(0, DRIVEWAY_CAPACITY - used);
+      return { open, used };
     }
 
     function render(){
@@ -441,7 +436,7 @@
       let kind = 'ok';
       if(a.open === 0) kind = 'bad';
       else if(a.open === 1) kind = 'warn';
-      setPill(els.availabilityDot, els.availabilityText, kind, `${a.open}/2 driveway spots open`);
+      setPill(els.availabilityDot, els.availabilityText, kind, `${a.open}/${DRIVEWAY_CAPACITY} driveway spots open`);
 
       // Sync pill
       if(syncMode === 'supabase') {
@@ -463,7 +458,7 @@
       if(!state.cars || !state.cars.length){
         state.cars = DEFAULT_RESIDENTS.map((c, idx) => ({
           ...c,
-          zone: idx === 0 ? 'driveway_a' : 'away',
+          zone: idx === 0 ? 'driveway' : 'away',
           updatedAt: nowIso(),
           updatedBy: '',
           note: ''
@@ -572,8 +567,8 @@
       await client.from('driveway_states').upsert({ house_id: house, state });
     }
 
-    function drivewayOccupied(zone, carId){
-      return !!state.cars.find(c => c.id !== carId && c.zone === zone);
+    function drivewayCount(exceptCarId = null){
+      return state.cars.filter(c => c.zone === 'driveway' && c.id !== exceptCarId).length;
     }
 
     async function moveCar(carId, zone, opts = { allowSwap: true }){
@@ -587,23 +582,21 @@
       const who = els.displayName.value.trim();
       const prev = (state.cars.find(c => c.id === carId) || {}).zone || 'away';
 
-      // Enforce: max 1 car per driveway spot.
-      // Drag moves can swap; tap moves should NOT bump a car out of a driveway spot.
-      if(zone === 'driveway_a' || zone === 'driveway_b') {
-        const occupied = drivewayOccupied(zone, carId);
-        if(occupied) {
+      // Enforce: max N cars in driveway.
+      // Drag moves can swap/bump one car out; tap moves should NOT bump cars out.
+      if(zone === 'driveway') {
+        const count = drivewayCount(carId);
+        if(count >= DRIVEWAY_CAPACITY) {
           if(!opts.allowSwap) {
             // Can't move here; keep state unchanged.
             return;
           }
-          const occupant = state.cars.find(c => c.id !== carId && c.zone === zone);
-          if(occupant) {
-            state.cars = state.cars.map(c => {
-              if(c.id === occupant.id) {
-                return { ...c, zone: prev, updatedAt: nowIso(), updatedBy: who };
-              }
-              return c;
-            });
+          // Choose a car to bump out of the driveway (oldest updatedAt; stable-ish).
+          const occupants = state.cars.filter(c => c.id !== carId && c.zone === 'driveway');
+          occupants.sort((a,b) => String(a.updatedAt || '').localeCompare(String(b.updatedAt || '')));
+          const bump = occupants[0];
+          if(bump) {
+            state.cars = state.cars.map(c => c.id === bump.id ? ({ ...c, zone: prev, updatedAt: nowIso(), updatedBy: who }) : c);
           }
         }
       }
@@ -615,10 +608,11 @@
 
     function nextZoneForTap(currentZone, carId){
       const start = Math.max(0, ZONES.indexOf(currentZone));
-      // Try each zone in order after the current one, skipping occupied driveways.
+      // Try each zone in order after the current one.
+      // For driveway: only allow if there's space (no bumping on tap).
       for(let step=1; step<=ZONES.length; step++){
         const z = ZONES[(start + step) % ZONES.length];
-        if((z === 'driveway_a' || z === 'driveway_b') && drivewayOccupied(z, carId)) continue;
+        if(z === 'driveway' && drivewayCount(carId) >= DRIVEWAY_CAPACITY) continue;
         return z;
       }
       return currentZone;
