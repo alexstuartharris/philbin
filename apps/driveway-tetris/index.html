@@ -203,7 +203,6 @@
           <div class="row" style="justify-content: space-between;">
             <div class="row">
               <span class="pill" id="availabilityPill"><span class="dot" id="availabilityDot"></span><span id="availabilityText">Loading…</span></span>
-              <span class="pill" id="lockPill"><span class="dot" id="lockDot"></span><span id="lockText">Lock: …</span></span>
             </div>
             <div class="row">
               <button id="btnRefresh">Refresh</button>
@@ -218,7 +217,7 @@
           <div class="row" style="margin-top: 12px; align-items: flex-start;">
             <div style="display:flex; flex-direction:column; gap:6px;">
               <input id="passcode" placeholder="Passcode" inputmode="numeric" style="width: 160px;" />
-              <div id="passcodeHint" class="sub" style="margin: 0 0 0 2px; font-size: 12px;">Enter code to unlock</div>
+              <div id="passcodeHint" class="sub" style="margin: 0 0 0 2px; font-size: 11px;">Enter code to unlock</div>
             </div>
           </div>
 
@@ -349,8 +348,6 @@
       syncText: document.getElementById('syncText'),
       syncDot: document.getElementById('syncDot'),
       guestCount: document.getElementById('guestCount'),
-      lockText: document.getElementById('lockText'),
-      lockDot: document.getElementById('lockDot'),
       passcodeHint: document.getElementById('passcodeHint'),
       debug: document.getElementById('debug'),
     };
@@ -530,12 +527,6 @@
     function renderLock(){
       const code = (els.passcode.value || '').trim();
       const unlocked = isUnlocked();
-
-      if(unlocked) {
-        setPill(els.lockDot, els.lockText, 'ok', 'Lock: unlocked');
-      } else {
-        setPill(els.lockDot, els.lockText, 'bad', 'Lock: passcode required');
-      }
 
       // Passcode input feedback
       els.passcode.classList.remove('ok','bad');
