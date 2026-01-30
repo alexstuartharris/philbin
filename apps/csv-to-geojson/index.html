@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CSV → GeoJSON (Points)</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f4ef;
+        --panel: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #5c5c5c;
+        --accent: #2451ff;
+        --accent-soft: rgba(36, 81, 255, 0.1);
+        --danger: #b42318;
+        --border: #e3dfd8;
+        --shadow: 0 10px 35px rgba(19, 15, 10, 0.12);
+        --radius: 18px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+          radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+          var(--bg);
+      }
+
+      header {
+        padding: 42px 20px 18px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+        margin: 0 0 10px;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 70ch;
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px 64px;
+        display: grid;
+        gap: 18px;
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: start;
+      }
+
+      @media (max-width: 980px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+
+      h2 {
+        font-size: 1.15rem;
+        margin: 0 0 10px;
+      }
+
+      label {
+        display: block;
+        font-weight: 650;
+        margin: 0 0 6px;
+      }
+
+      input[type="file"], select, input[type="text"], input[type="number"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #fff;
+        font: inherit;
+      }
+
+      .row {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @media (max-width: 620px) {
+        .row { grid-template-columns: 1fr; }
+      }
+
+      .small {
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin: 6px 0 0;
+        line-height: 1.45;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-weight: 700;
+        cursor: pointer;
+        background: var(--accent);
+        color: white;
+      }
+
+      button.secondary {
+        background: transparent;
+        color: var(--accent);
+        border: 1px solid var(--border);
+      }
+
+      button.danger {
+        background: #fff;
+        color: var(--danger);
+        border: 1px solid rgba(180, 35, 24, 0.25);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .drop {
+        border: 2px dashed var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.55);
+      }
+
+      .drop.drag {
+        border-color: rgba(36, 81, 255, 0.55);
+        background: rgba(36, 81, 255, 0.06);
+      }
+
+      pre {
+        background: #111;
+        color: #f6f6f6;
+        border-radius: 14px;
+        padding: 14px;
+        overflow: auto;
+        max-height: 320px;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.45;
+        margin: 0;
+      }
+
+      .kpi {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .pill {
+        background: rgba(0,0,0,0.04);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 10px 12px;
+      }
+
+      .pill .n {
+        font-family: var(--mono);
+        font-weight: 800;
+        font-size: 1.1rem;
+      }
+
+      .pill .t {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-top: 4px;
+      }
+
+      .warn {
+        border-left: 3px solid rgba(180, 35, 24, 0.55);
+        padding: 10px 12px;
+        background: rgba(180, 35, 24, 0.06);
+        border-radius: 14px;
+        margin-top: 12px;
+        color: #3a1411;
+      }
+
+      .footer {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      a { color: var(--accent); font-weight: 650; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      .mono { font-family: var(--mono); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>CSV → GeoJSON (Points)</h1>
+      <p class="subtitle">
+        Convert a CSV with latitude/longitude columns into a GeoJSON FeatureCollection.
+        Runs entirely in your browser (static, GitHub Pages friendly).
+      </p>
+    </header>
+
+    <main>
+      <section class="card grid" aria-label="Converter">
+        <div>
+          <h2>1) Choose a CSV</h2>
+
+          <div id="drop" class="drop" role="button" tabindex="0" aria-label="Drop CSV here">
+            <label for="file">Upload file</label>
+            <input id="file" type="file" accept=".csv,text/csv" />
+            <p class="small">
+              Tip: you can also drag & drop a <span class="mono">.csv</span> onto this box.
+            </p>
+          </div>
+
+          <div class="row" style="margin-top: 14px;">
+            <div>
+              <label for="latCol">Latitude column</label>
+              <select id="latCol" disabled></select>
+              <p class="small">Examples: <span class="mono">lat</span>, <span class="mono">latitude</span>, <span class="mono">y</span></p>
+            </div>
+            <div>
+              <label for="lonCol">Longitude column</label>
+              <select id="lonCol" disabled></select>
+              <p class="small">Examples: <span class="mono">lon</span>, <span class="mono">lng</span>, <span class="mono">longitude</span>, <span class="mono">x</span></p>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 10px;">
+            <div>
+              <label for="idCol">ID/name column (optional)</label>
+              <select id="idCol" disabled>
+                <option value="">(none)</option>
+              </select>
+              <p class="small">If set, copied into each feature's <span class="mono">properties.name</span>.</p>
+            </div>
+            <div>
+              <label for="strict">Mode</label>
+              <select id="strict" disabled>
+                <option value="lenient">Lenient (skip bad rows)</option>
+                <option value="strict">Strict (fail on first bad row)</option>
+              </select>
+              <p class="small">Lenient is usually better for field data exports.</p>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 10px;">
+            <div>
+              <label for="outName">Output filename</label>
+              <input id="outName" type="text" value="points.geojson" disabled />
+              <p class="small">Downloaded as a standard GeoJSON file.</p>
+            </div>
+            <div>
+              <label for="precision">Coordinate precision</label>
+              <input id="precision" type="number" min="0" max="12" step="1" value="6" disabled />
+              <p class="small">Rounding can reduce file size (default: 6 decimals).</p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="convert" disabled>Convert →</button>
+            <button id="download" class="secondary" disabled>Download GeoJSON</button>
+            <button id="copy" class="secondary" disabled>Copy GeoJSON</button>
+            <button id="reset" class="danger" disabled>Reset</button>
+          </div>
+
+          <div id="messages"></div>
+
+          <div class="kpi" aria-label="Stats">
+            <div class="pill"><div class="n" id="rows">—</div><div class="t">Rows read</div></div>
+            <div class="pill"><div class="n" id="kept">—</div><div class="t">Features kept</div></div>
+            <div class="pill"><div class="n" id="skipped">—</div><div class="t">Rows skipped</div></div>
+          </div>
+
+          <div class="footer">
+            Notes: output CRS is assumed WGS84 (<span class="mono">EPSG:4326</span>).
+            If your CSV is in UTM / local projection, reproject first (e.g., QGIS).
+          </div>
+        </div>
+
+        <div>
+          <h2>2) Preview output</h2>
+          <p class="small" style="margin-top: -2px;">
+            First 2000 characters shown. Use Download/Copy for the full file.
+          </p>
+          <pre id="preview" aria-label="GeoJSON preview">Upload a CSV to begin…</pre>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Help">
+        <h2>What counts as a valid point?</h2>
+        <ul class="small">
+          <li>Lat ∈ [-90, 90], Lon ∈ [-180, 180]</li>
+          <li>Numbers can be plain or quoted (e.g., <span class="mono">"-123.456"</span>)</li>
+          <li>All other columns become <span class="mono">properties</span> (strings/numbers/bools when obvious)</li>
+        </ul>
+        <p class="small">
+          Back to <a href="../">apps index</a>.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      const el = (id) => document.getElementById(id);
+
+      const fileEl = el('file');
+      const dropEl = el('drop');
+      const latColEl = el('latCol');
+      const lonColEl = el('lonCol');
+      const idColEl = el('idCol');
+      const strictEl = el('strict');
+      const outNameEl = el('outName');
+      const precisionEl = el('precision');
+      const convertBtn = el('convert');
+      const downloadBtn = el('download');
+      const copyBtn = el('copy');
+      const resetBtn = el('reset');
+      const previewEl = el('preview');
+      const messagesEl = el('messages');
+
+      const rowsEl = el('rows');
+      const keptEl = el('kept');
+      const skippedEl = el('skipped');
+
+      let parsed = null; // { header: string[], rows: object[] }
+      let geojsonText = '';
+
+      function setMsg(kind, text) {
+        messagesEl.innerHTML = '';
+        if (!text) return;
+        const div = document.createElement('div');
+        div.className = 'warn';
+        div.style.borderLeftColor = kind === 'error' ? 'rgba(180, 35, 24, 0.65)' : 'rgba(36, 81, 255, 0.55)';
+        div.style.background = kind === 'error' ? 'rgba(180, 35, 24, 0.08)' : 'rgba(36, 81, 255, 0.06)';
+        div.textContent = text;
+        messagesEl.appendChild(div);
+      }
+
+      function enableControls(enabled) {
+        [latColEl, lonColEl, idColEl, strictEl, outNameEl, precisionEl, convertBtn, resetBtn].forEach((x) => (x.disabled = !enabled));
+        downloadBtn.disabled = true;
+        copyBtn.disabled = true;
+      }
+
+      function resetAll() {
+        parsed = null;
+        geojsonText = '';
+        fileEl.value = '';
+        latColEl.innerHTML = '';
+        lonColEl.innerHTML = '';
+        idColEl.innerHTML = '<option value="">(none)</option>';
+        previewEl.textContent = 'Upload a CSV to begin…';
+        setMsg('', '');
+        enableControls(false);
+        rowsEl.textContent = '—';
+        keptEl.textContent = '—';
+        skippedEl.textContent = '—';
+      }
+
+      function guessColumn(header, candidates) {
+        const lower = header.map((h) => String(h).trim().toLowerCase());
+        for (const cand of candidates) {
+          const idx = lower.indexOf(cand);
+          if (idx >= 0) return header[idx];
+        }
+        // fuzzy contains
+        for (const cand of candidates) {
+          const idx = lower.findIndex((h) => h.replace(/[^a-z0-9]/g,'').includes(cand.replace(/[^a-z0-9]/g,'')));
+          if (idx >= 0) return header[idx];
+        }
+        return '';
+      }
+
+      // Minimal CSV parser: handles commas, quotes, CRLF/LF.
+      function parseCSV(text) {
+        const rows = [];
+        let row = [];
+        let field = '';
+        let inQuotes = false;
+
+        function pushField() {
+          row.push(field);
+          field = '';
+        }
+
+        function pushRow() {
+          // avoid pushing completely empty trailing line
+          if (row.length === 1 && row[0] === '') {
+            row = [];
+            return;
+          }
+          rows.push(row);
+          row = [];
+        }
+
+        for (let i = 0; i < text.length; i++) {
+          const c = text[i];
+          const next = text[i + 1];
+
+          if (inQuotes) {
+            if (c === '"' && next === '"') {
+              field += '"';
+              i++;
+            } else if (c === '"') {
+              inQuotes = false;
+            } else {
+              field += c;
+            }
+          } else {
+            if (c === '"') {
+              inQuotes = true;
+            } else if (c === ',') {
+              pushField();
+            } else if (c === '\n') {
+              pushField();
+              pushRow();
+            } else if (c === '\r') {
+              // ignore; handle CRLF
+              if (next === '\n') continue;
+              pushField();
+              pushRow();
+            } else {
+              field += c;
+            }
+          }
+        }
+        pushField();
+        pushRow();
+
+        if (rows.length === 0) throw new Error('No CSV rows found.');
+
+        const header = rows[0].map((h) => String(h).trim());
+        if (header.some((h) => !h)) throw new Error('Header row contains empty column names.');
+
+        const out = [];
+        for (let r = 1; r < rows.length; r++) {
+          const vals = rows[r];
+          const obj = {};
+          for (let c = 0; c < header.length; c++) {
+            obj[header[c]] = vals[c] ?? '';
+          }
+          out.push(obj);
+        }
+
+        return { header, rows: out };
+      }
+
+      function coerceValue(v) {
+        if (v === null || v === undefined) return null;
+        const s = String(v).trim();
+        if (s === '') return '';
+
+        const lower = s.toLowerCase();
+        if (lower === 'true') return true;
+        if (lower === 'false') return false;
+        if (lower === 'null') return null;
+
+        // number-ish
+        const n = Number(s);
+        if (Number.isFinite(n) && String(n) !== 'NaN') return n;
+
+        return s;
+      }
+
+      function toNumber(v) {
+        const s = String(v ?? '').trim().replace(/^"|"$/g, '');
+        const n = Number(s);
+        return Number.isFinite(n) ? n : NaN;
+      }
+
+      function round(n, prec) {
+        const p = Math.pow(10, prec);
+        return Math.round(n * p) / p;
+      }
+
+      function buildGeoJSON() {
+        if (!parsed) throw new Error('No CSV loaded.');
+
+        const latKey = latColEl.value;
+        const lonKey = lonColEl.value;
+        const idKey = idColEl.value;
+        const strict = strictEl.value === 'strict';
+        const prec = Math.max(0, Math.min(12, Number(precisionEl.value || 6)));
+
+        if (!latKey || !lonKey) throw new Error('Choose latitude and longitude columns.');
+
+        let kept = 0;
+        let skipped = 0;
+        const features = [];
+
+        for (let i = 0; i < parsed.rows.length; i++) {
+          const r = parsed.rows[i];
+          const lat = toNumber(r[latKey]);
+          const lon = toNumber(r[lonKey]);
+
+          const ok = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+          if (!ok) {
+            skipped++;
+            if (strict) {
+              throw new Error(`Invalid coordinate on data row ${i + 2} (lat=${r[latKey]}, lon=${r[lonKey]}).`);
+            }
+            continue;
+          }
+
+          const props = {};
+          for (const k of parsed.header) {
+            if (k === latKey || k === lonKey) continue;
+            const v = coerceValue(r[k]);
+            props[k] = v;
+          }
+
+          if (idKey) {
+            const nameVal = String(r[idKey] ?? '').trim();
+            if (nameVal) props.name = nameVal;
+          }
+
+          features.push({
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [round(lon, prec), round(lat, prec)] },
+            properties: props,
+          });
+          kept++;
+        }
+
+        return { geojson: { type: 'FeatureCollection', features }, stats: { rows: parsed.rows.length, kept, skipped } };
+      }
+
+      function setHeaderOptions(header) {
+        const opts = header.map((h) => `<option value="${escapeHtml(h)}">${escapeHtml(h)}</option>`).join('');
+        latColEl.innerHTML = opts;
+        lonColEl.innerHTML = opts;
+        idColEl.innerHTML = '<option value="">(none)</option>' + opts;
+
+        const guessLat = guessColumn(header, ['lat', 'latitude', 'y', 'northing']);
+        const guessLon = guessColumn(header, ['lon', 'lng', 'long', 'longitude', 'x', 'easting']);
+        const guessId = guessColumn(header, ['name', 'site', 'station', 'id', 'site_id', 'station_id']);
+
+        if (guessLat) latColEl.value = guessLat;
+        if (guessLon) lonColEl.value = guessLon;
+        if (guessId) idColEl.value = guessId;
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
+
+      async function readFile(file) {
+        return await file.text();
+      }
+
+      async function handleFile(file) {
+        try {
+          setMsg('', '');
+          previewEl.textContent = 'Parsing…';
+          enableControls(false);
+
+          const text = await readFile(file);
+          parsed = parseCSV(text);
+
+          setHeaderOptions(parsed.header);
+          enableControls(true);
+
+          rowsEl.textContent = String(parsed.rows.length);
+          keptEl.textContent = '—';
+          skippedEl.textContent = '—';
+
+          const base = (file.name || 'points.csv').replace(/\.[^.]+$/, '');
+          outNameEl.value = base + '.geojson';
+          previewEl.textContent = 'Ready. Click Convert →';
+        } catch (err) {
+          parsed = null;
+          enableControls(false);
+          previewEl.textContent = 'Upload a CSV to begin…';
+          setMsg('error', err?.message || String(err));
+        }
+      }
+
+      function downloadText(filename, text) {
+        const blob = new Blob([text], { type: 'application/geo+json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename || 'points.geojson';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      fileEl.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (file) await handleFile(file);
+      });
+
+      convertBtn.addEventListener('click', () => {
+        try {
+          setMsg('', '');
+          const { geojson, stats } = buildGeoJSON();
+          geojsonText = JSON.stringify(geojson, null, 2);
+          previewEl.textContent = geojsonText.slice(0, 2000) + (geojsonText.length > 2000 ? '\n\n… (truncated preview)' : '');
+
+          rowsEl.textContent = String(stats.rows);
+          keptEl.textContent = String(stats.kept);
+          skippedEl.textContent = String(stats.skipped);
+
+          downloadBtn.disabled = false;
+          copyBtn.disabled = false;
+        } catch (err) {
+          geojsonText = '';
+          downloadBtn.disabled = true;
+          copyBtn.disabled = true;
+          setMsg('error', err?.message || String(err));
+        }
+      });
+
+      downloadBtn.addEventListener('click', () => {
+        if (!geojsonText) return;
+        const name = (outNameEl.value || 'points.geojson').trim();
+        downloadText(name, geojsonText);
+      });
+
+      copyBtn.addEventListener('click', async () => {
+        if (!geojsonText) return;
+        try {
+          await navigator.clipboard.writeText(geojsonText);
+          setMsg('info', 'Copied GeoJSON to clipboard.');
+          setTimeout(() => setMsg('', ''), 1800);
+        } catch (err) {
+          setMsg('error', 'Could not copy to clipboard in this browser. Use Download instead.');
+        }
+      });
+
+      resetBtn.addEventListener('click', resetAll);
+
+      // Drag/drop
+      function prevent(e) { e.preventDefault(); e.stopPropagation(); }
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((evt) => {
+        dropEl.addEventListener(evt, prevent);
+      });
+
+      dropEl.addEventListener('dragenter', () => dropEl.classList.add('drag'));
+      dropEl.addEventListener('dragover', () => dropEl.classList.add('drag'));
+      dropEl.addEventListener('dragleave', () => dropEl.classList.remove('drag'));
+      dropEl.addEventListener('drop', async (e) => {
+        dropEl.classList.remove('drag');
+        const file = e.dataTransfer?.files?.[0];
+        if (file) await handleFile(file);
+      });
+
+      dropEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileEl.click();
+        }
+      });
+
+      resetAll();
+    </script>
+  </body>
+</html>
