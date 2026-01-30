@@ -15,6 +15,7 @@ A fun shared “where are the cars?” board.
 - Tap a token on mobile to cycle through zones.
 - Max 1 car per driveway spot (dropping into an occupied driveway spot swaps the other car out).
 - Unlimited guest cars (Add guest).
+- Remove a guest car with the ✕ button.
 - Add a note/ETA to any car with the ✎ button (e.g., "Back ~7pm").
 
 ## Shared mode (Supabase)

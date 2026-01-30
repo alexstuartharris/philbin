@@ -371,8 +371,9 @@
 
         const label = document.createElement('div');
         const note = (car.note || '').trim();
+        const emoji = car.kind === 'guest' ? '🚙' : '🚗';
         label.innerHTML =
-          `<div>${escapeHtml(car.label || 'Car')}</div>` +
+          `<div>${emoji} ${escapeHtml(car.label || 'Car')}</div>` +
           (note ? `<div class="mini">${escapeHtml(note)}</div>` : (car.kind === 'guest' ? `<div class="mini">guest</div>` : `<div class="mini">resident</div>`));
 
         const btn = document.createElement('button');
@@ -389,9 +390,28 @@
           editNote(car.id);
         });
 
+        // Guest delete button
+        let del = null;
+        if(car.kind === 'guest') {
+          del = document.createElement('button');
+          del.textContent = '✕';
+          del.title = 'Remove guest';
+          del.style.marginLeft = '6px';
+          del.style.padding = '6px 8px';
+          del.style.borderRadius = '10px';
+          del.style.fontWeight = '900';
+          del.style.background = 'rgba(255,92,92,.14)';
+          del.style.borderColor = 'rgba(255,92,92,.30)';
+          del.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            deleteGuest(car.id);
+          });
+        }
+
         t.appendChild(c);
         t.appendChild(label);
         t.appendChild(btn);
+        if(del) t.appendChild(del);
 
         t.addEventListener('dragstart', (ev) => {
           t.classList.add('dragging');
@@ -606,6 +626,24 @@
       if(next === null) return;
       const who = els.displayName.value.trim();
       state.cars = state.cars.map(c => c.id === carId ? ({ ...c, note: (next || '').trim(), updatedAt: nowIso(), updatedBy: who }) : c);
+      await pushShared();
+      render();
+    }
+
+    async function deleteGuest(carId){
+      if(!isUnlocked()) {
+        alert('Passcode required to remove guests.');
+        renderLock();
+        return;
+      }
+      const car = state.cars.find(c => c.id === carId);
+      if(!car) return;
+      if(car.kind !== 'guest') return;
+      if(!confirm(`Remove guest "${car.label}"?`)) return;
+      const who = els.displayName.value.trim();
+      state.cars = state.cars.filter(c => c.id !== carId);
+      // Touch updatedAt on remaining cars so changes propagate consistently.
+      state.cars = state.cars.map(c => ({...c, updatedAt: nowIso(), updatedBy: who }));
       await pushShared();
       render();
     }
