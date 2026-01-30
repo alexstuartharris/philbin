@@ -77,6 +77,9 @@
       font-size: 13px;
       color: var(--text);
     }
+    /* Make the driveway availability the most scannable info */
+    #availabilityPill { padding: 10px 14px; }
+    #availabilityText { font-size: 18px; font-weight: 900; letter-spacing: -0.01em; }
     .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
     .dot.ok { background: var(--ok); }
     .dot.warn { background: var(--warn); }
@@ -190,7 +193,6 @@
           <div class="row" style="justify-content: space-between;">
             <div class="row">
               <span class="pill" id="availabilityPill"><span class="dot" id="availabilityDot"></span><span id="availabilityText">Loading…</span></span>
-              <span class="pill" id="syncPill"><span class="dot" id="syncDot"></span><span id="syncText">Sync: …</span></span>
               <span class="pill" id="lockPill"><span class="dot" id="lockDot"></span><span id="lockText">Lock: …</span></span>
             </div>
             <div class="row">
@@ -199,9 +201,12 @@
             </div>
           </div>
 
+          <div class="row" style="margin-top: 10px; justify-content: flex-start;">
+            <span class="pill" id="syncPill"><span class="dot" id="syncDot"></span><span id="syncText">Sync: …</span></span>
+          </div>
+
           <div class="row" style="margin-top: 12px;">
             <input id="houseId" placeholder="House code (shared)" style="flex: 1; min-width: 200px;" />
-            <input id="displayName" placeholder="Your name (optional)" style="flex: 1; min-width: 180px;" />
             <input id="passcode" placeholder="Passcode" inputmode="numeric" style="width: 140px;" />
             <button id="btnJoin">Join / Save</button>
           </div>
@@ -227,10 +232,19 @@
           <details style="margin-top: 10px;">
             <summary>Supabase setup (for real sharing)</summary>
             <div class="sub" style="margin-top: 8px;">
-              This app can run in local-only demo mode. For shared state, set <code>SUPABASE_URL</code> + <code>SUPABASE_ANON_KEY</code> in <code>config.js</code>.
+              Optional: enter a Supabase URL + anon key to enable shared syncing for your house code.
+              Stored locally in your browser (not sent anywhere except Supabase).
             </div>
+
+            <div class="row" style="margin-top: 10px;">
+              <input id="sbUrl" placeholder="Supabase URL (https://...supabase.co)" style="flex: 1; min-width: 260px;" />
+              <input id="sbAnon" placeholder="Supabase anon key" style="flex: 1; min-width: 260px;" />
+              <button id="btnSaveSupabase">Save</button>
+              <button id="btnClearSupabase" class="secondary">Clear</button>
+            </div>
+
             <div class="sub" style="margin-top: 8px;">
-              We’ll wire this up after the UI is solid.
+              Requires a table named <code>driveway_states</code> (see README / instructions).
             </div>
           </details>
 
@@ -291,8 +305,12 @@
 
     const els = {
       houseId: document.getElementById('houseId'),
-      displayName: document.getElementById('displayName'),
+      // displayName removed (no per-user identity needed)
       passcode: document.getElementById('passcode'),
+      sbUrl: document.getElementById('sbUrl'),
+      sbAnon: document.getElementById('sbAnon'),
+      btnSaveSupabase: document.getElementById('btnSaveSupabase'),
+      btnClearSupabase: document.getElementById('btnClearSupabase'),
       btnJoin: document.getElementById('btnJoin'),
       btnRefresh: document.getElementById('btnRefresh'),
       btnCopyLink: document.getElementById('btnCopyLink'),
@@ -442,7 +460,7 @@
       if(syncMode === 'supabase') {
         setPill(els.syncDot, els.syncText, 'ok', `Sync: shared (${state.houseId})`);
       } else {
-        setPill(els.syncDot, els.syncText, 'warn', 'Sync: demo (local only)');
+        setPill(els.syncDot, els.syncText, 'warn', 'Sync: local only (no Supabase)');
       }
 
       renderLock();
@@ -487,19 +505,29 @@
       local.save({
         ...saved,
         houseId: state.houseId,
-        displayName: els.displayName.value.trim(),
         passcode: (els.passcode.value || '').trim(),
+        supabaseUrl: (els.sbUrl?.value || saved.supabaseUrl || '').trim(),
+        supabaseAnonKey: (els.sbAnon?.value || saved.supabaseAnonKey || '').trim(),
         state: state,
       });
     }
 
+    function getSupabaseCreds(){
+      const saved = local.load();
+      const url = (els.sbUrl?.value || saved.supabaseUrl || window.DRIVEWAY_TETRIS?.SUPABASE_URL || '').trim();
+      const anon = (els.sbAnon?.value || saved.supabaseAnonKey || window.DRIVEWAY_TETRIS?.SUPABASE_ANON_KEY || '').trim();
+      return { url, anon };
+    }
+
     async function initSupabase(){
-      if(!window.DRIVEWAY_TETRIS || !DRIVEWAY_TETRIS.SUPABASE_URL || !DRIVEWAY_TETRIS.SUPABASE_ANON_KEY) {
+      const { url, anon } = getSupabaseCreds();
+      if(!url || !anon) {
         syncMode = 'demo';
+        client = null;
         return false;
       }
 
-      client = window.supabase.createClient(DRIVEWAY_TETRIS.SUPABASE_URL, DRIVEWAY_TETRIS.SUPABASE_ANON_KEY);
+      client = window.supabase.createClient(url, anon);
       syncMode = 'supabase';
       return true;
     }
@@ -579,7 +607,7 @@
         return;
       }
 
-      const who = els.displayName.value.trim();
+      const who = '';
       const prev = (state.cars.find(c => c.id === carId) || {}).zone || 'away';
 
       // Enforce: max N cars in driveway.
@@ -629,7 +657,7 @@
       const id = 'guest_' + Math.random().toString(16).slice(2);
       const colors = ['#ff7aa2','#86b7ff','#35d07f','#ffcc66','#c28cff','#7ee7ff'];
       const color = colors[Math.floor(Math.random()*colors.length)];
-      const who = els.displayName.value.trim();
+      const who = '';
       state.cars.push({ id, label: label.trim() || 'Guest', color, kind: 'guest', zone: 'away', updatedAt: nowIso(), updatedBy: who, note: '' });
       await pushShared();
       render();
@@ -646,7 +674,7 @@
       const current = (car.note || '').trim();
       const next = prompt('Note / ETA (e.g., "Back ~7pm" or "Gone overnight")', current);
       if(next === null) return;
-      const who = els.displayName.value.trim();
+      const who = '';
       state.cars = state.cars.map(c => c.id === carId ? ({ ...c, note: (next || '').trim(), updatedAt: nowIso(), updatedBy: who }) : c);
       await pushShared();
       render();
@@ -662,7 +690,7 @@
       if(!car) return;
       if(car.kind !== 'guest') return;
       if(!confirm(`Remove guest "${car.label}"?`)) return;
-      const who = els.displayName.value.trim();
+      const who = '';
       state.cars = state.cars.filter(c => c.id !== carId);
       // Touch updatedAt on remaining cars so changes propagate consistently.
       state.cars = state.cars.map(c => ({...c, updatedAt: nowIso(), updatedBy: who }));
@@ -710,8 +738,12 @@
       const saved = local.load();
       const house = initialHouse || saved.houseId || randomHouse();
       els.houseId.value = house;
-      els.displayName.value = saved.displayName || '';
       els.passcode.value = saved.passcode || '';
+
+      // Supabase creds (optional)
+      els.sbUrl.value = saved.supabaseUrl || window.DRIVEWAY_TETRIS?.SUPABASE_URL || '';
+      els.sbAnon.value = saved.supabaseAnonKey || window.DRIVEWAY_TETRIS?.SUPABASE_ANON_KEY || '';
+
       els.passcode.addEventListener('input', () => { saveLocal(); renderLock(); });
 
       state.houseId = sanitizeHouse(house);
@@ -727,6 +759,25 @@
         els.houseId.value = state.houseId;
         saveLocal();
         await initSupabase();
+        await loadShared();
+      };
+
+      els.btnSaveSupabase.onclick = async () => {
+        saveLocal();
+        await initSupabase();
+        await loadShared();
+      };
+
+      els.btnClearSupabase.onclick = async () => {
+        els.sbUrl.value = '';
+        els.sbAnon.value = '';
+        saveLocal();
+        syncMode = 'demo';
+        if(client && channel) {
+          await client.removeChannel(channel);
+          channel = null;
+        }
+        client = null;
         await loadShared();
       };
 
