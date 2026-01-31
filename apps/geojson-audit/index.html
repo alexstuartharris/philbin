@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GeoJSON Audit</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f4ef;
+        --panel: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #5c5c5c;
+        --accent: #2451ff;
+        --accent-soft: rgba(36, 81, 255, 0.1);
+        --danger: #b42318;
+        --border: #e3dfd8;
+        --shadow: 0 10px 35px rgba(19, 15, 10, 0.12);
+        --radius: 18px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+          radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+          var(--bg);
+      }
+
+      header {
+        padding: 42px 20px 18px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+        margin: 0 0 10px;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 78ch;
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 70px;
+        display: grid;
+        gap: 18px;
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: start;
+      }
+
+      @media (max-width: 980px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      label {
+        display: block;
+        font-weight: 650;
+        margin: 14px 0 8px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 240px;
+        resize: vertical;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.4;
+        background: #fff;
+      }
+
+      input[type="file"] {
+        padding: 8px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        padding: 10px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #fff;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .status {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(36, 81, 255, 0.08);
+        border: 1px solid rgba(36, 81, 255, 0.2);
+        color: #10207a;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .status.error {
+        background: rgba(180, 35, 24, 0.08);
+        border-color: rgba(180, 35, 24, 0.2);
+        color: var(--danger);
+      }
+
+      #map {
+        width: 100%;
+        height: 460px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+
+      .kvs {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .kv {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 10px;
+        align-items: baseline;
+        padding: 8px 10px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
+      @media (max-width: 560px) {
+        .kv { grid-template-columns: 1fr; }
+      }
+
+      .k {
+        font-family: var(--mono);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .v {
+        font-weight: 650;
+      }
+
+      details {
+        margin-top: 14px;
+      }
+
+      summary {
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      .small {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      footer {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 40px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      code {
+        font-family: var(--mono);
+        font-size: 12px;
+        background: rgba(0,0,0,0.06);
+        padding: 1px 6px;
+        border-radius: 8px;
+      }
+
+      a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>GeoJSON Audit</h1>
+      <p class="subtitle">
+        Drop a GeoJSON file (or paste JSON) to validate it, preview it on a map, and get quick stats
+        (feature counts, bbox, property keys, length/area estimates). Everything runs locally in your browser.
+      </p>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="row">
+          <input id="file" type="file" accept=".geojson,.json,application/geo+json,application/json" />
+          <button id="loadSample">Load sample</button>
+          <button id="analyze" class="primary">Analyze</button>
+          <button id="download" disabled>Download (pretty)</button>
+          <button id="copyMarkdown" disabled>Copy stats (Markdown)</button>
+          <span id="featurePill" class="pill" style="display:none"></span>
+        </div>
+        <label for="input">GeoJSON (paste)</label>
+        <textarea id="input" spellcheck="false" placeholder='Paste GeoJSON here… e.g. { "type": "FeatureCollection", "features": [...] }'></textarea>
+        <div id="status" class="status" style="display:none"></div>
+      </section>
+
+      <section class="grid">
+        <section class="card">
+          <div id="map"></div>
+          <p class="small" style="margin:10px 2px 0">
+            Tip: if your data is in a projected CRS, reproject to EPSG:4326 (WGS84 lon/lat) before using.
+            Leaflet assumes WGS84.
+          </p>
+        </section>
+
+        <section class="card">
+          <h2 style="margin: 0 0 6px">Stats</h2>
+          <p class="small" style="margin: 0 0 12px">Computed client-side using <code>@turf/turf</code>.</p>
+          <div id="stats" class="kvs"></div>
+
+          <details>
+            <summary>Property keys</summary>
+            <div id="keys" class="small" style="margin-top:10px"></div>
+          </details>
+
+          <details>
+            <summary>Notes / limitations</summary>
+            <ul class="small">
+              <li>Area/length estimates use spherical calculations; good for QA, not survey-grade.</li>
+              <li>For <code>GeometryCollection</code> and nested geometries, counts are best-effort.</li>
+              <li>If you paste huge GeoJSONs (many MB), your browser may struggle.</li>
+            </ul>
+          </details>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      Built for <a href="https://alexstuartharris.github.io/philbin/">philbin</a>. Source is static HTML + JS.
+    </footer>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+
+      const fileEl = $("file");
+      const inputEl = $("input");
+      const statusEl = $("status");
+      const analyzeBtn = $("analyze");
+      const downloadBtn = $("download");
+      const copyMarkdownBtn = $("copyMarkdown");
+      const loadSampleBtn = $("loadSample");
+      const statsEl = $("stats");
+      const keysEl = $("keys");
+      const featurePill = $("featurePill");
+
+      const map = L.map("map", { zoomControl: true });
+      const base = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
+      map.setView([49.7, -123.15], 9);
+
+      let layer = null;
+      let lastGeojson = null;
+
+      function setStatus(msg, kind = "info") {
+        statusEl.style.display = "block";
+        statusEl.classList.toggle("error", kind === "error");
+        statusEl.textContent = msg;
+      }
+
+      function clearStatus() {
+        statusEl.style.display = "none";
+        statusEl.textContent = "";
+        statusEl.classList.remove("error");
+      }
+
+      function humanNumber(n, digits = 2) {
+        if (!Number.isFinite(n)) return "—";
+        const abs = Math.abs(n);
+        if (abs >= 1e9) return (n / 1e9).toFixed(digits) + "B";
+        if (abs >= 1e6) return (n / 1e6).toFixed(digits) + "M";
+        if (abs >= 1e3) return (n / 1e3).toFixed(digits) + "k";
+        return n.toFixed(digits);
+      }
+
+      function round(n, digits = 6) {
+        if (!Number.isFinite(n)) return n;
+        const f = Math.pow(10, digits);
+        return Math.round(n * f) / f;
+      }
+
+      function asFeatureCollection(obj) {
+        if (!obj || typeof obj !== "object") throw new Error("Not an object");
+
+        if (obj.type === "FeatureCollection" && Array.isArray(obj.features)) return obj;
+        if (obj.type === "Feature") return { type: "FeatureCollection", features: [obj] };
+        if (obj.type && obj.coordinates) {
+          return {
+            type: "FeatureCollection",
+            features: [{ type: "Feature", properties: {}, geometry: obj }],
+          };
+        }
+
+        throw new Error(
+          'Expected GeoJSON FeatureCollection / Feature / Geometry. Got type="' + (obj.type ?? "(missing)") + '"'
+        );
+      }
+
+      function safeBbox(fc) {
+        try {
+          const b = turf.bbox(fc);
+          if (!Array.isArray(b) || b.length !== 4) return null;
+          return b;
+        } catch {
+          return null;
+        }
+      }
+
+      function gatherKeys(fc, limit = 40) {
+        const keys = new Set();
+        let missingProps = 0;
+
+        for (const f of fc.features || []) {
+          if (!f || typeof f !== "object") continue;
+          if (!f.properties || typeof f.properties !== "object") {
+            missingProps++;
+            continue;
+          }
+          for (const k of Object.keys(f.properties)) {
+            keys.add(k);
+            if (keys.size >= limit) break;
+          }
+          if (keys.size >= limit) break;
+        }
+
+        return { keys: Array.from(keys).sort((a, b) => a.localeCompare(b)), missingProps };
+      }
+
+      function geomTypeCounts(fc) {
+        const counts = {};
+        let nullGeoms = 0;
+
+        for (const f of fc.features || []) {
+          const g = f?.geometry;
+          if (!g) {
+            nullGeoms++;
+            continue;
+          }
+          const t = g.type || "(missing)";
+          counts[t] = (counts[t] || 0) + 1;
+        }
+
+        return { counts, nullGeoms };
+      }
+
+      function writeStats(kvs) {
+        statsEl.innerHTML = "";
+        for (const [k, v] of kvs) {
+          const div = document.createElement("div");
+          div.className = "kv";
+          div.innerHTML = `<div class="k">${k}</div><div class="v">${v}</div>`;
+          statsEl.appendChild(div);
+        }
+      }
+
+      function toMarkdown(kvs, keys) {
+        const lines = [];
+        lines.push("## GeoJSON Audit");
+        lines.push("");
+        for (const [k, v] of kvs) {
+          lines.push(`- **${k}**: ${v}`);
+        }
+        if (keys && keys.length) {
+          lines.push("");
+          lines.push("### Property keys (sample)");
+          lines.push(keys.map((k) => `- \\`${k}\\``).join("\n"));
+        }
+        return lines.join("\n");
+      }
+
+      function updateMap(fc) {
+        if (layer) {
+          layer.remove();
+          layer = null;
+        }
+
+        layer = L.geoJSON(fc, {
+          style: { color: "#2451ff", weight: 2, fillOpacity: 0.12 },
+          pointToLayer: (_feature, latlng) => L.circleMarker(latlng, { radius: 5, color: "#2451ff" }),
+        }).addTo(map);
+
+        try {
+          const bounds = layer.getBounds();
+          if (bounds && bounds.isValid()) {
+            map.fitBounds(bounds.pad(0.15));
+          }
+        } catch {
+          // ignore
+        }
+      }
+
+      async function analyze() {
+        clearStatus();
+
+        const raw = inputEl.value.trim();
+        if (!raw) {
+          setStatus("Paste GeoJSON (or choose a file) first.", "error");
+          return;
+        }
+
+        let parsed;
+        try {
+          parsed = JSON.parse(raw);
+        } catch (err) {
+          setStatus("JSON parse error: " + err.message, "error");
+          return;
+        }
+
+        let fc;
+        try {
+          fc = asFeatureCollection(parsed);
+        } catch (err) {
+          setStatus(err.message, "error");
+          return;
+        }
+
+        lastGeojson = fc;
+        downloadBtn.disabled = false;
+        copyMarkdownBtn.disabled = false;
+
+        const featureCount = fc.features?.length ?? 0;
+        featurePill.style.display = "inline-flex";
+        featurePill.textContent = `${featureCount} feature${featureCount === 1 ? "" : "s"}`;
+
+        // counts
+        const { counts, nullGeoms } = geomTypeCounts(fc);
+        const typeSummary = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 6)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(" · ") || "—";
+
+        // bbox
+        const bbox = safeBbox(fc);
+        const bboxStr = bbox
+          ? `[${round(bbox[0], 6)}, ${round(bbox[1], 6)}, ${round(bbox[2], 6)}, ${round(bbox[3], 6)}]`
+          : "—";
+
+        // area / length
+        let areaM2 = 0;
+        let lengthKm = 0;
+        try {
+          // turf.area ignores non-(Multi)Polygon; turf.length expects (Multi)LineString; but it can take FeatureCollection too.
+          areaM2 = turf.area(fc);
+        } catch {}
+        try {
+          lengthKm = turf.length(fc, { units: "kilometers" });
+        } catch {}
+
+        const kvs = [
+          ["features", String(featureCount)],
+          ["geometry types", typeSummary + (nullGeoms ? ` (null: ${nullGeoms})` : "")],
+          ["bbox (WGS84)", bboxStr],
+          ["area (approx)", Number.isFinite(areaM2) ? `${humanNumber(areaM2, 2)} m²` : "—"],
+          ["length (approx)", Number.isFinite(lengthKm) ? `${humanNumber(lengthKm, 3)} km` : "—"],
+        ];
+
+        const { keys, missingProps } = gatherKeys(fc);
+
+        writeStats(kvs);
+
+        keysEl.innerHTML = "";
+        if (!keys.length) {
+          keysEl.textContent = missingProps
+            ? `No properties found (missing/empty properties on ~${missingProps} features).`
+            : "No properties found.";
+        } else {
+          const pre = document.createElement("pre");
+          pre.style.margin = "0";
+          pre.style.fontFamily = "var(--mono)";
+          pre.style.fontSize = "12px";
+          pre.style.whiteSpace = "pre-wrap";
+          pre.textContent = keys.map((k) => `• ${k}`).join("\n") + (missingProps ? `\n\n(plus ~${missingProps} features missing properties)` : "");
+          keysEl.appendChild(pre);
+        }
+
+        updateMap(fc);
+        setStatus("Parsed OK. Stats updated.");
+
+        copyMarkdownBtn.onclick = async () => {
+          const md = toMarkdown(kvs, keys);
+          await navigator.clipboard.writeText(md);
+          setStatus("Copied stats to clipboard.");
+        };
+      }
+
+      analyzeBtn.addEventListener("click", analyze);
+
+      downloadBtn.addEventListener("click", () => {
+        if (!lastGeojson) return;
+        const blob = new Blob([JSON.stringify(lastGeojson, null, 2) + "\n"], { type: "application/geo+json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "audited.geojson";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      loadSampleBtn.addEventListener("click", () => {
+        const sample = {
+          type: "FeatureCollection",
+          features: [
+            {
+              type: "Feature",
+              properties: { name: "Sample line", id: 1 },
+              geometry: {
+                type: "LineString",
+                coordinates: [
+                  [-123.175, 49.662],
+                  [-123.052, 49.745],
+                  [-122.85, 49.81],
+                ],
+              },
+            },
+            {
+              type: "Feature",
+              properties: { name: "Sample point", id: 2 },
+              geometry: { type: "Point", coordinates: [-123.12, 49.76] },
+            },
+          ],
+        };
+        inputEl.value = JSON.stringify(sample, null, 2);
+        clearStatus();
+        downloadBtn.disabled = true;
+        copyMarkdownBtn.disabled = true;
+        featurePill.style.display = "none";
+      });
+
+      fileEl.addEventListener("change", async (e) => {
+        clearStatus();
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          inputEl.value = text;
+          setStatus(`Loaded “${file.name}” (${humanNumber(file.size, 2)} bytes). Click Analyze.`);
+          downloadBtn.disabled = true;
+          copyMarkdownBtn.disabled = true;
+          featurePill.style.display = "none";
+        } catch (err) {
+          setStatus("Failed to read file: " + err.message, "error");
+        }
+      });
+    </script>
+  </body>
+</html>

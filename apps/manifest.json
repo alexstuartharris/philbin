@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-31T05:57:13.183Z",
+  "generatedAt": "2026-01-31T06:32:26.714Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -11,6 +11,10 @@
     },
     {
       "name": "field-kit-planner",
+      "hasIndex": true
+    },
+    {
+      "name": "geojson-audit",
       "hasIndex": true
     },
     {
