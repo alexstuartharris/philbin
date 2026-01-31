@@ -175,6 +175,32 @@
     </section>
 
     <section class="card">
+      <h2>Event timing</h2>
+      <p class="small">
+        Key nat gas catalyst: <b>EIA Weekly Natural Gas Storage Report</b> (typically Thursdays 10:30am ET / 7:30am PT).
+        Use this to avoid getting surprised (or theta’d) right into the print.
+      </p>
+
+      <div class="three" style="margin-top:10px;">
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Next EIA storage report</div>
+          <div class="kpi" id="eiaNext">—</div>
+          <div class="mini" id="eiaCountdown">—</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">2nd-next report</div>
+          <div class="kpi" id="eiaNext2">—</div>
+          <div class="mini" id="eiaCountdown2">—</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Expiry sanity</div>
+          <div class="mini" id="expiryHint">—</div>
+          <div class="mini">Rule of thumb: avoid opening 1–3 week options if a major catalyst hits inside the next 24–48h unless that’s the point.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
       <h2>Pre‑trade checklist (1–3 week options)</h2>
       <div class="warnBox">
         Goal: turn “I feel like it” into a repeatable decision.
@@ -642,6 +668,106 @@
       navigator.clipboard.writeText(lines.join('\n'));
     }
 
+
+    function fmtCountdown(ms){
+      if(ms <= 0) return 'now';
+      const sec = Math.floor(ms/1000);
+      const d = Math.floor(sec/86400);
+      const h = Math.floor((sec%86400)/3600);
+      const m = Math.floor((sec%3600)/60);
+      if(d > 0) return `${d}d ${h}h ${m}m`;
+      if(h > 0) return `${h}h ${m}m`;
+      return `${m}m`;
+    }
+
+    function tzOffsetMinutes(tz, date){
+      const fmt = new Intl.DateTimeFormat('en-US',{
+        timeZone: tz,
+        year:'numeric',month:'2-digit',day:'2-digit',
+        hour:'2-digit',minute:'2-digit',second:'2-digit',
+        hour12:false
+      });
+      const parts = fmt.formatToParts(date);
+      const get = (t) => Number(String(parts.find(p=>p.type===t).value));
+      const y=get('year'), mo=get('month'), da=get('day'), h=get('hour'), mi=get('minute'), se=get('second');
+      const asUtc = Date.UTC(y, mo-1, da, h, mi, se);
+      return (asUtc - date.getTime())/60000;
+    }
+
+    // EIA gas storage report is usually Thu 10:30am ET.
+    function nextEiaReportDates(count=2){
+      const out=[];
+      const tz='America/New_York';
+      const now=new Date();
+
+      for(let add=0; out.length<count && add<45; add++){
+        const d0=new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()+add, 0,0,0));
+        const parts=new Intl.DateTimeFormat('en-US',{timeZone:tz, weekday:'short', year:'numeric', month:'2-digit', day:'2-digit'}).formatToParts(d0);
+        const wd=parts.find(p=>p.type==='weekday')?.value;
+        if(wd !== 'Thu') continue;
+
+        const y=Number(parts.find(p=>p.type==='year').value);
+        const mo=Number(parts.find(p=>p.type==='month').value);
+        const da=Number(parts.find(p=>p.type==='day').value);
+
+        // Represent 10:30 ET as a "local" Date then convert to UTC using offset at that instant.
+        const local = new Date(Date.UTC(y, mo-1, da, 10, 30, 0));
+        const offMin = tzOffsetMinutes(tz, local);
+        const utc = new Date(local.getTime() - offMin*60000);
+
+        if(utc.getTime() > now.getTime()) out.push(utc);
+      }
+      return out;
+    }
+
+    function formatInTz(date, tz){
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: tz,
+        weekday: 'short',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      }).format(date);
+    }
+
+    function updateEventTiming(){
+      const next = nextEiaReportDates(2);
+      const now = new Date();
+      const pt='America/Los_Angeles';
+      const et='America/New_York';
+
+      if(next.length){
+        const n0=next[0];
+        el('eiaNext').textContent = `${formatInTz(n0, et)} ET / ${formatInTz(n0, pt)} PT`;
+        el('eiaCountdown').textContent = 'In ' + fmtCountdown(n0.getTime()-now.getTime());
+      }
+      if(next.length>1){
+        const n1=next[1];
+        el('eiaNext2').textContent = `${formatInTz(n1, et)} ET / ${formatInTz(n1, pt)} PT`;
+        el('eiaCountdown2').textContent = 'In ' + fmtCountdown(n1.getTime()-now.getTime());
+      }
+
+      // Simple expiry sanity: warn if your chosen expiry bucket likely overlaps the next report.
+      const exp = el('expiry')?.value || '10–15';
+      const approxDays = ({'7–10': 9, '10–15': 13, '15–21': 18})[exp] || 13;
+
+      let hint = `Selected expiry bucket: ${exp} (≈${approxDays} days).`;
+      if(next.length){
+        const msToReport = next[0].getTime() - now.getTime();
+        const daysToReport = msToReport / 86400000;
+        if(daysToReport <= 2) {
+          hint += ' Next EIA report is inside 48h: expect volatility (do not get theta’d by waiting).';
+        } else if(daysToReport <= approxDays) {
+          hint += ' Next EIA report occurs before expiry: plan for the print.';
+        } else {
+          hint += ' Next EIA report is after the likely expiry window.';
+        }
+      }
+      el('expiryHint').textContent = hint;
+    }
+
     function boot(){
       const saved = loadLocal();
       el('base').value = saved.base || '65';
@@ -654,6 +780,7 @@
       el('btnRefresh').addEventListener('click', refreshWeather);
       el('base').addEventListener('change', refreshWeather);
       el('climoYears').addEventListener('change', refreshWeather);
+      el('expiry').addEventListener('change', updateEventTiming);
 
       el('btnSave').addEventListener('click', () => {
         saveLocal({
@@ -674,6 +801,8 @@
       });
 
       initTradingView();
+      updateEventTiming();
+      setInterval(updateEventTiming, 60000);
       refreshWeather();
     }
 
