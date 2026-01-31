@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PNW Week Ahead — Vancouver + Seattle</title>
+  <style>
+    :root{
+      color-scheme: light;
+      --bg1:#f7f4ef;
+      --bg2:#eef4ff;
+      --panel:#ffffff;
+      --ink:#161616;
+      --muted:#5a5a5a;
+      --border:#e3dfd8;
+      --accent:#2451ff;
+      --shadow:0 10px 35px rgba(19,15,10,.12);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 18% 0%, #fffaf2 0%, transparent 48%),
+        radial-gradient(circle at 92% 18%, var(--bg2) 0%, transparent 45%),
+        var(--bg1);
+      overflow-x:hidden;
+    }
+
+    header{
+      padding: 34px 18px 14px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1{margin:0 0 8px; font-size: clamp(1.8rem, 3.8vw, 2.6rem); letter-spacing:-.02em;}
+    .sub{margin:0; color:var(--muted); line-height:1.45; max-width: 90ch;}
+
+    main{max-width:1200px; margin:0 auto; padding:0 18px 74px; display:grid; gap:14px;}
+
+    .card{background:var(--panel); border:1px solid var(--border); border-radius: var(--radius); padding:16px; box-shadow: var(--shadow); position:relative; overflow:hidden;}
+
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+
+    button{border:0; border-radius:999px; padding:10px 14px; background: var(--accent); color:#fff; font-weight:900; cursor:pointer;}
+    button.secondary{background:transparent; color:var(--accent); border:1px solid var(--border);} 
+
+    .pill{display:inline-flex; gap:8px; align-items:center; border:1px solid var(--border); border-radius:999px; padding:8px 12px; background:rgba(0,0,0,.03); font-size:13px;}
+    .dot{width:9px;height:9px;border-radius:50%;background:#999;}
+    .dot.ok{background:#1f8b4c;} .dot.warn{background:#c06a00;} .dot.bad{background:#b42318;}
+
+    .grid{display:grid; gap:14px; grid-template-columns: 1fr 1fr; align-items:stretch;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
+
+    h2{margin:0 0 10px; font-size:1.15rem;}
+
+    .kpis{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    .kpi{border:1px solid var(--border); border-radius:16px; padding:10px 12px; background:rgba(0,0,0,.02); min-width: 160px;}
+    .kpi .n{font-weight:950; font-size: 1.2rem; letter-spacing:-.01em;}
+    .kpi .t{color:var(--muted); font-size: .9rem; margin-top:4px;}
+
+    .days{margin-top:12px; display:grid; gap:10px; grid-template-columns: repeat(7, minmax(0,1fr));}
+    @media (max-width: 980px){ .days{grid-template-columns: repeat(2, minmax(0,1fr));} }
+    @media (max-width: 520px){ .days{grid-template-columns: 1fr;} }
+
+    .day{
+      border:1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 10px 12px;
+      background: linear-gradient(180deg, rgba(0,0,0,.01), rgba(0,0,0,.00));
+      position:relative;
+      overflow:hidden;
+    }
+
+    .dow{font-weight:900;}
+    .date{color:var(--muted); font-size:.9rem; margin-top:2px;}
+    .temps{display:flex; gap:10px; align-items:baseline; margin-top:10px;}
+    .hi{font-weight:950; font-size: 1.45rem; letter-spacing:-.02em;}
+    .lo{color:var(--muted); font-weight:850;}
+
+    .wxRow{display:flex; gap:8px; align-items:center; margin-top:8px;}
+    .wxIcon{font-size: 22px;}
+    .wxText{color:var(--muted); font-size:.92rem; line-height:1.2;}
+
+    .rain{margin-top:8px; font-size:.9rem; color:var(--muted);}
+
+    /* Fun visuals: drifting clouds + rain */
+    .sky{
+      position:absolute; inset:-40px -60px auto -60px; height:140px;
+      pointer-events:none;
+      opacity:.55;
+      filter: blur(.2px);
+    }
+    .cloud{
+      position:absolute;
+      top: 24px;
+      width: 120px; height: 42px;
+      background: rgba(255,255,255,.8);
+      border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.06);
+      animation: drift 14s linear infinite;
+    }
+    .cloud:before, .cloud:after{
+      content:"";
+      position:absolute;
+      background: rgba(255,255,255,.85);
+      border-radius: 999px;
+    }
+    .cloud:before{ width: 56px; height: 56px; left: 18px; top: -28px; }
+    .cloud:after{ width: 66px; height: 66px; left: 54px; top: -34px; }
+
+    @keyframes drift {
+      from { transform: translateX(-40px); }
+      to { transform: translateX(520px); }
+    }
+
+    .sun{
+      position:absolute;
+      right: 18px; top: 18px;
+      width: 62px; height: 62px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff7b0 0%, #ffd34e 45%, #ffbe2e 70%, #ffb300 100%);
+      box-shadow: 0 10px 28px rgba(255, 185, 10, .25);
+      opacity:.9;
+    }
+
+    .rainDrops{
+      position:absolute;
+      inset: 72px 10px 10px 10px;
+      pointer-events:none;
+      opacity:.22;
+    }
+    .drop{
+      position:absolute;
+      width: 2px;
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(180deg, rgba(36,81,255,.0), rgba(36,81,255,.9));
+      animation: fall 1.2s linear infinite;
+    }
+    @keyframes fall {
+      from { transform: translateY(-30px); opacity: .0; }
+      15% { opacity: .55; }
+      to { transform: translateY(110px); opacity: .0; }
+    }
+
+    .footer{color:var(--muted); font-size:.92rem;}
+    a{color:var(--accent); font-weight:650; text-decoration:none;} a:hover{text-decoration:underline;}
+
+    .err{border-left:3px solid rgba(180,35,24,.55); padding:10px 12px; background: rgba(180,35,24,.08); border-radius:14px;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PNW Week Ahead</h1>
+    <p class="sub">Vancouver + Seattle forecast for the next 7 days with a little PNW vibe. Data via Open‑Meteo (no key).</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div class="row">
+          <span class="pill"><span id="dot" class="dot"></span><span id="status">Loading…</span></span>
+          <span class="pill"><span class="dot ok"></span><span>Units: °C</span></span>
+        </div>
+        <div class="row">
+          <button id="btnRefresh">Refresh</button>
+          <button id="btnCopy" class="secondary">Copy summary</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card" id="cardVan">
+        <div class="sky" aria-hidden="true">
+          <div class="sun" id="sunVan" style="display:none"></div>
+          <div class="cloud" style="left:-120px; opacity:.65; animation-duration: 16s;"></div>
+          <div class="cloud" style="left:-200px; top:50px; opacity:.55; animation-duration: 20s;"></div>
+        </div>
+        <h2>Vancouver</h2>
+        <div class="kpis">
+          <div class="kpi"><div class="n" id="vanNow">—</div><div class="t">Now</div></div>
+          <div class="kpi"><div class="n" id="vanRain">—</div><div class="t">Total precip (7d)</div></div>
+          <div class="kpi"><div class="n" id="vanRange">—</div><div class="t">High range (7d)</div></div>
+        </div>
+        <div class="days" id="vanDays"></div>
+      </div>
+
+      <div class="card" id="cardSea">
+        <div class="sky" aria-hidden="true">
+          <div class="sun" id="sunSea" style="display:none"></div>
+          <div class="cloud" style="left:-160px; opacity:.65; animation-duration: 17s;"></div>
+          <div class="cloud" style="left:-240px; top:54px; opacity:.55; animation-duration: 22s;"></div>
+        </div>
+        <h2>Seattle</h2>
+        <div class="kpis">
+          <div class="kpi"><div class="n" id="seaNow">—</div><div class="t">Now</div></div>
+          <div class="kpi"><div class="n" id="seaRain">—</div><div class="t">Total precip (7d)</div></div>
+          <div class="kpi"><div class="n" id="seaRange">—</div><div class="t">High range (7d)</div></div>
+        </div>
+        <div class="days" id="seaDays"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="footer">
+        Tip: if you want a “go outside” signal, tell me what threshold you want (e.g., dry + above 10°C).
+        Back to <a href="../">apps index</a>.
+      </div>
+      <div id="err" style="margin-top:10px;"></div>
+    </section>
+  </main>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+
+    const VAN = { name: 'Vancouver', lat: 49.2827, lon: -123.1207 };
+    const SEA = { name: 'Seattle', lat: 47.6062, lon: -122.3321 };
+
+    function setDot(kind){
+      const d = el('dot');
+      d.classList.remove('ok','warn','bad');
+      if(kind) d.classList.add(kind);
+    }
+
+    function fmtDate(iso){
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function fmtDow(iso){
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString(undefined, { weekday: 'short' });
+    }
+
+    function wmoText(code){
+      // https://open-meteo.com/en/docs (weather_code)
+      const c = Number(code);
+      const map = {
+        0: 'Clear',
+        1: 'Mainly clear',
+        2: 'Partly cloudy',
+        3: 'Overcast',
+        45: 'Fog',
+        48: 'Rime fog',
+        51: 'Light drizzle',
+        53: 'Drizzle',
+        55: 'Heavy drizzle',
+        56: 'Freezing drizzle',
+        57: 'Freezing drizzle',
+        61: 'Light rain',
+        63: 'Rain',
+        65: 'Heavy rain',
+        66: 'Freezing rain',
+        67: 'Freezing rain',
+        71: 'Light snow',
+        73: 'Snow',
+        75: 'Heavy snow',
+        77: 'Snow grains',
+        80: 'Rain showers',
+        81: 'Rain showers',
+        82: 'Violent showers',
+        85: 'Snow showers',
+        86: 'Snow showers',
+        95: 'Thunderstorm',
+        96: 'Tstorm + hail',
+        99: 'Tstorm + hail',
+      };
+      return map[c] || ('Code ' + c);
+    }
+
+    function wmoIcon(code){
+      const c = Number(code);
+      if(c === 0) return '☀️';
+      if(c === 1) return '🌤️';
+      if(c === 2) return '⛅';
+      if(c === 3) return '☁️';
+      if(c === 45 || c === 48) return '🌫️';
+      if([51,53,55,56,57].includes(c)) return '🌦️';
+      if([61,63,65,66,67,80,81,82].includes(c)) return '🌧️';
+      if([71,73,75,77,85,86].includes(c)) return '🌨️';
+      if([95,96,99].includes(c)) return '⛈️';
+      return '🌡️';
+    }
+
+    function paintVibe(cardId, daily){
+      // Fun: show sun if at least 3 mostly-clear/clear days; show raindrops if lots of precip.
+      const totalPrecip = daily.precipitation_sum.reduce((a,b)=>a+Number(b||0), 0);
+      const clearDays = daily.weather_code.filter(c => [0,1].includes(Number(c))).length;
+      const sun = el(cardId === 'cardVan' ? 'sunVan' : 'sunSea');
+      if(sun) sun.style.display = (clearDays >= 3 ? 'block' : 'none');
+
+      // Raindrops overlay within each day card based on precip.
+      const dayWrap = el(cardId === 'cardVan' ? 'vanDays' : 'seaDays');
+      [...dayWrap.querySelectorAll('.day')].forEach((d, i) => {
+        const mm = Number(daily.precipitation_sum[i] || 0);
+        const existing = d.querySelector('.rainDrops');
+        if(existing) existing.remove();
+        if(mm < 2) return;
+        const drops = document.createElement('div');
+        drops.className = 'rainDrops';
+        const n = Math.min(24, Math.max(6, Math.round(mm * 1.2)));
+        for(let j=0;j<n;j++){
+          const drop = document.createElement('div');
+          drop.className = 'drop';
+          drop.style.left = (Math.random()*100).toFixed(1) + '%';
+          drop.style.top = (Math.random()*30).toFixed(1) + 'px';
+          drop.style.animationDelay = (Math.random()*1.2).toFixed(2) + 's';
+          drop.style.animationDuration = (0.8 + Math.random()*0.8).toFixed(2) + 's';
+          drops.appendChild(drop);
+        }
+        d.appendChild(drops);
+      });
+
+      return { totalPrecip };
+    }
+
+    async function fetchCity(lat, lon){
+      const url = new URL('https://api.open-meteo.com/v1/forecast');
+      url.searchParams.set('latitude', String(lat));
+      url.searchParams.set('longitude', String(lon));
+      url.searchParams.set('timezone', 'America/Vancouver');
+      url.searchParams.set('current', 'temperature_2m,weather_code');
+      url.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code');
+      url.searchParams.set('forecast_days', '7');
+      const r = await fetch(url.toString());
+      if(!r.ok) throw new Error('Fetch failed: ' + r.status);
+      return await r.json();
+    }
+
+    function renderCity(which, data){
+      const prefix = which === 'van' ? 'van' : 'sea';
+      const current = data.current;
+      const daily = data.daily;
+
+      // now
+      el(prefix + 'Now').textContent = `${Math.round(current.temperature_2m)}°C ${wmoIcon(current.weather_code)}`;
+
+      // totals
+      const totalRain = daily.precipitation_sum.reduce((a,b)=>a+Number(b||0), 0);
+      el(prefix + 'Rain').textContent = `${Math.round(totalRain)} mm`;
+
+      const highs = daily.temperature_2m_max.map(Number);
+      const hiMin = Math.min(...highs);
+      const hiMax = Math.max(...highs);
+      el(prefix + 'Range').textContent = `${Math.round(hiMin)}–${Math.round(hiMax)}°C`;
+
+      const wrap = el(prefix + 'Days');
+      wrap.innerHTML = '';
+
+      for(let i=0;i<daily.time.length;i++){
+        const day = document.createElement('div');
+        day.className = 'day';
+
+        const dow = fmtDow(daily.time[i]);
+        const date = fmtDate(daily.time[i]);
+
+        const hi = Math.round(daily.temperature_2m_max[i]);
+        const lo = Math.round(daily.temperature_2m_min[i]);
+        const mm = Number(daily.precipitation_sum[i] || 0);
+        const code = Number(daily.weather_code[i]);
+
+        day.innerHTML = `
+          <div class="dow">${dow}</div>
+          <div class="date">${date}</div>
+          <div class="temps"><div class="hi">${hi}°</div><div class="lo">/${lo}°</div></div>
+          <div class="wxRow"><div class="wxIcon">${wmoIcon(code)}</div><div class="wxText">${wmoText(code)}</div></div>
+          <div class="rain">Precip: <b>${mm.toFixed(1)} mm</b></div>
+        `;
+
+        wrap.appendChild(day);
+      }
+
+      // fun visuals
+      const cardId = which === 'van' ? 'cardVan' : 'cardSea';
+      paintVibe(cardId, daily);
+
+      return { totalRain };
+    }
+
+    function copySummary(van, sea){
+      const txt = [
+        'PNW Week Ahead',
+        `Vancouver: ${van.now}`,
+        `Seattle: ${sea.now}`,
+        `Vancouver 7d precip: ${van.rain}`,
+        `Seattle 7d precip: ${sea.rain}`,
+      ].join('\n');
+      navigator.clipboard.writeText(txt);
+    }
+
+    async function refresh(){
+      setDot('warn');
+      el('status').textContent = 'Loading forecast…';
+      el('err').innerHTML = '';
+
+      try{
+        const [v, s] = await Promise.all([
+          fetchCity(VAN.lat, VAN.lon),
+          fetchCity(SEA.lat, SEA.lon),
+        ]);
+
+        const vStats = renderCity('van', v);
+        const sStats = renderCity('sea', s);
+
+        setDot('ok');
+        el('status').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+
+        el('btnCopy').onclick = () => {
+          copySummary(
+            { now: el('vanNow').textContent, rain: el('vanRain').textContent },
+            { now: el('seaNow').textContent, rain: el('seaRain').textContent },
+          );
+        };
+
+      } catch(e){
+        setDot('bad');
+        el('status').textContent = 'Error';
+        el('err').innerHTML = `<div class="err">${String(e?.message || e)}</div>`;
+      }
+    }
+
+    el('btnRefresh').addEventListener('click', refresh);
+    refresh();
+  </script>
+</body>
+</html>

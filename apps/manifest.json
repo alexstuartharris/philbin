@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-30T22:38:48.407Z",
+  "generatedAt": "2026-01-31T05:57:13.183Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -11,6 +11,10 @@
     },
     {
       "name": "field-kit-planner",
+      "hasIndex": true
+    },
+    {
+      "name": "pnw-weekly-weather",
       "hasIndex": true
     },
     {
