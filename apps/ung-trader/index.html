@@ -171,6 +171,16 @@
           <summary style="cursor:pointer; font-weight:800;">Show raw weather debug</summary>
           <pre id="weatherRaw">(none)</pre>
         </details>
+
+        <details style="margin-top:12px;">
+          <summary style="cursor:pointer; font-weight:800;">Model history (local)</summary>
+          <p class="small">Saved in your browser. Each refresh stores one snapshot per minute (max ~500). Export to CSV if you want to archive elsewhere.</p>
+          <div class="btnRow" style="margin-top:8px;">
+            <button id="exportHistory" class="secondary">Download history CSV</button>
+            <button id="clearHistory" class="secondary">Clear history</button>
+          </div>
+          <pre id="historyPreview">(none)</pre>
+        </details>
       </div>
     </section>
 
@@ -499,18 +509,20 @@
       return { label, kind };
     }
 
-    const modelKey = 'ung-trader.model-snapshots.v1';
+    const modelKey = 'ung-trader.model-snapshots.v2';
 
     function loadModelSnapshots(){
       try { return JSON.parse(localStorage.getItem(modelKey) || '[]'); } catch { return []; }
     }
 
     function saveModelSnapshots(list){
-      localStorage.setItem(modelKey, JSON.stringify(list.slice(-30)));
+      // keep last ~500 snapshots (~a few weeks if you're refreshing often)
+      localStorage.setItem(modelKey, JSON.stringify(list.slice(-500)));
     }
 
-    function todayKeyUTC(){
-      return new Date().toISOString().slice(0,10);
+    function isoMinuteKey(date){
+      // rounded to minute for idempotency
+      return date.toISOString().slice(0,16) + 'Z';
     }
 
     function setChange(elText, elDot, val){
@@ -564,11 +576,13 @@
         el('southAlert').textContent = sig.label;
 
 
-        // Model change tracking: compare today's ΔHDD14 against last saved snapshot (usually yesterday).
+        // Model history (local-only): store a timestamped snapshot every refresh.
+        // This approximates "model runs" as you check it through the day.
         const snaps = loadModelSnapshots();
-        const latest = snaps.length ? snaps[snaps.length - 1] : null;
-        const prev = (latest && latest.day === todayKeyUTC()) ? (snaps.length > 1 ? snaps[snaps.length - 2] : null) : latest;
+        const nowTs = new Date();
+        const tsKey = isoMinuteKey(nowTs);
 
+        const prev = snaps.length ? snaps[snaps.length - 1] : null;
         const neChg = prev ? (ne.dhdd14 - prev.neDhdd14) : NaN;
         const mwChg = prev ? (mw.dhdd14 - prev.mwDhdd14) : NaN;
         const sChg  = prev ? (s.dhdd14  - prev.sDhdd14)  : NaN;
@@ -577,15 +591,24 @@
         setChange(el('mwChg'), el('mwChgDot'), mwChg);
         setChange(el('sChg'),  el('sChgDot'),  sChg);
 
-        const ref = prev ? ('since ' + prev.day) : 'no prior snapshot yet';
+        const ref = prev ? ('since ' + (prev.ts || prev.day || 'previous')) : 'no prior snapshot yet';
         el('modelChangeNote').textContent = `Model change (ΔΔHDD14): ${ref}. Saved snapshots: ${snaps.length}.`;
 
-        // Auto-save one snapshot per UTC day (first time you refresh that day).
-        const day = todayKeyUTC();
-        if(!snaps.length || snaps[snaps.length - 1].day !== day){
-          snaps.push({ day, baseF, windowKey, neDhdd14: ne.dhdd14, mwDhdd14: mw.dhdd14, sDhdd14: s.dhdd14 });
+        // Idempotent-ish save: only keep one snapshot per minute.
+        if(!snaps.length || snaps[snaps.length - 1].ts !== tsKey){
+          snaps.push({
+            ts: tsKey,
+            baseF,
+            windowKey,
+            neDhdd14: ne.dhdd14,
+            mwDhdd14: mw.dhdd14,
+            sDhdd14: s.dhdd14,
+            southBurst3d: sig.label,
+          });
           saveModelSnapshots(snaps);
         }
+
+        renderHistoryPreview();
 
         setDot(el('weatherDot'), 'ok');
         el('weatherStatus').textContent = `Weather: loaded (GFS + archive normals)`;
@@ -632,6 +655,41 @@
           allow_symbol_change: true,
         });
       }
+    }
+
+
+    function historyToCsv(list){
+      const header = ['ts','baseF','windowKey','neDhdd14','mwDhdd14','sDhdd14','southBurst3d'];
+      const rows = [header.join(',')];
+      for(const r of list){
+        const row = header.map(k => {
+          const v = (r && r[k] !== undefined && r[k] !== null) ? String(r[k]) : '';
+          // CSV escape
+          if(v.includes('"') || v.includes(',') || v.includes('\\n')){
+            return '"' + v.replaceAll('"','""') + '"';
+          }
+          return v;
+        }).join(',');
+        rows.push(row);
+      }
+      return rows.join('\\n') + '\\n';
+    }
+
+    function renderHistoryPreview(){
+      const snaps = loadModelSnapshots();
+      const tail = snaps.slice(-12);
+      if(!tail.length){
+        el('historyPreview').textContent = '(none)';
+        return;
+      }
+      const lines = tail.map(r => {
+        const ts = r.ts || r.day || '';
+        const ne = (r.neDhdd14 ?? '');
+        const mw = (r.mwDhdd14 ?? '');
+        const so = (r.sDhdd14 ?? '');
+        return `${ts} | NE ΔHDD14 ${ne} | MW ${mw} | South ${so}`;
+      });
+      el('historyPreview').textContent = lines.join('\\n');
     }
 
     function copySummary(){
@@ -799,6 +857,30 @@
       el('btnCopy').addEventListener('click', () => {
         try{ copySummary(); } catch {}
       });
+
+
+      el('exportHistory').addEventListener('click', () => {
+        const snaps = loadModelSnapshots();
+        const csv = historyToCsv(snaps);
+        const name = 'ung-model-history.csv';
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+
+      el('clearHistory').addEventListener('click', () => {
+        if(!confirm('Clear all locally saved model history?')) return;
+        localStorage.removeItem(modelKey);
+        renderHistoryPreview();
+      });
+
+      renderHistoryPreview();
 
       initTradingView();
       updateEventTiming();
