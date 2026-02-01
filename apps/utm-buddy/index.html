@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>UTM Buddy</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121a33; --muted:#9fb0d0; --text:#eaf0ff;
+      --accent:#7aa2ff; --accent2:#5ef0c6; --danger:#ff6b6b;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    body{margin:0;font-family:var(--sans);background:linear-gradient(180deg,var(--bg),#070a14);color:var(--text);}
+    a{color:var(--accent)}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px;}
+    header{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+    h1{margin:0;font-size:24px;letter-spacing:.3px}
+    .sub{color:var(--muted);margin-top:6px;max-width:70ch;line-height:1.4}
+    .grid{display:grid;grid-template-columns: 1fr; gap:16px; margin-top:18px;}
+    @media (min-width: 980px){.grid{grid-template-columns: 420px 1fr;}}
+    .card{background:rgba(18,26,51,.92);border:1px solid rgba(122,162,255,.18);border-radius:14px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .card h2{font-size:14px;margin:0 0 10px 0;color:#cfe0ff;text-transform:uppercase;letter-spacing:.12em}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+    select,input[type="number"],input[type="text"],textarea{width:100%;box-sizing:border-box;background:#0c1329;color:var(--text);border:1px solid rgba(159,176,208,.25);border-radius:10px;padding:10px 10px;font-size:14px;outline:none}
+    textarea{min-height:210px;font-family:var(--mono);font-size:12.5px;line-height:1.35;white-space:pre;}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{border:1px solid rgba(122,162,255,.35);background:rgba(122,162,255,.15);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer;font-size:14px}
+    button.primary{background:linear-gradient(135deg, rgba(122,162,255,.35), rgba(94,240,198,.22));border-color:rgba(94,240,198,.5)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
+    .pill{display:inline-block;font-size:12px;background:rgba(94,240,198,.14);border:1px solid rgba(94,240,198,.35);color:#d8fff2;padding:4px 8px;border-radius:999px}
+    .err{color:#ffd1d1;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.35);padding:10px;border-radius:12px;margin-top:10px;display:none}
+    .ok{color:#d8fff2;background:rgba(94,240,198,.12);border:1px solid rgba(94,240,198,.35);padding:10px;border-radius:12px;margin-top:10px;display:none}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th,td{border-bottom:1px solid rgba(159,176,208,.18);padding:8px 6px;text-align:left;vertical-align:top}
+    th{color:#cfe0ff;font-weight:600}
+    .mono{font-family:var(--mono)}
+    footer{margin-top:16px;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>UTM Buddy <span class="pill">client-side</span></h1>
+        <div class="sub">Convert between <b>WGS84 Lat/Lon</b> and <b>UTM</b> from pasted or uploaded CSV — adds new columns and lets you download the result.</div>
+      </div>
+      <div class="hint">Repo: <a href="https://github.com/alexstuartharris/philbin" target="_blank" rel="noreferrer">alexstuartharris/philbin</a></div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Settings</h2>
+
+        <label for="mode">Conversion</label>
+        <select id="mode">
+          <option value="ll_to_utm">Lat/Lon → UTM</option>
+          <option value="utm_to_ll">UTM → Lat/Lon</option>
+        </select>
+
+        <div class="row">
+          <div>
+            <label for="zone">UTM Zone (1–60)</label>
+            <input id="zone" type="number" min="1" max="60" value="10" />
+          </div>
+          <div>
+            <label for="hemi">Hemisphere</label>
+            <select id="hemi">
+              <option value="N">Northern</option>
+              <option value="S">Southern</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="file">Upload CSV (optional)</label>
+        <input id="file" type="file" accept=".csv,text/csv" />
+
+        <label for="input">Paste CSV</label>
+        <textarea id="input" spellcheck="false" placeholder="Example (Lat/Lon → UTM):
+site,lat,lon
+A,49.702,-123.155
+B,49.705,-123.141
+
+Example (UTM → Lat/Lon):
+site,easting,northing
+A,488200,5506300
+B,489120,5506600
+"></textarea>
+
+        <div class="row">
+          <div>
+            <label for="xField" id="xLabel">Longitude column</label>
+            <select id="xField" disabled></select>
+          </div>
+          <div>
+            <label for="yField" id="yLabel">Latitude column</label>
+            <select id="yField" disabled></select>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button id="parseBtn">Parse CSV</button>
+          <button id="convertBtn" class="primary" disabled>Convert</button>
+          <button id="downloadBtn" disabled>Download CSV</button>
+        </div>
+
+        <div id="err" class="err"></div>
+        <div id="ok" class="ok"></div>
+
+        <div class="hint">
+          Notes:
+          <ul>
+            <li>Assumes <b>WGS84</b> for both Lat/Lon and UTM.</li>
+            <li>Does not auto-detect UTM zone (yet) — choose the correct zone for your data.</li>
+            <li>Runs entirely in your browser; nothing is uploaded.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Preview</h2>
+        <div class="hint">First 50 rows shown. Output preserves original columns and adds new ones.</div>
+        <div style="overflow:auto; max-height: 520px; margin-top:10px">
+          <table id="preview"><thead></thead><tbody></tbody></table>
+        </div>
+        <footer>
+          Libraries: <a href="https://proj4js.org/" target="_blank" rel="noreferrer">proj4js</a>, <a href="https://www.papaparse.com/" target="_blank" rel="noreferrer">Papa Parse</a>
+        </footer>
+      </section>
+    </div>
+  </div>
+
+  <!-- deps (no build step) -->
+  <script src="https://cdn.jsdelivr.net/npm/proj4@2.15.0/dist/proj4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const state = {
+      rows: [],
+      fields: [],
+      convertedRows: null,
+      lastCsv: null,
+    };
+
+    function setMsg(kind, text) {
+      const err = $('err');
+      const ok = $('ok');
+      err.style.display = 'none';
+      ok.style.display = 'none';
+      if (!text) return;
+      if (kind === 'err') {
+        err.textContent = text;
+        err.style.display = 'block';
+      } else {
+        ok.textContent = text;
+        ok.style.display = 'block';
+      }
+    }
+
+    function getUtmProj(zone, hemi) {
+      zone = Number(zone);
+      if (!Number.isFinite(zone) || zone < 1 || zone > 60) throw new Error('UTM zone must be between 1 and 60.');
+      const south = (hemi === 'S') ? ' +south' : '';
+      return `+proj=utm +zone=${zone} +datum=WGS84 +units=m +no_defs${south}`;
+    }
+
+    function normalizeFieldName(s) {
+      return String(s || '').trim().toLowerCase();
+    }
+
+    function guessField(fields, mode, which) {
+      // which: 'x' or 'y'
+      const f = fields.map((name) => ({ name, n: normalizeFieldName(name) }));
+      if (mode === 'll_to_utm') {
+        // x=lon, y=lat
+        const lonKeys = ['lon','long','longitude','x'];
+        const latKeys = ['lat','latitude','y'];
+        const keys = (which === 'x') ? lonKeys : latKeys;
+        for (const k of keys) {
+          const hit = f.find(o => o.n === k);
+          if (hit) return hit.name;
+        }
+      } else {
+        // x=easting, y=northing
+        const eKeys = ['easting','east','x','utm_e','utm_easting'];
+        const nKeys = ['northing','north','y','utm_n','utm_northing'];
+        const keys = (which === 'x') ? eKeys : nKeys;
+        for (const k of keys) {
+          const hit = f.find(o => o.n === k);
+          if (hit) return hit.name;
+        }
+      }
+      return fields[0] || '';
+    }
+
+    function fillFieldSelects() {
+      const mode = $('mode').value;
+      const xSel = $('xField');
+      const ySel = $('yField');
+      xSel.innerHTML = '';
+      ySel.innerHTML = '';
+
+      for (const name of state.fields) {
+        const o1 = document.createElement('option');
+        o1.value = name; o1.textContent = name;
+        const o2 = document.createElement('option');
+        o2.value = name; o2.textContent = name;
+        xSel.appendChild(o1);
+        ySel.appendChild(o2);
+      }
+
+      const xGuess = guessField(state.fields, mode, 'x');
+      const yGuess = guessField(state.fields, mode, 'y');
+      if (xGuess) xSel.value = xGuess;
+      if (yGuess) ySel.value = yGuess;
+
+      $('xLabel').textContent = (mode === 'll_to_utm') ? 'Longitude column' : 'Easting column';
+      $('yLabel').textContent = (mode === 'll_to_utm') ? 'Latitude column' : 'Northing column';
+
+      xSel.disabled = state.fields.length === 0;
+      ySel.disabled = state.fields.length === 0;
+    }
+
+    function renderPreview(rows) {
+      const table = $('preview');
+      const thead = table.querySelector('thead');
+      const tbody = table.querySelector('tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+      if (!rows || rows.length === 0) return;
+
+      const fields = Object.keys(rows[0]);
+      const trh = document.createElement('tr');
+      for (const f of fields) {
+        const th = document.createElement('th');
+        th.textContent = f;
+        trh.appendChild(th);
+      }
+      thead.appendChild(trh);
+
+      rows.slice(0, 50).forEach(r => {
+        const tr = document.createElement('tr');
+        for (const f of fields) {
+          const td = document.createElement('td');
+          const v = r[f];
+          td.textContent = (v === null || v === undefined) ? '' : String(v);
+          if (typeof v === 'number') td.classList.add('mono');
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      });
+    }
+
+    function parseCsvText(csvText) {
+      const res = Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        dynamicTyping: false,
+      });
+      if (res.errors && res.errors.length) {
+        const e = res.errors[0];
+        throw new Error(`CSV parse error (row ${e.row}): ${e.message}`);
+      }
+      const rows = res.data || [];
+      if (!rows.length) throw new Error('No rows parsed. Is there a header row?');
+      const fields = res.meta?.fields || Object.keys(rows[0]);
+      return { rows, fields };
+    }
+
+    function num(v) {
+      if (v === null || v === undefined) return NaN;
+      const s = String(v).trim();
+      if (!s) return NaN;
+      return Number(s);
+    }
+
+    function convert() {
+      const mode = $('mode').value;
+      const zone = $('zone').value;
+      const hemi = $('hemi').value;
+      const xField = $('xField').value;
+      const yField = $('yField').value;
+
+      if (!state.rows.length) throw new Error('No parsed rows. Click “Parse CSV” first.');
+      if (!xField || !yField) throw new Error('Pick both coordinate columns.');
+
+      const wgs84 = '+proj=longlat +datum=WGS84 +no_defs';
+      const utm = getUtmProj(zone, hemi);
+      const forward = (mode === 'll_to_utm') ? proj4(wgs84, utm) : proj4(utm, wgs84);
+
+      const out = state.rows.map((r, idx) => {
+        const x = num(r[xField]);
+        const y = num(r[yField]);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          return { ...r, _utmBuddyError: `Row ${idx+2}: invalid number(s) in ${xField}/${yField}` };
+        }
+        const [ox, oy] = forward.forward([x, y]);
+
+        if (mode === 'll_to_utm') {
+          return {
+            ...r,
+            utm_zone: Number(zone),
+            utm_hemi: hemi,
+            easting_m: round(ox, 3),
+            northing_m: round(oy, 3),
+          };
+        } else {
+          return {
+            ...r,
+            latitude: round(oy, 8),
+            longitude: round(ox, 8),
+          };
+        }
+      });
+
+      return out;
+    }
+
+    function round(n, digits) {
+      const p = Math.pow(10, digits);
+      return Math.round(n * p) / p;
+    }
+
+    function toCsv(rows) {
+      return Papa.unparse(rows, { quotes: false });
+    }
+
+    // events
+    $('mode').addEventListener('change', () => {
+      fillFieldSelects();
+      $('convertBtn').disabled = !state.rows.length;
+      $('downloadBtn').disabled = true;
+      state.convertedRows = null;
+      setMsg('', '');
+    });
+
+    $('file').addEventListener('change', async (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const text = await f.text();
+      $('input').value = text;
+      setMsg('ok', `Loaded ${f.name}. Click “Parse CSV”.`);
+    });
+
+    $('parseBtn').addEventListener('click', () => {
+      try {
+        setMsg('', '');
+        const csvText = $('input').value;
+        if (!csvText.trim()) throw new Error('Paste CSV or upload a file first.');
+        const { rows, fields } = parseCsvText(csvText);
+        state.rows = rows;
+        state.fields = fields;
+        state.convertedRows = null;
+        fillFieldSelects();
+        renderPreview(rows);
+        $('convertBtn').disabled = false;
+        $('downloadBtn').disabled = true;
+        setMsg('ok', `Parsed ${rows.length} row(s). Pick columns if needed, then click “Convert”.`);
+      } catch (e) {
+        setMsg('err', e.message || String(e));
+      }
+    });
+
+    $('convertBtn').addEventListener('click', () => {
+      try {
+        setMsg('', '');
+        const out = convert();
+        state.convertedRows = out;
+        renderPreview(out);
+        $('downloadBtn').disabled = false;
+
+        // count row-level errors
+        const errCount = out.filter(r => r._utmBuddyError).length;
+        if (errCount) {
+          setMsg('err', `Converted with ${errCount} row error(s). See “_utmBuddyError” column.`);
+        } else {
+          setMsg('ok', `Converted ${out.length} row(s). Download when ready.`);
+        }
+      } catch (e) {
+        setMsg('err', e.message || String(e));
+      }
+    });
+
+    $('downloadBtn').addEventListener('click', () => {
+      try {
+        if (!state.convertedRows) throw new Error('Nothing to download yet.');
+        const csv = toCsv(state.convertedRows);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `utm-buddy_${new Date().toISOString().slice(0,10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        setMsg('err', e.message || String(e));
+      }
+    });
+
+    // initial
+    fillFieldSelects();
+  </script>
+</body>
+</html>
