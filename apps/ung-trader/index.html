@@ -190,12 +190,32 @@
         </details>
 
         <details style="margin-top:12px;">
-          <summary style="cursor:pointer; font-weight:800;">Model history (local)</summary>
-          <p class="small">Saved in your browser. Each refresh stores one snapshot per minute (max ~500). Export to CSV if you want to archive elsewhere.</p>
+          <summary style="cursor:pointer; font-weight:800;">Model history</summary>
+          <p class="small">Saved in your browser. Each refresh stores one snapshot per minute (max ~500). You can optionally sync to Supabase (private) to persist across devices.</p>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label for="sbUrl" style="margin: 0 0 6px;">Supabase URL (optional)</label>
+              <input id="sbUrl" placeholder="https://xxxx.supabase.co" />
+            </div>
+            <div>
+              <label for="sbKey" style="margin: 0 0 6px;">Supabase publishable key (treat as secret)</label>
+              <input id="sbKey" placeholder="sb_publishable_..." />
+            </div>
+          </div>
+
+          <div class="btnRow" style="margin-top:10px;">
+            <button id="sbSave" class="secondary">Save & sync</button>
+            <button id="sbPull" class="secondary">Pull from Supabase</button>
+            <button id="sbPush" class="secondary">Push latest snapshot</button>
+            <span class="small" id="sbStatus"></span>
+          </div>
+
           <div class="btnRow" style="margin-top:8px;">
             <button id="exportHistory" class="secondary">Download history CSV</button>
-            <button id="clearHistory" class="secondary">Clear history</button>
+            <button id="clearHistory" class="secondary">Clear local history</button>
           </div>
+
           <pre id="historyPreview">(none)</pre>
         </details>
       </div>
@@ -346,6 +366,7 @@
   </main>
 
   <script src="https://s3.tradingview.com/tv.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const el = (id) => document.getElementById(id);
     const storageKey = 'ung-trader.v3';
@@ -650,9 +671,18 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
+    const sbKey = 'ung-trader.supabase.v1';
 
     function loadModelSnapshots(){
       try { return JSON.parse(localStorage.getItem(modelKey) || '[]'); } catch { return []; }
+    }
+
+    function loadSupabaseCfg(){
+      try { return JSON.parse(localStorage.getItem(sbKey) || '{}'); } catch { return {}; }
+    }
+
+    function saveSupabaseCfg(cfg){
+      localStorage.setItem(sbKey, JSON.stringify(cfg || {}));
     }
 
     function saveModelSnapshots(list){
@@ -813,6 +843,80 @@
       }
     }
 
+
+    function getSupabaseClient(){
+      const cfg = loadSupabaseCfg();
+      const url = (cfg.url || '').trim();
+      const key = (cfg.key || '').trim();
+      if(!url || !key) return null;
+      if(!window.supabase) return null;
+      return window.supabase.createClient(url, key);
+    }
+
+    async function sbPullAll(){
+      const client = getSupabaseClient();
+      if(!client) throw new Error('Supabase not configured.');
+
+      // pull snapshots
+      const { data: snaps, error: e1 } = await client
+        .from('ung_model_snapshots')
+        .select('ts, base_f, window_key, ne_dhdd14, mw_dhdd14, s_dhdd14, ne_dhdd_buckets, mw_dhdd_buckets, s_dhdd_buckets, south_burst_3d, south_freeze_risk')
+        .order('ts', { ascending: true })
+        .limit(800);
+      if(e1) throw new Error('Supabase pull snapshots error: ' + e1.message);
+
+      const local = (snaps || []).map(r => ({
+        ts: new Date(r.ts).toISOString().slice(0,16) + 'Z',
+        baseF: r.base_f,
+        windowKey: r.window_key,
+        neDhdd14: r.ne_dhdd14,
+        mwDhdd14: r.mw_dhdd14,
+        sDhdd14: r.s_dhdd14,
+        neDhddBuckets: r.ne_dhdd_buckets,
+        mwDhddBuckets: r.mw_dhdd_buckets,
+        sDhddBuckets: r.s_dhdd_buckets,
+        southBurst3d: r.south_burst_3d,
+        southFreezeRisk: r.south_freeze_risk,
+      }));
+
+      // merge unique by ts
+      const existing = loadModelSnapshots();
+      const byTs = new Map(existing.map(x => [x.ts, x]));
+      for(const r of local) byTs.set(r.ts, { ...byTs.get(r.ts), ...r });
+      const merged = Array.from(byTs.values()).sort((a,b) => String(a.ts).localeCompare(String(b.ts)));
+      saveModelSnapshots(merged);
+
+      return { snapshots: merged.length };
+    }
+
+    async function sbPushLatestSnapshot(){
+      const client = getSupabaseClient();
+      if(!client) throw new Error('Supabase not configured.');
+      const snaps = loadModelSnapshots();
+      const last = snaps.length ? snaps[snaps.length-1] : null;
+      if(!last) throw new Error('No local snapshots to push yet.');
+
+      const payload = {
+        ts: new Date(last.ts),
+        base_f: Number(last.baseF || 65),
+        window_key: String(last.windowKey || ''),
+        ne_dhdd14: last.neDhdd14 ?? null,
+        mw_dhdd14: last.mwDhdd14 ?? null,
+        s_dhdd14: last.sDhdd14 ?? null,
+        ne_dhdd_buckets: last.neDhddBuckets ?? null,
+        mw_dhdd_buckets: last.mwDhddBuckets ?? null,
+        s_dhdd_buckets: last.sDhddBuckets ?? null,
+        south_burst_3d: last.southBurst3d ?? null,
+        south_freeze_risk: last.southFreezeRisk ?? null,
+      };
+
+      const { error } = await client.from('ung_model_snapshots').insert(payload);
+      if(error) {
+        // ignore duplicates by ts; just surface message
+        throw new Error('Supabase push snapshot error: ' + error.message);
+      }
+      return { ok: true };
+    }
 
     function historyToCsv(list){
       const header = ['ts','baseF','windowKey','neDhdd14','mwDhdd14','sDhdd14','southBurst3d'];
@@ -1068,6 +1172,36 @@
         localStorage.removeItem(modelKey);
         renderHistoryPreview();
       });
+
+      // Supabase (optional)
+      const cfg = loadSupabaseCfg();
+      el('sbUrl').value = cfg.url || '';
+      el('sbKey').value = cfg.key || '';
+
+      async function withSbStatus(fn){
+        el('sbStatus').textContent = 'Working…';
+        try {
+          const res = await fn();
+          el('sbStatus').textContent = 'OK';
+          renderHistoryPreview();
+          return res;
+        } catch(e){
+          el('sbStatus').textContent = String(e?.message || e);
+        }
+      }
+
+      el('sbSave').addEventListener('click', () => withSbStatus(async () => {
+        saveSupabaseCfg({ url: el('sbUrl').value.trim(), key: el('sbKey').value.trim() });
+        await sbPullAll();
+      }));
+
+      el('sbPull').addEventListener('click', () => withSbStatus(async () => {
+        await sbPullAll();
+      }));
+
+      el('sbPush').addEventListener('click', () => withSbStatus(async () => {
+        await sbPushLatestSnapshot();
+      }));
 
       renderHistoryPreview();
 
