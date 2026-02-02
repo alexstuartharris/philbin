@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-31T06:32:26.714Z",
+  "generatedAt": "2026-02-01T06:32:23.821Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -27,6 +27,10 @@
     },
     {
       "name": "ung-trader",
+      "hasIndex": true
+    },
+    {
+      "name": "utm-buddy",
       "hasIndex": true
     }
   ],
