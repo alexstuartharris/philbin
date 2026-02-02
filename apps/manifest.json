@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-01T06:32:23.821Z",
+  "generatedAt": "2026-02-02T06:32:09.960Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -15,6 +15,10 @@
     },
     {
       "name": "geojson-audit",
+      "hasIndex": true
+    },
+    {
+      "name": "geojson-metrics",
       "hasIndex": true
     },
     {
