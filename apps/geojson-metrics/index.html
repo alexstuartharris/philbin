@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GeoJSON Metrics</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #121a33;
+        --panel2: #0f1630;
+        --text: #e9eefc;
+        --muted: #a9b6e5;
+        --border: rgba(255, 255, 255, 0.12);
+        --accent: #7aa2ff;
+        --bad: #ff6b6b;
+        --good: #51d18a;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+        background: radial-gradient(1200px 800px at 20% -10%, #1a2a6a, transparent 60%),
+          radial-gradient(900px 700px at 110% 10%, #2a1a6a, transparent 55%),
+          var(--bg);
+        color: var(--text);
+      }
+      a { color: var(--accent); }
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+      header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      h1 { font-size: 22px; margin: 0; letter-spacing: 0.2px; }
+      .sub { color: var(--muted); font-size: 13px; }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+
+      .card {
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .card h2 {
+        margin: 0;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        color: var(--muted);
+        background: rgba(0,0,0,0.12);
+      }
+      .card .body { padding: 14px; }
+
+      textarea {
+        width: 100%;
+        min-height: 260px;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(0,0,0,0.25);
+        color: var(--text);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12.5px;
+        line-height: 1.45;
+      }
+
+      .drop {
+        border: 1px dashed rgba(255,255,255,0.25);
+        border-radius: 12px;
+        padding: 14px;
+        background: rgba(0,0,0,0.18);
+      }
+      .drop.dragover {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(122,162,255,0.15);
+      }
+
+      .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.06);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 10px 12px;
+        cursor: pointer;
+      }
+      button.primary {
+        border-color: rgba(122,162,255,0.45);
+        background: rgba(122,162,255,0.18);
+      }
+      button:disabled { opacity: 0.55; cursor: not-allowed; }
+      input[type="file"] { display: none; }
+
+      .pill {
+        font-size: 12px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      .pill.good { border-color: rgba(81,209,138,0.4); color: rgba(81,209,138,0.9); }
+      .pill.bad { border-color: rgba(255,107,107,0.4); color: rgba(255,107,107,0.95); }
+
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+      th { font-size: 12px; color: var(--muted); font-weight: 600; }
+      td { font-size: 13px; }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+      .foot { margin-top: 14px; color: var(--muted); font-size: 12px; }
+      .err { color: rgba(255,107,107,0.95); white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div>
+          <h1>GeoJSON Metrics</h1>
+          <div class="sub">Paste or drop GeoJSON → get counts, bbox, length/area totals (client-side; no uploads).</div>
+        </div>
+        <div class="row">
+          <span id="status" class="pill">Idle</span>
+          <a href="../" class="pill" title="Back to apps">Apps index</a>
+        </div>
+      </header>
+
+      <div class="grid">
+        <section class="card">
+          <h2>Input</h2>
+          <div class="body">
+            <div id="drop" class="drop">
+              <div class="row" style="justify-content: space-between; margin-bottom: 10px;">
+                <div class="sub">Drag & drop a <code>.geojson</code>/<code>.json</code> file here, or paste below.</div>
+                <div class="row">
+                  <label for="file" class="pill" style="cursor:pointer;">Choose file</label>
+                  <input id="file" type="file" accept=".geojson,.json,application/geo+json,application/json" />
+                  <button id="example">Load example</button>
+                </div>
+              </div>
+              <textarea id="input" spellcheck="false" placeholder='Paste GeoJSON here. Example: {"type":"FeatureCollection","features":[...]}'></textarea>
+            </div>
+
+            <div class="row" style="margin-top: 12px;">
+              <button id="analyze" class="primary">Analyze</button>
+              <button id="copySummary">Copy summary JSON</button>
+              <button id="downloadCsv">Download per-feature CSV</button>
+              <button id="clear">Clear</button>
+            </div>
+
+            <div class="foot">
+              Notes: uses <a href="https://turfjs.org/" target="_blank" rel="noreferrer">Turf.js</a>.
+              Length/area are computed in meters/hectares using Turf geodesic calculations.
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Results</h2>
+          <div class="body">
+            <div id="error" class="err" style="display:none;"></div>
+
+            <div id="results" style="display:none;">
+              <table>
+                <tbody>
+                  <tr><th style="width: 220px;">Detected input</th><td id="rType"></td></tr>
+                  <tr><th>Feature count</th><td id="rCount"></td></tr>
+                  <tr><th>Geometry breakdown</th><td id="rBreakdown"></td></tr>
+                  <tr><th>Total line length</th><td id="rLen"></td></tr>
+                  <tr><th>Total polygon area</th><td id="rArea"></td></tr>
+                  <tr><th>BBox (W,S,E,N)</th><td><code id="rBbox"></code></td></tr>
+                  <tr><th>Centroid (lon,lat)</th><td><code id="rCentroid"></code></td></tr>
+                </tbody>
+              </table>
+
+              <div class="foot">
+                Tip: the per-feature CSV includes <code>id</code>, <code>type</code>, <code>length_m</code>, <code>area_m2</code>, and <code>properties.*</code> (flattened).
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <script>
+      const $ = (id) => document.getElementById(id);
+
+      const inputEl = $('input');
+      const statusEl = $('status');
+      const errorEl = $('error');
+      const resultsEl = $('results');
+      const dropEl = $('drop');
+      const fileEl = $('file');
+
+      let lastSummary = null;
+      let lastFeatureRows = null;
+
+      function setStatus(text, kind = 'idle') {
+        statusEl.textContent = text;
+        statusEl.classList.remove('good', 'bad');
+        if (kind === 'good') statusEl.classList.add('good');
+        if (kind === 'bad') statusEl.classList.add('bad');
+      }
+
+      function showError(msg) {
+        errorEl.style.display = 'block';
+        resultsEl.style.display = 'none';
+        errorEl.textContent = msg;
+        setStatus('Error', 'bad');
+      }
+
+      function clearError() {
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
+      }
+
+      function fmtNum(n, digits = 2) {
+        if (!Number.isFinite(n)) return '—';
+        return n.toLocaleString(undefined, { maximumFractionDigits: digits });
+      }
+
+      function fmtMeters(m) {
+        if (!Number.isFinite(m)) return '—';
+        if (m >= 1000) return `${fmtNum(m / 1000, 3)} km (${fmtNum(m, 1)} m)`;
+        return `${fmtNum(m, 2)} m`;
+      }
+
+      function fmtArea(m2) {
+        if (!Number.isFinite(m2)) return '—';
+        const ha = m2 / 10000;
+        if (ha >= 1) return `${fmtNum(ha, 3)} ha (${fmtNum(m2, 1)} m²)`;
+        return `${fmtNum(m2, 2)} m²`;
+      }
+
+      function flatten(obj, prefix = '', out = {}) {
+        if (obj == null) return out;
+        for (const [k, v] of Object.entries(obj)) {
+          const key = prefix ? `${prefix}.${k}` : k;
+          if (v && typeof v === 'object' && !Array.isArray(v)) flatten(v, key, out);
+          else out[key] = Array.isArray(v) ? JSON.stringify(v) : v;
+        }
+        return out;
+      }
+
+      function safeJsonParse(text) {
+        try {
+          return { ok: true, value: JSON.parse(text) };
+        } catch (e) {
+          return { ok: false, error: e };
+        }
+      }
+
+      function toFeatureCollection(input) {
+        if (!input || typeof input !== 'object') throw new Error('Input is not a JSON object');
+        if (input.type === 'FeatureCollection' && Array.isArray(input.features)) return input;
+        if (input.type === 'Feature') return { type: 'FeatureCollection', features: [input] };
+        if (input.type && input.coordinates) {
+          return { type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: input }] };
+        }
+        throw new Error('Unsupported GeoJSON: expected FeatureCollection, Feature, or Geometry');
+      }
+
+      function geomType(f) {
+        const g = f?.geometry;
+        return g?.type || 'Unknown';
+      }
+
+      function analyzeGeojson(text) {
+        const parsed = safeJsonParse(text);
+        if (!parsed.ok) throw new Error(`Invalid JSON: ${parsed.error.message}`);
+
+        const fc = toFeatureCollection(parsed.value);
+        if (fc.features.length === 0) throw new Error('FeatureCollection has 0 features');
+
+        const breakdown = {};
+        let totalLenM = 0;
+        let totalAreaM2 = 0;
+
+        const rows = [];
+
+        fc.features.forEach((f, idx) => {
+          const t = geomType(f);
+          breakdown[t] = (breakdown[t] || 0) + 1;
+
+          let lenM = 0;
+          let areaM2 = 0;
+
+          try {
+            if (t.includes('LineString')) {
+              // turf.length returns km
+              lenM = turf.length(f, { units: 'kilometers' }) * 1000;
+            }
+            if (t.includes('Polygon')) {
+              areaM2 = turf.area(f);
+            }
+            // Points: no metrics
+          } catch (e) {
+            // keep row but mark metrics as 0
+          }
+
+          totalLenM += lenM;
+          totalAreaM2 += areaM2;
+
+          const flatProps = flatten(f.properties || {});
+          rows.push({
+            id: f.id ?? idx,
+            geometry_type: t,
+            length_m: lenM,
+            area_m2: areaM2,
+            ...flatProps,
+          });
+        });
+
+        const bbox = turf.bbox(fc); // [w,s,e,n]
+        const centroid = turf.centroid(fc).geometry.coordinates; // [lon,lat]
+
+        const summary = {
+          inputType: parsed.value.type || 'Unknown',
+          featureCount: fc.features.length,
+          breakdown,
+          totalLengthM: totalLenM,
+          totalAreaM2: totalAreaM2,
+          bbox,
+          centroid,
+        };
+
+        return { summary, rows };
+      }
+
+      function render({ summary, rows }) {
+        $('rType').textContent = summary.inputType;
+        $('rCount').textContent = String(summary.featureCount);
+        $('rBreakdown').textContent = Object.entries(summary.breakdown)
+          .sort((a, b) => b[1] - a[1])
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(' · ');
+        $('rLen').textContent = fmtMeters(summary.totalLengthM);
+        $('rArea').textContent = fmtArea(summary.totalAreaM2);
+        $('rBbox').textContent = summary.bbox.map((n) => fmtNum(n, 6)).join(', ');
+        $('rCentroid').textContent = summary.centroid.map((n) => fmtNum(n, 6)).join(', ');
+
+        clearError();
+        resultsEl.style.display = 'block';
+        setStatus('OK', 'good');
+
+        lastSummary = summary;
+        lastFeatureRows = rows;
+      }
+
+      function rowsToCsv(rows) {
+        const allKeys = new Set();
+        rows.forEach((r) => Object.keys(r).forEach((k) => allKeys.add(k)));
+        const keys = Array.from(allKeys);
+
+        const esc = (v) => {
+          if (v == null) return '';
+          const s = String(v);
+          if (/[\n\r",]/.test(s)) return '"' + s.replaceAll('"', '""') + '"';
+          return s;
+        };
+
+        const lines = [];
+        lines.push(keys.join(','));
+        for (const r of rows) {
+          lines.push(keys.map((k) => esc(r[k])).join(','));
+        }
+        return lines.join('\n');
+      }
+
+      function download(filename, text, mime = 'text/plain') {
+        const blob = new Blob([text], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function loadExample() {
+        const example = {
+          type: 'FeatureCollection',
+          features: [
+            {
+              type: 'Feature',
+              id: 'line-1',
+              properties: { name: 'Transect A', crew: { lead: 'Alex', tech: 'Sam' } },
+              geometry: {
+                type: 'LineString',
+                coordinates: [
+                  [-123.157, 49.726],
+                  [-123.150, 49.723],
+                  [-123.142, 49.719]
+                ]
+              }
+            },
+            {
+              type: 'Feature',
+              id: 'poly-1',
+              properties: { name: 'Wetland AOI', habitat: 'marsh' },
+              geometry: {
+                type: 'Polygon',
+                coordinates: [
+                  [
+                    [-123.160, 49.720],
+                    [-123.155, 49.720],
+                    [-123.155, 49.716],
+                    [-123.160, 49.716],
+                    [-123.160, 49.720]
+                  ]
+                ]
+              }
+            }
+          ]
+        };
+        inputEl.value = JSON.stringify(example, null, 2);
+      }
+
+      $('analyze').addEventListener('click', () => {
+        setStatus('Working…');
+        try {
+          const { summary, rows } = analyzeGeojson(inputEl.value.trim());
+          render({ summary, rows });
+        } catch (e) {
+          showError(String(e?.message || e));
+          lastSummary = null;
+          lastFeatureRows = null;
+        }
+      });
+
+      $('clear').addEventListener('click', () => {
+        inputEl.value = '';
+        clearError();
+        resultsEl.style.display = 'none';
+        lastSummary = null;
+        lastFeatureRows = null;
+        setStatus('Idle');
+      });
+
+      $('example').addEventListener('click', () => {
+        loadExample();
+        $('analyze').click();
+      });
+
+      $('copySummary').addEventListener('click', async () => {
+        if (!lastSummary) return;
+        const text = JSON.stringify(lastSummary, null, 2);
+        try {
+          await navigator.clipboard.writeText(text);
+          setStatus('Copied summary', 'good');
+          setTimeout(() => setStatus('OK', 'good'), 900);
+        } catch {
+          download('geojson-metrics-summary.json', text, 'application/json');
+        }
+      });
+
+      $('downloadCsv').addEventListener('click', () => {
+        if (!lastFeatureRows) return;
+        const csv = rowsToCsv(lastFeatureRows);
+        download('geojson-metrics.csv', csv, 'text/csv');
+      });
+
+      fileEl.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const text = await file.text();
+        inputEl.value = text;
+        $('analyze').click();
+      });
+
+      // Drag/drop
+      dropEl.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropEl.classList.add('dragover');
+      });
+      dropEl.addEventListener('dragleave', () => dropEl.classList.remove('dragover'));
+      dropEl.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        dropEl.classList.remove('dragover');
+        const file = e.dataTransfer?.files?.[0];
+        if (!file) return;
+        const text = await file.text();
+        inputEl.value = text;
+        $('analyze').click();
+      });
+
+      // Initial
+      setStatus('Idle');
+    </script>
+  </body>
+</html>
