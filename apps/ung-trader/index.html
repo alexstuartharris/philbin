@@ -789,9 +789,20 @@
             neDhdd14: ne.dhdd14,
             mwDhdd14: mw.dhdd14,
             sDhdd14: s.dhdd14,
+            neDhddBuckets: ne.dhddBuckets,
+            mwDhddBuckets: mw.dhddBuckets,
+            sDhddBuckets: s.dhddBuckets,
             southBurst3d: sig.label,
+            southFreezeRisk: s.freezeRisk || null,
           });
           saveModelSnapshots(snaps);
+
+          // If Supabase is configured, auto-push every new snapshot.
+          try {
+            await sbPushLatestSnapshot();
+            // prune on the same cadence (cheap)
+            await sbPruneOld(28);
+          } catch {}
         }
 
         renderHistoryPreview();
@@ -910,11 +921,20 @@
         south_freeze_risk: last.southFreezeRisk ?? null,
       };
 
-      const { error } = await client.from('ung_model_snapshots').insert(payload);
-      if(error) {
-        // ignore duplicates by ts; just surface message
-        throw new Error('Supabase push snapshot error: ' + error.message);
-      }
+      // Upsert so you can safely refresh multiple times without duplicates.
+      const { error } = await client
+        .from('ung_model_snapshots')
+        .upsert(payload, { onConflict: 'ts,base_f,window_key' });
+      if(error) throw new Error('Supabase push snapshot error: ' + error.message);
+      return { ok: true };
+    }
+
+    async function sbPruneOld(days=28){
+      const client = getSupabaseClient();
+      if(!client) return { ok: false };
+      const cutoff = new Date(Date.now() - days*86400000).toISOString();
+      const { error } = await client.from('ung_model_snapshots').delete().lt('ts', cutoff);
+      if(error) throw new Error('Supabase prune error: ' + error.message);
       return { ok: true };
     }
 
