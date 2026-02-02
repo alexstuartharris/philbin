@@ -67,7 +67,7 @@
   <header>
     <h1>UNG Trader</h1>
     <p class="sub">
-      Decision-support dashboard for <b>UNG options (1–3 week)</b>: weather regime (NE + Midwest + South cold-breakout) + price context + checklist.
+      Decision-support dashboard for <b>UNG / nat gas</b> (1–3 week options focus): weather regime (NE + MW demand + South cold-breakout) + run-to-run changes + event timing.
       <br />
       <span style="font-weight:800">Not financial advice.</span> This is for organizing information and your own thesis.
     </p>
@@ -167,6 +167,23 @@
 
         <div class="mini" id="modelChangeNote" style="margin-top:10px;">Model change: —</div>
 
+        <div class="three" style="margin-top:12px;">
+          <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+            <div class="muted">NE+MW demand index (weighted)</div>
+            <div class="kpi" id="demandIndex">—</div>
+            <div class="mini" id="demandIndexExplain">—</div>
+          </div>
+          <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+            <div class="muted">Lead-time buckets (ΔHDD)</div>
+            <div class="mini" id="leadBuckets">—</div>
+          </div>
+          <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+            <div class="muted">NG roll window (heuristic)</div>
+            <div class="mini" id="rollWindow">—</div>
+            <div class="mini" style="margin-top:6px;">Helps interpret NG1!/front-month behavior. (Heuristic: NG expires ~3 business days before month start.)</div>
+          </div>
+        </div>
+
         <details style="margin-top:12px;">
           <summary style="cursor:pointer; font-weight:800;">Show raw weather debug</summary>
           <pre id="weatherRaw">(none)</pre>
@@ -249,6 +266,74 @@
     </section>
 
     <section class="card">
+      <h2>Test contracts (paper trading)</h2>
+      <p class="small">Use this to practice entries/exits based on the tool and track whether the edge holds up. Prices are manual for now (no broker integration yet).</p>
+
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <label for="simSymbol">Instrument</label>
+          <select id="simSymbol">
+            <option value="UNG">UNG (ETF)</option>
+            <option value="NG">Nat Gas (proxy)</option>
+          </select>
+          <p class="small">Pick what you want to benchmark against.</p>
+        </div>
+        <div>
+          <label for="simSide">Direction</label>
+          <select id="simSide">
+            <option value="bullish">Bullish (calls / long)</option>
+            <option value="bearish">Bearish (puts / short)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <label for="simEntry">Entry price (manual)</label>
+          <input id="simEntry" type="number" step="0.01" placeholder="e.g., 1.25" />
+        </div>
+        <div>
+          <label for="simExpiry">Target exit / expiry date</label>
+          <input id="simExpiry" type="date" />
+        </div>
+      </div>
+
+      <div class="btnRow" style="margin-top:12px;">
+        <button id="simOpen" class="secondary">Open test contract</button>
+        <button id="simExport" class="secondary">Export CSV</button>
+        <button id="simClear" class="secondary">Clear</button>
+        <span class="small" id="simStatus"></span>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="small" style="margin-bottom:8px;">Open positions</div>
+        <pre id="simOpenList">(none)</pre>
+      </div>
+
+      <details style="margin-top:10px;">
+        <summary style="cursor:pointer; font-weight:800;">Close a position</summary>
+        <div class="two" style="margin-top:10px;">
+          <div>
+            <label for="simCloseId">Position ID</label>
+            <input id="simCloseId" placeholder="copy/paste from list" />
+          </div>
+          <div>
+            <label for="simExit">Exit price (manual)</label>
+            <input id="simExit" type="number" step="0.01" placeholder="e.g., 1.80" />
+          </div>
+        </div>
+        <div class="btnRow" style="margin-top:10px;">
+          <button id="simClose" class="secondary">Close</button>
+        </div>
+      </details>
+
+      <details style="margin-top:10px;">
+        <summary style="cursor:pointer; font-weight:800;">Closed positions</summary>
+        <pre id="simClosedList">(none)</pre>
+      </details>
+    </section>
+
+    <section class="card">
       <h2>What I’ll add next</h2>
       <ol class="small">
         <li>CDD anomaly + summer-focused view (useful later in the year).</li>
@@ -263,7 +348,7 @@
   <script src="https://s3.tradingview.com/tv.js"></script>
   <script>
     const el = (id) => document.getElementById(id);
-    const storageKey = 'ung-trader.v2';
+    const storageKey = 'ung-trader.v3';
 
     const cities = {
       // Northeast
@@ -286,10 +371,25 @@
     };
 
     const regions = {
-      ne: { name: 'Northeast', keys: ['nyc','boston','philadelphia','dc'] },
-      mw: { name: 'Midwest', keys: ['chicago','detroit','minneapolis'] },
-      s:  { name: 'South', keys: ['houston','dallas','atlanta','nashville','charlotte'] },
+      // weights are rough demand-proxy weights (sum ~1). Adjust any time.
+      ne: { name: 'Northeast', keys: ['nyc','boston','philadelphia','dc'], weights: [0.34,0.22,0.24,0.20] },
+      mw: { name: 'Midwest', keys: ['chicago','detroit','minneapolis'], weights: [0.50,0.28,0.22] },
+      s:  { name: 'South', keys: ['houston','dallas','atlanta','nashville','charlotte'], weights: [0.28,0.22,0.22,0.16,0.12] },
     };
+
+    function weightedAvg(values, weights){
+      if(!values || !values.length) return NaN;
+      if(!weights || weights.length !== values.length) return values.reduce((a,b)=>a+b,0)/values.length;
+      let sw=0, sv=0;
+      for(let i=0;i<values.length;i++){
+        const w=Number(weights[i]||0);
+        const v=Number(values[i]);
+        if(!Number.isFinite(v)) continue;
+        sw += w;
+        sv += w*v;
+      }
+      return sw ? (sv/sw) : NaN;
+    }
 
     function setDot(dotEl, kind){
       dotEl.classList.remove('ok','warn','bad');
@@ -352,13 +452,16 @@
     }
 
     function computeDailyTable(daily){
+      // {date, tmeanC, tminC, tmaxC}
       const dates = daily.time;
       const tmaxC = daily.temperature_2m_max;
       const tminC = daily.temperature_2m_min;
       const rows = [];
       for(let i=0;i<dates.length;i++){
-        const tmeanC = (Number(tmaxC[i]) + Number(tminC[i])) / 2;
-        rows.push({ date: dates[i], tmeanC });
+        const tmax = Number(tmaxC[i]);
+        const tmin = Number(tminC[i]);
+        const tmeanC = (tmax + tmin) / 2;
+        rows.push({ date: dates[i], tmeanC, tminC: tmin, tmaxC: tmax });
       }
       return rows;
     }
@@ -445,13 +548,18 @@
           }
         }
 
-        const avg = (xs) => xs.length ? sum(xs)/xs.length : NaN;
+        const w = reg.weights;
+        const hddW = weightedAvg(hdds, w);
+        const cddW = weightedAvg(cdds, w);
+        const hddNormW = weightedAvg(hddNorm, w);
+        const cddNormW = weightedAvg(cddNorm, w);
+
         daily.push({
           date,
-          hdd: avg(hdds),
-          cdd: avg(cdds),
-          hddNorm: avg(hddNorm),
-          cddNorm: avg(cddNorm),
+          hdd: hddW,
+          cdd: cddW,
+          hddNorm: hddNormW,
+          cddNorm: cddNormW,
         });
       }
 
@@ -459,6 +567,19 @@
       const cdd14 = sum(daily.map(d => d.cdd));
       const hddNorm14 = sum(daily.map(d => d.hddNorm));
       const cddNorm14 = sum(daily.map(d => d.cddNorm));
+
+      const bucketSum = (arr, a, b, key) => sum(arr.slice(a,b).map(x => x[key]));
+
+      const hddBuckets = {
+        d1_5: Number(bucketSum(daily, 0, 5, 'hdd').toFixed(1)),
+        d6_10: Number(bucketSum(daily, 5, 10, 'hdd').toFixed(1)),
+        d11_14: Number(bucketSum(daily, 10, 14, 'hdd').toFixed(1)),
+      };
+      const dhddBuckets = {
+        d1_5: Number((bucketSum(daily, 0, 5, 'hdd')-bucketSum(daily, 0, 5, 'hddNorm')).toFixed(1)),
+        d6_10: Number((bucketSum(daily, 5, 10, 'hdd')-bucketSum(daily, 5, 10, 'hddNorm')).toFixed(1)),
+        d11_14: Number((bucketSum(daily, 10, 14, 'hdd')-bucketSum(daily, 10, 14, 'hddNorm')).toFixed(1)),
+      };
 
       const out = {
         region: reg.name,
@@ -469,6 +590,8 @@
         cdd14: Number(cdd14.toFixed(1)),
         dhdd14: Number((hdd14 - hddNorm14).toFixed(1)),
         dcdd14: Number((cdd14 - cddNorm14).toFixed(1)),
+        hddBuckets,
+        dhddBuckets,
         daily: daily.map(d => ({
           date: d.date,
           hdd: Number(d.hdd.toFixed(2)),
@@ -479,6 +602,23 @@
           dcdd: Number((d.cdd - d.cddNorm).toFixed(2)),
         }))
       };
+
+      // South freeze-risk: % of cities with Tmin below thresholds in next 10d.
+      if(regionKey === 's') {
+        const thresholdsF = [32, 20];
+        const next10 = 10;
+        const risk = {};
+        for(const th of thresholdsF){
+          let hit = 0;
+          for(const f of forecasts){
+            const mins = (f.rows || []).map(r => cToF(r.tminC));
+            const any = mins.slice(0,next10).some(v => Number.isFinite(v) && v <= th);
+            if(any) hit++;
+          }
+          risk['tmin_le_' + th] = Number((hit / cityKeys.length).toFixed(2));
+        }
+        out.freezeRisk = risk;
+      }
 
       return out;
     }
@@ -573,7 +713,23 @@
         setDot(el('sADot'), classifyHddAnom(s.dhdd14));
 
         const sig = southColdBreakoutSignal(s);
-        el('southAlert').textContent = sig.label;
+
+        // Demand index: combine NE+MW anomalies (simple blend)
+        const demand = (0.55 * ne.dhdd14) + (0.45 * mw.dhdd14);
+        el('demandIndex').textContent = `ΔHDD14: ${demand.toFixed(1)}`;
+        el('demandIndexExplain').textContent = `0.55*NE + 0.45*MW (anomaly).`;
+
+        // Lead-time buckets (anomalies): 1-5 / 6-10 / 11-14
+        el('leadBuckets').textContent = `NE ${ne.dhddBuckets.d1_5}/${ne.dhddBuckets.d6_10}/${ne.dhddBuckets.d11_14} | MW ${mw.dhddBuckets.d1_5}/${mw.dhddBuckets.d6_10}/${mw.dhddBuckets.d11_14} | S ${s.dhddBuckets.d1_5}/${s.dhddBuckets.d6_10}/${s.dhddBuckets.d11_14}`;
+
+        // South freeze risk
+        if(s.freezeRisk){
+          const p32 = Math.round(100*s.freezeRisk.tmin_le_32);
+          const p20 = Math.round(100*s.freezeRisk.tmin_le_20);
+          el('southAlert').textContent = sig.label + ` | Freeze risk (next10d): <=32F: ${p32}% cities; <=20F: ${p20}% cities`;
+        } else {
+          el('southAlert').textContent = sig.label;
+        }
 
 
         // Model history (local-only): store a timestamped snapshot every refresh.
@@ -790,6 +946,39 @@
       }).format(date);
     }
 
+    function isBusinessDayUtc(d){
+      const wd = d.getUTCDay();
+      return wd !== 0 && wd !== 6;
+    }
+
+    function subtractBusinessDaysUtc(dateUtc, n){
+      const d = new Date(dateUtc.getTime());
+      let left = n;
+      while(left > 0){
+        d.setUTCDate(d.getUTCDate() - 1);
+        if(isBusinessDayUtc(d)) left--;
+      }
+      return d;
+    }
+
+    function ngRollWindow(){
+      // Heuristic: NG futures trading ends ~3 business days before the 1st of delivery month.
+      const now = new Date();
+      const y = now.getUTCFullYear();
+      const m = now.getUTCMonth();
+      const firstNext = new Date(Date.UTC(y, m+1, 1, 0,0,0));
+      const lastTrade = subtractBusinessDaysUtc(firstNext, 3);
+      const rollStart = subtractBusinessDaysUtc(lastTrade, 7);
+      return { rollStart, lastTrade, firstNext };
+    }
+
+    function updateRollWindow(){
+      const pt='America/Los_Angeles';
+      const { rollStart, lastTrade, firstNext } = ngRollWindow();
+      const fmt = (d) => new Intl.DateTimeFormat('en-CA', { timeZone: pt, month:'short', day:'2-digit' }).format(d);
+      el('rollWindow').textContent = `Roll window: ${fmt(rollStart)} → ${fmt(lastTrade)} (delivery month starts ${fmt(firstNext)})`;
+    }
+
     function updateEventTiming(){
       const next = nextEiaReportDates(2);
       const now = new Date();
@@ -882,9 +1071,99 @@
 
       renderHistoryPreview();
 
+      // --- Test contracts (paper trading) ---
+      const simKey = 'ung-trader.sim.v1';
+      function loadSim(){
+        try { return JSON.parse(localStorage.getItem(simKey) || '{"open":[],"closed":[]}'); } catch { return {open:[],closed:[]}; }
+      }
+      function saveSim(obj){ localStorage.setItem(simKey, JSON.stringify(obj)); }
+      function mkId(){ return 'T' + Math.random().toString(16).slice(2,8) + '-' + Date.now().toString(16).slice(-4); }
+      function currentSnapshot(){
+        const snaps = loadModelSnapshots();
+        return snaps.length ? snaps[snaps.length-1] : null;
+      }
+      function renderSim(){
+        const sim = loadSim();
+        const openLines = sim.open.map(p => {
+          return `${p.id} | ${p.symbol} | ${p.side} | entry ${p.entry} | expiry ${p.expiry || ''} | opened ${p.openedAt} | NEΔ ${p.snap?.neDhdd14 ?? ''} MWΔ ${p.snap?.mwDhdd14 ?? ''} SΔ ${p.snap?.sDhdd14 ?? ''}`;
+        });
+        el('simOpenList').textContent = openLines.length ? openLines.join('\\n') : '(none)';
+
+        const closedLines = sim.closed.slice(-80).map(p => {
+          return `${p.id} | ${p.symbol} | ${p.side} | entry ${p.entry} -> exit ${p.exit} | P/L ${p.pl} | opened ${p.openedAt} closed ${p.closedAt}`;
+        });
+        el('simClosedList').textContent = closedLines.length ? closedLines.join('\\n') : '(none)';
+      }
+
+      el('simOpen').addEventListener('click', () => {
+        const symbol = el('simSymbol').value;
+        const side = el('simSide').value;
+        const entry = Number(el('simEntry').value);
+        const expiry = el('simExpiry').value;
+        if(!Number.isFinite(entry) || entry <= 0){ el('simStatus').textContent='Enter a valid entry price.'; return; }
+        const sim = loadSim();
+        const snap = currentSnapshot();
+        sim.open.push({ id: mkId(), symbol, side, entry, expiry, openedAt: new Date().toISOString(), snap });
+        saveSim(sim);
+        el('simStatus').textContent='Opened.';
+        renderSim();
+      });
+
+      el('simClose').addEventListener('click', () => {
+        const id = el('simCloseId').value.trim();
+        const exit = Number(el('simExit').value);
+        if(!id){ el('simStatus').textContent='Enter a position ID.'; return; }
+        if(!Number.isFinite(exit) || exit <= 0){ el('simStatus').textContent='Enter a valid exit price.'; return; }
+        const sim = loadSim();
+        const idx = sim.open.findIndex(p => p.id === id);
+        if(idx < 0){ el('simStatus').textContent='ID not found in open positions.'; return; }
+        const p = sim.open.splice(idx,1)[0];
+        const pl = (p.side === 'bullish') ? (exit - p.entry) : (p.entry - exit);
+        sim.closed.push({ ...p, exit, pl: Number(pl.toFixed(3)), closedAt: new Date().toISOString() });
+        saveSim(sim);
+        el('simStatus').textContent='Closed.';
+        renderSim();
+      });
+
+      el('simExport').addEventListener('click', () => {
+        const sim = loadSim();
+        const header = ['id','symbol','side','entry','exit','pl','openedAt','closedAt','expiry','neDhdd14','mwDhdd14','sDhdd14'];
+        const rows = [header.join(',')];
+        for(const p of sim.closed){
+          const row = [
+            p.id, p.symbol, p.side, String(p.entry), String(p.exit ?? ''), String(p.pl ?? ''),
+            p.openedAt, p.closedAt, p.expiry,
+            String(p.snap?.neDhdd14 ?? ''), String(p.snap?.mwDhdd14 ?? ''), String(p.snap?.sDhdd14 ?? '')
+          ].map(v => {
+            const s = String(v ?? '');
+            return (s.includes(',') || s.includes('"') || s.includes('\\n')) ? ('"' + s.replaceAll('"','""') + '"') : s;
+          }).join(',');
+          rows.push(row);
+        }
+        const csv = rows.join('\\n') + '\\n';
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ung-test-contracts.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+
+      el('simClear').addEventListener('click', () => {
+        if(!confirm('Clear all test contracts?')) return;
+        localStorage.removeItem(simKey);
+        renderSim();
+      });
+
+      renderSim();
+
       initTradingView();
       updateEventTiming();
-      setInterval(updateEventTiming, 60000);
+      updateRollWindow();
+      setInterval(() => { updateEventTiming(); updateRollWindow(); }, 60000);
       refreshWeather();
     }
 
