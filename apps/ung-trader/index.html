@@ -709,7 +709,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-03.1';
+    const APP_VERSION = '2026-02-03.2';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -767,9 +767,12 @@
 
         // Prefer server-generated snapshots in Supabase (avoids local compute + API rate limits)
         try{
-          const latest = await sbFetchLatestSnapshot({ baseF, windowKey });
+          const rows = await sbFetchLatestTwo({ baseF, windowKey });
+          const latest = rows && rows[0];
+          const prevDb = rows && rows[1];
           if(latest){
             const tsIso = new Date(latest.ts).toISOString();
+            lastDbSnapshot = latest;
 
             // HDD14 (raw) + normal (if present in DB)
             const fmtHdd = (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(1) : '—');
@@ -815,39 +818,17 @@
               el('southAlert').textContent = String(southBurst);
             }
 
-            // Local history (for ΔΔ) — mirror the DB snapshot into localStorage
-            const snaps = loadModelSnapshots();
-            const tsKey = tsIso.slice(0,16) + 'Z';
-            const prev = snaps.length ? snaps[snaps.length - 1] : null;
-            const neChg = prev ? (Number(latest.ne_dhdd14) - prev.neDhdd14) : NaN;
-            const mwChg = prev ? (Number(latest.mw_dhdd14) - prev.mwDhdd14) : NaN;
-            const sChg  = prev ? (Number(latest.s_dhdd14)  - prev.sDhdd14)  : NaN;
+            // ΔΔ should come from Supabase (not browser cache)
+            const neChg = prevDb ? (Number(latest.ne_dhdd14) - Number(prevDb.ne_dhdd14)) : NaN;
+            const mwChg = prevDb ? (Number(latest.mw_dhdd14) - Number(prevDb.mw_dhdd14)) : NaN;
+            const sChg  = prevDb ? (Number(latest.s_dhdd14)  - Number(prevDb.s_dhdd14))  : NaN;
 
             setChange(el('neChg'), el('neChgDot'), neChg);
             setChange(el('mwChg'), el('mwChgDot'), mwChg);
             setChange(el('sChg'),  el('sChgDot'),  sChg);
 
-            if(!snaps.length || snaps[snaps.length - 1].ts !== tsKey){
-              snaps.push({
-                ts: tsKey,
-                baseF,
-                windowKey,
-                neDhdd14: Number(latest.ne_dhdd14),
-                mwDhdd14: Number(latest.mw_dhdd14),
-                sDhdd14: Number(latest.s_dhdd14),
-                neDhddBuckets: neB,
-                mwDhddBuckets: mwB,
-                sDhddBuckets: sB,
-                southBurst3d: southBurst,
-                southFreezeRisk: freezeRisk || null,
-              });
-              saveModelSnapshots(snaps);
-            }
-
-            const ref = prev ? ('since ' + (prev.ts || prev.day || 'previous')) : 'no prior snapshot yet';
-            el('modelChangeNote').textContent = `Model change (ΔΔHDD14): ${ref}. Saved snapshots: ${snaps.length}.`;
-
-            renderHistoryPreview();
+            const ref = prevDb ? ('since ' + new Date(prevDb.ts).toISOString().slice(0,16) + 'Z') : 'no prior run yet';
+            el('modelChangeNote').textContent = `Model change (ΔΔHDD14): ${ref}.`;
 
             setDot(el('weatherDot'), 'ok');
             el('weatherStatus').textContent = `Weather: loaded from Supabase (${tsIso.replace('T',' ').slice(0,19)}Z)`;
@@ -901,48 +882,12 @@
         }
 
 
-        // Model history (local-only): store a timestamped snapshot every refresh.
-        // This approximates "model runs" as you check it through the day.
-        const snaps = loadModelSnapshots();
-        const nowTs = new Date();
-        const tsKey = isoMinuteKey(nowTs);
-
-        const prev = snaps.length ? snaps[snaps.length - 1] : null;
-        const neChg = prev ? (ne.dhdd14 - prev.neDhdd14) : NaN;
-        const mwChg = prev ? (mw.dhdd14 - prev.mwDhdd14) : NaN;
-        const sChg  = prev ? (s.dhdd14  - prev.sDhdd14)  : NaN;
-
-        setChange(el('neChg'), el('neChgDot'), neChg);
-        setChange(el('mwChg'), el('mwChgDot'), mwChg);
-        setChange(el('sChg'),  el('sChgDot'),  sChg);
-
-        const ref = prev ? ('since ' + (prev.ts || prev.day || 'previous')) : 'no prior snapshot yet';
-        el('modelChangeNote').textContent = `Model change (ΔΔHDD14): ${ref}. Saved snapshots: ${snaps.length}.`;
-
-        // Idempotent-ish save: only keep one snapshot per minute.
-        if(!snaps.length || snaps[snaps.length - 1].ts !== tsKey){
-          snaps.push({
-            ts: tsKey,
-            baseF,
-            windowKey,
-            neDhdd14: ne.dhdd14,
-            mwDhdd14: mw.dhdd14,
-            sDhdd14: s.dhdd14,
-            neDhddBuckets: ne.dhddBuckets,
-            mwDhddBuckets: mw.dhddBuckets,
-            sDhddBuckets: s.dhddBuckets,
-            southBurst3d: sig.label,
-            southFreezeRisk: s.freezeRisk || null,
-          });
-          saveModelSnapshots(snaps);
-
-          // If Supabase is configured, auto-push every new snapshot.
-          try {
-            await sbPushLatestSnapshot();
-            // prune on the same cadence (cheap)
-            await sbPruneOld(28);
-          } catch {}
-        }
+        // No browser-cached snapshots: if we got here, we're in fallback local compute mode.
+        // We do NOT write to localStorage, and ΔΔ is DB-only.
+        setChange(el('neChg'), el('neChgDot'), NaN);
+        setChange(el('mwChg'), el('mwChgDot'), NaN);
+        setChange(el('sChg'),  el('sChgDot'),  NaN);
+        el('modelChangeNote').textContent = 'Model change (ΔΔHDD14): DB-only (fallback mode).';
 
         renderHistoryPreview();
 
@@ -1003,9 +948,9 @@
       return window.supabase.createClient(url, key);
     }
 
-    async function sbFetchLatestSnapshot({ baseF, windowKey }){
+    async function sbFetchLatestTwo({ baseF, windowKey }){
       const client = getSupabaseClient();
-      if(!client) return null;
+      if(!client) return [];
 
       const { data, error } = await client
         .from('ung_model_snapshots')
@@ -1013,10 +958,10 @@
         .eq('base_f', baseF)
         .eq('window_key', windowKey)
         .order('ts', { ascending: false })
-        .limit(1);
+        .limit(2);
 
-      if(error) throw new Error('Supabase latest snapshot error: ' + error.message);
-      return (data && data[0]) ? data[0] : null;
+      if(error) throw new Error('Supabase latest snapshots error: ' + error.message);
+      return data || [];
     }
 
     async function sbFetchSeries({ baseF, windowKey, days=7 }){
@@ -1063,43 +1008,12 @@
         southFreezeRisk: r.south_freeze_risk,
       }));
 
-      // merge unique by ts
-      const existing = loadModelSnapshots();
-      const byTs = new Map(existing.map(x => [x.ts, x]));
-      for(const r of local) byTs.set(r.ts, { ...byTs.get(r.ts), ...r });
-      const merged = Array.from(byTs.values()).sort((a,b) => String(a.ts).localeCompare(String(b.ts)));
-      saveModelSnapshots(merged);
-
-      return { snapshots: merged.length };
+      // DB-first: do not write browser snapshot cache. Just show count.
+      return { snapshots: local.length };
     }
 
     async function sbPushLatestSnapshot(){
-      const client = getSupabaseClient();
-      if(!client) throw new Error('Supabase not configured.');
-      const snaps = loadModelSnapshots();
-      const last = snaps.length ? snaps[snaps.length-1] : null;
-      if(!last) throw new Error('No local snapshots to push yet.');
-
-      const payload = {
-        ts: new Date(last.ts),
-        base_f: Number(last.baseF || 65),
-        window_key: String(last.windowKey || ''),
-        ne_dhdd14: last.neDhdd14 ?? null,
-        mw_dhdd14: last.mwDhdd14 ?? null,
-        s_dhdd14: last.sDhdd14 ?? null,
-        ne_dhdd_buckets: last.neDhddBuckets ?? null,
-        mw_dhdd_buckets: last.mwDhddBuckets ?? null,
-        s_dhdd_buckets: last.sDhddBuckets ?? null,
-        south_burst_3d: last.southBurst3d ?? null,
-        south_freeze_risk: last.southFreezeRisk ?? null,
-      };
-
-      // Upsert so you can safely refresh multiple times without duplicates.
-      const { error } = await client
-        .from('ung_model_snapshots')
-        .upsert(payload, { onConflict: 'ts,base_f,window_key' });
-      if(error) throw new Error('Supabase push snapshot error: ' + error.message);
-      return { ok: true };
+      throw new Error('Browser snapshot push disabled (DB-only mode).');
     }
 
     async function sbPruneOld(days=28){
@@ -1113,6 +1027,9 @@
 
     let rawChart = null;
     let deltaChart = null;
+
+    // Last DB snapshot loaded (DB-only mode)
+    let lastDbSnapshot = null;
 
     function computeStats(arr){
       const xs = (arr || []).filter(x => Number.isFinite(x));
@@ -1251,21 +1168,27 @@
       return rows.join('\\n') + '\\n';
     }
 
-    function renderHistoryPreview(){
-      const snaps = loadModelSnapshots();
-      const tail = snaps.slice(-12);
-      if(!tail.length){
-        el('historyPreview').textContent = '(none)';
-        return;
+    async function renderHistoryPreview(){
+      try{
+        const baseF = Number(el('base').value);
+        const windowKey = el('climoYears').value;
+        const rows = await sbFetchSeries({ baseF, windowKey, days: 7 });
+        const tail = (rows || []).slice(-12);
+        if(!tail.length){
+          el('historyPreview').textContent = '(none)';
+          return;
+        }
+        const lines = tail.map(r => {
+          const ts = new Date(r.ts).toISOString().slice(0,16) + 'Z';
+          const ne = (r.ne_dhdd14 ?? '');
+          const mw = (r.mw_dhdd14 ?? '');
+          const so = (r.s_dhdd14 ?? '');
+          return `${ts} | NE ΔHDD14 ${ne} | MW ${mw} | South ${so}`;
+        });
+        el('historyPreview').textContent = lines.join('\\n');
+      } catch(e){
+        el('historyPreview').textContent = '(Supabase not available)';
       }
-      const lines = tail.map(r => {
-        const ts = r.ts || r.day || '';
-        const ne = (r.neDhdd14 ?? '');
-        const mw = (r.mwDhdd14 ?? '');
-        const so = (r.sDhdd14 ?? '');
-        return `${ts} | NE ΔHDD14 ${ne} | MW ${mw} | South ${so}`;
-      });
-      el('historyPreview').textContent = lines.join('\\n');
     }
 
     function copySummary(){
@@ -1529,11 +1452,15 @@
         await sbPullAll();
       }));
 
-      el('sbPush').addEventListener('click', () => withSbStatus(async () => {
-        await sbPushLatestSnapshot();
-      }));
+      // We no longer push browser-generated snapshots; pipeline writes server-side.
+      try {
+        el('sbPush').style.display = 'none';
+      } catch {}
 
       renderHistoryPreview();
+
+      // DB-only mode: clear any old browser snapshot cache if present
+      try { localStorage.removeItem(modelKey); } catch {}
 
       // --- Test contracts (paper trading) ---
       const simKey = 'ung-trader.sim.v1';
@@ -1543,8 +1470,15 @@
       function saveSim(obj){ localStorage.setItem(simKey, JSON.stringify(obj)); }
       function mkId(){ return 'T' + Math.random().toString(16).slice(2,8) + '-' + Date.now().toString(16).slice(-4); }
       function currentSnapshot(){
-        const snaps = loadModelSnapshots();
-        return snaps.length ? snaps[snaps.length-1] : null;
+        if(!lastDbSnapshot) return null;
+        return {
+          ts: new Date(lastDbSnapshot.ts).toISOString().slice(0,16) + 'Z',
+          baseF: lastDbSnapshot.base_f,
+          windowKey: lastDbSnapshot.window_key,
+          neDhdd14: Number(lastDbSnapshot.ne_dhdd14),
+          mwDhdd14: Number(lastDbSnapshot.mw_dhdd14),
+          sDhdd14: Number(lastDbSnapshot.s_dhdd14),
+        };
       }
       function renderSim(){
         const sim = loadSim();
