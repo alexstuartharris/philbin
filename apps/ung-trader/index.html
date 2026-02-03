@@ -345,16 +345,24 @@
 
       <div class="two" style="margin-top:12px;">
         <div>
-          <label for="simEntry">Entry price (manual)</label>
+          <label for="simEntry">Entry price</label>
           <input id="simEntry" type="number" step="0.01" placeholder="e.g., 1.25" />
+          <div class="mini" id="simPriceMeta" style="margin-top:6px;">Price source: —</div>
         </div>
         <div>
           <label for="simExpiry">Target exit / expiry date</label>
           <input id="simExpiry" type="date" />
+          <div class="mini" style="margin-top:6px;">
+            <label style="display:flex; gap:10px; align-items:center; margin:0; font-weight:700;">
+              <input id="simAutoFill" type="checkbox" style="width:auto;" checked />
+              Auto-fill price (Stooq daily close if no free intraday)
+            </label>
+          </div>
         </div>
       </div>
 
       <div class="btnRow" style="margin-top:12px;">
+        <button id="simFill" class="secondary">Fetch UNG price</button>
         <button id="simOpen" class="secondary">Open test contract</button>
         <button id="simExport" class="secondary">Export CSV</button>
         <button id="simClear" class="secondary">Clear</button>
@@ -374,8 +382,9 @@
             <input id="simCloseId" placeholder="copy/paste from list" />
           </div>
           <div>
-            <label for="simExit">Exit price (manual)</label>
+            <label for="simExit">Exit price</label>
             <input id="simExit" type="number" step="0.01" placeholder="e.g., 1.80" />
+            <div class="mini" style="margin-top:6px;">Tip: enable auto-fill above, or click “Fetch UNG price”.</div>
           </div>
         </div>
         <div class="btnRow" style="margin-top:10px;">
@@ -709,7 +718,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-03.2';
+    const APP_VERSION = '2026-02-03.3';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1464,6 +1473,41 @@
 
       // --- Test contracts (paper trading) ---
       const simKey = 'ung-trader.sim.v1';
+
+      async function fetchUngPriceStooq(){
+        // Stooq provides daily OHLC (not true live intraday). No API key.
+        // Example: https://stooq.com/q/l/?s=ung.us&i=d
+        const url = 'https://stooq.com/q/l/?s=ung.us&i=d';
+        const r = await fetch(url, { cache: 'no-store' });
+        if(!r.ok) throw new Error('Price fetch failed: ' + r.status);
+        const text = (await r.text()).trim();
+        const lines = text.split(/\r?\n/).filter(Boolean);
+        if(lines.length < 2) throw new Error('Price fetch returned no data.');
+        const header = lines[0].split(',').map(s => s.trim().toLowerCase());
+        const row = lines[1].split(',');
+        const idx = (name) => header.indexOf(name);
+        const closeI = idx('close');
+        const dateI = idx('date');
+        if(closeI < 0) throw new Error('Price parse error: close missing');
+        const close = Number(String(row[closeI] ?? '').trim());
+        const date = String(row[dateI] ?? '').trim();
+        if(!Number.isFinite(close)) throw new Error('Price parse error: bad close');
+        return { price: close, date, source: 'stooq (daily close)' };
+      }
+
+      async function fillUngPriceInto(fieldId){
+        el('simStatus').textContent = 'Fetching UNG price…';
+        try{
+          const q = await fetchUngPriceStooq();
+          el(fieldId).value = String(q.price);
+          el('simPriceMeta').textContent = `Price source: ${q.source} (${q.date || 'latest'})`;
+          el('simStatus').textContent = 'OK';
+          return q;
+        } catch(e){
+          el('simStatus').textContent = String(e?.message || e);
+          throw e;
+        }
+      }
       function loadSim(){
         try { return JSON.parse(localStorage.getItem(simKey) || '{"open":[],"closed":[]}'); } catch { return {open:[],closed:[]}; }
       }
@@ -1493,31 +1537,51 @@
         el('simClosedList').textContent = closedLines.length ? closedLines.join('\\n') : '(none)';
       }
 
-      el('simOpen').addEventListener('click', () => {
+      el('simFill').addEventListener('click', async () => {
+        try{
+          await fillUngPriceInto('simEntry');
+        } catch {}
+      });
+
+      el('simOpen').addEventListener('click', async () => {
         const symbol = el('simSymbol').value;
         const side = el('simSide').value;
-        const entry = Number(el('simEntry').value);
         const expiry = el('simExpiry').value;
+
+        // Optional auto-fill
+        if(symbol === 'UNG' && el('simAutoFill')?.checked){
+          try{ await fillUngPriceInto('simEntry'); } catch {}
+        }
+
+        const entry = Number(el('simEntry').value);
         if(!Number.isFinite(entry) || entry <= 0){ el('simStatus').textContent='Enter a valid entry price.'; return; }
         const sim = loadSim();
         const snap = currentSnapshot();
-        sim.open.push({ id: mkId(), symbol, side, entry, expiry, openedAt: new Date().toISOString(), snap });
+        sim.open.push({ id: mkId(), symbol, side, entry, expiry, openedAt: new Date().toISOString(), snap, priceSource: el('simPriceMeta')?.textContent || '' });
         saveSim(sim);
         el('simStatus').textContent='Opened.';
         renderSim();
       });
 
-      el('simClose').addEventListener('click', () => {
+      el('simClose').addEventListener('click', async () => {
         const id = el('simCloseId').value.trim();
-        const exit = Number(el('simExit').value);
         if(!id){ el('simStatus').textContent='Enter a position ID.'; return; }
+
+        // Optional auto-fill (for UNG only)
+        const simTmp = loadSim();
+        const pTmp = simTmp.open.find(p => p.id === id);
+        if(pTmp && pTmp.symbol === 'UNG' && el('simAutoFill')?.checked){
+          try{ await fillUngPriceInto('simExit'); } catch {}
+        }
+
+        const exit = Number(el('simExit').value);
         if(!Number.isFinite(exit) || exit <= 0){ el('simStatus').textContent='Enter a valid exit price.'; return; }
         const sim = loadSim();
         const idx = sim.open.findIndex(p => p.id === id);
         if(idx < 0){ el('simStatus').textContent='ID not found in open positions.'; return; }
         const p = sim.open.splice(idx,1)[0];
         const pl = (p.side === 'bullish') ? (exit - p.entry) : (p.entry - exit);
-        sim.closed.push({ ...p, exit, pl: Number(pl.toFixed(3)), closedAt: new Date().toISOString() });
+        sim.closed.push({ ...p, exit, pl: Number(pl.toFixed(3)), closedAt: new Date().toISOString(), closePriceSource: el('simPriceMeta')?.textContent || '' });
         saveSim(sim);
         el('simStatus').textContent='Closed.';
         renderSim();
