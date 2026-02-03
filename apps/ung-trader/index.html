@@ -809,7 +809,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-03.7';
+    const APP_VERSION = '2026-02-03.8';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1656,49 +1656,33 @@
       const simKey = 'ung-trader.sim.v1';
 
       async function fetchUngPriceStooq(){
+        // NOTE: Stooq does not send CORS headers reliably.
+        // We fetch via Supabase Edge Function proxy (/functions/v1/market-data) to avoid CORS failures.
+
         // Stooq provides daily OHLC (not true live intraday). No API key.
         // Example: https://stooq.com/q/l/?s=ung.us&i=d
-        const url = 'https://stooq.com/q/l/?s=ung.us&i=d';
+        const url = 'https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/market-data?provider=stooq&symbol=ung&kind=latest';
         const r = await fetch(url, { cache: 'no-store' });
         if(!r.ok) throw new Error('Price fetch failed: ' + r.status);
-        const text = (await r.text()).trim();
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        if(lines.length < 2) throw new Error('Price fetch returned no data.');
-        const header = lines[0].split(',').map(s => s.trim().toLowerCase());
-        const row = lines[1].split(',');
-        const idx = (name) => header.indexOf(name);
-        const closeI = idx('close');
-        const dateI = idx('date');
-        if(closeI < 0) throw new Error('Price parse error: close missing');
-        const close = Number(String(row[closeI] ?? '').trim());
-        const date = String(row[dateI] ?? '').trim();
-        if(!Number.isFinite(close)) throw new Error('Price parse error: bad close');
-        return { price: close, date, source: 'stooq (daily close)' };
+        const j = await r.json();
+        if(!j?.ok) throw new Error(j?.error || 'Price fetch failed');
+        // date comes as YYYYMMDD from Stooq
+        const date = String(j.date || '');
+        const ymd = date.length === 8 ? `${date.slice(0,4)}-${date.slice(4,6)}-${date.slice(6,8)}` : date;
+        const close = Number(j.close);
+        if(!Number.isFinite(close)) throw new Error('Price parse error');
+        return { price: close, date: ymd, source: 'stooq via Supabase (daily close)' };
       }
 
       async function fetchUngDailyHistoryStooq(){
         // Daily history CSV
         // Example: https://stooq.com/q/d/l/?s=ung.us&i=d
-        const url = 'https://stooq.com/q/d/l/?s=ung.us&i=d';
+        const url = 'https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/market-data?provider=stooq&symbol=ung&kind=history';
         const r = await fetch(url, { cache: 'no-store' });
         if(!r.ok) throw new Error('History fetch failed: ' + r.status);
-        const text = (await r.text()).trim();
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        if(lines.length < 3) throw new Error('History returned no data.');
-        const header = lines[0].split(',').map(s => s.trim().toLowerCase());
-        const ci = header.indexOf('close');
-        const di = header.indexOf('date');
-        if(ci < 0 || di < 0) throw new Error('History parse error: missing date/close');
-
-        const out = [];
-        for(let i=1;i<lines.length;i++){
-          const row = lines[i].split(',');
-          const date = String(row[di] ?? '').trim();
-          const close = Number(String(row[ci] ?? '').trim());
-          if(!date || !Number.isFinite(close)) continue;
-          out.push({ date, close });
-        }
-        return out;
+        const j = await r.json();
+        if(!j?.ok) throw new Error(j?.error || 'History fetch failed');
+        return (j.rows || []).map(x => ({ date: x.date, close: Number(x.close) })).filter(x => x.date && Number.isFinite(x.close));
       }
 
       function monthKeyFromYmd(d){
