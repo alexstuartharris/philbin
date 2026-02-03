@@ -251,7 +251,20 @@
         </div>
       </div>
 
-      <div class="mini" id="deltaStats" style="margin-top:8px;">—</div>
+      <div style="margin-top:10px; overflow:auto;">
+        <table id="deltaStatsTable">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th class="mono">Value</th>
+              <th class="mono">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="deltaStatsBody">
+            <tr><td colspan="3" class="muted">—</td></tr>
+          </tbody>
+        </table>
+      </div>
     </details>
 
     <details class="card">
@@ -718,7 +731,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-03.3';
+    const APP_VERSION = '2026-02-03.4';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1045,7 +1058,53 @@
       if(xs.length < 2) return null;
       const mean = xs.reduce((a,b)=>a+b,0) / xs.length;
       const varr = xs.reduce((a,b)=>a + (b-mean)*(b-mean), 0) / xs.length;
-      return { n: xs.length, mean, std: Math.sqrt(varr) };
+      const std = Math.sqrt(varr);
+      const sorted = xs.slice().sort((a,b)=>a-b);
+      const q = (p) => {
+        if(!sorted.length) return NaN;
+        const i = (sorted.length - 1) * p;
+        const lo = Math.floor(i), hi = Math.ceil(i);
+        if(lo === hi) return sorted[lo];
+        const w = i - lo;
+        return sorted[lo] * (1-w) + sorted[hi] * w;
+      };
+      const median = q(0.5);
+      const mad = qFromArray(sorted.map(v => Math.abs(v - median)).sort((a,b)=>a-b), 0.5);
+      return {
+        n: xs.length,
+        mean,
+        std,
+        median,
+        mad,
+        p90: q(0.90),
+        p95: q(0.95),
+        max: sorted[sorted.length-1],
+      };
+    }
+
+    function qFromArray(sorted, p){
+      if(!sorted.length) return NaN;
+      const i = (sorted.length - 1) * p;
+      const lo = Math.floor(i), hi = Math.ceil(i);
+      if(lo === hi) return sorted[lo];
+      const w = i - lo;
+      return sorted[lo] * (1-w) + sorted[hi] * w;
+    }
+
+    function fmtNum(v, digits=1){
+      return Number.isFinite(v) ? v.toFixed(digits) : '—';
+    }
+
+    function bucketFlag(absVal, st){
+      // Uses mean + k*sigma on ABS deltas (rough, but effective)
+      if(!st) return { label: '—', kind: 'muted' };
+      const t1 = st.mean + 1.5*st.std;
+      const t2 = st.mean + 2.0*st.std;
+      const t3 = st.mean + 3.0*st.std;
+      if(absVal >= t3) return { label: 'EXTREME', kind: 'bad' };
+      if(absVal >= t2) return { label: 'BIG', kind: 'warn' };
+      if(absVal >= t1) return { label: 'NOTABLE', kind: 'warn' };
+      return { label: 'NORMAL', kind: 'ok' };
     }
 
     function ensureCharts(){
@@ -1137,12 +1196,35 @@
 
       const absDem = demD.map(v => (v===null? null : Math.abs(v)));
       const st = computeStats(absDem);
-      const statsEl = document.getElementById('deltaStats');
-      if(statsEl){
-        if(!st){ statsEl.textContent = 'ΔΔ stats: need more points.'; }
-        else {
-          statsEl.textContent = `ΔΔ Demand (abs) last ${rows.length} pts: mean ${st.mean.toFixed(1)}, σ ${st.std.toFixed(1)}. Rough flags: >${(st.mean+2*st.std).toFixed(1)} ≈ big move.`;
+
+      const latestDem = demand.length ? demand[demand.length-1] : NaN;
+      const latestDemD = demD.length ? demD[demD.length-1] : null;
+      const latestAbs = (latestDemD===null || latestDemD===undefined) ? NaN : Math.abs(Number(latestDemD));
+      const flag = bucketFlag(latestAbs, st);
+
+      // Render stats table
+      const body = document.getElementById('deltaStatsBody');
+      if(body){
+        const esc = (x) => String(x ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+        const rowsHtml = [];
+        rowsHtml.push(`<tr><td>Window</td><td class="mono">7d</td><td class="mono">Supabase series</td></tr>`);
+        rowsHtml.push(`<tr><td>Points</td><td class="mono">${rows.length}</td><td class="mono">Runs in window</td></tr>`);
+        rowsHtml.push(`<tr><td>Latest Demand (ΔHDD14)</td><td class="mono">${fmtNum(latestDem,1)}</td><td class="mono">0.55*NE + 0.45*MW</td></tr>`);
+        rowsHtml.push(`<tr><td>Latest ΔΔ Demand</td><td class="mono">${latestDemD===null? '—' : fmtNum(Number(latestDemD),1)}</td><td class="mono">vs prior run</td></tr>`);
+        rowsHtml.push(`<tr><td>Latest |ΔΔ Demand|</td><td class="mono">${fmtNum(latestAbs,1)}</td><td class="mono">magnitude</td></tr>`);
+
+        if(!st){
+          rowsHtml.push(`<tr><td>Significance</td><td class="mono">—</td><td class="mono">Need more points</td></tr>`);
+        } else {
+          rowsHtml.push(`<tr><td>Significance</td><td class="mono">${esc(flag.label)}</td><td class="mono">mean+1.5σ / +2σ / +3σ bands</td></tr>`);
+          rowsHtml.push(`<tr><td>Mean |ΔΔ|</td><td class="mono">${fmtNum(st.mean,1)}</td><td class="mono">baseline churn</td></tr>`);
+          rowsHtml.push(`<tr><td>σ(|ΔΔ|)</td><td class="mono">${fmtNum(st.std,1)}</td><td class="mono">variability of churn</td></tr>`);
+          rowsHtml.push(`<tr><td>P90 |ΔΔ|</td><td class="mono">${fmtNum(st.p90,1)}</td><td class="mono">rare-ish move</td></tr>`);
+          rowsHtml.push(`<tr><td>P95 |ΔΔ|</td><td class="mono">${fmtNum(st.p95,1)}</td><td class="mono">very rare move</td></tr>`);
+          rowsHtml.push(`<tr><td>Max |ΔΔ|</td><td class="mono">${fmtNum(st.max,1)}</td><td class="mono">largest in window</td></tr>`);
         }
+
+        body.innerHTML = rowsHtml.join('');
       }
     }
 
