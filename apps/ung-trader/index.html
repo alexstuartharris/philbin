@@ -37,6 +37,11 @@
     details.card > summary::-webkit-details-marker{display:none;}
     details.card > summary{display:flex; align-items:center; justify-content:space-between; gap:12px;}
     details.card > summary .caret{opacity:.55; font-weight:900;}
+
+    /* Chart.js: prevent runaway resize on mobile by giving canvases a stable container height */
+    .chartBox{position:relative; height:220px; min-height:220px;}
+    .chartBox canvas{display:block; width:100% !important; height:100% !important;}
+    @media (max-width: 720px){ .chartBox{height:240px; min-height:240px;} }
     .sub{margin:0; color:var(--muted); line-height:1.45; max-width:95ch;}
     main{max-width:1200px; margin:0 auto; padding:0 18px 70px; display:grid; gap:14px;}
     .card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);}
@@ -238,11 +243,11 @@
       <div class="two" style="margin-top:10px;">
         <div>
           <div class="muted mini" style="margin-bottom:6px;">Raw anomalies (ΔHDD14)</div>
-          <canvas id="chartRaw" height="160"></canvas>
+          <div class="chartBox"><canvas id="chartRaw"></canvas></div>
         </div>
         <div>
           <div class="muted mini" style="margin-bottom:6px;">Run-to-run deltas (ΔΔ)</div>
-          <canvas id="chartDelta" height="160"></canvas>
+          <div class="chartBox"><canvas id="chartDelta"></canvas></div>
         </div>
       </div>
 
@@ -704,7 +709,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-02.6';
+    const APP_VERSION = '2026-02-03.1';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1130,6 +1135,8 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            resizeDelay: 150,
+            animation: false,
             interaction: { mode: 'index', intersect: false },
             plugins: { legend: { display: true } },
             scales: {
@@ -1147,6 +1154,8 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            resizeDelay: 150,
+            animation: false,
             interaction: { mode: 'index', intersect: false },
             plugins: { legend: { display: true } },
             scales: {
