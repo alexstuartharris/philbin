@@ -741,7 +741,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-03.5';
+    const APP_VERSION = '2026-02-03.6';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1240,7 +1240,7 @@
         rowsHtml.push(`<tr><td>Points</td><td class="mono">${rows.length}</td><td class="mono">Runs in window</td></tr>`);
         rowsHtml.push(`<tr><td>Latest Demand (ΔHDD14)</td><td class="mono">${fmtNum(latestDem,1)}</td><td class="mono">0.55*NE + 0.45*MW</td></tr>`);
         rowsHtml.push(`<tr><td>Latest ΔΔ Demand</td><td class="mono">${latestDemD===null? '—' : fmtNum(Number(latestDemD),1)}</td><td class="mono">run-to-run; + = colder, − = warmer</td></tr>`);
-        rowsHtml.push(`<tr><td>Latest |ΔΔ Demand|</td><td class="mono">${fmtNum(latestAbs,1)}</td><td class="mono">magnitude</td></tr>`);
+        // (magnitude row removed)
         rowsHtml.push(`<tr><td>Robust z (ΔΔ)</td><td class="mono">${fmtNum(robustZ,2)}</td><td class="mono">0.6745*(x−median)/MAD</td></tr>`);
         rowsHtml.push(`<tr><td>Robust |z|</td><td class="mono">${Number.isFinite(robustZ)? fmtNum(Math.abs(robustZ),2) : '—'}</td><td class="mono">outlier score (MAD)</td></tr>`);
 
