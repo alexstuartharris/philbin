@@ -766,13 +766,23 @@
           if(latest){
             const tsIso = new Date(latest.ts).toISOString();
 
-            // No HDD14 stored in DB table yet; we focus on anomalies.
-            el('neHdd').textContent = `HDD14: —`;
-            el('mwHdd').textContent = `HDD14: —`;
-            el('sHdd').textContent = `HDD14: —`;
-            setDot(el('neDot'), 'warn');
-            setDot(el('mwDot'), 'warn');
-            setDot(el('sDot'), 'warn');
+            // HDD14 (raw) + normal (if present in DB)
+            const fmtHdd = (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(1) : '—');
+            const neH = fmtHdd(latest.ne_hdd14);
+            const mwH = fmtHdd(latest.mw_hdd14);
+            const sH  = fmtHdd(latest.s_hdd14);
+            const neN = fmtHdd(latest.ne_hdd14_norm);
+            const mwN = fmtHdd(latest.mw_hdd14_norm);
+            const sN  = fmtHdd(latest.s_hdd14_norm);
+
+            el('neHdd').textContent = `HDD14: ${neH} (N ${neN})`;
+            el('mwHdd').textContent = `HDD14: ${mwH} (N ${mwN})`;
+            el('sHdd').textContent  = `HDD14: ${sH} (N ${sN})`;
+
+            // Dot: warn if HDD14 missing, otherwise simple threshold coloring
+            setDot(el('neDot'), neH === '—' ? 'warn' : (Number(neH) >= 120 ? 'warn' : 'ok'));
+            setDot(el('mwDot'), mwH === '—' ? 'warn' : (Number(mwH) >= 140 ? 'warn' : 'ok'));
+            setDot(el('sDot'),  sH === '—'  ? 'warn' : (Number(sH)  >= 60  ? 'warn' : 'ok'));
 
             el('neAnom').textContent = `ΔHDD14: ${Number(latest.ne_dhdd14).toFixed(1)}`;
             el('mwAnom').textContent = `ΔHDD14: ${Number(latest.mw_dhdd14).toFixed(1)}`;
@@ -994,7 +1004,7 @@
 
       const { data, error } = await client
         .from('ung_model_snapshots')
-        .select('ts, base_f, window_key, ne_dhdd14, mw_dhdd14, s_dhdd14, ne_dhdd_buckets, mw_dhdd_buckets, s_dhdd_buckets, south_burst_3d, south_freeze_risk')
+        .select('ts, base_f, window_key, ne_hdd14, mw_hdd14, s_hdd14, ne_hdd14_norm, mw_hdd14_norm, s_hdd14_norm, ne_dhdd14, mw_dhdd14, s_dhdd14, ne_dhdd_buckets, mw_dhdd_buckets, s_dhdd_buckets, south_burst_3d, south_freeze_risk')
         .eq('base_f', baseF)
         .eq('window_key', windowKey)
         .order('ts', { ascending: false })
@@ -1029,7 +1039,7 @@
       // pull snapshots
       const { data: snaps, error: e1 } = await client
         .from('ung_model_snapshots')
-        .select('ts, base_f, window_key, ne_dhdd14, mw_dhdd14, s_dhdd14, ne_dhdd_buckets, mw_dhdd_buckets, s_dhdd_buckets, south_burst_3d, south_freeze_risk')
+        .select('ts, base_f, window_key, ne_hdd14, mw_hdd14, s_hdd14, ne_hdd14_norm, mw_hdd14_norm, s_hdd14_norm, ne_dhdd14, mw_dhdd14, s_dhdd14, ne_dhdd_buckets, mw_dhdd_buckets, s_dhdd_buckets, south_burst_3d, south_freeze_risk')
         .order('ts', { ascending: true })
         .limit(800);
       if(e1) throw new Error('Supabase pull snapshots error: ' + e1.message);
