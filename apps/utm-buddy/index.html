@@ -104,6 +104,7 @@ B,489120,5506600
         <div class="btns">
           <button id="parseBtn">Parse CSV</button>
           <button id="convertBtn" class="primary" disabled>Convert</button>
+          <button id="copyBtn" disabled>Copy CSV</button>
           <button id="downloadBtn" disabled>Download CSV</button>
         </div>
 
@@ -334,6 +335,7 @@ B,489120,5506600
     $('mode').addEventListener('change', () => {
       fillFieldSelects();
       $('convertBtn').disabled = !state.rows.length;
+      $('copyBtn').disabled = true;
       $('downloadBtn').disabled = true;
       state.convertedRows = null;
       setMsg('', '');
@@ -359,6 +361,7 @@ B,489120,5506600
         fillFieldSelects();
         renderPreview(rows);
         $('convertBtn').disabled = false;
+        $('copyBtn').disabled = true;
         $('downloadBtn').disabled = true;
         setMsg('ok', `Parsed ${rows.length} row(s). Pick columns if needed, then click “Convert”.`);
       } catch (e) {
@@ -372,6 +375,7 @@ B,489120,5506600
         const out = convert();
         state.convertedRows = out;
         renderPreview(out);
+        $('copyBtn').disabled = false;
         $('downloadBtn').disabled = false;
 
         // count row-level errors
@@ -381,6 +385,34 @@ B,489120,5506600
         } else {
           setMsg('ok', `Converted ${out.length} row(s). Download when ready.`);
         }
+      } catch (e) {
+        setMsg('err', e.message || String(e));
+      }
+    });
+
+    $('copyBtn').addEventListener('click', async () => {
+      try {
+        if (!state.convertedRows) throw new Error('Nothing to copy yet.');
+        const csv = toCsv(state.convertedRows);
+
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(csv);
+          setMsg('ok', 'Copied CSV to clipboard.');
+          return;
+        }
+
+        // Fallback: select+copy from a hidden textarea
+        const ta = document.createElement('textarea');
+        ta.value = csv;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        ta.remove();
+        if (!ok) throw new Error('Copy failed (browser blocked). Try Download instead.');
+        setMsg('ok', 'Copied CSV to clipboard.');
       } catch (e) {
         setMsg('err', e.message || String(e));
       }
