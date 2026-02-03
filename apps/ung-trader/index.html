@@ -97,6 +97,7 @@
       <div class="row" style="justify-content:space-between;">
         <div class="row">
           <span class="pill"><span id="weatherDot" class="dot"></span><span id="weatherStatus">Weather: not loaded</span></span>
+          <span class="pill"><span class="dot ok"></span><span id="nextRun">Next model run: —</span></span>
           <span class="pill"><span class="dot ok"></span><span>Market: charts embedded</span></span>
         </div>
         <div class="row">
@@ -240,6 +241,38 @@
         </details>
       </details>
     </section>
+
+    <details class="card" open>
+      <summary><span>Price context (UNG)</span><span class="caret">▾</span></summary>
+      <h2 style="display:none;">Price context (UNG)</h2>
+      <p class="small">
+        Uses Stooq daily close (no API key) for current price and builds a month-of-year baseline from the last ~10 years.
+        This is a rough seasonal context (UNG is an ETF with roll effects; treat as directional context, not a law).
+      </p>
+
+      <div class="three" style="margin-top:10px;">
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Latest close (UNG)</div>
+          <div class="kpi" id="pxLast">—</div>
+          <div class="mini" id="pxLastMeta">—</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">This month vs 10y avg</div>
+          <div class="kpi" id="pxRel">—</div>
+          <div class="mini" id="pxRelMeta">—</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Month-of-year z-score</div>
+          <div class="kpi" id="pxZ">—</div>
+          <div class="mini" id="pxZMeta">—</div>
+        </div>
+      </div>
+
+      <div class="btnRow" style="margin-top:10px;">
+        <button id="pxRefresh" class="secondary">Refresh price baseline</button>
+        <span class="small" id="pxStatus"></span>
+      </div>
+    </details>
 
     <details class="card" open>
       <summary><span>Delta history (last 7 days)</span><span class="caret">▾</span></summary>
@@ -440,6 +473,41 @@
   <script>
     const el = (id) => document.getElementById(id);
     const storageKey = 'ung-trader.v3';
+
+    function nextGfsRunUtc(now=new Date()){
+      // Scheduled ung-runner calls: 01:00 / 07:00 / 13:00 / 19:00 UTC
+      const hours = [1,7,13,19];
+      const y = now.getUTCFullYear();
+      const m = now.getUTCMonth();
+      const d = now.getUTCDate();
+      const h = now.getUTCHours();
+
+      for(const hh of hours){
+        if(h < hh) return new Date(Date.UTC(y,m,d,hh,0,0));
+      }
+      // next day 01:00
+      return new Date(Date.UTC(y,m,d+1,1,0,0));
+    }
+
+    function fmtCountdown(ms){
+      if(ms <= 0) return 'now';
+      const sec = Math.floor(ms/1000);
+      const hh = Math.floor(sec/3600);
+      const mm = Math.floor((sec%3600)/60);
+      const ss = sec%60;
+      if(hh > 0) return `${hh}h ${mm}m`;
+      if(mm > 0) return `${mm}m ${ss}s`;
+      return `${ss}s`;
+    }
+
+    function updateNextRun(){
+      const elRun = el('nextRun');
+      if(!elRun) return;
+      const t = nextGfsRunUtc(new Date());
+      const ms = t.getTime() - Date.now();
+      const iso = t.toISOString().slice(11,16) + 'Z';
+      elRun.textContent = `Next model run: ${iso} (${fmtCountdown(ms)})`;
+    }
 
     const cities = {
       // Northeast
@@ -741,7 +809,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-03.6';
+    const APP_VERSION = '2026-02-03.7';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1348,7 +1416,7 @@
     }
 
 
-    function fmtCountdown(ms){
+    function fmtCountdownLong(ms){
       if(ms <= 0) return 'now';
       const sec = Math.floor(ms/1000);
       const d = Math.floor(sec/86400);
@@ -1608,6 +1676,116 @@
         return { price: close, date, source: 'stooq (daily close)' };
       }
 
+      async function fetchUngDailyHistoryStooq(){
+        // Daily history CSV
+        // Example: https://stooq.com/q/d/l/?s=ung.us&i=d
+        const url = 'https://stooq.com/q/d/l/?s=ung.us&i=d';
+        const r = await fetch(url, { cache: 'no-store' });
+        if(!r.ok) throw new Error('History fetch failed: ' + r.status);
+        const text = (await r.text()).trim();
+        const lines = text.split(/\r?\n/).filter(Boolean);
+        if(lines.length < 3) throw new Error('History returned no data.');
+        const header = lines[0].split(',').map(s => s.trim().toLowerCase());
+        const ci = header.indexOf('close');
+        const di = header.indexOf('date');
+        if(ci < 0 || di < 0) throw new Error('History parse error: missing date/close');
+
+        const out = [];
+        for(let i=1;i<lines.length;i++){
+          const row = lines[i].split(',');
+          const date = String(row[di] ?? '').trim();
+          const close = Number(String(row[ci] ?? '').trim());
+          if(!date || !Number.isFinite(close)) continue;
+          out.push({ date, close });
+        }
+        return out;
+      }
+
+      function monthKeyFromYmd(d){
+        // yyyy-mm-dd -> yyyy-mm
+        return String(d).slice(0,7);
+      }
+
+      function buildMonthlyBaseline(dailyRows, years=10){
+        // Create monthly averages then collapse into month-of-year stats across years.
+        const cutoff = new Date();
+        cutoff.setUTCFullYear(cutoff.getUTCFullYear() - years);
+        const cutoffYmd = cutoff.toISOString().slice(0,10);
+
+        const monthly = new Map(); // yyyy-mm -> {sum,n}
+        for(const r of dailyRows){
+          if(r.date < cutoffYmd) continue;
+          const k = monthKeyFromYmd(r.date);
+          const a = monthly.get(k) || { sum:0, n:0 };
+          a.sum += Number(r.close);
+          a.n += 1;
+          monthly.set(k, a);
+        }
+
+        const byMonth = new Map(); // mm -> [monthlyAvg,...]
+        for(const [k,a] of monthly.entries()){
+          if(a.n < 3) continue; // ignore super sparse months
+          const mm = k.slice(5,7);
+          const arr = byMonth.get(mm) || [];
+          arr.push(a.sum / a.n);
+          byMonth.set(mm, arr);
+        }
+
+        const stats = {};
+        for(const [mm, arr] of byMonth.entries()){
+          const st = computeStats(arr);
+          stats[mm] = st;
+        }
+        return stats;
+      }
+
+      async function refreshPriceContext(){
+        const statusEl = el('pxStatus');
+        try{
+          if(statusEl) statusEl.textContent = 'Loading…';
+
+          // Latest close
+          const last = await fetchUngPriceStooq();
+          el('pxLast').textContent = last.price.toFixed(2);
+          el('pxLastMeta').textContent = `${last.source} • ${last.date}`;
+
+          // Baseline (cache in localStorage)
+          const cacheKey = 'ung-trader.ung-baseline.v1';
+          let baseline = null;
+          try{ baseline = JSON.parse(localStorage.getItem(cacheKey) || 'null'); } catch {}
+
+          const now = new Date();
+          const month = String(now.getUTCMonth()+1).padStart(2,'0');
+
+          const stale = !baseline || !baseline.builtAt || (Date.now() - Date.parse(baseline.builtAt)) > 7*86400000;
+          if(stale){
+            const daily = await fetchUngDailyHistoryStooq();
+            const stats = buildMonthlyBaseline(daily, 10);
+            baseline = { builtAt: new Date().toISOString(), stats };
+            localStorage.setItem(cacheKey, JSON.stringify(baseline));
+          }
+
+          const st = baseline?.stats?.[month] || null;
+          if(st && Number.isFinite(st.mean) && Number.isFinite(st.std) && st.std > 0){
+            const rel = (last.price - st.mean) / st.mean;
+            const z = (last.price - st.mean) / st.std;
+            el('pxRel').textContent = `${(100*rel).toFixed(1)}%`;
+            el('pxRelMeta').textContent = `Month ${month} avg ${st.mean.toFixed(2)} (10y)`;
+            el('pxZ').textContent = z.toFixed(2);
+            el('pxZMeta').textContent = `z vs month-${month} mean/σ (10y)`;
+          } else {
+            el('pxRel').textContent = '—';
+            el('pxRelMeta').textContent = 'Not enough history yet.';
+            el('pxZ').textContent = '—';
+            el('pxZMeta').textContent = 'Not enough history yet.';
+          }
+
+          if(statusEl) statusEl.textContent = `OK (baseline ${baseline?.builtAt ? new Date(baseline.builtAt).toISOString().slice(0,10) : '—'})`;
+        } catch(e){
+          if(statusEl) statusEl.textContent = String(e?.message || e);
+        }
+      }
+
       async function fillUngPriceInto(fieldId){
         el('simStatus').textContent = 'Fetching UNG price…';
         try{
@@ -1655,6 +1833,11 @@
           await fillUngPriceInto('simEntry');
         } catch {}
       });
+
+      // Price context section
+      try{
+        el('pxRefresh').addEventListener('click', () => refreshPriceContext());
+      } catch {}
 
       el('simOpen').addEventListener('click', async () => {
         const symbol = el('simSymbol').value;
@@ -1739,9 +1922,16 @@
       updateEventTiming();
       updateRollWindow();
       setInterval(() => { updateEventTiming(); updateRollWindow(); }, 60000);
+
+      // Model schedule countdown
+      updateNextRun();
+      setInterval(() => updateNextRun(), 1000);
+
       refreshWeather();
       // Keep charts in sync with DB over time (lightweight)
       refreshDeltaCharts(7);
+      // Price context
+      try{ refreshPriceContext(); } catch {}
     }
 
     boot();
