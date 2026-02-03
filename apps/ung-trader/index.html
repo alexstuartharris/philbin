@@ -243,11 +243,11 @@
     </section>
 
     <details class="card" open>
-      <summary><span>Price context (UNG)</span><span class="caret">▾</span></summary>
-      <h2 style="display:none;">Price context (UNG)</h2>
+      <summary><span>Price context (UNG + Henry Hub)</span><span class="caret">▾</span></summary>
+      <h2 style="display:none;">Price context (UNG + Henry Hub)</h2>
       <p class="small">
-        Uses Stooq daily close (no API key) for current price and builds a month-of-year baseline from the last ~10 years.
-        This is a rough seasonal context (UNG is an ETF with roll effects; treat as directional context, not a law).
+        UNG uses Stooq daily close. Henry Hub uses FRED (DHHNGSP) daily spot.
+        Both build a month-of-year baseline from the last ~10 years for seasonal context.
       </p>
 
       <div class="three" style="margin-top:10px;">
@@ -257,14 +257,32 @@
           <div class="mini" id="pxLastMeta">—</div>
         </div>
         <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Latest (Henry Hub)</div>
+          <div class="kpi" id="hhLast">—</div>
+          <div class="mini" id="hhLastMeta">—</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
           <div class="muted">This month vs 10y avg</div>
           <div class="kpi" id="pxRel">—</div>
           <div class="mini" id="pxRelMeta">—</div>
         </div>
+      </div>
+
+      <div class="three" style="margin-top:12px;">
         <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
-          <div class="muted">Month-of-year z-score</div>
+          <div class="muted">UNG month z-score</div>
           <div class="kpi" id="pxZ">—</div>
           <div class="mini" id="pxZMeta">—</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Henry Hub month z-score</div>
+          <div class="kpi" id="hhZ">—</div>
+          <div class="mini" id="hhZMeta">—</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Henry Hub vs 10y avg</div>
+          <div class="kpi" id="hhRel">—</div>
+          <div class="mini" id="hhRelMeta">—</div>
         </div>
       </div>
 
@@ -809,7 +827,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-03.8';
+    const APP_VERSION = '2026-02-03.9';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1675,14 +1693,21 @@
       }
 
       async function fetchUngDailyHistoryStooq(){
-        // Daily history CSV
-        // Example: https://stooq.com/q/d/l/?s=ung.us&i=d
         const url = 'https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/market-data?provider=stooq&symbol=ung&kind=history';
         const r = await fetch(url, { cache: 'no-store' });
         if(!r.ok) throw new Error('History fetch failed: ' + r.status);
         const j = await r.json();
         if(!j?.ok) throw new Error(j?.error || 'History fetch failed');
         return (j.rows || []).map(x => ({ date: x.date, close: Number(x.close) })).filter(x => x.date && Number.isFinite(x.close));
+      }
+
+      async function fetchHenryHubHistoryFred(){
+        const url = 'https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/market-data?provider=fred&symbol=henryhub';
+        const r = await fetch(url, { cache: 'no-store' });
+        if(!r.ok) throw new Error('FRED fetch failed: ' + r.status);
+        const j = await r.json();
+        if(!j?.ok) throw new Error(j?.error || 'FRED fetch failed');
+        return (j.rows || []).map(x => ({ date: x.date, close: Number(x.value) })).filter(x => x.date && Number.isFinite(x.close));
       }
 
       function monthKeyFromYmd(d){
@@ -1728,43 +1753,83 @@
         try{
           if(statusEl) statusEl.textContent = 'Loading…';
 
-          // Latest close
-          const last = await fetchUngPriceStooq();
-          el('pxLast').textContent = last.price.toFixed(2);
-          el('pxLastMeta').textContent = `${last.source} • ${last.date}`;
-
-          // Baseline (cache in localStorage)
-          const cacheKey = 'ung-trader.ung-baseline.v1';
-          let baseline = null;
-          try{ baseline = JSON.parse(localStorage.getItem(cacheKey) || 'null'); } catch {}
-
           const now = new Date();
           const month = String(now.getUTCMonth()+1).padStart(2,'0');
 
-          const stale = !baseline || !baseline.builtAt || (Date.now() - Date.parse(baseline.builtAt)) > 7*86400000;
-          if(stale){
+          // --- UNG ---
+          const lastUng = await fetchUngPriceStooq();
+          el('pxLast').textContent = lastUng.price.toFixed(2);
+          el('pxLastMeta').textContent = `${lastUng.source} • ${lastUng.date}`;
+
+          const ungCacheKey = 'ung-trader.ung-baseline.v1';
+          let ungBase = null;
+          try{ ungBase = JSON.parse(localStorage.getItem(ungCacheKey) || 'null'); } catch {}
+          const ungStale = !ungBase || !ungBase.builtAt || (Date.now() - Date.parse(ungBase.builtAt)) > 7*86400000;
+          if(ungStale){
             const daily = await fetchUngDailyHistoryStooq();
             const stats = buildMonthlyBaseline(daily, 10);
-            baseline = { builtAt: new Date().toISOString(), stats };
-            localStorage.setItem(cacheKey, JSON.stringify(baseline));
+            ungBase = { builtAt: new Date().toISOString(), stats };
+            localStorage.setItem(ungCacheKey, JSON.stringify(ungBase));
           }
 
-          const st = baseline?.stats?.[month] || null;
-          if(st && Number.isFinite(st.mean) && Number.isFinite(st.std) && st.std > 0){
-            const rel = (last.price - st.mean) / st.mean;
-            const z = (last.price - st.mean) / st.std;
+          const ungSt = ungBase?.stats?.[month] || null;
+          if(ungSt && Number.isFinite(ungSt.mean) && Number.isFinite(ungSt.std) && ungSt.std > 0){
+            const rel = (lastUng.price - ungSt.mean) / ungSt.mean;
+            const z = (lastUng.price - ungSt.mean) / ungSt.std;
             el('pxRel').textContent = `${(100*rel).toFixed(1)}%`;
-            el('pxRelMeta').textContent = `Month ${month} avg ${st.mean.toFixed(2)} (10y)`;
+            el('pxRelMeta').textContent = `UNG: Month ${month} avg ${ungSt.mean.toFixed(2)} (10y)`;
             el('pxZ').textContent = z.toFixed(2);
-            el('pxZMeta').textContent = `z vs month-${month} mean/σ (10y)`;
+            el('pxZMeta').textContent = `UNG z vs month-${month} mean/σ (10y)`;
           } else {
             el('pxRel').textContent = '—';
-            el('pxRelMeta').textContent = 'Not enough history yet.';
+            el('pxRelMeta').textContent = 'UNG baseline unavailable.';
             el('pxZ').textContent = '—';
-            el('pxZMeta').textContent = 'Not enough history yet.';
+            el('pxZMeta').textContent = 'UNG baseline unavailable.';
           }
 
-          if(statusEl) statusEl.textContent = `OK (baseline ${baseline?.builtAt ? new Date(baseline.builtAt).toISOString().slice(0,10) : '—'})`;
+          // --- Henry Hub (FRED DHHNGSP) ---
+          const hhCacheKey = 'ung-trader.hh-baseline.v1';
+          let hhBase = null;
+          try{ hhBase = JSON.parse(localStorage.getItem(hhCacheKey) || 'null'); } catch {}
+          const hhStale = !hhBase || !hhBase.builtAt || (Date.now() - Date.parse(hhBase.builtAt)) > 30*86400000;
+          if(hhStale){
+            const daily = await fetchHenryHubHistoryFred();
+            const stats = buildMonthlyBaseline(daily, 10);
+            hhBase = { builtAt: new Date().toISOString(), stats, dailyLatest: daily[daily.length-1] || null };
+            localStorage.setItem(hhCacheKey, JSON.stringify(hhBase));
+          }
+
+          // Latest HH value (use cached dailyLatest if present, else refetch)
+          let hhLatest = hhBase?.dailyLatest;
+          if(!hhLatest){
+            const daily = await fetchHenryHubHistoryFred();
+            hhLatest = daily[daily.length-1] || null;
+          }
+
+          if(hhLatest && Number.isFinite(hhLatest.close)){
+            el('hhLast').textContent = hhLatest.close.toFixed(2);
+            el('hhLastMeta').textContent = `FRED DHHNGSP • ${hhLatest.date}`;
+          } else {
+            el('hhLast').textContent = '—';
+            el('hhLastMeta').textContent = 'FRED not available';
+          }
+
+          const hhSt = hhBase?.stats?.[month] || null;
+          if(hhLatest && hhSt && Number.isFinite(hhSt.mean) && Number.isFinite(hhSt.std) && hhSt.std > 0){
+            const rel = (hhLatest.close - hhSt.mean) / hhSt.mean;
+            const z = (hhLatest.close - hhSt.mean) / hhSt.std;
+            el('hhRel').textContent = `${(100*rel).toFixed(1)}%`;
+            el('hhRelMeta').textContent = `HH: Month ${month} avg ${hhSt.mean.toFixed(2)} (10y)`;
+            el('hhZ').textContent = z.toFixed(2);
+            el('hhZMeta').textContent = `HH z vs month-${month} mean/σ (10y)`;
+          } else {
+            el('hhRel').textContent = '—';
+            el('hhRelMeta').textContent = 'HH baseline unavailable.';
+            el('hhZ').textContent = '—';
+            el('hhZMeta').textContent = 'HH baseline unavailable.';
+          }
+
+          if(statusEl) statusEl.textContent = `OK (UNG baseline ${ungBase?.builtAt ? new Date(ungBase.builtAt).toISOString().slice(0,10) : '—'}; HH baseline ${hhBase?.builtAt ? new Date(hhBase.builtAt).toISOString().slice(0,10) : '—'})`;
         } catch(e){
           if(statusEl) statusEl.textContent = String(e?.message || e);
         }
