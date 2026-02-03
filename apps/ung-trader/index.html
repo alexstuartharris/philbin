@@ -228,6 +228,27 @@
       </details>
     </section>
 
+    <details class="card" open>
+      <summary><span>Delta history (last 7 days)</span><span class="caret">▾</span></summary>
+      <h2 style="display:none;">Delta history (last 7 days)</h2>
+      <p class="small">
+        Tracks both the raw anomaly series (ΔHDD14) and the run-to-run changes (ΔΔ). Uses Supabase data when available.
+      </p>
+
+      <div class="two" style="margin-top:10px;">
+        <div>
+          <div class="muted mini" style="margin-bottom:6px;">Raw anomalies (ΔHDD14)</div>
+          <canvas id="chartRaw" height="160"></canvas>
+        </div>
+        <div>
+          <div class="muted mini" style="margin-bottom:6px;">Run-to-run deltas (ΔΔ)</div>
+          <canvas id="chartDelta" height="160"></canvas>
+        </div>
+      </div>
+
+      <div class="mini" id="deltaStats" style="margin-top:8px;">—</div>
+    </details>
+
     <details class="card">
       <summary><span>Event timing</span><span class="caret">▾</span></summary>
       <h2 style="display:none;">Event timing</h2>
@@ -378,6 +399,7 @@
 
   <script src="https://s3.tradingview.com/tv.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
     const el = (id) => document.getElementById(id);
     const storageKey = 'ung-trader.v3';
@@ -682,7 +704,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-02.5';
+    const APP_VERSION = '2026-02-02.6';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -815,6 +837,8 @@
             setDot(el('weatherDot'), 'ok');
             el('weatherStatus').textContent = `Weather: loaded from Supabase (${tsIso.replace('T',' ').slice(0,19)}Z)`;
             el('weatherRaw').textContent = JSON.stringify({ source: 'supabase', ts: tsIso, baseF, windowKey, latest }, null, 2);
+            // Update delta charts (DB)
+            refreshDeltaCharts(7);
             return;
           }
         } catch(e){
@@ -980,6 +1004,24 @@
       return (data && data[0]) ? data[0] : null;
     }
 
+    async function sbFetchSeries({ baseF, windowKey, days=7 }){
+      const client = getSupabaseClient();
+      if(!client) return [];
+
+      const sinceIso = new Date(Date.now() - days*86400000).toISOString();
+      const { data, error } = await client
+        .from('ung_model_snapshots')
+        .select('ts, base_f, window_key, ne_dhdd14, mw_dhdd14, s_dhdd14')
+        .eq('base_f', baseF)
+        .eq('window_key', windowKey)
+        .gte('ts', sinceIso)
+        .order('ts', { ascending: true })
+        .limit(400);
+
+      if(error) throw new Error('Supabase series error: ' + error.message);
+      return data || [];
+    }
+
     async function sbPullAll(){
       const client = getSupabaseClient();
       if(!client) throw new Error('Supabase not configured.');
@@ -1052,6 +1094,125 @@
       const { error } = await client.from('ung_model_snapshots').delete().lt('ts', cutoff);
       if(error) throw new Error('Supabase prune error: ' + error.message);
       return { ok: true };
+    }
+
+    let rawChart = null;
+    let deltaChart = null;
+
+    function computeStats(arr){
+      const xs = (arr || []).filter(x => Number.isFinite(x));
+      if(xs.length < 2) return null;
+      const mean = xs.reduce((a,b)=>a+b,0) / xs.length;
+      const varr = xs.reduce((a,b)=>a + (b-mean)*(b-mean), 0) / xs.length;
+      return { n: xs.length, mean, std: Math.sqrt(varr) };
+    }
+
+    function ensureCharts(){
+      if(!window.Chart) return false;
+      const rawEl = document.getElementById('chartRaw');
+      const delEl = document.getElementById('chartDelta');
+      if(!rawEl || !delEl) return false;
+
+      if(!rawChart){
+        rawChart = new Chart(rawEl, {
+          type: 'line',
+          data: { labels: [], datasets: [] },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { display: true } },
+            scales: {
+              x: { ticks: { maxTicksLimit: 8 } },
+              y: { title: { display: true, text: 'ΔHDD14' } },
+            }
+          }
+        });
+      }
+
+      if(!deltaChart){
+        deltaChart = new Chart(delEl, {
+          type: 'line',
+          data: { labels: [], datasets: [] },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { display: true } },
+            scales: {
+              x: { ticks: { maxTicksLimit: 8 } },
+              y: { title: { display: true, text: 'ΔΔ (run-to-run)' } },
+            }
+          }
+        });
+      }
+
+      return true;
+    }
+
+    function setChartsFromSeries(rows){
+      if(!ensureCharts()) return;
+      const labels = rows.map(r => {
+        const d = new Date(r.ts);
+        // show month-day hour UTC
+        const mm = String(d.getUTCMonth()+1).padStart(2,'0');
+        const dd = String(d.getUTCDate()).padStart(2,'0');
+        const hh = String(d.getUTCHours()).padStart(2,'0');
+        return `${mm}-${dd} ${hh}Z`;
+      });
+
+      const ne = rows.map(r => Number(r.ne_dhdd14));
+      const mw = rows.map(r => Number(r.mw_dhdd14));
+      const s  = rows.map(r => Number(r.s_dhdd14));
+      const demand = rows.map((_,i) => 0.55*ne[i] + 0.45*mw[i]);
+
+      const dd = (arr) => arr.map((v,i) => (i===0 ? null : (v - arr[i-1])));
+      const neD = dd(ne);
+      const mwD = dd(mw);
+      const sD  = dd(s);
+      const demD = dd(demand);
+
+      rawChart.data.labels = labels;
+      rawChart.data.datasets = [
+        { label:'Demand', data: demand, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, pointRadius: 2 },
+        { label:'NE', data: ne, borderColor:'rgba(31,139,76,.9)', tension:.25, pointRadius: 1 },
+        { label:'MW', data: mw, borderColor:'rgba(192,106,0,.9)', tension:.25, pointRadius: 1 },
+        { label:'South', data: s, borderColor:'rgba(180,35,24,.85)', tension:.25, pointRadius: 1 },
+      ];
+      rawChart.update();
+
+      deltaChart.data.labels = labels;
+      deltaChart.data.datasets = [
+        { label:'ΔΔ Demand', data: demD, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, pointRadius: 2 },
+        { label:'ΔΔ NE', data: neD, borderColor:'rgba(31,139,76,.8)', tension:.25, pointRadius: 1 },
+        { label:'ΔΔ MW', data: mwD, borderColor:'rgba(192,106,0,.8)', tension:.25, pointRadius: 1 },
+        { label:'ΔΔ South', data: sD, borderColor:'rgba(180,35,24,.75)', tension:.25, pointRadius: 1 },
+      ];
+      deltaChart.update();
+
+      const absDem = demD.map(v => (v===null? null : Math.abs(v)));
+      const st = computeStats(absDem);
+      const statsEl = document.getElementById('deltaStats');
+      if(statsEl){
+        if(!st){ statsEl.textContent = 'ΔΔ stats: need more points.'; }
+        else {
+          statsEl.textContent = `ΔΔ Demand (abs) last ${rows.length} pts: mean ${st.mean.toFixed(1)}, σ ${st.std.toFixed(1)}. Rough flags: >${(st.mean+2*st.std).toFixed(1)} ≈ big move.`;
+        }
+      }
+    }
+
+    async function refreshDeltaCharts(days=7){
+      try{
+        const baseF = Number(el('base').value);
+        const windowKey = el('climoYears').value;
+        const rows = await sbFetchSeries({ baseF, windowKey, days });
+        if(rows && rows.length >= 2){
+          setChartsFromSeries(rows);
+        }
+      } catch(e){
+        const statsEl = document.getElementById('deltaStats');
+        if(statsEl) statsEl.textContent = 'Delta chart error: ' + String(e?.message || e);
+      }
     }
 
     function historyToCsv(list){
@@ -1449,6 +1610,8 @@
       updateRollWindow();
       setInterval(() => { updateEventTiming(); updateRollWindow(); }, 60000);
       refreshWeather();
+      // Keep charts in sync with DB over time (lightweight)
+      refreshDeltaCharts(7);
     }
 
     boot();
