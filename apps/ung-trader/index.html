@@ -71,6 +71,14 @@
     .muted{color:var(--muted);}
     .mini{font-size:.92rem; color:var(--muted); line-height:1.35;}
     .btnRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+
+    /* Delta stats table */
+    #deltaStatsTable{width:100%; border-collapse:separate; border-spacing:0; font-size:12.5px;}
+    #deltaStatsTable th{position:sticky; top:0; background:rgba(247,244,239,.96); z-index:1;}
+    #deltaStatsTable th, #deltaStatsTable td{padding:10px 10px; border-bottom:1px solid var(--border);}
+    #deltaStatsTable tr:nth-child(even) td{background:rgba(0,0,0,.02);}
+    #deltaStatsTable td:first-child{font-weight:800;}
+    #deltaStatsTable td.mono, #deltaStatsTable th.mono{font-family:var(--mono); font-size:12px;}
   </style>
 </head>
 <body>
@@ -250,6 +258,8 @@
           <div class="chartBox"><canvas id="chartDelta"></canvas></div>
         </div>
       </div>
+
+      <div class="mini" id="deltaSummary" style="margin-top:8px;">—</div>
 
       <div style="margin-top:10px; overflow:auto;">
         <table id="deltaStatsTable">
@@ -731,7 +741,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-03.4';
+    const APP_VERSION = '2026-02-03.5';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1195,12 +1205,31 @@
       deltaChart.update();
 
       const absDem = demD.map(v => (v===null? null : Math.abs(v)));
-      const st = computeStats(absDem);
+      const stAbs = computeStats(absDem);
+      const stSigned = computeStats(demD.filter(v => Number.isFinite(v)));
 
       const latestDem = demand.length ? demand[demand.length-1] : NaN;
       const latestDemD = demD.length ? demD[demD.length-1] : null;
       const latestAbs = (latestDemD===null || latestDemD===undefined) ? NaN : Math.abs(Number(latestDemD));
-      const flag = bucketFlag(latestAbs, st);
+      const flag = bucketFlag(latestAbs, stAbs);
+
+      // Robust z-score (MAD-based) on signed ΔΔ
+      let robustZ = NaN;
+      if(stSigned && Number.isFinite(Number(latestDemD)) && Number.isFinite(stSigned.median) && Number.isFinite(stSigned.mad) && stSigned.mad > 0){
+        robustZ = 0.6745 * (Number(latestDemD) - stSigned.median) / stSigned.mad;
+      }
+
+      // Summary text: direction of the shift
+      const sumEl = document.getElementById('deltaSummary');
+      if(sumEl){
+        if(latestDemD === null || latestDemD === undefined || !Number.isFinite(Number(latestDemD))){
+          sumEl.textContent = 'Trend: — (need 2+ runs to compute ΔΔ)';
+        } else {
+          const v = Number(latestDemD);
+          const dir = v > 0 ? 'getting colder' : (v < 0 ? 'getting warmer' : 'flat');
+          sumEl.textContent = `Trend: ${dir} in the next 14 days (Demand ΔΔ ${v>0?'+':''}${v.toFixed(1)}).`;
+        }
+      }
 
       // Render stats table
       const body = document.getElementById('deltaStatsBody');
@@ -1210,18 +1239,20 @@
         rowsHtml.push(`<tr><td>Window</td><td class="mono">7d</td><td class="mono">Supabase series</td></tr>`);
         rowsHtml.push(`<tr><td>Points</td><td class="mono">${rows.length}</td><td class="mono">Runs in window</td></tr>`);
         rowsHtml.push(`<tr><td>Latest Demand (ΔHDD14)</td><td class="mono">${fmtNum(latestDem,1)}</td><td class="mono">0.55*NE + 0.45*MW</td></tr>`);
-        rowsHtml.push(`<tr><td>Latest ΔΔ Demand</td><td class="mono">${latestDemD===null? '—' : fmtNum(Number(latestDemD),1)}</td><td class="mono">vs prior run</td></tr>`);
+        rowsHtml.push(`<tr><td>Latest ΔΔ Demand</td><td class="mono">${latestDemD===null? '—' : fmtNum(Number(latestDemD),1)}</td><td class="mono">run-to-run; + = colder, − = warmer</td></tr>`);
         rowsHtml.push(`<tr><td>Latest |ΔΔ Demand|</td><td class="mono">${fmtNum(latestAbs,1)}</td><td class="mono">magnitude</td></tr>`);
+        rowsHtml.push(`<tr><td>Robust z (ΔΔ)</td><td class="mono">${fmtNum(robustZ,2)}</td><td class="mono">0.6745*(x−median)/MAD</td></tr>`);
+        rowsHtml.push(`<tr><td>Robust |z|</td><td class="mono">${Number.isFinite(robustZ)? fmtNum(Math.abs(robustZ),2) : '—'}</td><td class="mono">outlier score (MAD)</td></tr>`);
 
-        if(!st){
+        if(!stAbs){
           rowsHtml.push(`<tr><td>Significance</td><td class="mono">—</td><td class="mono">Need more points</td></tr>`);
         } else {
-          rowsHtml.push(`<tr><td>Significance</td><td class="mono">${esc(flag.label)}</td><td class="mono">mean+1.5σ / +2σ / +3σ bands</td></tr>`);
-          rowsHtml.push(`<tr><td>Mean |ΔΔ|</td><td class="mono">${fmtNum(st.mean,1)}</td><td class="mono">baseline churn</td></tr>`);
-          rowsHtml.push(`<tr><td>σ(|ΔΔ|)</td><td class="mono">${fmtNum(st.std,1)}</td><td class="mono">variability of churn</td></tr>`);
-          rowsHtml.push(`<tr><td>P90 |ΔΔ|</td><td class="mono">${fmtNum(st.p90,1)}</td><td class="mono">rare-ish move</td></tr>`);
-          rowsHtml.push(`<tr><td>P95 |ΔΔ|</td><td class="mono">${fmtNum(st.p95,1)}</td><td class="mono">very rare move</td></tr>`);
-          rowsHtml.push(`<tr><td>Max |ΔΔ|</td><td class="mono">${fmtNum(st.max,1)}</td><td class="mono">largest in window</td></tr>`);
+          rowsHtml.push(`<tr><td>Significance</td><td class="mono">${esc(flag.label)}</td><td class="mono">mean+1.5σ / +2σ / +3σ bands (|ΔΔ|)</td></tr>`);
+          rowsHtml.push(`<tr><td>Mean |ΔΔ|</td><td class="mono">${fmtNum(stAbs.mean,1)}</td><td class="mono">baseline churn</td></tr>`);
+          rowsHtml.push(`<tr><td>σ(|ΔΔ|)</td><td class="mono">${fmtNum(stAbs.std,1)}</td><td class="mono">variability of churn</td></tr>`);
+          rowsHtml.push(`<tr><td>P90 |ΔΔ|</td><td class="mono">${fmtNum(stAbs.p90,1)}</td><td class="mono">rare-ish move</td></tr>`);
+          rowsHtml.push(`<tr><td>P95 |ΔΔ|</td><td class="mono">${fmtNum(stAbs.p95,1)}</td><td class="mono">very rare move</td></tr>`);
+          rowsHtml.push(`<tr><td>Max |ΔΔ|</td><td class="mono">${fmtNum(stAbs.max,1)}</td><td class="mono">largest in window</td></tr>`);
         }
 
         body.innerHTML = rowsHtml.join('');
