@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Checklist Buddy</title>
+    <meta name="description" content="A fast, offline-friendly checklist builder with notes + exports." />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f3ee;
+        --panel: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #5a5a5a;
+        --accent: #2451ff;
+        --accent-soft: rgba(36, 81, 255, 0.11);
+        --border: #e2ddd5;
+        --shadow: 0 10px 35px rgba(19, 15, 10, 0.12);
+        --radius: 16px;
+        --danger: #b00020;
+        --ok: #0b7a41;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 15% 0%, #fffaf2 0%, transparent 48%),
+          radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+          var(--bg);
+      }
+
+      header {
+        padding: 44px 18px 18px;
+        max-width: 1050px;
+        margin: 0 auto;
+        display: grid;
+        gap: 12px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.9rem, 4vw, 2.6rem);
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 70ch;
+      }
+
+      .pillrow {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .pill {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 10px;
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      main {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 0 18px 64px;
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 18px;
+        align-items: start;
+      }
+
+      @media (max-width: 940px) {
+        main { grid-template-columns: 1fr; }
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.25rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin: 10px 0 6px;
+      }
+
+      input[type="text"], textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 1rem;
+        background: #fff;
+      }
+
+      textarea { min-height: 78px; resize: vertical; }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .row > * { flex: 1; }
+
+      button {
+        appearance: none;
+        border: 1px solid transparent;
+        background: var(--accent);
+        color: #fff;
+        padding: 10px 12px;
+        font-weight: 700;
+        border-radius: 12px;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        background: transparent;
+        color: var(--accent);
+        border-color: var(--border);
+      }
+
+      button.danger {
+        background: var(--danger);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.4;
+      }
+
+      .small {
+        font-size: 0.9rem;
+      }
+
+      .section {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        margin: 12px 0;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .sectionHeader {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .sectionTitle {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 800;
+      }
+
+      .iconbtn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+      }
+
+      .items {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: start;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.85);
+      }
+
+      .item input[type="checkbox"] { margin-top: 3px; transform: scale(1.1); }
+
+      .itemText {
+        font-weight: 650;
+        line-height: 1.35;
+      }
+
+      .itemMeta {
+        margin-top: 4px;
+        font-size: 0.86rem;
+        color: var(--muted);
+      }
+
+      .noteBox {
+        grid-column: 2 / 4;
+        display: none;
+        margin-top: 6px;
+      }
+
+      .noteBox textarea { min-height: 64px; }
+
+      .item.open .noteBox { display: block; }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        padding: 6px 10px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 0.9rem;
+      }
+
+      .status {
+        margin-top: 10px;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        background: #161616;
+        color: #fff;
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      .toast.show { opacity: 1; }
+
+      @media print {
+        header, .noPrint { display: none !important; }
+        body { background: #fff; }
+        .card { box-shadow: none; }
+        main { grid-template-columns: 1fr; padding: 0; }
+        .section { break-inside: avoid; }
+        .noteBox { display: block !important; }
+        textarea { border: 1px solid #ccc; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Checklist Buddy</h1>
+      <p class="subtitle">
+        Build a site-visit / QA / packing checklist that lives in your browser (no account). Add notes per item,
+        keep progress between sessions, and export when you're done.
+      </p>
+      <div class="pillrow">
+        <span class="pill">Offline-first (localStorage)</span>
+        <span class="pill">Export: Markdown / CSV / JSON</span>
+        <span class="pill">Import: JSON</span>
+        <span class="pill">Print-friendly</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="card noPrint" aria-labelledby="builder-title">
+        <h2 id="builder-title">Build / Manage</h2>
+
+        <label for="checklistName">Checklist name</label>
+        <input id="checklistName" type="text" placeholder="e.g., Squamish stream site visit" />
+
+        <div class="row">
+          <div>
+            <label for="newSection">New section</label>
+            <input id="newSection" type="text" placeholder="e.g., Safety" />
+          </div>
+          <div style="flex: 0 0 130px; align-self: end;">
+            <button id="addSection">Add section</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="targetSection">Add item to section</label>
+            <select id="targetSection" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:1rem; background:#fff;"></select>
+          </div>
+        </div>
+
+        <label for="newItem">New item</label>
+        <input id="newItem" type="text" placeholder="e.g., First aid kit" />
+        <div class="row" style="margin-top:10px;">
+          <button id="addItem">Add item</button>
+          <button id="addDefaults" class="secondary" title="Adds a small starter checklist">Add starter template</button>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border); margin:16px 0;" />
+
+        <h2 style="margin-top:0">Export / Import</h2>
+        <p class="muted">
+          Exports include a timestamp. JSON preserves everything (including notes + completion).
+        </p>
+
+        <div class="row">
+          <button id="exportMd" class="secondary">Export Markdown</button>
+          <button id="exportCsv" class="secondary">Export CSV</button>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <button id="exportJson" class="secondary">Export JSON</button>
+          <button id="importJson" class="secondary">Import JSON</button>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button id="print" class="secondary">Print</button>
+          <button id="reset" class="danger" title="Clears this checklist from your browser">Reset</button>
+        </div>
+
+        <div class="status" id="saveStatus"></div>
+        <div class="status small" id="storageStatus"></div>
+      </section>
+
+      <section class="card" aria-labelledby="checklist-title">
+        <div style="display:flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <h2 id="checklist-title" style="margin:0">Checklist</h2>
+          <div class="chip" id="progressChip">0 / 0 done</div>
+        </div>
+        <div class="muted" id="checklistMeta" style="margin-top:8px;"></div>
+        <div id="checklist"></div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <input id="fileInput" type="file" accept="application/json" style="display:none" />
+
+    <script>
+      const STORAGE_KEY = 'checklist-buddy:v1';
+
+      function uid() {
+        return Math.random().toString(16).slice(2) + Date.now().toString(16);
+      }
+
+      function nowIso() {
+        return new Date().toISOString();
+      }
+
+      function download(filename, text, mime = 'text/plain') {
+        const blob = new Blob([text], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function escapeCsv(value) {
+        const s = String(value ?? '');
+        if (/[\n\r\t,\"]/g.test(s)) {
+          return '"' + s.replaceAll('"', '""') + '"';
+        }
+        return s;
+      }
+
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => el.classList.remove('show'), 1700);
+      }
+
+      function defaultState() {
+        return {
+          version: 1,
+          id: uid(),
+          name: 'New checklist',
+          createdAt: nowIso(),
+          updatedAt: nowIso(),
+          sections: [
+            {
+              id: uid(),
+              title: 'General',
+              items: [
+                { id: uid(), text: 'Example item (click note to add details)', done: false, note: '', createdAt: nowIso(), updatedAt: nowIso() },
+              ],
+            },
+          ],
+        };
+      }
+
+      function load() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return defaultState();
+          const parsed = JSON.parse(raw);
+          if (!parsed || !Array.isArray(parsed.sections)) return defaultState();
+          return parsed;
+        } catch {
+          return defaultState();
+        }
+      }
+
+      function save(state) {
+        state.updatedAt = nowIso();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        document.getElementById('saveStatus').textContent = `Saved ${new Date(state.updatedAt).toLocaleString()}`;
+      }
+
+      function setStorageStatus() {
+        const el = document.getElementById('storageStatus');
+        const used = new Blob(Object.values(localStorage)).size;
+        el.textContent = `Local storage used (rough): ${Math.round(used / 1024)} KB`;
+      }
+
+      function findSection(state, id) {
+        return state.sections.find(s => s.id === id);
+      }
+
+      function computeProgress(state) {
+        const items = state.sections.flatMap(s => s.items);
+        const total = items.length;
+        const done = items.filter(i => i.done).length;
+        return { total, done };
+      }
+
+      function render() {
+        const checklist = document.getElementById('checklist');
+        checklist.innerHTML = '';
+
+        // header bits
+        document.getElementById('checklistName').value = state.name ?? '';
+        const { total, done } = computeProgress(state);
+        document.getElementById('progressChip').textContent = `${done} / ${total} done`;
+
+        const meta = document.getElementById('checklistMeta');
+        meta.textContent = `${state.name || 'Checklist'} • Updated ${new Date(state.updatedAt).toLocaleString()}`;
+
+        // sections dropdown
+        const sel = document.getElementById('targetSection');
+        sel.innerHTML = '';
+        for (const s of state.sections) {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.textContent = s.title;
+          sel.appendChild(opt);
+        }
+
+        for (const s of state.sections) {
+          const wrap = document.createElement('div');
+          wrap.className = 'section';
+
+          const header = document.createElement('div');
+          header.className = 'sectionHeader';
+
+          const title = document.createElement('h3');
+          title.className = 'sectionTitle';
+          title.textContent = s.title;
+
+          const controls = document.createElement('div');
+          controls.className = 'row';
+          controls.style.gap = '8px';
+          controls.style.justifyContent = 'flex-end';
+
+          const renameBtn = document.createElement('button');
+          renameBtn.className = 'iconbtn';
+          renameBtn.textContent = 'Rename';
+          renameBtn.onclick = () => {
+            const next = prompt('Rename section:', s.title);
+            if (next == null) return;
+            const cleaned = next.trim();
+            if (!cleaned) return;
+            s.title = cleaned;
+            save(state);
+            render();
+          };
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'iconbtn';
+          deleteBtn.textContent = 'Delete';
+          deleteBtn.onclick = () => {
+            if (!confirm(`Delete section "${s.title}" (and its items)?`)) return;
+            state.sections = state.sections.filter(x => x.id !== s.id);
+            if (!state.sections.length) {
+              state.sections = [ { id: uid(), title: 'General', items: [] } ];
+            }
+            save(state);
+            render();
+          };
+
+          controls.appendChild(renameBtn);
+          controls.appendChild(deleteBtn);
+
+          header.appendChild(title);
+          header.appendChild(controls);
+          wrap.appendChild(header);
+
+          const items = document.createElement('div');
+          items.className = 'items';
+
+          if (!s.items.length) {
+            const empty = document.createElement('div');
+            empty.className = 'muted';
+            empty.textContent = 'No items yet.';
+            items.appendChild(empty);
+          }
+
+          for (const item of s.items) {
+            const row = document.createElement('div');
+            row.className = 'item';
+
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = !!item.done;
+            cb.onchange = () => {
+              item.done = cb.checked;
+              item.updatedAt = nowIso();
+              save(state);
+              render();
+            };
+
+            const text = document.createElement('div');
+            const textLine = document.createElement('div');
+            textLine.className = 'itemText';
+            textLine.textContent = item.text;
+            const metaLine = document.createElement('div');
+            metaLine.className = 'itemMeta';
+            const noteSummary = (item.note || '').trim();
+            metaLine.textContent = noteSummary ? `Note: ${noteSummary.slice(0, 80)}${noteSummary.length > 80 ? '…' : ''}` : 'No note';
+            text.appendChild(textLine);
+            text.appendChild(metaLine);
+
+            const actions = document.createElement('div');
+            actions.style.display = 'flex';
+            actions.style.gap = '8px';
+            actions.style.alignItems = 'center';
+
+            const noteBtn = document.createElement('button');
+            noteBtn.className = 'iconbtn';
+            noteBtn.textContent = 'Note';
+            noteBtn.onclick = () => {
+              row.classList.toggle('open');
+            };
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'iconbtn';
+            removeBtn.textContent = 'Remove';
+            removeBtn.onclick = () => {
+              if (!confirm('Remove this item?')) return;
+              s.items = s.items.filter(x => x.id !== item.id);
+              save(state);
+              render();
+            };
+
+            actions.appendChild(noteBtn);
+            actions.appendChild(removeBtn);
+
+            const noteBox = document.createElement('div');
+            noteBox.className = 'noteBox';
+            const noteLabel = document.createElement('label');
+            noteLabel.textContent = 'Note';
+            noteLabel.style.margin = '6px 0 6px';
+            noteLabel.style.color = 'var(--muted)';
+            const note = document.createElement('textarea');
+            note.value = item.note || '';
+            note.placeholder = 'e.g., calibrated at 09:10; photo #12; access via south gate';
+            note.oninput = () => {
+              item.note = note.value;
+              item.updatedAt = nowIso();
+              save(state);
+              setStorageStatus();
+            };
+            noteBox.appendChild(noteLabel);
+            noteBox.appendChild(note);
+
+            row.appendChild(cb);
+            row.appendChild(text);
+            row.appendChild(actions);
+            row.appendChild(noteBox);
+
+            items.appendChild(row);
+          }
+
+          wrap.appendChild(items);
+          checklist.appendChild(wrap);
+        }
+
+        setStorageStatus();
+      }
+
+      function addSection(title) {
+        const cleaned = (title || '').trim();
+        if (!cleaned) return;
+        state.sections.push({ id: uid(), title: cleaned, items: [] });
+        save(state);
+        toast('Section added');
+        render();
+      }
+
+      function addItem(sectionId, text) {
+        const cleaned = (text || '').trim();
+        if (!cleaned) return;
+        const s = findSection(state, sectionId);
+        if (!s) return;
+        s.items.push({ id: uid(), text: cleaned, done: false, note: '', createdAt: nowIso(), updatedAt: nowIso() });
+        save(state);
+        toast('Item added');
+        render();
+      }
+
+      function addStarterTemplate() {
+        const template = [
+          { title: 'Safety', items: ['First aid kit', 'Bear spray (if needed)', 'PPE (waders/boots/gloves)', 'Radio / InReach / phone battery'] },
+          { title: 'Sampling gear', items: ['Field notebook + pencils', 'GPS / phone with offline maps', 'Thermometer / probe (calibrated)', 'Sample bottles / labels / Sharpie'] },
+          { title: 'Office / admin', items: ['Permits / access contact', 'Site map / directions', 'Camera / spare battery', 'Upload photos + notes after field day'] },
+        ];
+
+        // If state is basically empty, replace; else append.
+        const existingItems = state.sections.flatMap(s => s.items).length;
+        if (existingItems <= 1 && state.sections.length === 1 && state.sections[0].title === 'General') {
+          state.sections = [];
+        }
+
+        for (const sec of template) {
+          const s = { id: uid(), title: sec.title, items: [] };
+          for (const t of sec.items) {
+            s.items.push({ id: uid(), text: t, done: false, note: '', createdAt: nowIso(), updatedAt: nowIso() });
+          }
+          state.sections.push(s);
+        }
+        save(state);
+        toast('Starter template added');
+        render();
+      }
+
+      function exportMarkdown() {
+        const stamp = new Date().toLocaleString();
+        const lines = [];
+        lines.push(`# ${state.name || 'Checklist'}`);
+        lines.push('');
+        lines.push(`_Exported: ${stamp}_`);
+        lines.push('');
+        for (const s of state.sections) {
+          lines.push(`## ${s.title}`);
+          for (const item of s.items) {
+            const box = item.done ? 'x' : ' ';
+            lines.push(`- [${box}] ${item.text}`);
+            const note = (item.note || '').trim();
+            if (note) {
+              lines.push(`  - Note: ${note.replaceAll('\n', ' ')}`);
+            }
+          }
+          lines.push('');
+        }
+        download(`${slug(state.name || 'checklist')}.md`, lines.join('\n'), 'text/markdown');
+        toast('Markdown exported');
+      }
+
+      function exportCsv() {
+        const rows = [];
+        rows.push(['checklist', 'section', 'item', 'done', 'note', 'updatedAt'].map(escapeCsv).join(','));
+        for (const s of state.sections) {
+          for (const item of s.items) {
+            rows.push([
+              state.name || '',
+              s.title,
+              item.text,
+              item.done ? 'true' : 'false',
+              item.note || '',
+              item.updatedAt || '',
+            ].map(escapeCsv).join(','));
+          }
+        }
+        download(`${slug(state.name || 'checklist')}.csv`, rows.join('\n'), 'text/csv');
+        toast('CSV exported');
+      }
+
+      function exportJson() {
+        download(`${slug(state.name || 'checklist')}.json`, JSON.stringify(state, null, 2) + '\n', 'application/json');
+        toast('JSON exported');
+      }
+
+      function slug(name) {
+        return String(name || 'checklist')
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '')
+          .slice(0, 60) || 'checklist';
+      }
+
+      function importJsonObject(obj) {
+        if (!obj || !Array.isArray(obj.sections)) {
+          alert('Invalid JSON: expected { sections: [...] }');
+          return;
+        }
+        // minimal normalization
+        const normalized = {
+          version: 1,
+          id: obj.id || uid(),
+          name: String(obj.name || 'Imported checklist'),
+          createdAt: obj.createdAt || nowIso(),
+          updatedAt: nowIso(),
+          sections: obj.sections.map((s) => ({
+            id: s.id || uid(),
+            title: String(s.title || 'Section'),
+            items: Array.isArray(s.items) ? s.items.map((it) => ({
+              id: it.id || uid(),
+              text: String(it.text || ''),
+              done: !!it.done,
+              note: String(it.note || ''),
+              createdAt: it.createdAt || nowIso(),
+              updatedAt: it.updatedAt || nowIso(),
+            })) : [],
+          })),
+        };
+        state = normalized;
+        save(state);
+        toast('Imported');
+        render();
+      }
+
+      // wire up
+      let state = load();
+
+      document.getElementById('checklistName').addEventListener('input', (e) => {
+        state.name = e.target.value;
+        save(state);
+        render();
+      });
+
+      document.getElementById('addSection').onclick = () => {
+        const el = document.getElementById('newSection');
+        addSection(el.value);
+        el.value = '';
+      };
+
+      document.getElementById('addItem').onclick = () => {
+        const sectionId = document.getElementById('targetSection').value;
+        const el = document.getElementById('newItem');
+        addItem(sectionId, el.value);
+        el.value = '';
+      };
+
+      document.getElementById('addDefaults').onclick = () => addStarterTemplate();
+
+      document.getElementById('exportMd').onclick = exportMarkdown;
+      document.getElementById('exportCsv').onclick = exportCsv;
+      document.getElementById('exportJson').onclick = exportJson;
+
+      document.getElementById('print').onclick = () => window.print();
+
+      document.getElementById('reset').onclick = () => {
+        if (!confirm('Reset this checklist (clears local data for Checklist Buddy)?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        state = defaultState();
+        save(state);
+        toast('Reset');
+        render();
+      };
+
+      const fileInput = document.getElementById('fileInput');
+      document.getElementById('importJson').onclick = () => fileInput.click();
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files?.[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          importJsonObject(JSON.parse(text));
+        } catch (err) {
+          alert('Could not import JSON: ' + err);
+        } finally {
+          fileInput.value = '';
+        }
+      });
+
+      // first render
+      save(state);
+      render();
+    </script>
+  </body>
+</html>

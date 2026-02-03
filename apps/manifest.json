@@ -1,6 +1,10 @@
 {
-  "generatedAt": "2026-02-02T06:32:09.960Z",
+  "generatedAt": "2026-02-03T06:33:05.760Z",
   "apps": [
+    {
+      "name": "checklist-buddy",
+      "hasIndex": true
+    },
     {
       "name": "csv-to-geojson",
       "hasIndex": true
