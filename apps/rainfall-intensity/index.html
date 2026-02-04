@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rainfall Intensity (CSV → rolling sums)</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.09);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.72);
+      --border: rgba(255,255,255,0.12);
+      --accent: #7dd3fc;
+      --danger: #fb7185;
+      --ok: #34d399;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 700px at 20% 10%, rgba(125, 211, 252, 0.18), transparent 60%),
+        radial-gradient(900px 600px at 90% 20%, rgba(52, 211, 153, 0.12), transparent 60%),
+        radial-gradient(900px 600px at 50% 90%, rgba(251, 113, 133, 0.10), transparent 60%),
+        var(--bg);
+    }
+    header {
+      padding: 20px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(8px);
+      background: rgba(11,16,32,0.72);
+      z-index: 2;
+    }
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      letter-spacing: 0.2px;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 380px 1fr;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      main { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }
+    input[type="file"], select, input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 10px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      outline: none;
+    }
+    input[type="number"] { font-family: var(--mono); }
+    select option { color: #0b1020; }
+    .row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .row3 {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    @media (max-width: 540px) {
+      .row, .row3 { grid-template-columns: 1fr; }
+    }
+    button {
+      border: 1px solid var(--border);
+      background: rgba(125, 211, 252, 0.12);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { border-color: rgba(125, 211, 252, 0.35); }
+    button.secondary {
+      background: rgba(255,255,255,0.06);
+    }
+    button.danger {
+      background: rgba(251, 113, 133, 0.12);
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 8px;
+    }
+    .pill {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.85);
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .status {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .status strong { color: rgba(255,255,255,0.9); }
+    .status .ok { color: var(--ok); }
+    .status .bad { color: var(--danger); }
+
+    .tableWrap { overflow-x: auto; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      color: rgba(255,255,255,0.85);
+      font-weight: 700;
+      background: rgba(255,255,255,0.04);
+      position: sticky;
+      top: 0;
+    }
+    td { color: rgba(255,255,255,0.88); }
+    td.mono { font-family: var(--mono); }
+
+    .canvasCard {
+      padding: 14px;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 10px 16px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Rainfall Intensity</h1>
+    <p>Upload a precipitation CSV and compute rolling totals (e.g., max 1h/3h/24h/48h) — entirely in-browser.</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1) Load CSV</h2>
+      <label>CSV file</label>
+      <input id="file" type="file" accept=".csv,text/csv" />
+
+      <div class="status" id="fileStatus">No file loaded.</div>
+
+      <h2 style="margin-top: 14px;">2) Map columns</h2>
+      <label>Date/time column</label>
+      <select id="timeCol"></select>
+      <label>Rain / precip column (mm)</label>
+      <select id="rainCol"></select>
+
+      <div class="row" style="margin-top: 10px;">
+        <div>
+          <label>Date parse hint (optional)</label>
+          <input id="dateHint" type="text" placeholder="e.g. YYYY-MM-DD HH:mm or 2026-02-03T10:00:00Z" />
+        </div>
+        <div>
+          <label>Timezone assumption</label>
+          <select id="tzMode">
+            <option value="as-is">Use CSV timestamps as-is (recommended)</option>
+            <option value="force-local">Treat timestamps as local time</option>
+          </select>
+        </div>
+      </div>
+
+      <h2 style="margin-top: 14px;">3) Rolling windows</h2>
+      <div class="row3">
+        <div>
+          <label>Window A (hours)</label>
+          <input id="wA" type="number" min="0" step="0.25" value="1" />
+        </div>
+        <div>
+          <label>Window B (hours)</label>
+          <input id="wB" type="number" min="0" step="0.25" value="3" />
+        </div>
+        <div>
+          <label>Window C (hours)</label>
+          <input id="wC" type="number" min="0" step="0.25" value="24" />
+        </div>
+      </div>
+      <div class="row" style="margin-top: 10px;">
+        <div>
+          <label>Window D (hours)</label>
+          <input id="wD" type="number" min="0" step="0.25" value="48" />
+        </div>
+        <div>
+          <label>Aggregation</label>
+          <select id="aggMode">
+            <option value="sum">Sum (mm in window)</option>
+            <option value="mean">Mean rate (mm per interval)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 12px;">
+        <button id="run">Compute</button>
+        <button class="secondary" id="download" disabled>Download summary CSV</button>
+      </div>
+
+      <div class="row" style="margin-top: 10px;">
+        <button class="secondary" id="downloadSeries" disabled>Download rolling-series CSV</button>
+        <button class="danger" id="reset">Reset</button>
+      </div>
+
+      <div class="hint">
+        Tips:
+        <ul>
+          <li>Works best with regularly spaced data (e.g., 5-min, 15-min, hourly).</li>
+          <li>Missing timestamps/values are dropped; duplicates are summed.</li>
+          <li>If parsing fails, try a different <span class="pill">Date parse hint</span> or clean the CSV header.</li>
+        </ul>
+      </div>
+
+      <div class="status" id="computeStatus"></div>
+    </section>
+
+    <section class="card canvasCard">
+      <h2>Results</h2>
+      <canvas id="chart" height="140"></canvas>
+      <div class="hint" id="chartHint">Load a CSV, map columns, and compute rolling windows.</div>
+
+      <h2 style="margin-top: 14px;">Max rolling totals</h2>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Window</th>
+              <th>Max value</th>
+              <th>At timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="maxTableBody">
+            <tr><td colspan="3" style="color: rgba(255,255,255,0.65)">No results yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 style="margin-top: 14px;">Data preview</h2>
+      <div class="tableWrap">
+        <table>
+          <thead id="previewHead"></thead>
+          <tbody id="previewBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">
+    Built for GitHub Pages. Source lives in the <code>philbin</code> repo under <code>apps/rainfall-intensity</code>.
+    Uses <a href="https://www.papaparse.com/" target="_blank" rel="noreferrer">PapaParse</a> + <a href="https://www.chartjs.org/" target="_blank" rel="noreferrer">Chart.js</a> (CDN).
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const state = {
+      rawRows: [],
+      headers: [],
+      parsed: [], // {t: Date, ms: number, rain: number}
+      roll: null, // { windows: [{hours, series: [{ms, tISO, value}]}] }
+      summaryCsv: null,
+      seriesCsv: null,
+      chart: null,
+    };
+
+    function setStatus(el, html) {
+      el.innerHTML = html || '';
+    }
+
+    function cleanNumber(x) {
+      if (x === null || x === undefined) return null;
+      if (typeof x === 'number' && Number.isFinite(x)) return x;
+      const s = String(x).trim();
+      if (!s) return null;
+      const v = Number(s.replace(/,/g, ''));
+      return Number.isFinite(v) ? v : null;
+    }
+
+    function parseDateSmart(value, tzMode) {
+      // - If value is ISO-ish, Date can parse.
+      // - If tzMode=force-local and string lacks timezone, we'll interpret as local by injecting no timezone.
+      //   (JS Date already treats YYYY-MM-DD HH:mm as local in most browsers; ISO without Z is local.)
+      if (value === null || value === undefined) return null;
+      const s0 = String(value).trim();
+      if (!s0) return null;
+
+      const s = s0.replace(/\//g, '-');
+
+      // Try native parse first
+      const d = new Date(s);
+      if (!Number.isNaN(d.getTime())) return d;
+
+      // Common: "YYYY-MM-DD HH:mm:ss" (native sometimes fails)
+      const m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
+      if (m) {
+        const [_, Y, M, D, h, min, sec] = m;
+        if (tzMode === 'force-local') {
+          return new Date(Number(Y), Number(M)-1, Number(D), Number(h), Number(min), Number(sec||0));
+        }
+        // "as-is": still local if no timezone info; that's fine.
+        return new Date(Number(Y), Number(M)-1, Number(D), Number(h), Number(min), Number(sec||0));
+      }
+
+      return null;
+    }
+
+    function toISO(ms) {
+      return new Date(ms).toISOString();
+    }
+
+    function uniqWindows(hoursList) {
+      const clean = hoursList
+        .map((h) => Number(h))
+        .filter((h) => Number.isFinite(h) && h > 0)
+        .sort((a,b) => a-b);
+      const out = [];
+      for (const h of clean) {
+        if (!out.length || Math.abs(out[out.length-1] - h) > 1e-9) out.push(h);
+      }
+      return out;
+    }
+
+    function computeRolling(parsed, hours, aggMode) {
+      // parsed: sorted by ms ascending, with possible irregular spacing.
+      // Rolling computed using two-pointer window by time (not fixed number of samples).
+      const windowMs = hours * 3600 * 1000;
+      let i0 = 0;
+      let sum = 0;
+
+      const series = [];
+      for (let i = 0; i < parsed.length; i++) {
+        const cur = parsed[i];
+        sum += cur.rain;
+
+        const minMs = cur.ms - windowMs;
+        while (i0 <= i && parsed[i0].ms < minMs) {
+          sum -= parsed[i0].rain;
+          i0++;
+        }
+
+        let value = sum;
+        if (aggMode === 'mean') {
+          const denom = (i - i0 + 1);
+          value = denom > 0 ? (sum / denom) : 0;
+        }
+
+        series.push({ ms: cur.ms, tISO: toISO(cur.ms), value });
+      }
+      return series;
+    }
+
+    function formatValue(v, aggMode) {
+      if (!Number.isFinite(v)) return '';
+      if (aggMode === 'mean') {
+        return v.toFixed(3);
+      }
+      // sum
+      return v.toFixed(2);
+    }
+
+    function renderPreview(headers, rows, timeCol, rainCol) {
+      const head = $('previewHead');
+      const body = $('previewBody');
+      head.innerHTML = '';
+      body.innerHTML = '';
+
+      const cols = headers.slice(0, 6);
+      const trh = document.createElement('tr');
+      for (const c of cols) {
+        const th = document.createElement('th');
+        th.textContent = c;
+        trh.appendChild(th);
+      }
+      head.appendChild(trh);
+
+      const n = Math.min(rows.length, 12);
+      for (let i = 0; i < n; i++) {
+        const tr = document.createElement('tr');
+        for (const c of cols) {
+          const td = document.createElement('td');
+          td.textContent = rows[i][c] ?? '';
+          if (c === timeCol || c === rainCol) td.classList.add('mono');
+          tr.appendChild(td);
+        }
+        body.appendChild(tr);
+      }
+    }
+
+    function setSelectOptions(select, headers) {
+      select.innerHTML = '';
+      for (const h of headers) {
+        const opt = document.createElement('option');
+        opt.value = h;
+        opt.textContent = h;
+        select.appendChild(opt);
+      }
+    }
+
+    function guessCols(headers) {
+      const lower = headers.map((h) => ({ h, l: h.toLowerCase() }));
+      const timeGuess =
+        lower.find(x => x.l.includes('date') && x.l.includes('time'))?.h ||
+        lower.find(x => x.l.includes('datetime'))?.h ||
+        lower.find(x => x.l.includes('timestamp'))?.h ||
+        lower.find(x => x.l === 'time')?.h ||
+        lower.find(x => x.l.includes('date'))?.h ||
+        headers[0];
+
+      const rainGuess =
+        lower.find(x => x.l.includes('precip') && x.l.includes('mm'))?.h ||
+        lower.find(x => x.l.includes('rain') && x.l.includes('mm'))?.h ||
+        lower.find(x => x.l.includes('precip'))?.h ||
+        lower.find(x => x.l.includes('rain'))?.h ||
+        headers.find(h => h !== timeGuess) || headers[1] || headers[0];
+
+      return { timeGuess, rainGuess };
+    }
+
+    function normalizeParsed(rows, timeCol, rainCol, tzMode) {
+      // Drop invalids, sum duplicates.
+      const map = new Map(); // ms -> sum rain
+      let dropped = 0;
+      for (const r of rows) {
+        const d = parseDateSmart(r[timeCol], tzMode);
+        const v = cleanNumber(r[rainCol]);
+        if (!d || v === null) {
+          dropped++;
+          continue;
+        }
+        const ms = d.getTime();
+        if (!Number.isFinite(ms)) { dropped++; continue; }
+        map.set(ms, (map.get(ms) || 0) + v);
+      }
+      const parsed = Array.from(map.entries())
+        .map(([ms, rain]) => ({ ms, t: new Date(ms), rain }))
+        .sort((a,b) => a.ms - b.ms);
+
+      return { parsed, dropped };
+    }
+
+    function buildSummary(windows, aggMode) {
+      // windows: [{hours, series}]
+      const lines = [];
+      lines.push(['window_hours', 'max_value', 'timestamp_iso'].join(','));
+      const summary = [];
+      for (const w of windows) {
+        let max = -Infinity;
+        let at = null;
+        for (const p of w.series) {
+          if (p.value > max) {
+            max = p.value;
+            at = p.tISO;
+          }
+        }
+        const maxStr = Number.isFinite(max) ? String(max) : '';
+        lines.push([w.hours, maxStr, at || ''].join(','));
+        summary.push({ hours: w.hours, max, at });
+      }
+      return { csv: lines.join('\n') + '\n', summary };
+    }
+
+    function buildSeriesCsv(parsed, windows, aggMode) {
+      const header = ['timestamp_iso', 'rain_mm'];
+      for (const w of windows) header.push(`rolling_${w.hours}h_${aggMode}`);
+
+      // Create lookup for each window series by ms for quick join.
+      const lookups = windows.map((w) => {
+        const m = new Map();
+        for (const p of w.series) m.set(p.ms, p.value);
+        return m;
+      });
+
+      const lines = [];
+      lines.push(header.join(','));
+      for (const row of parsed) {
+        const out = [toISO(row.ms), String(row.rain)];
+        for (const m of lookups) {
+          const v = m.get(row.ms);
+          out.push(Number.isFinite(v) ? String(v) : '');
+        }
+        lines.push(out.join(','));
+      }
+      return lines.join('\n') + '\n';
+    }
+
+    function downloadText(filename, text) {
+      const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function renderMaxTable(summary, aggMode) {
+      const tbody = $('maxTableBody');
+      tbody.innerHTML = '';
+      for (const s of summary) {
+        const tr = document.createElement('tr');
+
+        const tdW = document.createElement('td');
+        tdW.className = 'mono';
+        tdW.textContent = `${s.hours}h`;
+
+        const tdV = document.createElement('td');
+        tdV.className = 'mono';
+        tdV.textContent = Number.isFinite(s.max) ? formatValue(s.max, aggMode) : '';
+
+        const tdT = document.createElement('td');
+        tdT.className = 'mono';
+        tdT.textContent = s.at || '';
+
+        tr.appendChild(tdW);
+        tr.appendChild(tdV);
+        tr.appendChild(tdT);
+        tbody.appendChild(tr);
+      }
+    }
+
+    function renderChart(parsed, windows, aggMode) {
+      const ctx = $('chart');
+      const labels = parsed.map((p) => p.ms);
+
+      const datasets = [];
+      // base rain
+      datasets.push({
+        label: 'Rain (mm)',
+        data: parsed.map((p) => ({ x: p.ms, y: p.rain })),
+        borderColor: 'rgba(125,211,252,0.65)',
+        backgroundColor: 'rgba(125,211,252,0.15)',
+        parsing: false,
+        yAxisID: 'y',
+        tension: 0.15,
+        pointRadius: 0,
+        borderWidth: 1.25,
+        fill: true,
+      });
+
+      const colors = [
+        'rgba(52,211,153,0.85)',
+        'rgba(251,113,133,0.85)',
+        'rgba(250,204,21,0.85)',
+        'rgba(167,139,250,0.85)',
+      ];
+
+      windows.forEach((w, i) => {
+        datasets.push({
+          label: `Rolling ${w.hours}h (${aggMode})`,
+          data: w.series.map((p) => ({ x: p.ms, y: p.value })),
+          borderColor: colors[i % colors.length],
+          backgroundColor: 'rgba(255,255,255,0)',
+          parsing: false,
+          yAxisID: 'y2',
+          tension: 0.12,
+          pointRadius: 0,
+          borderWidth: 1.5,
+          fill: false,
+        });
+      });
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { color: 'rgba(255,255,255,0.85)' } },
+          tooltip: {
+            callbacks: {
+              title: (items) => {
+                const ms = items?.[0]?.parsed?.x;
+                return ms ? new Date(ms).toISOString() : '';
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            ticks: {
+              color: 'rgba(255,255,255,0.7)',
+              callback: (v) => {
+                const d = new Date(Number(v));
+                // Compact label (local-ish) but stable.
+                return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+              },
+              maxRotation: 0,
+              autoSkip: true,
+            },
+            grid: { color: 'rgba(255,255,255,0.06)' },
+          },
+          y: {
+            position: 'left',
+            title: { display: true, text: 'Rain (mm)', color: 'rgba(255,255,255,0.8)' },
+            ticks: { color: 'rgba(255,255,255,0.7)' },
+            grid: { color: 'rgba(255,255,255,0.06)' },
+          },
+          y2: {
+            position: 'right',
+            title: { display: true, text: `Rolling (${aggMode})`, color: 'rgba(255,255,255,0.8)' },
+            ticks: { color: 'rgba(255,255,255,0.7)' },
+            grid: { drawOnChartArea: false },
+          },
+        },
+      };
+
+      if (state.chart) state.chart.destroy();
+      state.chart = new Chart(ctx, { type: 'line', data: { datasets }, options });
+    }
+
+    function resetAll() {
+      state.rawRows = [];
+      state.headers = [];
+      state.parsed = [];
+      state.roll = null;
+      state.summaryCsv = null;
+      state.seriesCsv = null;
+      $('file').value = '';
+      $('timeCol').innerHTML = '';
+      $('rainCol').innerHTML = '';
+      $('previewHead').innerHTML = '';
+      $('previewBody').innerHTML = '';
+      $('maxTableBody').innerHTML = '<tr><td colspan="3" style="color: rgba(255,255,255,0.65)">No results yet.</td></tr>';
+      $('chartHint').textContent = 'Load a CSV, map columns, and compute rolling windows.';
+      $('download').disabled = true;
+      $('downloadSeries').disabled = true;
+      setStatus($('fileStatus'), 'No file loaded.');
+      setStatus($('computeStatus'), '');
+      if (state.chart) { state.chart.destroy(); state.chart = null; }
+    }
+
+    $('reset').addEventListener('click', resetAll);
+
+    $('file').addEventListener('change', async (e) => {
+      resetAll();
+      const f = e.target.files?.[0];
+      if (!f) return;
+
+      setStatus($('fileStatus'), `Loading <strong>${f.name}</strong> (${Math.round(f.size/1024)} KB)…`);
+
+      Papa.parse(f, {
+        header: true,
+        skipEmptyLines: true,
+        dynamicTyping: false,
+        complete: (res) => {
+          const rows = res.data || [];
+          const headers = res.meta?.fields || (rows.length ? Object.keys(rows[0]) : []);
+          state.rawRows = rows;
+          state.headers = headers;
+
+          if (!headers.length) {
+            setStatus($('fileStatus'), `<span class="bad">Could not find headers.</span>`);
+            return;
+          }
+
+          setSelectOptions($('timeCol'), headers);
+          setSelectOptions($('rainCol'), headers);
+          const guesses = guessCols(headers);
+          $('timeCol').value = guesses.timeGuess;
+          $('rainCol').value = guesses.rainGuess;
+
+          renderPreview(headers, rows, $('timeCol').value, $('rainCol').value);
+
+          setStatus($('fileStatus'), `<span class="ok">Loaded.</span> Rows: <strong>${rows.length}</strong> | Columns: <strong>${headers.length}</strong>`);
+        },
+        error: (err) => {
+          setStatus($('fileStatus'), `<span class="bad">CSV parse error:</span> ${String(err)}`);
+        }
+      });
+    });
+
+    $('timeCol').addEventListener('change', () => {
+      if (state.headers.length) renderPreview(state.headers, state.rawRows, $('timeCol').value, $('rainCol').value);
+    });
+    $('rainCol').addEventListener('change', () => {
+      if (state.headers.length) renderPreview(state.headers, state.rawRows, $('timeCol').value, $('rainCol').value);
+    });
+
+    $('run').addEventListener('click', () => {
+      setStatus($('computeStatus'), '');
+
+      if (!state.rawRows.length) {
+        setStatus($('computeStatus'), `<span class="bad">No CSV loaded.</span>`);
+        return;
+      }
+
+      const timeCol = $('timeCol').value;
+      const rainCol = $('rainCol').value;
+      const tzMode = $('tzMode').value;
+      const aggMode = $('aggMode').value;
+
+      const hours = uniqWindows([
+        $('wA').value,
+        $('wB').value,
+        $('wC').value,
+        $('wD').value,
+      ]);
+
+      if (!timeCol || !rainCol) {
+        setStatus($('computeStatus'), `<span class="bad">Pick both a timestamp column and a rainfall column.</span>`);
+        return;
+      }
+      if (!hours.length) {
+        setStatus($('computeStatus'), `<span class="bad">Add at least one window (hours > 0).</span>`);
+        return;
+      }
+
+      const { parsed, dropped } = normalizeParsed(state.rawRows, timeCol, rainCol, tzMode);
+      state.parsed = parsed;
+
+      if (parsed.length < 2) {
+        setStatus($('computeStatus'), `<span class="bad">Not enough valid rows after parsing.</span> Dropped: ${dropped}`);
+        return;
+      }
+
+      const windows = hours.map((h) => ({ hours: h, series: computeRolling(parsed, h, aggMode) }));
+      state.roll = { windows, aggMode };
+
+      const { csv, summary } = buildSummary(windows, aggMode);
+      state.summaryCsv = csv;
+      state.seriesCsv = buildSeriesCsv(parsed, windows, aggMode);
+
+      renderMaxTable(summary, aggMode);
+      renderChart(parsed, windows, aggMode);
+
+      $('download').disabled = false;
+      $('downloadSeries').disabled = false;
+      $('chartHint').textContent = `Computed ${windows.length} window(s) over ${parsed.length} timestamps. Dropped ${dropped} row(s).`;
+
+      setStatus(
+        $('computeStatus'),
+        `<span class="ok">Done.</span> Parsed <strong>${parsed.length}</strong> unique timestamps; dropped <strong>${dropped}</strong> row(s).`
+      );
+    });
+
+    $('download').addEventListener('click', () => {
+      if (!state.summaryCsv) return;
+      downloadText('rainfall_rolling_max_summary.csv', state.summaryCsv);
+    });
+
+    $('downloadSeries').addEventListener('click', () => {
+      if (!state.seriesCsv) return;
+      downloadText('rainfall_rolling_series.csv', state.seriesCsv);
+    });
+
+    // Initial
+    resetAll();
+  </script>
+</body>
+</html>
