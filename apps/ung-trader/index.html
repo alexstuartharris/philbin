@@ -811,7 +811,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-04.1';
+    const APP_VERSION = '2026-02-04.2';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1235,8 +1235,9 @@
     }
 
     function setChartsFromSeries(rows){
-      if(!ensureCharts()) return;
-      const labels = rows.map(r => {
+      try{
+        if(!ensureCharts()) return;
+        const labels = rows.map(r => {
         const d = new Date(r.ts);
         // show month-day hour UTC
         const mm = String(d.getUTCMonth()+1).padStart(2,'0');
@@ -1305,8 +1306,9 @@
       const body = document.getElementById('deltaStatsBody');
       if(body){
         const esc = (x) => String(x ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+        const escAttr = (x) => esc(x).replaceAll('"','&quot;').replaceAll("'",'&#39;');
         const rowsHtml = [];
-        const m = (name, tip) => `<span class="metricHelp" title="${esc(tip)}">${esc(name)}<span class="qmark">?</span></span>`;
+        const m = (name, tip) => `<span class="metricHelp" title="${escAttr(tip)}">${esc(name)}<span class="qmark">?</span></span>`;
 
         rowsHtml.push(`<tr><td>${m('Window','The time window used to compute stats (currently fixed at 7 days).')}</td><td class="mono">7d</td><td class="mono">Supabase series</td></tr>`);
         rowsHtml.push(`<tr><td>${m('Points','Number of daily observations in the window (more points = more stable stats).')}</td><td class="mono">${rows.length}</td><td class="mono">Runs in window</td></tr>`);
@@ -1327,6 +1329,10 @@
         }
 
         body.innerHTML = rowsHtml.join('');
+      }
+      } catch(e){
+        const statsBody = document.getElementById('deltaStatsBody');
+        if(statsBody) statsBody.innerHTML = `<tr><td colspan="3">Delta stats error: ${String(e?.message||e)}</td></tr>`;
       }
     }
 
