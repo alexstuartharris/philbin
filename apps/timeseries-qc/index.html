@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Time Series QC</title>
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f4ef;
+        --panel: #ffffff;
+        --ink: #161616;
+        --muted: #5a5a5a;
+        --border: #e3dfd8;
+        --accent: #2451ff;
+        --ok: #1f8b4c;
+        --warn: #c06a00;
+        --bad: #b42318;
+        --shadow: 0 10px 35px rgba(19, 15, 10, 0.12);
+        --radius: 18px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+          radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+          var(--bg);
+      }
+      header {
+        padding: 42px 20px 18px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+        margin: 0 0 10px;
+        letter-spacing: -0.02em;
+      }
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 78ch;
+      }
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 70px;
+        display: grid;
+        gap: 18px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: start;
+      }
+      @media (max-width: 980px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      label {
+        display: block;
+        font-weight: 650;
+        margin: 14px 0 8px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 220px;
+        resize: vertical;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.4;
+        background: #fff;
+      }
+      input[type="file"], select, input[type="number"], input[type="text"] {
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+      button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        padding: 10px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 650;
+      }
+      button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+      button:disabled { opacity: 0.55; cursor: not-allowed; }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #fff;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .status {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(36, 81, 255, 0.08);
+        border: 1px solid rgba(36, 81, 255, 0.2);
+        color: #10207a;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .status.error {
+        background: rgba(180, 35, 24, 0.08);
+        border-color: rgba(180, 35, 24, 0.2);
+        color: var(--bad);
+      }
+      .kvs {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .kv {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 10px;
+        align-items: baseline;
+        padding: 8px 10px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+      @media (max-width: 560px) {
+        .kv { grid-template-columns: 1fr; }
+      }
+      .k { font-family: var(--mono); color: var(--muted); font-size: 12px; }
+      .v { font-weight: 650; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      th, td {
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      th { color: var(--muted); font-weight: 700; font-size: 12px; }
+      .mono { font-family: var(--mono); }
+      #plot {
+        width: 100%;
+        height: 460px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+      .small { color: var(--muted); font-size: 13px; line-height: 1.4; }
+      footer {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 40px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      a { color: var(--accent); }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Time Series QC</h1>
+      <p class="subtitle">
+        Upload or paste a CSV with a timestamp column and a value column to plot the series and get quick QC metrics
+        (cadence inference, duplicates, missing %, gap list, and robust outlier flags). Runs entirely in your browser.
+      </p>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="row">
+          <input id="file" type="file" accept=".csv,text/csv" />
+          <button id="loadSample">Load sample</button>
+          <button id="analyze" class="primary">Analyze</button>
+          <button id="downloadJson" disabled>Download report (JSON)</button>
+          <button id="downloadCsv" disabled>Download report (CSV)</button>
+          <span id="pill" class="pill" style="display:none"></span>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <label style="margin:0">Delimiter</label>
+          <select id="delim">
+            <option value="auto" selected>Auto</option>
+            <option value=",">Comma</option>
+            <option value="\t">Tab</option>
+            <option value=";">Semicolon</option>
+            <option value="|">Pipe</option>
+          </select>
+
+          <label style="margin:0; display:flex; gap:8px; align-items:center; font-weight:650">
+            <input id="hasHeader" type="checkbox" checked />
+            Header row
+          </label>
+
+          <label style="margin:0">Timestamp column</label>
+          <select id="tsCol"></select>
+
+          <label style="margin:0">Value column</label>
+          <select id="valCol"></select>
+
+          <label style="margin:0">Gap multiplier</label>
+          <input id="gapMult" type="number" min="1" step="1" value="3" style="width:90px" />
+        </div>
+
+        <label for="input">CSV (paste)</label>
+        <textarea id="input" spellcheck="false" placeholder="timestamp,value\n2025-01-01T00:00:00Z,1.2\n..."></textarea>
+        <div id="status" class="status" style="display:none"></div>
+      </section>
+
+      <section class="grid">
+        <section class="card">
+          <div id="plot"></div>
+          <p class="small" style="margin:10px 2px 0">
+            Tip: if your timestamps don\'t parse cleanly, try ISO-8601 (e.g. <span class="mono">2026-02-04T22:30:00Z</span>).
+          </p>
+        </section>
+
+        <section class="card">
+          <h2 style="margin: 0 0 6px">Stats</h2>
+          <p class="small" style="margin: 0 0 12px">Cadence and missing% are inferred from parsed timestamps.</p>
+          <div id="stats" class="kvs"></div>
+
+          <details style="margin-top:14px" open>
+            <summary style="cursor:pointer; font-weight:650">Top gaps</summary>
+            <div style="margin-top:10px; overflow:auto">
+              <table id="gapsTable">
+                <thead><tr><th>start</th><th>end</th><th class="mono">duration</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </details>
+
+          <details style="margin-top:14px">
+            <summary style="cursor:pointer; font-weight:650">Notes / limitations</summary>
+            <ul class="small">
+              <li>Timestamp parsing uses <span class="mono">Date.parse</span> best-effort; ambiguous formats may misparse.</li>
+              <li>Cadence is computed as the mode of positive time deltas (rounded to nearest second).</li>
+              <li>Outliers are flagged with robust z-score (median/MAD), threshold |z| &gt; 5.</li>
+            </ul>
+          </details>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      Built for <a href="https://alexstuartharris.github.io/philbin/">philbin</a>. Source is static HTML + JS.
+    </footer>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+
+      const fileEl = $("file");
+      const inputEl = $("input");
+      const statusEl = $("status");
+      const analyzeBtn = $("analyze");
+      const loadSampleBtn = $("loadSample");
+      const delimEl = $("delim");
+      const hasHeaderEl = $("hasHeader");
+      const tsColEl = $("tsCol");
+      const valColEl = $("valCol");
+      const gapMultEl = $("gapMult");
+      const pillEl = $("pill");
+      const statsEl = $("stats");
+      const gapsBody = $("gapsTable").querySelector("tbody");
+      const dlJsonBtn = $("downloadJson");
+      const dlCsvBtn = $("downloadCsv");
+
+      let lastReport = null;
+
+      function setStatus(msg, kind = "info") {
+        statusEl.style.display = "block";
+        statusEl.classList.toggle("error", kind === "error");
+        statusEl.textContent = msg;
+      }
+      function clearStatus() {
+        statusEl.style.display = "none";
+        statusEl.textContent = "";
+        statusEl.classList.remove("error");
+      }
+
+      function humanDuration(ms) {
+        if (!Number.isFinite(ms)) return "—";
+        const s = Math.round(ms / 1000);
+        const sign = s < 0 ? "-" : "";
+        let x = Math.abs(s);
+        const days = Math.floor(x / 86400); x -= days * 86400;
+        const hrs = Math.floor(x / 3600); x -= hrs * 3600;
+        const mins = Math.floor(x / 60); x -= mins * 60;
+        const parts = [];
+        if (days) parts.push(days + "d");
+        if (hrs) parts.push(hrs + "h");
+        if (mins) parts.push(mins + "m");
+        parts.push(x + "s");
+        return sign + parts.join(" ");
+      }
+
+      function fmtNum(x, d = 4) {
+        if (!Number.isFinite(x)) return "—";
+        const abs = Math.abs(x);
+        if (abs >= 1e6 || (abs > 0 && abs < 1e-3)) return x.toExponential(3);
+        return x.toFixed(d).replace(/\.0+$/, "").replace(/(\.[0-9]*?)0+$/, "$1");
+      }
+
+      // RFC4180-ish CSV parser: supports quotes, escaped quotes, newlines in quoted fields.
+      function parseCsv(text, delim) {
+        const rows = [];
+        let row = [];
+        let field = "";
+        let inQuotes = false;
+
+        function endField() { row.push(field); field = ""; }
+        function endRow() { endField(); rows.push(row); row = []; }
+
+        for (let i = 0; i < text.length; i++) {
+          const c = text[i];
+
+          if (inQuotes) {
+            if (c === '"') {
+              if (text[i + 1] === '"') { field += '"'; i++; }
+              else { inQuotes = false; }
+            } else {
+              field += c;
+            }
+            continue;
+          }
+
+          if (c === '"') { inQuotes = true; continue; }
+          if (c === '\r') continue;
+          if (c === '\n') { endRow(); continue; }
+          if (c === delim) { endField(); continue; }
+          field += c;
+        }
+
+        // Flush last row
+        if (inQuotes) throw new Error("Unclosed quote in CSV");
+        if (field.length || row.length) endRow();
+
+        // Trim trailing empty rows
+        while (rows.length && rows[rows.length - 1].every((x) => (x ?? "").trim() === "")) rows.pop();
+        return rows;
+      }
+
+      function detectDelimiter(text) {
+        const candidates = [",", "\t", ";", "|"];
+        const lines = text.split(/\r?\n/).slice(0, 10).filter((l) => l.trim().length);
+        if (!lines.length) return ",";
+        let best = ",";
+        let bestScore = -1;
+        for (const d of candidates) {
+          const counts = lines.map((l) => (l.match(new RegExp(escapeRegExp(d), "g")) || []).length);
+          const score = counts.reduce((a, b) => a + b, 0) - variance(counts) * 2;
+          if (score > bestScore) { bestScore = score; best = d; }
+        }
+        return best;
+      }
+
+      function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+      function variance(arr) {
+        if (!arr.length) return 0;
+        const m = arr.reduce((a, b) => a + b, 0) / arr.length;
+        return arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length;
+      }
+
+      function median(nums) {
+        const a = nums.slice().sort((x, y) => x - y);
+        if (!a.length) return NaN;
+        const mid = Math.floor(a.length / 2);
+        return a.length % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
+      }
+
+      function mad(nums, med) {
+        const dev = nums.map((x) => Math.abs(x - med));
+        return median(dev);
+      }
+
+      function mean(nums) {
+        if (!nums.length) return NaN;
+        return nums.reduce((a, b) => a + b, 0) / nums.length;
+      }
+
+      function modeRoundedMs(deltasMs, roundToMs) {
+        const counts = new Map();
+        for (const dt of deltasMs) {
+          if (!(dt > 0)) continue;
+          const k = Math.max(1, Math.round(dt / roundToMs)) * roundToMs;
+          counts.set(k, (counts.get(k) || 0) + 1);
+        }
+        let best = null;
+        let bestC = -1;
+        for (const [k, c] of counts.entries()) {
+          if (c > bestC) { bestC = c; best = k; }
+        }
+        return best;
+      }
+
+      function toIso(ms) {
+        try { return new Date(ms).toISOString(); } catch { return ""; }
+      }
+
+      function writeStats(kvs) {
+        statsEl.innerHTML = "";
+        for (const [k, v] of kvs) {
+          const div = document.createElement("div");
+          div.className = "kv";
+          div.innerHTML = `<div class="k">${k}</div><div class="v">${v}</div>`;
+          statsEl.appendChild(div);
+        }
+      }
+
+      function setColumnOptions(cols, tsGuessIdx, valGuessIdx) {
+        tsColEl.innerHTML = "";
+        valColEl.innerHTML = "";
+        cols.forEach((c, idx) => {
+          const o1 = document.createElement("option");
+          o1.value = String(idx);
+          o1.textContent = c;
+          tsColEl.appendChild(o1);
+
+          const o2 = document.createElement("option");
+          o2.value = String(idx);
+          o2.textContent = c;
+          valColEl.appendChild(o2);
+        });
+        if (tsGuessIdx != null) tsColEl.value = String(tsGuessIdx);
+        if (valGuessIdx != null) valColEl.value = String(valGuessIdx);
+      }
+
+      function guessColumns(headers) {
+        const h = headers.map((x) => String(x ?? "").trim().toLowerCase());
+        const tsWords = ["time", "timestamp", "date", "datetime", "dt"];
+        const valWords = ["value", "val", "stage", "flow", "q", "temp", "temperature", "level"];
+
+        let tsIdx = null;
+        let valIdx = null;
+
+        for (let i = 0; i < h.length; i++) {
+          if (tsWords.some((w) => h[i] === w || h[i].includes(w))) { tsIdx = i; break; }
+        }
+        for (let i = 0; i < h.length; i++) {
+          if (valWords.some((w) => h[i] === w || h[i].includes(w))) { valIdx = i; break; }
+        }
+        if (tsIdx == null) tsIdx = 0;
+        if (valIdx == null) valIdx = Math.min(1, h.length - 1);
+        if (valIdx === tsIdx) valIdx = Math.min(tsIdx + 1, h.length - 1);
+        return { tsIdx, valIdx };
+      }
+
+      function buildReport(points, cadenceMs, gapMult) {
+        const validPoints = points.filter((p) => Number.isFinite(p.t) && Number.isFinite(p.v));
+        const tsAll = validPoints.map((p) => p.t).sort((a, b) => a - b);
+        const values = validPoints.map((p) => p.v);
+
+        const uniqueTs = Array.from(new Set(tsAll));
+        uniqueTs.sort((a, b) => a - b);
+
+        const duplicates = tsAll.length - uniqueTs.length;
+
+        const t0 = uniqueTs[0];
+        const t1 = uniqueTs[uniqueTs.length - 1];
+
+        const deltas = [];
+        for (let i = 1; i < uniqueTs.length; i++) deltas.push(uniqueTs[i] - uniqueTs[i - 1]);
+
+        const cadence = cadenceMs ?? modeRoundedMs(deltas, 1000);
+
+        let expectedCount = null;
+        let missing = null;
+        let missingPct = null;
+        if (cadence && uniqueTs.length >= 2) {
+          expectedCount = Math.floor((t1 - t0) / cadence) + 1;
+          missing = Math.max(0, expectedCount - uniqueTs.length);
+          missingPct = expectedCount ? (missing / expectedCount) * 100 : null;
+        }
+
+        const med = median(values);
+        const madV = mad(values, med);
+        const outliers = [];
+        if (Number.isFinite(med) && Number.isFinite(madV) && madV > 0) {
+          for (const p of validPoints) {
+            const z = 0.6745 * (p.v - med) / madV;
+            if (Math.abs(z) > 5) outliers.push({ t: p.t, v: p.v, robustZ: z });
+          }
+        }
+
+        const gaps = [];
+        if (cadence && uniqueTs.length >= 2) {
+          const thresh = gapMult * cadence;
+          for (let i = 1; i < uniqueTs.length; i++) {
+            const dt = uniqueTs[i] - uniqueTs[i - 1];
+            if (dt > thresh) {
+              gaps.push({
+                startMs: uniqueTs[i - 1],
+                endMs: uniqueTs[i],
+                durationMs: dt,
+              });
+            }
+          }
+          gaps.sort((a, b) => b.durationMs - a.durationMs);
+        }
+
+        const report = {
+          generatedAt: new Date().toISOString(),
+          summary: {
+            pointsParsed: points.length,
+            pointsValid: validPoints.length,
+            uniqueTimestamps: uniqueTs.length,
+            duplicates,
+            start: Number.isFinite(t0) ? toIso(t0) : null,
+            end: Number.isFinite(t1) ? toIso(t1) : null,
+            cadenceMs: cadence ?? null,
+            cadenceHuman: cadence ? humanDuration(cadence) : null,
+            expectedCount,
+            missing,
+            missingPct,
+            min: Math.min(...values),
+            max: Math.max(...values),
+            mean: mean(values),
+            median: med,
+            mad: madV,
+            outliersCount: outliers.length,
+            gapCount: gaps.length,
+            gapMultiplier: gapMult,
+          },
+          gaps: gaps.slice(0, 20).map((g) => ({
+            start: toIso(g.startMs),
+            end: toIso(g.endMs),
+            durationMs: g.durationMs,
+            durationHuman: humanDuration(g.durationMs),
+          })),
+          outliersSample: outliers
+            .sort((a, b) => Math.abs(b.robustZ) - Math.abs(a.robustZ))
+            .slice(0, 50)
+            .map((o) => ({ timestamp: toIso(o.t), value: o.v, robustZ: o.robustZ })),
+        };
+
+        return { report, uniqueTs, validPoints, outliers };
+      }
+
+      function reportToCsv(report) {
+        const lines = [];
+        lines.push("key,value");
+        for (const [k, v] of Object.entries(report.summary)) {
+          lines.push(`${csvEscape(k)},${csvEscape(v)}`);
+        }
+        lines.push("");
+        lines.push("gap_start,gap_end,duration_ms,duration");
+        for (const g of report.gaps || []) {
+          lines.push(`${csvEscape(g.start)},${csvEscape(g.end)},${csvEscape(g.durationMs)},${csvEscape(g.durationHuman)}`);
+        }
+        return lines.join("\n") + "\n";
+      }
+
+      function csvEscape(x) {
+        if (x == null) return "";
+        const s = String(x);
+        if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+
+      function downloadText(filename, text, mime) {
+        const blob = new Blob([text], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function updateGapsTable(gaps) {
+        gapsBody.innerHTML = "";
+        if (!gaps.length) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="3" class="small">No gaps found (above threshold).</td>`;
+          gapsBody.appendChild(tr);
+          return;
+        }
+        for (const g of gaps.slice(0, 20)) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td class="mono">${g.start}</td><td class="mono">${g.end}</td><td class="mono">${g.durationHuman}</td>`;
+          gapsBody.appendChild(tr);
+        }
+      }
+
+      function plotSeries(validPoints, outliers) {
+        const xs = validPoints.map((p) => new Date(p.t));
+        const ys = validPoints.map((p) => p.v);
+
+        const outSet = new Set(outliers.map((o) => o.t));
+        const outX = [];
+        const outY = [];
+        for (const p of validPoints) {
+          if (outSet.has(p.t)) { outX.push(new Date(p.t)); outY.push(p.v); }
+        }
+
+        const traces = [
+          {
+            x: xs,
+            y: ys,
+            type: "scatter",
+            mode: "lines+markers",
+            name: "series",
+            line: { color: "#2451ff", width: 2 },
+            marker: { size: 5, color: "#2451ff" },
+          },
+        ];
+
+        if (outX.length) {
+          traces.push({
+            x: outX,
+            y: outY,
+            type: "scatter",
+            mode: "markers",
+            name: "outliers",
+            marker: { size: 8, color: "#b42318", symbol: "x" },
+          });
+        }
+
+        Plotly.newPlot(
+          "plot",
+          traces,
+          {
+            margin: { l: 50, r: 16, t: 20, b: 40 },
+            paper_bgcolor: "#ffffff",
+            plot_bgcolor: "#ffffff",
+            xaxis: { title: "time" },
+            yaxis: { title: "value" },
+            legend: { orientation: "h" },
+          },
+          { responsive: true, displaylogo: false }
+        );
+      }
+
+      function refreshColumnsFromCsv(raw) {
+        try {
+          const d = delimEl.value === "auto" ? detectDelimiter(raw) : delimEl.value;
+          const rows = parseCsv(raw, d);
+          if (!rows.length) throw new Error("No rows found");
+
+          const hasHeader = hasHeaderEl.checked;
+          const headers = hasHeader ? rows[0] : rows[0].map((_, i) => `col_${i + 1}`);
+          const { tsIdx, valIdx } = guessColumns(headers);
+          setColumnOptions(headers.map((h, i) => (String(h || "").trim() || `col_${i + 1}`)), tsIdx, valIdx);
+
+          pillEl.style.display = "inline-flex";
+          pillEl.textContent = `${rows.length}${hasHeader ? " rows (incl header)" : " rows"} · delim: ${d === "\t" ? "tab" : d}`;
+        } catch {
+          // Ignore while typing
+        }
+      }
+
+      async function analyze() {
+        clearStatus();
+        dlJsonBtn.disabled = true;
+        dlCsvBtn.disabled = true;
+        lastReport = null;
+
+        const raw = inputEl.value.trim();
+        if (!raw) {
+          setStatus("Paste CSV (or choose a file) first.", "error");
+          return;
+        }
+
+        const delim = delimEl.value === "auto" ? detectDelimiter(raw) : delimEl.value;
+
+        let rows;
+        try {
+          rows = parseCsv(raw, delim);
+        } catch (err) {
+          setStatus("CSV parse error: " + err.message, "error");
+          return;
+        }
+
+        if (!rows.length) {
+          setStatus("No rows found.", "error");
+          return;
+        }
+
+        const hasHeader = hasHeaderEl.checked;
+        const headers = hasHeader ? rows[0] : rows[0].map((_, i) => `col_${i + 1}`);
+        const cols = headers.map((h, i) => (String(h || "").trim() || `col_${i + 1}`));
+        if (!tsColEl.options.length) {
+          const { tsIdx, valIdx } = guessColumns(cols);
+          setColumnOptions(cols, tsIdx, valIdx);
+        }
+
+        const tsIdx = Number(tsColEl.value || 0);
+        const valIdx = Number(valColEl.value || 1);
+
+        const dataRows = hasHeader ? rows.slice(1) : rows;
+        const points = [];
+        let invalidDate = 0;
+        let invalidValue = 0;
+
+        for (const r of dataRows) {
+          const tsRaw = (r[tsIdx] ?? "").trim();
+          const vRaw = (r[valIdx] ?? "").trim();
+
+          const t = Date.parse(tsRaw);
+          const v = vRaw === "" ? NaN : Number(vRaw);
+
+          if (!Number.isFinite(t)) invalidDate++;
+          if (!Number.isFinite(v)) invalidValue++;
+
+          points.push({ t, v, tsRaw, vRaw });
+        }
+
+        if (!points.length) {
+          setStatus("No data rows after header.", "error");
+          return;
+        }
+
+        if (invalidDate / points.length > 0.2) {
+          setStatus(
+            `Too many invalid timestamps (${invalidDate}/${points.length}). Check delimiter/column selection and timestamp format.`,
+            "error"
+          );
+          return;
+        }
+
+        const gapMult = Math.max(1, Math.floor(Number(gapMultEl.value || 3)));
+
+        const { report, validPoints, outliers } = buildReport(points, null, gapMult);
+        lastReport = report;
+
+        const s = report.summary;
+        const kvs = [
+          ["points parsed", String(s.pointsParsed)],
+          ["valid points", String(s.pointsValid)],
+          ["unique timestamps", String(s.uniqueTimestamps)],
+          ["duplicates", String(s.duplicates)],
+          ["range", s.start && s.end ? `${s.start} → ${s.end}` : "—"],
+          ["cadence", s.cadenceHuman ? `${s.cadenceHuman} (${s.cadenceMs} ms)` : "—"],
+          ["expected count", s.expectedCount ?? "—"],
+          ["missing", s.missing ?? "—"],
+          ["missing %", Number.isFinite(s.missingPct) ? `${fmtNum(s.missingPct, 2)}%` : "—"],
+          ["min / max", `${fmtNum(s.min, 6)} / ${fmtNum(s.max, 6)}`],
+          ["mean / median", `${fmtNum(s.mean, 6)} / ${fmtNum(s.median, 6)}`],
+          ["MAD", Number.isFinite(s.mad) ? fmtNum(s.mad, 6) : "—"],
+          ["outliers (|z|>5)", String(s.outliersCount)],
+          ["gaps found", String(s.gapCount)],
+          ["invalid values", String(invalidValue)],
+        ];
+
+        writeStats(kvs);
+        updateGapsTable(report.gaps || []);
+        plotSeries(validPoints, outliers);
+
+        dlJsonBtn.disabled = false;
+        dlCsvBtn.disabled = false;
+
+        dlJsonBtn.onclick = () => {
+          downloadText("timeseries-qc-report.json", JSON.stringify(report, null, 2) + "\n", "application/json");
+        };
+        dlCsvBtn.onclick = () => {
+          downloadText("timeseries-qc-report.csv", reportToCsv(report), "text/csv");
+        };
+
+        setStatus("Parsed OK. Stats and plot updated.");
+      }
+
+      analyzeBtn.addEventListener("click", analyze);
+
+      loadSampleBtn.addEventListener("click", () => {
+        const sample = [
+          "timestamp,value",
+          "2026-01-01T00:00:00Z,1.0",
+          "2026-01-01T00:15:00Z,1.1",
+          "2026-01-01T00:30:00Z,1.0",
+          "2026-01-01T00:45:00Z,1.2",
+          "2026-01-01T01:00:00Z,1.0",
+          "2026-01-01T02:00:00Z,4.8", // gap + outlier-ish
+          "2026-01-01T02:15:00Z,1.1",
+          "2026-01-01T02:15:00Z,1.1", // duplicate
+          "2026-01-01T02:30:00Z,1.0",
+        ].join("\n");
+        inputEl.value = sample + "\n";
+        clearStatus();
+        refreshColumnsFromCsv(inputEl.value);
+        dlJsonBtn.disabled = true;
+        dlCsvBtn.disabled = true;
+        pillEl.style.display = "none";
+      });
+
+      fileEl.addEventListener("change", async (e) => {
+        clearStatus();
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          inputEl.value = text;
+          refreshColumnsFromCsv(text);
+          setStatus(`Loaded “${file.name}”. Choose columns if needed, then click Analyze.`);
+          dlJsonBtn.disabled = true;
+          dlCsvBtn.disabled = true;
+        } catch (err) {
+          setStatus("Failed to read file: " + err.message, "error");
+        }
+      });
+
+      // live-ish column guess when user pastes
+      inputEl.addEventListener("input", () => {
+        if (inputEl.value.length < 5) return;
+        refreshColumnsFromCsv(inputEl.value);
+      });
+
+      // initial plot placeholder
+      Plotly.newPlot(
+        "plot",
+        [{ x: [], y: [], type: "scatter", mode: "lines+markers", name: "series" }],
+        { margin: { l: 50, r: 16, t: 20, b: 40 }, paper_bgcolor: "#ffffff", plot_bgcolor: "#ffffff" },
+        { responsive: true, displaylogo: false }
+      );
+    </script>
+  </body>
+</html>
