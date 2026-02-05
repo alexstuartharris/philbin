@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-02T06:32:09.960Z",
+  "generatedAt": "2026-02-05T06:37:33.943Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -27,6 +27,10 @@
     },
     {
       "name": "status",
+      "hasIndex": true
+    },
+    {
+      "name": "timeseries-qc",
       "hasIndex": true
     },
     {
