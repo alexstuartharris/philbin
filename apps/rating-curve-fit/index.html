@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rating Curve Fit (Stage → Discharge)</title>
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f4ef;
+        --panel: #ffffff;
+        --ink: #161616;
+        --muted: #5a5a5a;
+        --border: #e3dfd8;
+        --accent: #2451ff;
+        --accent-soft: rgba(36, 81, 255, 0.1);
+        --danger: #b42318;
+        --shadow: 0 10px 35px rgba(19, 15, 10, 0.12);
+        --radius: 18px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+          radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+          var(--bg);
+      }
+
+      header {
+        padding: 42px 20px 18px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+        margin: 0 0 10px;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 82ch;
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 70px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1.05fr 0.95fr;
+        align-items: start;
+      }
+
+      @media (max-width: 980px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+
+      label {
+        display: block;
+        font-weight: 650;
+        margin: 12px 0 8px;
+      }
+
+      input[type="file"], select, input[type="number"], input[type="text"] {
+        padding: 9px 10px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #fff;
+        width: 100%;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 560px) {
+        .row { grid-template-columns: 1fr; }
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        padding: 10px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .note {
+        margin: 10px 0 0;
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 0.95rem;
+      }
+
+      .error {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(180, 35, 24, 0.25);
+        background: rgba(180, 35, 24, 0.06);
+        color: var(--danger);
+        display: none;
+      }
+
+      .stats {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 14px;
+      }
+
+      @media (max-width: 700px) {
+        .stats { grid-template-columns: 1fr; }
+      }
+
+      .stat {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .stat h3 {
+        margin: 0 0 6px;
+        font-size: 0.95rem;
+        color: var(--muted);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.95rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+        margin: 0;
+      }
+
+      #plot {
+        width: 100%;
+        height: 560px;
+      }
+
+      details {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      summary {
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 180px;
+        resize: vertical;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.4;
+        background: #fff;
+      }
+
+      a {
+        color: var(--accent);
+        font-weight: 650;
+        text-decoration: none;
+      }
+      a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Rating Curve Fit</h1>
+      <p class="subtitle">
+        Fit a simple power-law rating curve <span class="mono">Q = a · (h − h0)^b</span> from paired stage/discharge data.
+        Everything runs locally in your browser (GitHub Pages-friendly). Upload a CSV, pick columns, set <span class="mono">h0</span>
+        (or auto-search it), then export parameters + a curve table.
+      </p>
+    </header>
+
+    <main>
+      <section class="card grid" aria-label="Inputs and outputs">
+        <div>
+          <label for="file">CSV file</label>
+          <input id="file" type="file" accept=".csv,text/csv" />
+
+          <div class="row">
+            <div>
+              <label for="stageCol">Stage column (h)</label>
+              <select id="stageCol" disabled></select>
+            </div>
+            <div>
+              <label for="qCol">Discharge column (Q)</label>
+              <select id="qCol" disabled></select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="h0">h0 (stage offset)</label>
+              <input id="h0" type="number" inputmode="decimal" step="any" placeholder="e.g. 0" />
+              <p class="note">Only points with <span class="mono">h &gt; h0</span> and <span class="mono">Q &gt; 0</span> are used.</p>
+            </div>
+            <div>
+              <label for="mode">Fit mode</label>
+              <select id="mode" disabled>
+                <option value="fixed">Use provided h0</option>
+                <option value="auto">Auto-search h0 (grid search)</option>
+              </select>
+              <p class="note">Auto-search tries many <span class="mono">h0</span> values below min(h) to minimize log-space SSE.</p>
+            </div>
+          </div>
+
+          <details>
+            <summary>Advanced</summary>
+            <div class="row" style="margin-top: 12px;">
+              <div>
+                <label for="autoSteps">Auto-search steps</label>
+                <input id="autoSteps" type="number" min="20" max="500" step="10" value="120" />
+              </div>
+              <div>
+                <label for="curvePoints">Export curve points</label>
+                <input id="curvePoints" type="number" min="20" max="500" step="10" value="80" />
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="logY">Plot discharge axis</label>
+                <select id="logY">
+                  <option value="log">Log (recommended)</option>
+                  <option value="linear">Linear</option>
+                </select>
+              </div>
+              <div>
+                <label for="curveMaxH">Curve max stage (optional)</label>
+                <input id="curveMaxH" type="number" inputmode="decimal" step="any" placeholder="default: max observed h" />
+              </div>
+            </div>
+          </details>
+
+          <div class="btns">
+            <button id="fit" class="primary" disabled>Fit curve</button>
+            <button id="downloadParams" disabled>Download params (JSON)</button>
+            <button id="downloadCurve" disabled>Download curve (CSV)</button>
+            <button id="copySummary" disabled>Copy summary</button>
+          </div>
+
+          <div id="error" class="error" role="alert"></div>
+
+          <div class="stats" aria-label="Fit results">
+            <div class="stat">
+              <h3>Parameters</h3>
+              <pre id="params" class="mono">—</pre>
+            </div>
+            <div class="stat">
+              <h3>Diagnostics</h3>
+              <pre id="diag" class="mono">—</pre>
+            </div>
+          </div>
+
+          <p class="note">
+            Tip: for quick testing, paste CSV into a file with columns like <span class="mono">stage,discharge</span>.
+            If stage/discharge units vary (ft vs m), that’s fine—just be consistent.
+          </p>
+        </div>
+
+        <div>
+          <div id="plot" aria-label="Plot"></div>
+          <label for="dataPreview" style="margin-top: 14px;">Data preview (first 30 rows)</label>
+          <textarea id="dataPreview" readonly spellcheck="false">Upload a CSV to begin.</textarea>
+          <p class="note">
+            This is a simple single-segment fit; real rating curves often need breaks, hysteresis handling, and error models.
+            Treat outputs as exploratory unless you validate.
+          </p>
+        </div>
+      </section>
+
+      <section class="card" aria-label="About">
+        <p class="note" style="margin: 0;">
+          Model: fit is performed in log space: <span class="mono">ln(Q) = ln(a) + b · ln(h − h0)</span>.
+          Auto-search chooses <span class="mono">h0</span> that minimizes log-space SSE.
+          Want segmented curves / breaks? That’s a good next improvement.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      const els = {
+        file: document.getElementById('file'),
+        stageCol: document.getElementById('stageCol'),
+        qCol: document.getElementById('qCol'),
+        h0: document.getElementById('h0'),
+        mode: document.getElementById('mode'),
+        autoSteps: document.getElementById('autoSteps'),
+        curvePoints: document.getElementById('curvePoints'),
+        curveMaxH: document.getElementById('curveMaxH'),
+        logY: document.getElementById('logY'),
+        fit: document.getElementById('fit'),
+        downloadParams: document.getElementById('downloadParams'),
+        downloadCurve: document.getElementById('downloadCurve'),
+        copySummary: document.getElementById('copySummary'),
+        error: document.getElementById('error'),
+        params: document.getElementById('params'),
+        diag: document.getElementById('diag'),
+        plot: document.getElementById('plot'),
+        dataPreview: document.getElementById('dataPreview'),
+      };
+
+      let parsed = null; // { headers, rows, preview }
+      let fitResult = null; // { a,b,h0, n, r2, rmseLog, sseLog, usedPoints, curve }
+
+      function showError(message) {
+        els.error.style.display = message ? 'block' : 'none';
+        els.error.textContent = message || '';
+      }
+
+      function fmt(x, digits = 6) {
+        if (!Number.isFinite(x)) return '—';
+        const abs = Math.abs(x);
+        if (abs === 0) return '0';
+        if (abs >= 1e6 || abs < 1e-4) return x.toExponential(4);
+        return x.toFixed(digits).replace(/\.0+$/, '').replace(/(\.[0-9]*?)0+$/, '$1');
+      }
+
+      function parseCSV(text) {
+        // Minimal CSV parser that handles quoted fields.
+        const rows = [];
+        let i = 0;
+        let field = '';
+        let row = [];
+        let inQuotes = false;
+
+        const pushField = () => {
+          row.push(field);
+          field = '';
+        };
+        const pushRow = () => {
+          // Ignore empty trailing lines
+          const isAllEmpty = row.every((v) => String(v).trim() === '');
+          if (!isAllEmpty) rows.push(row);
+          row = [];
+        };
+
+        while (i < text.length) {
+          const c = text[i];
+          if (c === '"') {
+            if (inQuotes && text[i + 1] === '"') {
+              field += '"';
+              i += 2;
+              continue;
+            }
+            inQuotes = !inQuotes;
+            i += 1;
+            continue;
+          }
+
+          if (!inQuotes && (c === ',' || c === '\t' || c === ';')) {
+            pushField();
+            i += 1;
+            continue;
+          }
+
+          if (!inQuotes && (c === '\n' || c === '\r')) {
+            pushField();
+            pushRow();
+            // consume CRLF
+            if (c === '\r' && text[i + 1] === '\n') i += 2;
+            else i += 1;
+            continue;
+          }
+
+          field += c;
+          i += 1;
+        }
+        pushField();
+        pushRow();
+
+        if (rows.length < 2) throw new Error('CSV must include a header row and at least 1 data row.');
+        const headers = rows[0].map((h, idx) => (String(h || '').trim() || `col_${idx + 1}`));
+        const data = rows.slice(1);
+        return { headers, data };
+      }
+
+      function toNumber(x) {
+        const s = String(x ?? '').trim();
+        if (!s) return NaN;
+        // Allow commas in numbers
+        const cleaned = s.replace(/,/g, '');
+        return Number(cleaned);
+      }
+
+      function buildSelect(select, headers) {
+        select.innerHTML = '';
+        for (const h of headers) {
+          const opt = document.createElement('option');
+          opt.value = h;
+          opt.textContent = h;
+          select.appendChild(opt);
+        }
+      }
+
+      function guessColumn(headers, patterns) {
+        const lower = headers.map((h) => h.toLowerCase());
+        for (const p of patterns) {
+          const idx = lower.findIndex((h) => h.includes(p));
+          if (idx >= 0) return headers[idx];
+        }
+        return headers[0];
+      }
+
+      function linearRegression(x, y) {
+        // returns {slope, intercept, r2}
+        const n = x.length;
+        const mean = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+        const mx = mean(x);
+        const my = mean(y);
+        let sxx = 0;
+        let sxy = 0;
+        let syy = 0;
+        for (let i = 0; i < n; i++) {
+          const dx = x[i] - mx;
+          const dy = y[i] - my;
+          sxx += dx * dx;
+          sxy += dx * dy;
+          syy += dy * dy;
+        }
+        const slope = sxy / sxx;
+        const intercept = my - slope * mx;
+        let sse = 0;
+        for (let i = 0; i < n; i++) {
+          const yhat = intercept + slope * x[i];
+          const e = y[i] - yhat;
+          sse += e * e;
+        }
+        const r2 = syy === 0 ? 1 : 1 - (sse / syy);
+        return { slope, intercept, r2, sse };
+      }
+
+      function fitForH0(points, h0) {
+        // points: [{h,q}]
+        const used = points
+          .filter((p) => Number.isFinite(p.h) && Number.isFinite(p.q))
+          .filter((p) => p.q > 0)
+          .filter((p) => p.h > h0)
+          .map((p) => ({ ...p, dh: p.h - h0 }))
+          .filter((p) => p.dh > 0);
+
+        if (used.length < 3) {
+          return { ok: false, reason: 'Need at least 3 valid points after filtering (Q>0 and h>h0).' };
+        }
+
+        const x = used.map((p) => Math.log(p.dh));
+        const y = used.map((p) => Math.log(p.q));
+        if (x.some((v) => !Number.isFinite(v)) || y.some((v) => !Number.isFinite(v))) {
+          return { ok: false, reason: 'Non-finite values encountered after log transform.' };
+        }
+
+        const lr = linearRegression(x, y);
+        const a = Math.exp(lr.intercept);
+        const b = lr.slope;
+        const rmseLog = Math.sqrt(lr.sse / used.length);
+        return {
+          ok: true,
+          a,
+          b,
+          h0,
+          r2: lr.r2,
+          sseLog: lr.sse,
+          rmseLog,
+          n: used.length,
+          usedPoints: used,
+        };
+      }
+
+      function autoSearchH0(points, steps) {
+        const hs = points.map((p) => p.h).filter(Number.isFinite);
+        const hMin = Math.min(...hs);
+        const hMax = Math.max(...hs);
+        const span = hMax - hMin;
+        const eps = Math.max(1e-9, span * 1e-6);
+
+        // Search slightly below min(h). The range is heuristic.
+        const start = hMin - (span || Math.abs(hMin) || 1) * 0.75;
+        const end = hMin - eps;
+
+        let best = null;
+        for (let i = 0; i < steps; i++) {
+          const t = steps === 1 ? 0.5 : i / (steps - 1);
+          const h0 = start + (end - start) * t;
+          const res = fitForH0(points, h0);
+          if (!res.ok) continue;
+          // minimize SSE in log space; tie-breaker: prefer fewer extreme offsets (closer to min(h))
+          const score = res.sseLog;
+          if (!best || score < best.score || (score === best.score && Math.abs(hMin - res.h0) < Math.abs(hMin - best.res.h0))) {
+            best = { score, res };
+          }
+        }
+        if (!best) return { ok: false, reason: 'Auto-search failed to find any valid h0. Try fixed mode with a reasonable h0.' };
+        return { ok: true, ...best.res, h0Range: [start, end], steps };
+      }
+
+      function makeCurve({ a, b, h0 }, minH, maxH, nPoints) {
+        const out = [];
+        for (let i = 0; i < nPoints; i++) {
+          const t = nPoints === 1 ? 0.5 : i / (nPoints - 1);
+          const h = minH + (maxH - minH) * t;
+          const dh = h - h0;
+          const q = dh > 0 ? a * Math.pow(dh, b) : NaN;
+          out.push({ h, q });
+        }
+        return out;
+      }
+
+      function downloadText(filename, text, mime = 'text/plain') {
+        const blob = new Blob([text], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function renderPlot(points, usedPoints, curve, logY) {
+        const rawTrace = {
+          x: points.map((p) => p.h),
+          y: points.map((p) => p.q),
+          mode: 'markers',
+          type: 'scatter',
+          name: 'All points',
+          marker: { color: 'rgba(90,90,90,0.35)', size: 7 },
+          hovertemplate: 'h=%{x}<br>Q=%{y}<extra></extra>'
+        };
+
+        const usedTrace = {
+          x: usedPoints.map((p) => p.h),
+          y: usedPoints.map((p) => p.q),
+          mode: 'markers',
+          type: 'scatter',
+          name: 'Used (Q>0, h>h0)',
+          marker: { color: '#2451ff', size: 8, line: { width: 1, color: 'rgba(0,0,0,0.15)' } },
+          hovertemplate: 'h=%{x}<br>Q=%{y}<extra></extra>'
+        };
+
+        const curveTrace = {
+          x: curve.map((p) => p.h),
+          y: curve.map((p) => p.q),
+          mode: 'lines',
+          type: 'scatter',
+          name: 'Fitted curve',
+          line: { color: '#111', width: 3 },
+          hovertemplate: 'h=%{x}<br>Q=%{y}<extra></extra>'
+        };
+
+        const layout = {
+          margin: { l: 60, r: 20, t: 20, b: 55 },
+          xaxis: { title: 'Stage (h)', zeroline: false },
+          yaxis: {
+            title: 'Discharge (Q)',
+            type: logY === 'log' ? 'log' : 'linear',
+            zeroline: false,
+          },
+          legend: { orientation: 'h', x: 0, y: 1.12 },
+          paper_bgcolor: 'rgba(0,0,0,0)',
+          plot_bgcolor: 'rgba(255,255,255,0.55)',
+        };
+
+        Plotly.newPlot(els.plot, [rawTrace, usedTrace, curveTrace], layout, { responsive: true, displaylogo: false });
+      }
+
+      function setResults(res) {
+        fitResult = res;
+        if (!res) {
+          els.params.textContent = '—';
+          els.diag.textContent = '—';
+          els.downloadParams.disabled = true;
+          els.downloadCurve.disabled = true;
+          els.copySummary.disabled = true;
+          return;
+        }
+
+        const paramsObj = {
+          model: 'Q = a * (h - h0)^b',
+          a: res.a,
+          b: res.b,
+          h0: res.h0,
+          n: res.n,
+          r2_log: res.r2,
+          rmse_log: res.rmseLog,
+        };
+
+        els.params.textContent =
+          `a  = ${fmt(res.a)}\n` +
+          `b  = ${fmt(res.b)}\n` +
+          `h0 = ${fmt(res.h0)}\n` +
+          `model: Q = a * (h - h0)^b`;
+
+        const extra = [];
+        if (res.h0Range) extra.push(`auto h0 range: [${fmt(res.h0Range[0])}, ${fmt(res.h0Range[1])}] (${res.steps} steps)`);
+
+        els.diag.textContent =
+          `points used: ${res.n}\n` +
+          `R² (log space): ${fmt(res.r2, 4)}\n` +
+          `RMSE (log space): ${fmt(res.rmseLog, 4)}\n` +
+          (extra.length ? extra.join('\n') + '\n' : '') +
+          `note: diagnostics are computed on ln(Q)`;
+
+        els.downloadParams.disabled = false;
+        els.downloadCurve.disabled = false;
+        els.copySummary.disabled = false;
+
+        const allPoints = parsed.points;
+        const hs = allPoints.map((p) => p.h).filter(Number.isFinite);
+        const minH = Math.min(...hs);
+        const maxObs = Math.max(...hs);
+        const maxH = Number.isFinite(toNumber(els.curveMaxH.value)) ? toNumber(els.curveMaxH.value) : maxObs;
+        const nPoints = Math.max(20, Math.min(500, Math.floor(toNumber(els.curvePoints.value) || 80)));
+        const curve = makeCurve(res, minH, maxH, nPoints);
+        res.curve = curve;
+
+        renderPlot(allPoints, res.usedPoints, curve, els.logY.value);
+
+        // stash for download/copy
+        res.paramsObj = paramsObj;
+      }
+
+      function updateFitEnabled() {
+        const ready = !!parsed && els.stageCol.value && els.qCol.value;
+        els.fit.disabled = !ready;
+        els.mode.disabled = !ready;
+      }
+
+      function refreshPlotIfAvailable() {
+        if (!fitResult || !parsed) return;
+        // re-render with current plot options
+        setResults({ ...fitResult });
+      }
+
+      async function handleFile(file) {
+        showError('');
+        setResults(null);
+
+        if (!file) {
+          parsed = null;
+          els.stageCol.disabled = true;
+          els.qCol.disabled = true;
+          els.mode.disabled = true;
+          els.fit.disabled = true;
+          els.dataPreview.value = 'Upload a CSV to begin.';
+          Plotly.purge(els.plot);
+          return;
+        }
+
+        const text = await file.text();
+        let csv;
+        try {
+          csv = parseCSV(text);
+        } catch (err) {
+          showError(String(err?.message || err));
+          return;
+        }
+
+        // Map to objects
+        const previewLines = [];
+        const nPreview = Math.min(30, csv.data.length);
+        previewLines.push(csv.headers.join(','));
+        for (let i = 0; i < nPreview; i++) {
+          previewLines.push(csv.data[i].map((v) => String(v ?? '')).join(','));
+        }
+
+        const points = csv.data.map((row) => {
+          const obj = {};
+          csv.headers.forEach((h, idx) => (obj[h] = row[idx]));
+          return obj;
+        });
+
+        parsed = {
+          headers: csv.headers,
+          rows: points,
+          preview: previewLines.join('\n'),
+          points: [],
+        };
+
+        buildSelect(els.stageCol, csv.headers);
+        buildSelect(els.qCol, csv.headers);
+
+        els.stageCol.value = guessColumn(csv.headers, ['stage', 'stg', 'wl', 'water level', 'level', 'gage', 'gauge', 'h']);
+        els.qCol.value = guessColumn(csv.headers, ['discharge', 'flow', 'q', 'cms', 'cumec', 'cfs']);
+
+        els.stageCol.disabled = false;
+        els.qCol.disabled = false;
+        els.mode.disabled = false;
+        els.mode.value = 'fixed';
+
+        els.dataPreview.value = parsed.preview;
+
+        // Build numeric points array from selected cols
+        rebuildNumericPoints();
+        updateFitEnabled();
+      }
+
+      function rebuildNumericPoints() {
+        if (!parsed) return;
+        const stageKey = els.stageCol.value;
+        const qKey = els.qCol.value;
+        parsed.points = parsed.rows.map((r) => ({
+          h: toNumber(r[stageKey]),
+          q: toNumber(r[qKey]),
+        }));
+
+        // suggest h0 if empty
+        if (!String(els.h0.value || '').trim()) {
+          const hs = parsed.points.map((p) => p.h).filter(Number.isFinite);
+          if (hs.length) {
+            const hMin = Math.min(...hs);
+            els.h0.value = fmt(hMin - (Math.max(1e-6, Math.abs(hMin) * 0.05)), 6);
+          }
+        }
+
+        // show scatter-only plot
+        const trace = {
+          x: parsed.points.map((p) => p.h),
+          y: parsed.points.map((p) => p.q),
+          mode: 'markers',
+          type: 'scatter',
+          name: 'Points',
+          marker: { color: 'rgba(36,81,255,0.5)', size: 8 },
+        };
+        const layout = {
+          margin: { l: 60, r: 20, t: 20, b: 55 },
+          xaxis: { title: 'Stage (h)', zeroline: false },
+          yaxis: { title: 'Discharge (Q)', type: els.logY.value === 'log' ? 'log' : 'linear', zeroline: false },
+          paper_bgcolor: 'rgba(0,0,0,0)',
+          plot_bgcolor: 'rgba(255,255,255,0.55)',
+        };
+        Plotly.newPlot(els.plot, [trace], layout, { responsive: true, displaylogo: false });
+      }
+
+      function doFit() {
+        showError('');
+        setResults(null);
+        if (!parsed) return;
+
+        const points = parsed.points;
+        const h0Fixed = toNumber(els.h0.value);
+        const mode = els.mode.value;
+
+        let res;
+        if (mode === 'auto') {
+          const steps = Math.max(20, Math.min(500, Math.floor(toNumber(els.autoSteps.value) || 120)));
+          res = autoSearchH0(points, steps);
+        } else {
+          if (!Number.isFinite(h0Fixed)) {
+            showError('Please enter a numeric h0 (or switch to auto-search).');
+            return;
+          }
+          res = fitForH0(points, h0Fixed);
+        }
+
+        if (!res.ok) {
+          showError(res.reason || 'Fit failed.');
+          return;
+        }
+
+        setResults(res);
+      }
+
+      els.file.addEventListener('change', (e) => handleFile(e.target.files?.[0]));
+      els.stageCol.addEventListener('change', () => {
+        rebuildNumericPoints();
+        updateFitEnabled();
+      });
+      els.qCol.addEventListener('change', () => {
+        rebuildNumericPoints();
+        updateFitEnabled();
+      });
+      els.logY.addEventListener('change', () => {
+        if (parsed && !fitResult) rebuildNumericPoints();
+        else refreshPlotIfAvailable();
+      });
+      els.curveMaxH.addEventListener('change', refreshPlotIfAvailable);
+      els.curvePoints.addEventListener('change', refreshPlotIfAvailable);
+      els.fit.addEventListener('click', doFit);
+
+      els.downloadParams.addEventListener('click', () => {
+        if (!fitResult?.paramsObj) return;
+        const fname = `rating-curve-params-${new Date().toISOString().slice(0, 10)}.json`;
+        downloadText(fname, JSON.stringify(fitResult.paramsObj, null, 2) + '\n', 'application/json');
+      });
+
+      els.downloadCurve.addEventListener('click', () => {
+        if (!fitResult?.curve) return;
+        const lines = ['stage,discharge'];
+        for (const p of fitResult.curve) {
+          lines.push(`${p.h},${p.q}`);
+        }
+        const fname = `rating-curve-${new Date().toISOString().slice(0, 10)}.csv`;
+        downloadText(fname, lines.join('\n') + '\n', 'text/csv');
+      });
+
+      els.copySummary.addEventListener('click', async () => {
+        if (!fitResult) return;
+        const text =
+          `Rating curve fit (log-space)\n` +
+          `Q = a * (h - h0)^b\n` +
+          `a=${fmt(fitResult.a)}\n` +
+          `b=${fmt(fitResult.b)}\n` +
+          `h0=${fmt(fitResult.h0)}\n` +
+          `n=${fitResult.n}\n` +
+          `R2_log=${fmt(fitResult.r2, 4)}\n` +
+          `RMSE_log=${fmt(fitResult.rmseLog, 4)}\n`;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          // fallback
+          downloadText('rating-curve-summary.txt', text, 'text/plain');
+        }
+      });
+
+      // initial empty plot
+      Plotly.newPlot(els.plot, [], {
+        margin: { l: 60, r: 20, t: 20, b: 55 },
+        xaxis: { title: 'Stage (h)', zeroline: false },
+        yaxis: { title: 'Discharge (Q)', zeroline: false },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(255,255,255,0.55)',
+        annotations: [{
+          x: 0.5, y: 0.5, xref: 'paper', yref: 'paper',
+          text: 'Upload a CSV to plot + fit.',
+          showarrow: false,
+          font: { size: 14, color: '#5a5a5a' }
+        }]
+      }, { responsive: true, displaylogo: false });
+    </script>
+  </body>
+</html>
