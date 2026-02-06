@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-02T06:32:09.960Z",
+  "generatedAt": "2026-02-06T06:33:38.494Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -23,6 +23,10 @@
     },
     {
       "name": "pnw-weekly-weather",
+      "hasIndex": true
+    },
+    {
+      "name": "rating-curve-fit",
       "hasIndex": true
     },
     {
