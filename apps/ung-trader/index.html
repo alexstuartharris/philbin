@@ -822,7 +822,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-06.2';
+    const APP_VERSION = '2026-02-06.3';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1718,7 +1718,10 @@
       try { localStorage.removeItem(modelKey); } catch {}
 
       // --- Test contracts (paper trading) ---
+      // Store in Supabase (public.ung_test_contracts) so you can use across devices.
+      // Falls back to browser storage if Supabase is unavailable.
       const simKey = 'ung-trader.sim.v1';
+      let simCache = null;
 
       async function fetchUngPriceStooq(){
         // NOTE: Stooq does not send CORS headers reliably.
@@ -1858,11 +1861,56 @@
           throw e;
         }
       }
-      function loadSim(){
+      function loadSimLocal(){
         try { return JSON.parse(localStorage.getItem(simKey) || '{"open":[],"closed":[]}'); } catch { return {open:[],closed:[]}; }
       }
-      function saveSim(obj){ localStorage.setItem(simKey, JSON.stringify(obj)); }
-      function mkId(){ return 'T' + Math.random().toString(16).slice(2,8) + '-' + Date.now().toString(16).slice(-4); }
+      function saveSimLocal(obj){ localStorage.setItem(simKey, JSON.stringify(obj)); }
+
+      function mkId(){
+        try{
+          if(globalThis.crypto?.randomUUID) return crypto.randomUUID();
+        } catch {}
+        return 'T' + Math.random().toString(16).slice(2,8) + '-' + Date.now().toString(16).slice(-4);
+      }
+
+      function getSb(){
+        try { return getSupabaseClient(); } catch { return null; }
+      }
+
+      async function sbSimFetch(){
+        const client = getSb();
+        if(!client) return null;
+        const { data, error } = await client
+          .from('ung_test_contracts')
+          .select('id,status,symbol,side,entry,exit,pl,expiry,opened_at,closed_at,snapshot')
+          .order('opened_at', { ascending: true })
+          .limit(2000);
+        if(error) throw new Error('Supabase test contracts fetch error: ' + error.message);
+        const open = (data || []).filter(r => r.status === 'open');
+        const closed = (data || []).filter(r => r.status === 'closed');
+        return { open, closed };
+      }
+
+      async function sbSimInsertOpen(row){
+        const client = getSb();
+        if(!client) throw new Error('Supabase not configured');
+        const { error } = await client.from('ung_test_contracts').insert(row);
+        if(error) throw new Error('Supabase insert error: ' + error.message);
+      }
+
+      async function sbSimClose(id, patch){
+        const client = getSb();
+        if(!client) throw new Error('Supabase not configured');
+        const { error } = await client.from('ung_test_contracts').update(patch).eq('id', id);
+        if(error) throw new Error('Supabase update error: ' + error.message);
+      }
+
+      async function sbSimClearAll(){
+        const client = getSb();
+        if(!client) throw new Error('Supabase not configured');
+        const { error } = await client.from('ung_test_contracts').delete().neq('id','00000000-0000-0000-0000-000000000000');
+        if(error) throw new Error('Supabase delete error: ' + error.message);
+      }
       function currentSnapshot(){
         if(!lastDbSnapshot) return null;
         return {
@@ -1875,16 +1923,33 @@
         };
       }
       function renderSim(){
-        const sim = loadSim();
-        const openLines = sim.open.map(p => {
-          return `${p.id} | ${p.symbol} | ${p.side} | entry ${p.entry} | expiry ${p.expiry || ''} | opened ${p.openedAt} | NEΔ ${p.snap?.neDhdd14 ?? ''} MWΔ ${p.snap?.mwDhdd14 ?? ''} SΔ ${p.snap?.sDhdd14 ?? ''}`;
+        const sim = simCache || loadSimLocal();
+        const openLines = (sim.open || []).map(p => {
+          const openedAt = p.opened_at || p.openedAt || '';
+          const exp = p.expiry || '';
+          const snap = p.snapshot || p.snap || null;
+          return `${p.id} | ${p.symbol} | ${p.side} | entry ${p.entry} | expiry ${exp} | opened ${openedAt} | NEΔ ${snap?.neDhdd14 ?? ''} MWΔ ${snap?.mwDhdd14 ?? ''} SΔ ${snap?.sDhdd14 ?? ''}`;
         });
         el('simOpenList').textContent = openLines.length ? openLines.join('\\n') : '(none)';
 
-        const closedLines = sim.closed.slice(-80).map(p => {
-          return `${p.id} | ${p.symbol} | ${p.side} | entry ${p.entry} -> exit ${p.exit} | P/L ${p.pl} | opened ${p.openedAt} closed ${p.closedAt}`;
+        const closedLines = (sim.closed || []).slice(-80).map(p => {
+          const openedAt = p.opened_at || p.openedAt || '';
+          const closedAt = p.closed_at || p.closedAt || '';
+          return `${p.id} | ${p.symbol} | ${p.side} | entry ${p.entry} -> exit ${p.exit} | P/L ${p.pl} | opened ${openedAt} closed ${closedAt}`;
         });
         el('simClosedList').textContent = closedLines.length ? closedLines.join('\\n') : '(none)';
+      }
+
+      async function refreshSim(){
+        try{
+          const sb = await sbSimFetch();
+          if(sb){
+            simCache = sb;
+          }
+        } catch(_e){
+          // ignore (fallback to local)
+        }
+        renderSim();
       }
 
       el('simFill').addEventListener('click', async () => {
@@ -1910,12 +1975,36 @@
 
         const entry = Number(el('simEntry').value);
         if(!Number.isFinite(entry) || entry <= 0){ el('simStatus').textContent='Enter a valid entry price.'; return; }
-        const sim = loadSim();
+        const id = mkId();
         const snap = currentSnapshot();
-        sim.open.push({ id: mkId(), symbol, side, entry, expiry, openedAt: new Date().toISOString(), snap, priceSource: el('simPriceMeta')?.textContent || '' });
-        saveSim(sim);
-        el('simStatus').textContent='Opened.';
-        renderSim();
+        const openedAt = new Date().toISOString();
+
+        // Prefer Supabase
+        try{
+          await sbSimInsertOpen({
+            id,
+            status: 'open',
+            symbol,
+            side,
+            entry,
+            exit: null,
+            pl: null,
+            expiry: expiry || null,
+            opened_at: openedAt,
+            closed_at: null,
+            snapshot: snap,
+          });
+          el('simStatus').textContent='Opened (Supabase).';
+          await refreshSim();
+          return;
+        } catch(e){
+          // fallback local
+          const sim = loadSimLocal();
+          sim.open.push({ id, symbol, side, entry, expiry, openedAt, snap, priceSource: el('simPriceMeta')?.textContent || '' });
+          saveSimLocal(sim);
+          el('simStatus').textContent='Opened (local).';
+          renderSim();
+        }
       });
 
       el('simClose').addEventListener('click', async () => {
@@ -1931,26 +2020,51 @@
 
         const exit = Number(el('simExit').value);
         if(!Number.isFinite(exit) || exit <= 0){ el('simStatus').textContent='Enter a valid exit price.'; return; }
-        const sim = loadSim();
-        const idx = sim.open.findIndex(p => p.id === id);
+        // Prefer Supabase: fetch open positions from cache if present
+        let p = null;
+        if(simCache?.open){
+          p = simCache.open.find(x => x.id === id) || null;
+        }
+
+        if(p){
+          const pl = (p.side === 'bullish') ? (exit - Number(p.entry)) : (Number(p.entry) - exit);
+          try{
+            await sbSimClose(id, {
+              status: 'closed',
+              exit,
+              pl: Number(pl.toFixed(3)),
+              closed_at: new Date().toISOString(),
+            });
+            el('simStatus').textContent='Closed (Supabase).';
+            await refreshSim();
+            return;
+          } catch(e){
+            // fall through to local
+          }
+        }
+
+        // Local fallback
+        const sim = loadSimLocal();
+        const idx = sim.open.findIndex(x => x.id === id);
         if(idx < 0){ el('simStatus').textContent='ID not found in open positions.'; return; }
-        const p = sim.open.splice(idx,1)[0];
-        const pl = (p.side === 'bullish') ? (exit - p.entry) : (p.entry - exit);
-        sim.closed.push({ ...p, exit, pl: Number(pl.toFixed(3)), closedAt: new Date().toISOString(), closePriceSource: el('simPriceMeta')?.textContent || '' });
-        saveSim(sim);
-        el('simStatus').textContent='Closed.';
+        const pp = sim.open.splice(idx,1)[0];
+        const pl = (pp.side === 'bullish') ? (exit - pp.entry) : (pp.entry - exit);
+        sim.closed.push({ ...pp, exit, pl: Number(pl.toFixed(3)), closedAt: new Date().toISOString(), closePriceSource: el('simPriceMeta')?.textContent || '' });
+        saveSimLocal(sim);
+        el('simStatus').textContent='Closed (local).';
         renderSim();
       });
 
       el('simExport').addEventListener('click', () => {
-        const sim = loadSim();
+        const sim = simCache || loadSimLocal();
         const header = ['id','symbol','side','entry','exit','pl','openedAt','closedAt','expiry','neDhdd14','mwDhdd14','sDhdd14'];
         const rows = [header.join(',')];
-        for(const p of sim.closed){
+        for(const p of (sim.closed || [])){
+          const snap = p.snapshot || p.snap || null;
           const row = [
             p.id, p.symbol, p.side, String(p.entry), String(p.exit ?? ''), String(p.pl ?? ''),
-            p.openedAt, p.closedAt, p.expiry,
-            String(p.snap?.neDhdd14 ?? ''), String(p.snap?.mwDhdd14 ?? ''), String(p.snap?.sDhdd14 ?? '')
+            (p.opened_at || p.openedAt || ''), (p.closed_at || p.closedAt || ''), (p.expiry || ''),
+            String(snap?.neDhdd14 ?? ''), String(snap?.mwDhdd14 ?? ''), String(snap?.sDhdd14 ?? '')
           ].map(v => {
             const s = String(v ?? '');
             return (s.includes(',') || s.includes('"') || s.includes('\\n')) ? ('"' + s.replaceAll('"','""') + '"') : s;
@@ -1969,13 +2083,25 @@
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       });
 
-      el('simClear').addEventListener('click', () => {
+      el('simClear').addEventListener('click', async () => {
         if(!confirm('Clear all test contracts?')) return;
-        localStorage.removeItem(simKey);
-        renderSim();
+        // Prefer Supabase
+        try{
+          await sbSimClearAll();
+          simCache = { open: [], closed: [] };
+          el('simStatus').textContent='Cleared (Supabase).';
+          renderSim();
+          return;
+        } catch(e){
+          // fallback local
+          localStorage.removeItem(simKey);
+          el('simStatus').textContent='Cleared (local).';
+          renderSim();
+        }
       });
 
-      renderSim();
+      // Initial load
+      refreshSim();
 
       initTradingView();
       updateEventTiming();
