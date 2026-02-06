@@ -811,7 +811,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-04.2';
+    const APP_VERSION = '2026-02-06.1';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -894,15 +894,20 @@
             setDot(el('mwDot'), mwH === '—' ? 'warn' : (Number(mwH) >= 140 ? 'warn' : 'ok'));
             setDot(el('sDot'),  sH === '—'  ? 'warn' : (Number(sH)  >= 60  ? 'warn' : 'ok'));
 
-            el('neAnom').textContent = `ΔHDD14: ${Number(latest.ne_dhdd14).toFixed(1)}`;
-            el('mwAnom').textContent = `ΔHDD14: ${Number(latest.mw_dhdd14).toFixed(1)}`;
-            el('sAnom').textContent = `ΔHDD14: ${Number(latest.s_dhdd14).toFixed(1)}`;
-            setDot(el('neADot'), classifyHddAnom(Number(latest.ne_dhdd14)));
-            setDot(el('mwADot'), classifyHddAnom(Number(latest.mw_dhdd14)));
-            setDot(el('sADot'), classifyHddAnom(Number(latest.s_dhdd14)));
+            const neA = Number(latest.ne_dhdd14);
+            const mwA = Number(latest.mw_dhdd14);
+            const sA  = Number(latest.s_dhdd14);
 
-            const demand = (0.55 * Number(latest.ne_dhdd14)) + (0.45 * Number(latest.mw_dhdd14));
-            el('demandIndex').textContent = `ΔHDD14: ${demand.toFixed(1)}`;
+            const fmtA = (v) => (Number.isFinite(v) ? v.toFixed(1) : '—');
+            el('neAnom').textContent = `ΔHDD14: ${fmtA(neA)}`;
+            el('mwAnom').textContent = `ΔHDD14: ${fmtA(mwA)}`;
+            el('sAnom').textContent  = `ΔHDD14: ${fmtA(sA)}`;
+            setDot(el('neADot'), classifyHddAnom(neA));
+            setDot(el('mwADot'), classifyHddAnom(mwA));
+            setDot(el('sADot'), classifyHddAnom(sA));
+
+            const demand = (Number.isFinite(neA) && Number.isFinite(mwA)) ? (0.55*neA + 0.45*mwA) : NaN;
+            el('demandIndex').textContent = `ΔHDD14: ${fmtA(demand)}`;
             el('demandIndexExplain').textContent = `0.55*NE + 0.45*MW (anomaly).`;
 
             const neB = latest.ne_dhdd_buckets || { d1_5: null, d6_10: null, d11_14: null };
@@ -1246,12 +1251,17 @@
         return `${mm}-${dd} ${hh}Z`;
       });
 
-      const ne = rows.map(r => Number(r.ne_dhdd14));
-      const mw = rows.map(r => Number(r.mw_dhdd14));
-      const s  = rows.map(r => Number(r.s_dhdd14));
-      const demand = rows.map((_,i) => 0.55*ne[i] + 0.45*mw[i]);
+      const ne = rows.map(r => (r.ne_dhdd14===null || r.ne_dhdd14===undefined ? null : Number(r.ne_dhdd14)));
+      const mw = rows.map(r => (r.mw_dhdd14===null || r.mw_dhdd14===undefined ? null : Number(r.mw_dhdd14)));
+      const s  = rows.map(r => (r.s_dhdd14===null  || r.s_dhdd14===undefined  ? null : Number(r.s_dhdd14)));
+      const demand = rows.map((_,i) => (ne[i]===null || mw[i]===null ? null : (0.55*ne[i] + 0.45*mw[i])));
 
-      const dd = (arr) => arr.map((v,i) => (i===0 ? null : (v - arr[i-1])));
+      const dd = (arr) => arr.map((v,i) => {
+        if(i===0) return null;
+        const a = arr[i-1];
+        if(v===null || a===null) return null;
+        return v - a;
+      });
       const neD = dd(ne);
       const mwD = dd(mw);
       const sD  = dd(s);
