@@ -277,8 +277,8 @@
     </details>
 
     <details class="card" open>
-      <summary><span>Delta history (last 7 days)</span><span class="caret">▾</span></summary>
-      <h2 style="display:none;">Delta history (last 7 days)</h2>
+      <summary><span id="deltaHistoryTitle">Delta history (last 7 days)</span><span class="caret">▾</span></summary>
+      <h2 style="display:none;" id="deltaHistoryTitleH2">Delta history (last 7 days)</h2>
       <p class="small">
         Tracks both the raw anomaly series (ΔHDD14) and the run-to-run changes (ΔΔ). Uses Supabase data when available.
       </p>
@@ -294,7 +294,18 @@
         </div>
       </div>
 
-      <div class="mini" id="deltaSummary" style="margin-top:8px;">—</div>
+      <div class="mini" id="deltaSummary" style="margin-top:8px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <span id="deltaSummaryText">—</span>
+        <label class="muted" style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
+          Window
+          <select id="deltaWindow" style="font-size:12px; padding:4px 6px; border:1px solid var(--border); border-radius:8px; background:transparent; color:inherit;">
+            <option value="7">7d</option>
+            <option value="14">14d</option>
+            <option value="21">21d</option>
+            <option value="all">All</option>
+          </select>
+        </label>
+      </div>
 
       <div style="margin-top:10px; overflow:auto;">
         <table id="deltaStatsTable">
@@ -811,7 +822,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-06.1';
+    const APP_VERSION = '2026-02-06.2';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -941,7 +952,8 @@
             el('weatherStatus').textContent = `Weather: loaded from Supabase (${tsIso.replace('T',' ').slice(0,19)}Z)`;
             el('weatherRaw').textContent = JSON.stringify({ source: 'supabase', ts: tsIso, baseF, windowKey, latest }, null, 2);
             // Update delta charts (DB)
-            refreshDeltaCharts(7);
+            const winSel = (el('deltaWindow') && el('deltaWindow').value) ? el('deltaWindow').value : '7';
+            refreshDeltaCharts(winSel);
             return;
           }
         } catch(e){
@@ -1075,16 +1087,23 @@
       const client = getSupabaseClient();
       if(!client) return [];
 
-      const sinceIso = new Date(Date.now() - days*86400000).toISOString();
-      const { data, error } = await client
+      let q = client
         .from('ung_model_snapshots')
         .select('ts, base_f, window_key, ne_dhdd14, mw_dhdd14, s_dhdd14')
         .eq('base_f', baseF)
         .eq('window_key', windowKey)
-        .gte('ts', sinceIso)
-        .order('ts', { ascending: true })
-        .limit(400);
+        .order('ts', { ascending: true });
 
+      if(days === 'all'){
+        q = q.limit(2000);
+      } else {
+        const d = Number(days);
+        const safeDays = Number.isFinite(d) && d > 0 ? d : 7;
+        const sinceIso = new Date(Date.now() - safeDays*86400000).toISOString();
+        q = q.gte('ts', sinceIso).limit(400);
+      }
+
+      const { data, error } = await q;
       if(error) throw new Error('Supabase series error: ' + error.message);
       return data || [];
     }
@@ -1301,7 +1320,7 @@
       }
 
       // Summary text: direction of the shift
-      const sumEl = document.getElementById('deltaSummary');
+      const sumEl = document.getElementById('deltaSummaryText') || document.getElementById('deltaSummary');
       if(sumEl){
         if(latestDemD === null || latestDemD === undefined || !Number.isFinite(Number(latestDemD))){
           sumEl.textContent = 'Trend: — (need 2+ runs to compute ΔΔ)';
@@ -1346,17 +1365,30 @@
       }
     }
 
+    function deltaWindowLabel(days){
+      if(days === 'all') return 'entire dataset';
+      const d = Number(days);
+      return Number.isFinite(d) ? `last ${d} days` : 'last 7 days';
+    }
+
     async function refreshDeltaCharts(days=7){
       try{
         const baseF = Number(el('base').value);
         const windowKey = el('climoYears').value;
         const rows = await sbFetchSeries({ baseF, windowKey, days });
+
+        const title = `Delta history (${deltaWindowLabel(days)})`;
+        const t1 = document.getElementById('deltaHistoryTitle');
+        const t2 = document.getElementById('deltaHistoryTitleH2');
+        if(t1) t1.textContent = title;
+        if(t2) t2.textContent = title;
+
         if(rows && rows.length >= 2){
           setChartsFromSeries(rows);
         }
       } catch(e){
-        const statsEl = document.getElementById('deltaStats');
-        if(statsEl) statsEl.textContent = 'Delta chart error: ' + String(e?.message || e);
+        const statsBody = document.getElementById('deltaStatsBody');
+        if(statsBody) statsBody.innerHTML = `<tr><td colspan="3">Delta chart error: ${String(e?.message || e)}</td></tr>`;
       }
     }
 
@@ -1578,6 +1610,20 @@
       el('plan').value = saved.plan || '';
       el('expiry').value = saved.expiry || '10–15';
       el('notes').value = saved.notes || '';
+
+      // Delta window selector
+      try{
+        const win = saved.deltaWindow || '7';
+        if(el('deltaWindow')) el('deltaWindow').value = String(win);
+        if(el('deltaWindow')) el('deltaWindow').addEventListener('change', () => {
+          const v = el('deltaWindow').value;
+          // persist
+          const cur = loadLocal();
+          saveLocal({ ...cur, deltaWindow: v });
+          // refresh charts/stats only
+          refreshDeltaCharts(v);
+        });
+      } catch {}
 
       el('btnRefresh').addEventListener('click', refreshWeather);
       el('base').addEventListener('change', refreshWeather);
@@ -1942,7 +1988,8 @@
 
       refreshWeather();
       // Keep charts in sync with DB over time (lightweight)
-      refreshDeltaCharts(7);
+      const winSel = (el('deltaWindow') && el('deltaWindow').value) ? el('deltaWindow').value : '7';
+      refreshDeltaCharts(winSel);
       // Price context
       try{ refreshPriceContext(); } catch {}
     }
