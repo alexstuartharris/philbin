@@ -822,7 +822,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-06.4';
+    const APP_VERSION = '2026-02-06.5';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1108,6 +1108,27 @@
       return data || [];
     }
 
+    async function sbFetchMarketDaily({ days='all' }){
+      const client = getSupabaseClient();
+      if(!client) return [];
+
+      let q = client
+        .from('market_daily')
+        .select('date, ung_close')
+        .order('date', { ascending: true });
+
+      if(days !== 'all'){
+        const d = Number(days);
+        const safeDays = Number.isFinite(d) && d > 0 ? d : 30;
+        const sinceYmd = new Date(Date.now() - safeDays*86400000).toISOString().slice(0,10);
+        q = q.gte('date', sinceYmd);
+      }
+
+      const { data, error } = await q.limit(4000);
+      if(error) throw new Error('Supabase market_daily error: ' + error.message);
+      return data || [];
+    }
+
     async function sbPullAll(){
       const client = getSupabaseClient();
       if(!client) throw new Error('Supabase not configured.');
@@ -1231,6 +1252,11 @@
             scales: {
               x: { ticks: { maxTicksLimit: 8 } },
               y: { title: { display: true, text: 'ΔHDD14' } },
+              yPrice: {
+                position: 'right',
+                title: { display: true, text: 'UNG close' },
+                grid: { drawOnChartArea: false },
+              },
             }
           }
         });
@@ -1250,6 +1276,11 @@
             scales: {
               x: { ticks: { maxTicksLimit: 8 } },
               y: { title: { display: true, text: 'ΔΔ (run-to-run)' } },
+              yPrice: {
+                position: 'right',
+                title: { display: true, text: 'UNG close' },
+                grid: { drawOnChartArea: false },
+              },
             }
           }
         });
@@ -1258,22 +1289,39 @@
       return true;
     }
 
-    function setChartsFromSeries(rows){
+    async function setChartsFromSeries(rows, { priceDays='all' } = {}){
       try{
         if(!ensureCharts()) return;
+
+        // Build lookup of UNG daily closes by NY-day
+        const nyFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year:'numeric', month:'2-digit', day:'2-digit' });
+        const toNyYmd = (isoTs) => {
+          // en-CA gives YYYY-MM-DD
+          try { return nyFmt.format(new Date(isoTs)); } catch { return String(isoTs).slice(0,10); }
+        };
+
+        let px = [];
+        try{ px = await sbFetchMarketDaily({ days: priceDays }); } catch {}
+        const pxMap = new Map((px||[]).map(r => [String(r.date), (r.ung_close===null || r.ung_close===undefined) ? null : Number(r.ung_close)]));
+
         const labels = rows.map(r => {
-        const d = new Date(r.ts);
-        // show month-day hour UTC
-        const mm = String(d.getUTCMonth()+1).padStart(2,'0');
-        const dd = String(d.getUTCDate()).padStart(2,'0');
-        const hh = String(d.getUTCHours()).padStart(2,'0');
-        return `${mm}-${dd} ${hh}Z`;
-      });
+          const d = new Date(r.ts);
+          // show month-day hour UTC
+          const mm = String(d.getUTCMonth()+1).padStart(2,'0');
+          const dd = String(d.getUTCDate()).padStart(2,'0');
+          const hh = String(d.getUTCHours()).padStart(2,'0');
+          return `${mm}-${dd} ${hh}Z`;
+        });
 
       const ne = rows.map(r => (r.ne_dhdd14===null || r.ne_dhdd14===undefined ? null : Number(r.ne_dhdd14)));
       const mw = rows.map(r => (r.mw_dhdd14===null || r.mw_dhdd14===undefined ? null : Number(r.mw_dhdd14)));
       const s  = rows.map(r => (r.s_dhdd14===null  || r.s_dhdd14===undefined  ? null : Number(r.s_dhdd14)));
       const demand = rows.map((_,i) => (ne[i]===null || mw[i]===null || s[i]===null ? null : (0.50*ne[i] + 0.40*mw[i] + 0.10*s[i])));
+      const ungClose = rows.map(r => {
+        const day = toNyYmd(r.ts);
+        const v = pxMap.get(day);
+        return (v===undefined ? null : v);
+      });
 
       const dd = (arr) => arr.map((v,i) => {
         if(i===0) return null;
@@ -1292,6 +1340,7 @@
         { label:'NE', data: ne, borderColor:'rgba(31,139,76,.9)', tension:.25, pointRadius: 1 },
         { label:'MW', data: mw, borderColor:'rgba(192,106,0,.9)', tension:.25, pointRadius: 1 },
         { label:'South', data: s, borderColor:'rgba(180,35,24,.85)', tension:.25, pointRadius: 1 },
+        { label:'UNG close', data: ungClose, yAxisID:'yPrice', borderColor:'rgba(60,60,60,.85)', tension:.15, pointRadius: 1, borderDash:[4,3] },
       ];
       rawChart.update();
 
@@ -1301,6 +1350,7 @@
         { label:'ΔΔ NE', data: neD, borderColor:'rgba(31,139,76,.8)', tension:.25, pointRadius: 1 },
         { label:'ΔΔ MW', data: mwD, borderColor:'rgba(192,106,0,.8)', tension:.25, pointRadius: 1 },
         { label:'ΔΔ South', data: sD, borderColor:'rgba(180,35,24,.75)', tension:.25, pointRadius: 1 },
+        { label:'UNG close', data: ungClose, yAxisID:'yPrice', borderColor:'rgba(60,60,60,.85)', tension:.15, pointRadius: 1, borderDash:[4,3] },
       ];
       deltaChart.update();
 
@@ -1384,7 +1434,7 @@
         if(t2) t2.textContent = title;
 
         if(rows && rows.length >= 2){
-          setChartsFromSeries(rows);
+          await setChartsFromSeries(rows, { priceDays: (days==='all' ? 'all' : Number(days)+5) });
         }
       } catch(e){
         const statsBody = document.getElementById('deltaStatsBody');
