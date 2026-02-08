@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice Generator - No Login Required</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface-hover: #252525;
+      --border: #333;
+      --text: #e0e0e0;
+      --text-muted: #888;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .tagline {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    input, textarea, select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem;
+      color: var(--text);
+      font-size: 0.875rem;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: var(--accent-hover);
+    }
+    button.secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    button.secondary:hover {
+      background: var(--surface-hover);
+    }
+    button.danger {
+      background: var(--danger);
+    }
+    .line-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+    .line-items-table th {
+      text-align: left;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .line-items-table td {
+      padding: 0.5rem;
+      vertical-align: top;
+    }
+    .line-items-table input {
+      width: 100%;
+    }
+    .line-items-table .desc { min-width: 200px; }
+    .line-items-table .qty { width: 70px; }
+    .line-items-table .rate { width: 100px; }
+    .line-items-table .amount { width: 100px; text-align: right; }
+    .line-items-table .actions { width: 40px; }
+    .remove-btn {
+      background: transparent;
+      color: var(--danger);
+      padding: 0.25rem 0.5rem;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .totals {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      font-size: 0.875rem;
+    }
+    .total-row.grand {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--accent);
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .actions-bar {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .actions-bar button {
+      flex: 1;
+      min-width: 140px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .saved-notice {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background: var(--success);
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .saved-notice.show {
+      opacity: 1;
+    }
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .line-items-table {
+        font-size: 0.75rem;
+      }
+      .line-items-table th, .line-items-table td {
+        padding: 0.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>📄 Invoice Generator</h1>
+        <p class="tagline">Create professional invoices. No login. No signup. 100% client-side.</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="card-title">Your Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name / Business</label>
+          <input type="text" id="fromName" placeholder="Your Company Name">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="fromEmail" placeholder="you@example.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <textarea id="fromAddress" placeholder="123 Main Street&#10;City, State ZIP&#10;Country"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Bill To</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Client Name</label>
+          <input type="text" id="toName" placeholder="Client Company">
+        </div>
+        <div class="form-group">
+          <label>Client Email</label>
+          <input type="email" id="toEmail" placeholder="client@example.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Client Address</label>
+        <textarea id="toAddress" placeholder="456 Client Ave&#10;City, State ZIP"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Invoice Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Invoice Number</label>
+          <input type="text" id="invoiceNumber" placeholder="INV-001">
+        </div>
+        <div class="form-group">
+          <label>Issue Date</label>
+          <input type="date" id="issueDate">
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="dueDate">
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="currency">
+            <option value="USD">USD ($)</option>
+            <option value="CAD">CAD (C$)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="AUD">AUD (A$)</option>
+            <option value="JPY">JPY (¥)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Line Items</div>
+      <table class="line-items-table">
+        <thead>
+          <tr>
+            <th class="desc">Description</th>
+            <th class="qty">Qty</th>
+            <th class="rate">Rate</th>
+            <th class="amount">Amount</th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody id="lineItems">
+        </tbody>
+      </table>
+      <button type="button" class="secondary" onclick="addLineItem()">+ Add Line Item</button>
+      
+      <div class="totals">
+        <div class="total-row">
+          <span>Subtotal:</span>
+          <span id="subtotal">$0.00</span>
+        </div>
+        <div class="total-row">
+          <span>Tax (<input type="number" id="taxRate" value="0" min="0" max="100" style="width: 50px; text-align: center;">%):</span>
+          <span id="taxAmount">$0.00</span>
+        </div>
+        <div class="total-row grand">
+          <span>Total:</span>
+          <span id="grandTotal">$0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Notes & Payment Info</div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <textarea id="notes" placeholder="Payment terms, bank details, thank you message..."></textarea>
+      </div>
+    </div>
+
+    <div class="actions-bar">
+      <button onclick="generatePDF()">📥 Download PDF</button>
+      <button class="secondary" onclick="saveToLocal()">💾 Save Draft</button>
+      <button class="secondary" onclick="loadFromLocal()">📂 Load Draft</button>
+      <button class="secondary danger" onclick="clearAll()">🗑️ Clear All</button>
+    </div>
+
+    <div class="footer">
+      <p>Your data stays in your browser. Nothing is sent to any server.</p>
+      <p style="margin-top: 0.5rem;"><a href="../">← Back to Philbin Apps</a></p>
+    </div>
+  </div>
+
+  <div class="saved-notice" id="savedNotice">✓ Saved to browser</div>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+    let lineItemId = 0;
+    
+    const currencySymbols = {
+      USD: '$', CAD: 'C$', EUR: '€', GBP: '£', AUD: 'A$', JPY: '¥'
+    };
+
+    function getSymbol() {
+      return currencySymbols[document.getElementById('currency').value] || '$';
+    }
+
+    function formatCurrency(amount) {
+      const sym = getSymbol();
+      return sym + amount.toFixed(2);
+    }
+
+    function addLineItem(desc = '', qty = 1, rate = 0) {
+      const tbody = document.getElementById('lineItems');
+      const id = lineItemId++;
+      const tr = document.createElement('tr');
+      tr.id = `item-${id}`;
+      tr.innerHTML = `
+        <td class="desc"><input type="text" class="item-desc" value="${desc}" placeholder="Service or product"></td>
+        <td class="qty"><input type="number" class="item-qty" value="${qty}" min="0" step="0.5" onchange="updateTotals()"></td>
+        <td class="rate"><input type="number" class="item-rate" value="${rate}" min="0" step="0.01" onchange="updateTotals()"></td>
+        <td class="amount"><span class="item-amount">${formatCurrency(qty * rate)}</span></td>
+        <td class="actions"><button class="remove-btn secondary" onclick="removeItem(${id})">×</button></td>
+      `;
+      tbody.appendChild(tr);
+      updateTotals();
+    }
+
+    function removeItem(id) {
+      const tr = document.getElementById(`item-${id}`);
+      if (tr) tr.remove();
+      updateTotals();
+    }
+
+    function updateTotals() {
+      const rows = document.querySelectorAll('#lineItems tr');
+      let subtotal = 0;
+      
+      rows.forEach(row => {
+        const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+        const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
+        const amount = qty * rate;
+        row.querySelector('.item-amount').textContent = formatCurrency(amount);
+        subtotal += amount;
+      });
+
+      const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+      const taxAmount = subtotal * (taxRate / 100);
+      const grandTotal = subtotal + taxAmount;
+
+      document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+      document.getElementById('taxAmount').textContent = formatCurrency(taxAmount);
+      document.getElementById('grandTotal').textContent = formatCurrency(grandTotal);
+    }
+
+    function getFormData() {
+      const lineItems = [];
+      document.querySelectorAll('#lineItems tr').forEach(row => {
+        lineItems.push({
+          desc: row.querySelector('.item-desc').value,
+          qty: parseFloat(row.querySelector('.item-qty').value) || 0,
+          rate: parseFloat(row.querySelector('.item-rate').value) || 0
+        });
+      });
+
+      return {
+        fromName: document.getElementById('fromName').value,
+        fromEmail: document.getElementById('fromEmail').value,
+        fromAddress: document.getElementById('fromAddress').value,
+        toName: document.getElementById('toName').value,
+        toEmail: document.getElementById('toEmail').value,
+        toAddress: document.getElementById('toAddress').value,
+        invoiceNumber: document.getElementById('invoiceNumber').value,
+        issueDate: document.getElementById('issueDate').value,
+        dueDate: document.getElementById('dueDate').value,
+        currency: document.getElementById('currency').value,
+        taxRate: parseFloat(document.getElementById('taxRate').value) || 0,
+        notes: document.getElementById('notes').value,
+        lineItems
+      };
+    }
+
+    function setFormData(data) {
+      if (!data) return;
+      document.getElementById('fromName').value = data.fromName || '';
+      document.getElementById('fromEmail').value = data.fromEmail || '';
+      document.getElementById('fromAddress').value = data.fromAddress || '';
+      document.getElementById('toName').value = data.toName || '';
+      document.getElementById('toEmail').value = data.toEmail || '';
+      document.getElementById('toAddress').value = data.toAddress || '';
+      document.getElementById('invoiceNumber').value = data.invoiceNumber || '';
+      document.getElementById('issueDate').value = data.issueDate || '';
+      document.getElementById('dueDate').value = data.dueDate || '';
+      document.getElementById('currency').value = data.currency || 'USD';
+      document.getElementById('taxRate').value = data.taxRate || 0;
+      document.getElementById('notes').value = data.notes || '';
+      
+      document.getElementById('lineItems').innerHTML = '';
+      lineItemId = 0;
+      if (data.lineItems && data.lineItems.length) {
+        data.lineItems.forEach(item => addLineItem(item.desc, item.qty, item.rate));
+      } else {
+        addLineItem();
+      }
+    }
+
+    function saveToLocal() {
+      const data = getFormData();
+      localStorage.setItem('invoiceGenDraft', JSON.stringify(data));
+      const notice = document.getElementById('savedNotice');
+      notice.classList.add('show');
+      setTimeout(() => notice.classList.remove('show'), 2000);
+    }
+
+    function loadFromLocal() {
+      const saved = localStorage.getItem('invoiceGenDraft');
+      if (saved) {
+        setFormData(JSON.parse(saved));
+        updateTotals();
+      } else {
+        alert('No saved draft found');
+      }
+    }
+
+    function clearAll() {
+      if (confirm('Clear all fields? This cannot be undone.')) {
+        setFormData({});
+        document.getElementById('issueDate').value = new Date().toISOString().split('T')[0];
+      }
+    }
+
+    function generatePDF() {
+      const data = getFormData();
+      const doc = new jsPDF();
+      const sym = currencySymbols[data.currency] || '$';
+      
+      let y = 20;
+      const leftMargin = 20;
+      const rightMargin = 190;
+
+      // Header
+      doc.setFontSize(24);
+      doc.setFont('helvetica', 'bold');
+      doc.text('INVOICE', leftMargin, y);
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`#${data.invoiceNumber || 'N/A'}`, rightMargin, y, { align: 'right' });
+      
+      y += 15;
+      
+      // From section
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('FROM:', leftMargin, y);
+      doc.setFont('helvetica', 'normal');
+      y += 5;
+      if (data.fromName) { doc.text(data.fromName, leftMargin, y); y += 4; }
+      if (data.fromEmail) { doc.text(data.fromEmail, leftMargin, y); y += 4; }
+      if (data.fromAddress) {
+        data.fromAddress.split('\n').forEach(line => {
+          doc.text(line, leftMargin, y); y += 4;
+        });
+      }
+      
+      // To section (right side)
+      let yTo = 35;
+      doc.setFont('helvetica', 'bold');
+      doc.text('BILL TO:', 110, yTo);
+      doc.setFont('helvetica', 'normal');
+      yTo += 5;
+      if (data.toName) { doc.text(data.toName, 110, yTo); yTo += 4; }
+      if (data.toEmail) { doc.text(data.toEmail, 110, yTo); yTo += 4; }
+      if (data.toAddress) {
+        data.toAddress.split('\n').forEach(line => {
+          doc.text(line, 110, yTo); yTo += 4;
+        });
+      }
+      
+      y = Math.max(y, yTo) + 10;
+      
+      // Dates
+      doc.setFont('helvetica', 'bold');
+      doc.text('Issue Date:', leftMargin, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(data.issueDate || 'N/A', 50, y);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('Due Date:', 110, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(data.dueDate || 'N/A', 135, y);
+      
+      y += 15;
+
+      // Line items header
+      doc.setFillColor(240, 240, 240);
+      doc.rect(leftMargin, y - 4, 170, 8, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('Description', leftMargin + 2, y);
+      doc.text('Qty', 120, y);
+      doc.text('Rate', 140, y);
+      doc.text('Amount', rightMargin, y, { align: 'right' });
+      
+      y += 8;
+      doc.setFont('helvetica', 'normal');
+      
+      let subtotal = 0;
+      data.lineItems.forEach(item => {
+        const amount = item.qty * item.rate;
+        subtotal += amount;
+        
+        const desc = item.desc || '-';
+        doc.text(desc.substring(0, 50), leftMargin + 2, y);
+        doc.text(item.qty.toString(), 120, y);
+        doc.text(sym + item.rate.toFixed(2), 140, y);
+        doc.text(sym + amount.toFixed(2), rightMargin, y, { align: 'right' });
+        y += 6;
+      });
+      
+      // Totals
+      y += 5;
+      doc.line(130, y, rightMargin, y);
+      y += 8;
+      
+      doc.text('Subtotal:', 140, y);
+      doc.text(sym + subtotal.toFixed(2), rightMargin, y, { align: 'right' });
+      y += 6;
+      
+      const taxAmount = subtotal * (data.taxRate / 100);
+      doc.text(`Tax (${data.taxRate}%):`, 140, y);
+      doc.text(sym + taxAmount.toFixed(2), rightMargin, y, { align: 'right' });
+      y += 6;
+      
+      const grandTotal = subtotal + taxAmount;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('TOTAL:', 140, y);
+      doc.text(sym + grandTotal.toFixed(2), rightMargin, y, { align: 'right' });
+      
+      // Notes
+      if (data.notes) {
+        y += 15;
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Notes:', leftMargin, y);
+        doc.setFont('helvetica', 'normal');
+        y += 5;
+        const noteLines = doc.splitTextToSize(data.notes, 170);
+        doc.text(noteLines, leftMargin, y);
+      }
+      
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(128);
+      doc.text('Generated with Invoice Generator - invoicegen.philbin.app', 105, 285, { align: 'center' });
+
+      // Save
+      const filename = `invoice-${data.invoiceNumber || 'draft'}.pdf`;
+      doc.save(filename);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set today's date
+      document.getElementById('issueDate').value = new Date().toISOString().split('T')[0];
+      
+      // Set due date 30 days out
+      const due = new Date();
+      due.setDate(due.getDate() + 30);
+      document.getElementById('dueDate').value = due.toISOString().split('T')[0];
+      
+      // Add first line item
+      addLineItem();
+      
+      // Auto-save on changes
+      document.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('change', () => {
+          updateTotals();
+        });
+      });
+
+      // Load saved business info if exists
+      const saved = localStorage.getItem('invoiceGenDraft');
+      if (saved) {
+        const data = JSON.parse(saved);
+        // Only restore business details, not the full invoice
+        document.getElementById('fromName').value = data.fromName || '';
+        document.getElementById('fromEmail').value = data.fromEmail || '';
+        document.getElementById('fromAddress').value = data.fromAddress || '';
+      }
+      
+      document.getElementById('currency').addEventListener('change', updateTotals);
+      document.getElementById('taxRate').addEventListener('input', updateTotals);
+    });
+  </script>
+</body>
+</html>
