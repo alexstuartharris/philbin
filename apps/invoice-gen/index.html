@@ -117,7 +117,7 @@
     }
 
     .badge-icon {
-      font-size: 2rem;
+      font-size: 1.25rem;
     }
 
     /* App Container */
@@ -339,6 +339,25 @@
     input[type="color"] {
       height: 48px;
       cursor: pointer;
+      -webkit-appearance: none;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      background: var(--surface);
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: calc(var(--radius-sm) - 4px);
+    }
+
+    input[type="color"]::-moz-color-swatch {
+      border: none;
+      border-radius: calc(var(--radius-sm) - 4px);
     }
 
     input[type="file"] {
@@ -732,18 +751,40 @@
         bottom: 0;
         z-index: 999;
         background: var(--bg);
-        padding: 2rem 1.5rem;
+        padding: 0;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .preview-panel.show {
-        display: block;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .preview-panel .preview-header {
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        z-index: 10;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      .preview-panel .preview-container {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 1rem 1.5rem 1.5rem;
+        max-height: none;
       }
 
       .preview-close {
-        position: absolute;
+        position: sticky;
         top: 1rem;
         right: 1rem;
+        align-self: flex-end;
+        margin: 1rem 1rem 0 0;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 50%;
@@ -755,6 +796,8 @@
         cursor: pointer;
         font-size: 1.5rem;
         color: var(--text);
+        flex-shrink: 0;
+        z-index: 11;
       }
     }
 
@@ -891,7 +934,7 @@
   <!-- Hero Section -->
   <section class="hero">
     <h1>Create beautiful invoices in 60 seconds</h1>
-    <p class="tagline">No sign-up. No bullshit. 100% free forever.</p>
+    <p class="tagline">Simple. Fast. No sign-up invoices. Get to it!</p>
     <div class="trust-badges">
       <div class="badge">
         <div class="badge-icon">🚫</div>
@@ -1095,6 +1138,15 @@
           </div>
 
           <hr style="border: none; border-top: 1px solid var(--border); margin: 2rem 0;">
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label>Invoice Style</label>
+            <div class="template-selector" id="stepTemplateSelector">
+              <button class="template-btn active" data-template="modern" onclick="changeTemplate('modern')">Modern</button>
+              <button class="template-btn" data-template="classic" onclick="changeTemplate('classic')">Classic</button>
+              <button class="template-btn" data-template="minimal" onclick="changeTemplate('minimal')">Minimal</button>
+            </div>
+          </div>
 
           <div class="btn-group">
             <button class="btn btn-secondary" onclick="prevStep()">
@@ -1484,6 +1536,7 @@
     function changeTemplate(template) {
       currentTemplate = template;
       
+      // Sync ALL template selectors (preview header + step 3)
       document.querySelectorAll('.template-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.template === template);
       });
@@ -1764,7 +1817,7 @@
 
     // PDF Generation
     async function downloadPDF() {
-      const button = event.target;
+      const button = event.target.closest('button');
       const originalText = button.innerHTML;
       button.innerHTML = '<span class="loading"></span> Generating PDF...';
       button.disabled = true;
@@ -1773,14 +1826,30 @@
         // Save first
         saveInvoice();
         
-        const element = document.getElementById('invoicePreview');
+        // On mobile, the preview panel may be hidden. Create an off-screen clone for capture.
+        const source = document.getElementById('invoiceContent');
+        const clone = source.cloneNode(true);
+        clone.style.position = 'absolute';
+        clone.style.left = '-9999px';
+        clone.style.top = '0';
+        clone.style.width = '800px';
+        clone.style.background = '#ffffff';
+        clone.style.color = '#000000';
+        clone.style.padding = '3rem';
+        clone.style.zIndex = '-1';
+        document.body.appendChild(clone);
         
-        // Use html2canvas to capture the preview
-        const canvas = await html2canvas(element, {
+        // Use html2canvas to capture the clone
+        const canvas = await html2canvas(clone, {
           scale: 2,
           backgroundColor: '#ffffff',
-          logging: false
+          logging: false,
+          useCORS: true,
+          width: 800,
+          windowWidth: 800
         });
+        
+        document.body.removeChild(clone);
         
         const imgData = canvas.toDataURL('image/png');
         
@@ -1793,22 +1862,23 @@
         
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
-        const imgWidth = pdfWidth;
-        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+        const margin = 10;
+        const contentWidth = pdfWidth - (margin * 2);
+        const imgHeight = (canvas.height * contentWidth) / canvas.width;
         
         let heightLeft = imgHeight;
-        let position = 0;
+        let position = margin;
         
         // Add first page
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pdfHeight;
+        pdf.addImage(imgData, 'PNG', margin, position, contentWidth, imgHeight);
+        heightLeft -= (pdfHeight - margin * 2);
         
         // Add more pages if needed
         while (heightLeft > 0) {
-          position = heightLeft - imgHeight;
           pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-          heightLeft -= pdfHeight;
+          position = margin - (imgHeight - heightLeft);
+          pdf.addImage(imgData, 'PNG', margin, position, contentWidth, imgHeight);
+          heightLeft -= (pdfHeight - margin * 2);
         }
         
         // Download
@@ -1818,7 +1888,7 @@
         showToast('✓', 'PDF downloaded!');
       } catch (error) {
         console.error('PDF generation error:', error);
-        showToast('❌', 'PDF generation failed');
+        showToast('❌', 'PDF generation failed: ' + error.message);
       } finally {
         button.innerHTML = originalText;
         button.disabled = false;
