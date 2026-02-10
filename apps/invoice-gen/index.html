@@ -543,6 +543,7 @@
       font-size: 2.5rem;
       font-weight: 700;
       letter-spacing: -0.02em;
+      color: var(--brand-color, #000);
     }
 
     .invoice-number {
@@ -568,7 +569,7 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #666;
+      color: var(--brand-color, #666);
       margin-bottom: 0.75rem;
       font-weight: 600;
     }
@@ -623,7 +624,7 @@
     }
 
     .invoice-table thead {
-      border-bottom: 2px solid #000;
+      border-bottom: 2px solid var(--brand-color, #000);
     }
 
     .invoice-table th {
@@ -633,6 +634,7 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       font-weight: 600;
+      color: var(--brand-color, #000);
     }
 
     .invoice-table th:last-child,
@@ -668,7 +670,8 @@
       font-size: 1.25rem;
       font-weight: 700;
       padding-top: 0.75rem;
-      border-top: 2px solid #000;
+      border-top: 2px solid var(--brand-color, #000);
+      color: var(--brand-color, #000);
     }
 
     .invoice-notes {
@@ -694,17 +697,17 @@
     .template-classic .invoice-title {
       text-align: center;
       font-size: 2rem;
-      border-bottom: 3px double #000;
+      border-bottom: 3px double var(--brand-color, #000);
       padding-bottom: 1rem;
       margin-bottom: 2rem;
     }
 
     .template-classic .invoice-table {
-      border: 2px solid #000;
+      border: 2px solid var(--brand-color, #000);
     }
 
     .template-classic .invoice-table th {
-      background: #000;
+      background: var(--brand-color, #000);
       color: white;
       padding: 0.75rem;
     }
@@ -751,9 +754,7 @@
         bottom: 0;
         z-index: 999;
         background: var(--bg);
-        padding: 0;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow: hidden;
       }
 
       .preview-panel.show {
@@ -762,42 +763,38 @@
       }
 
       .preview-panel .preview-header {
-        position: sticky;
-        top: 0;
         background: var(--bg);
-        z-index: 10;
         padding: 1rem 1.5rem;
         border-bottom: 1px solid var(--border);
         flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       .preview-panel .preview-container {
-        flex: 1;
-        overflow-y: auto;
+        flex: 1 1 0;
+        overflow: auto;
         -webkit-overflow-scrolling: touch;
-        margin: 1rem 1.5rem 1.5rem;
-        max-height: none;
+        margin: 0;
+        border-radius: 0;
+        border: none;
+        overscroll-behavior: contain;
       }
 
       .preview-close {
-        position: sticky;
-        top: 1rem;
-        right: 1rem;
-        align-self: flex-end;
-        margin: 1rem 1rem 0 0;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         color: var(--text);
         flex-shrink: 0;
-        z-index: 11;
       }
     }
 
@@ -1173,14 +1170,15 @@
 
       <!-- Preview Panel -->
       <div class="preview-panel">
-        <button class="preview-close hidden" onclick="togglePreview()">✕</button>
-        
         <div class="preview-header">
           <h3 class="preview-title">Live Preview</h3>
-          <div class="template-selector">
-            <button class="template-btn active" data-template="modern" onclick="changeTemplate('modern')">Modern</button>
-            <button class="template-btn" data-template="classic" onclick="changeTemplate('classic')">Classic</button>
-            <button class="template-btn" data-template="minimal" onclick="changeTemplate('minimal')">Minimal</button>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div class="template-selector">
+              <button class="template-btn active" data-template="modern" onclick="changeTemplate('modern')">Modern</button>
+              <button class="template-btn" data-template="classic" onclick="changeTemplate('classic')">Classic</button>
+              <button class="template-btn" data-template="minimal" onclick="changeTemplate('minimal')">Minimal</button>
+            </div>
+            <button class="preview-close" onclick="togglePreview()">✕</button>
           </div>
         </div>
 
@@ -1527,9 +1525,11 @@
         notesSection.classList.add('hidden');
       }
       
-      // Apply brand color
+      // Apply brand color to both UI accent and invoice preview
       const brandColor = document.getElementById('brandColor').value;
       document.documentElement.style.setProperty('--accent', brandColor);
+      // Set brand color on the invoice content so it renders in preview AND PDF export
+      document.getElementById('invoiceContent').style.setProperty('--brand-color', brandColor);
     }
 
     // Templates
@@ -1593,9 +1593,7 @@
     // Mobile Preview Toggle
     function togglePreview() {
       const preview = document.querySelector('.preview-panel');
-      const closeBtn = document.querySelector('.preview-close');
       preview.classList.toggle('show');
-      closeBtn.classList.toggle('hidden');
     }
 
     // localStorage Management
@@ -1828,6 +1826,7 @@
         
         // On mobile, the preview panel may be hidden. Create an off-screen clone for capture.
         const source = document.getElementById('invoiceContent');
+        const brandColor = document.getElementById('brandColor').value;
         const clone = source.cloneNode(true);
         clone.style.position = 'absolute';
         clone.style.left = '-9999px';
@@ -1837,6 +1836,7 @@
         clone.style.color = '#000000';
         clone.style.padding = '3rem';
         clone.style.zIndex = '-1';
+        clone.style.setProperty('--brand-color', brandColor);
         document.body.appendChild(clone);
         
         // Use html2canvas to capture the clone
