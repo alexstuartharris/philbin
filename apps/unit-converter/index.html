@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scientific Unit Converter — No Sign Up | Philbin</title>
+  <meta name="description" content="Convert units for environmental science, engineering, and GIS. Flow rates, concentrations, area, volume, temperature. No sign-up required.">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Scientific Unit Converter — No Sign Up">
+  <meta property="og:description" content="Unit conversions for environmental science and engineering.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-elevated: #1a1a1a;
+      --surface-hover: #202020;
+      --border: #2a2a2a;
+      --border-focus: #3a3a3a;
+      --text: #f5f5f5;
+      --text-secondary: #a0a0a0;
+      --text-tertiary: #6a6a6a;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-light: rgba(99, 102, 241, 0.1);
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header .tagline {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    /* Category Tabs */
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+
+    .category-btn {
+      padding: 0.625rem 1rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .category-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+
+    .category-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    /* Converter */
+    .converter {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .converter-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      transition: border-color var(--transition);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .input-field::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .input-field.output {
+      background: var(--bg);
+      cursor: default;
+    }
+
+    .unit-select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: border-color var(--transition);
+    }
+
+    .unit-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .swap-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-bottom: 2rem;
+    }
+
+    .swap-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-focus);
+      transform: rotate(180deg);
+    }
+
+    .swap-btn svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-secondary);
+    }
+
+    /* Formula Display */
+    .formula {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--surface-elevated);
+      border-radius: var(--radius-sm);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .formula .highlight {
+      color: var(--accent);
+    }
+
+    /* Quick Reference */
+    .quick-ref {
+      margin-top: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .quick-ref-header {
+      padding: 1rem 1.5rem;
+      background: var(--surface-elevated);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .quick-ref-header svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-secondary);
+      transition: transform var(--transition);
+    }
+
+    .quick-ref.open .quick-ref-header svg {
+      transform: rotate(180deg);
+    }
+
+    .quick-ref-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .quick-ref.open .quick-ref-body {
+      max-height: 500px;
+    }
+
+    .quick-ref-content {
+      padding: 1rem 1.5rem;
+    }
+
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .ref-table th,
+    .ref-table td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ref-table th {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .ref-table td:last-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .converter-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .swap-btn {
+        margin: 0.5rem auto;
+        transform: rotate(90deg);
+      }
+
+      .swap-btn:hover {
+        transform: rotate(270deg);
+      }
+
+      .categories {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+      }
+
+      .category-btn {
+        flex-shrink: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🔬 Unit Converter</h1>
+      <p class="tagline">Scientific & engineering conversions. No sign-up.</p>
+    </header>
+
+    <div class="categories" id="categories">
+      <button class="category-btn active" data-category="flow">💧 Flow Rate</button>
+      <button class="category-btn" data-category="concentration">🧪 Concentration</button>
+      <button class="category-btn" data-category="area">📐 Area</button>
+      <button class="category-btn" data-category="volume">🧊 Volume</button>
+      <button class="category-btn" data-category="length">📏 Length</button>
+      <button class="category-btn" data-category="temperature">🌡️ Temperature</button>
+      <button class="category-btn" data-category="pressure">⚡ Pressure</button>
+      <button class="category-btn" data-category="mass">⚖️ Mass</button>
+    </div>
+
+    <div class="converter">
+      <div class="converter-row">
+        <div class="input-group">
+          <label>From</label>
+          <input type="number" class="input-field" id="inputValue" value="1" step="any">
+          <select class="unit-select" id="fromUnit"></select>
+        </div>
+
+        <button class="swap-btn" id="swapBtn" title="Swap units">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+          </svg>
+        </button>
+
+        <div class="input-group">
+          <label>To</label>
+          <input type="text" class="input-field output" id="outputValue" readonly>
+          <select class="unit-select" id="toUnit"></select>
+        </div>
+      </div>
+
+      <div class="formula" id="formula">
+        <span class="highlight">1</span> m³/s = <span class="highlight">1000</span> L/s
+      </div>
+    </div>
+
+    <div class="quick-ref" id="quickRef">
+      <div class="quick-ref-header" id="quickRefHeader">
+        <span>📚 Quick Reference</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+      <div class="quick-ref-body">
+        <div class="quick-ref-content" id="quickRefContent">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>All calculations run locally in your browser.</p>
+      <p style="margin-top: 1rem;"><a href="../">← Back to Philbin Tools</a></p>
+    </footer>
+  </div>
+
+  <script>
+    // Unit definitions: { unit: { name, toBase, fromBase } }
+    // toBase: converts value TO the base unit
+    // fromBase: converts value FROM the base unit
+    const units = {
+      flow: {
+        name: 'Flow Rate',
+        base: 'm³/s',
+        units: {
+          'm³/s': { name: 'Cubic meters/sec', factor: 1 },
+          'm³/h': { name: 'Cubic meters/hour', factor: 1/3600 },
+          'm³/day': { name: 'Cubic meters/day', factor: 1/86400 },
+          'L/s': { name: 'Liters/sec', factor: 0.001 },
+          'L/min': { name: 'Liters/min', factor: 0.001/60 },
+          'L/h': { name: 'Liters/hour', factor: 0.001/3600 },
+          'mL/s': { name: 'Milliliters/sec', factor: 0.000001 },
+          'gpm': { name: 'Gallons/min (US)', factor: 0.0000630902 },
+          'gpd': { name: 'Gallons/day (US)', factor: 0.0000630902/1440 },
+          'cfs': { name: 'Cubic feet/sec', factor: 0.0283168 },
+          'cfm': { name: 'Cubic feet/min', factor: 0.0283168/60 },
+          'MGD': { name: 'Million gal/day', factor: 0.0438126 }
+        },
+        refs: [
+          { from: '1 m³/s', to: '1000 L/s' },
+          { from: '1 cfs', to: '28.32 L/s' },
+          { from: '1 gpm', to: '0.0631 L/s' },
+          { from: '1 MGD', to: '43.81 L/s' }
+        ]
+      },
+      concentration: {
+        name: 'Concentration',
+        base: 'mg/L',
+        units: {
+          'mg/L': { name: 'Milligrams/liter', factor: 1 },
+          'µg/L': { name: 'Micrograms/liter', factor: 0.001 },
+          'ng/L': { name: 'Nanograms/liter', factor: 0.000001 },
+          'g/L': { name: 'Grams/liter', factor: 1000 },
+          'kg/m³': { name: 'Kilograms/m³', factor: 1000 },
+          'ppm': { name: 'Parts per million', factor: 1 },
+          'ppb': { name: 'Parts per billion', factor: 0.001 },
+          'ppt': { name: 'Parts per trillion', factor: 0.000001 },
+          '%': { name: 'Percent', factor: 10000 },
+          'g/mL': { name: 'Grams/mL', factor: 1000000 },
+          'mol/L': { name: 'Moles/liter (M)', factor: null, note: 'Varies by compound' }
+        },
+        refs: [
+          { from: '1 mg/L', to: '1 ppm' },
+          { from: '1 µg/L', to: '1 ppb' },
+          { from: '1%', to: '10,000 mg/L' },
+          { from: '1 g/L', to: '1000 ppm' }
+        ]
+      },
+      area: {
+        name: 'Area',
+        base: 'm²',
+        units: {
+          'm²': { name: 'Square meters', factor: 1 },
+          'km²': { name: 'Square kilometers', factor: 1000000 },
+          'ha': { name: 'Hectares', factor: 10000 },
+          'cm²': { name: 'Square centimeters', factor: 0.0001 },
+          'mm²': { name: 'Square millimeters', factor: 0.000001 },
+          'ft²': { name: 'Square feet', factor: 0.092903 },
+          'yd²': { name: 'Square yards', factor: 0.836127 },
+          'ac': { name: 'Acres', factor: 4046.86 },
+          'mi²': { name: 'Square miles', factor: 2589988 },
+          'section': { name: 'Sections (640 ac)', factor: 2589988 }
+        },
+        refs: [
+          { from: '1 ha', to: '10,000 m²' },
+          { from: '1 km²', to: '100 ha' },
+          { from: '1 ac', to: '0.4047 ha' },
+          { from: '1 mi²', to: '640 ac' }
+        ]
+      },
+      volume: {
+        name: 'Volume',
+        base: 'L',
+        units: {
+          'L': { name: 'Liters', factor: 1 },
+          'mL': { name: 'Milliliters', factor: 0.001 },
+          'm³': { name: 'Cubic meters', factor: 1000 },
+          'cm³': { name: 'Cubic centimeters', factor: 0.001 },
+          'mm³': { name: 'Cubic millimeters', factor: 0.000001 },
+          'gal': { name: 'Gallons (US)', factor: 3.78541 },
+          'gal_imp': { name: 'Gallons (Imperial)', factor: 4.54609 },
+          'qt': { name: 'Quarts (US)', factor: 0.946353 },
+          'pt': { name: 'Pints (US)', factor: 0.473176 },
+          'fl_oz': { name: 'Fluid ounces (US)', factor: 0.0295735 },
+          'ft³': { name: 'Cubic feet', factor: 28.3168 },
+          'in³': { name: 'Cubic inches', factor: 0.0163871 },
+          'ac-ft': { name: 'Acre-feet', factor: 1233482 }
+        },
+        refs: [
+          { from: '1 m³', to: '1000 L' },
+          { from: '1 gal (US)', to: '3.785 L' },
+          { from: '1 ft³', to: '28.32 L' },
+          { from: '1 ac-ft', to: '1233.5 m³' }
+        ]
+      },
+      length: {
+        name: 'Length',
+        base: 'm',
+        units: {
+          'm': { name: 'Meters', factor: 1 },
+          'km': { name: 'Kilometers', factor: 1000 },
+          'cm': { name: 'Centimeters', factor: 0.01 },
+          'mm': { name: 'Millimeters', factor: 0.001 },
+          'µm': { name: 'Micrometers', factor: 0.000001 },
+          'nm': { name: 'Nanometers', factor: 0.000000001 },
+          'ft': { name: 'Feet', factor: 0.3048 },
+          'in': { name: 'Inches', factor: 0.0254 },
+          'yd': { name: 'Yards', factor: 0.9144 },
+          'mi': { name: 'Miles', factor: 1609.34 },
+          'nmi': { name: 'Nautical miles', factor: 1852 },
+          'chain': { name: 'Chains (survey)', factor: 20.1168 }
+        },
+        refs: [
+          { from: '1 km', to: '1000 m' },
+          { from: '1 mi', to: '1.609 km' },
+          { from: '1 ft', to: '0.3048 m' },
+          { from: '1 chain', to: '66 ft' }
+        ]
+      },
+      temperature: {
+        name: 'Temperature',
+        base: 'K',
+        units: {
+          'K': { name: 'Kelvin', toBase: v => v, fromBase: v => v },
+          '°C': { name: 'Celsius', toBase: v => v + 273.15, fromBase: v => v - 273.15 },
+          '°F': { name: 'Fahrenheit', toBase: v => (v - 32) * 5/9 + 273.15, fromBase: v => (v - 273.15) * 9/5 + 32 },
+          '°R': { name: 'Rankine', toBase: v => v * 5/9, fromBase: v => v * 9/5 }
+        },
+        refs: [
+          { from: '0°C', to: '32°F = 273.15 K' },
+          { from: '100°C', to: '212°F = 373.15 K' },
+          { from: '20°C', to: '68°F' },
+          { from: '-40°C', to: '-40°F' }
+        ]
+      },
+      pressure: {
+        name: 'Pressure',
+        base: 'Pa',
+        units: {
+          'Pa': { name: 'Pascals', factor: 1 },
+          'kPa': { name: 'Kilopascals', factor: 1000 },
+          'MPa': { name: 'Megapascals', factor: 1000000 },
+          'bar': { name: 'Bar', factor: 100000 },
+          'mbar': { name: 'Millibar', factor: 100 },
+          'atm': { name: 'Atmospheres', factor: 101325 },
+          'psi': { name: 'PSI', factor: 6894.76 },
+          'mmHg': { name: 'mmHg (Torr)', factor: 133.322 },
+          'inHg': { name: 'Inches Hg', factor: 3386.39 },
+          'mH2O': { name: 'Meters H₂O', factor: 9806.65 },
+          'ftH2O': { name: 'Feet H₂O', factor: 2989.07 }
+        },
+        refs: [
+          { from: '1 atm', to: '101.325 kPa' },
+          { from: '1 bar', to: '14.504 psi' },
+          { from: '1 psi', to: '6.895 kPa' },
+          { from: '10 mH₂O', to: '1 bar' }
+        ]
+      },
+      mass: {
+        name: 'Mass',
+        base: 'kg',
+        units: {
+          'kg': { name: 'Kilograms', factor: 1 },
+          'g': { name: 'Grams', factor: 0.001 },
+          'mg': { name: 'Milligrams', factor: 0.000001 },
+          'µg': { name: 'Micrograms', factor: 0.000000001 },
+          't': { name: 'Metric tonnes', factor: 1000 },
+          'lb': { name: 'Pounds', factor: 0.453592 },
+          'oz': { name: 'Ounces', factor: 0.0283495 },
+          'st': { name: 'Short tons (US)', factor: 907.185 },
+          'lt': { name: 'Long tons (UK)', factor: 1016.05 },
+          'gr': { name: 'Grains', factor: 0.0000647989 }
+        },
+        refs: [
+          { from: '1 kg', to: '2.205 lb' },
+          { from: '1 t', to: '1000 kg' },
+          { from: '1 lb', to: '16 oz' },
+          { from: '1 oz', to: '28.35 g' }
+        ]
+      }
+    };
+
+    let currentCategory = 'flow';
+    let fromUnit = 'm³/s';
+    let toUnit = 'L/s';
+
+    const inputValue = document.getElementById('inputValue');
+    const outputValue = document.getElementById('outputValue');
+    const fromUnitSelect = document.getElementById('fromUnit');
+    const toUnitSelect = document.getElementById('toUnit');
+    const formulaEl = document.getElementById('formula');
+    const swapBtn = document.getElementById('swapBtn');
+    const quickRef = document.getElementById('quickRef');
+    const quickRefHeader = document.getElementById('quickRefHeader');
+    const quickRefContent = document.getElementById('quickRefContent');
+
+    // Category buttons
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.category-btn.active').classList.remove('active');
+        btn.classList.add('active');
+        currentCategory = btn.dataset.category;
+        updateUnitSelects();
+        convert();
+        updateQuickRef();
+      });
+    });
+
+    // Input handlers
+    inputValue.addEventListener('input', convert);
+    fromUnitSelect.addEventListener('change', (e) => {
+      fromUnit = e.target.value;
+      convert();
+    });
+    toUnitSelect.addEventListener('change', (e) => {
+      toUnit = e.target.value;
+      convert();
+    });
+
+    // Swap button
+    swapBtn.addEventListener('click', () => {
+      const temp = fromUnit;
+      fromUnit = toUnit;
+      toUnit = temp;
+      fromUnitSelect.value = fromUnit;
+      toUnitSelect.value = toUnit;
+      convert();
+    });
+
+    // Quick reference toggle
+    quickRefHeader.addEventListener('click', () => {
+      quickRef.classList.toggle('open');
+    });
+
+    // Copy output on click
+    outputValue.addEventListener('click', () => {
+      navigator.clipboard.writeText(outputValue.value);
+    });
+
+    function updateUnitSelects() {
+      const category = units[currentCategory];
+      const unitList = Object.entries(category.units);
+
+      fromUnitSelect.innerHTML = unitList.map(([key, val]) => 
+        `<option value="${key}">${key} — ${val.name}</option>`
+      ).join('');
+
+      toUnitSelect.innerHTML = unitList.map(([key, val]) => 
+        `<option value="${key}">${key} — ${val.name}</option>`
+      ).join('');
+
+      // Set default units
+      fromUnit = unitList[0][0];
+      toUnit = unitList.length > 1 ? unitList[1][0] : unitList[0][0];
+      
+      // Smart defaults for common conversions
+      if (currentCategory === 'flow') { fromUnit = 'm³/s'; toUnit = 'L/s'; }
+      if (currentCategory === 'concentration') { fromUnit = 'mg/L'; toUnit = 'ppm'; }
+      if (currentCategory === 'area') { fromUnit = 'ha'; toUnit = 'ac'; }
+      if (currentCategory === 'volume') { fromUnit = 'L'; toUnit = 'gal'; }
+      if (currentCategory === 'length') { fromUnit = 'm'; toUnit = 'ft'; }
+      if (currentCategory === 'temperature') { fromUnit = '°C'; toUnit = '°F'; }
+      if (currentCategory === 'pressure') { fromUnit = 'kPa'; toUnit = 'psi'; }
+      if (currentCategory === 'mass') { fromUnit = 'kg'; toUnit = 'lb'; }
+
+      fromUnitSelect.value = fromUnit;
+      toUnitSelect.value = toUnit;
+    }
+
+    function convert() {
+      const category = units[currentCategory];
+      const value = parseFloat(inputValue.value);
+
+      if (isNaN(value)) {
+        outputValue.value = '';
+        formulaEl.innerHTML = '';
+        return;
+      }
+
+      const fromDef = category.units[fromUnit];
+      const toDef = category.units[toUnit];
+
+      let result;
+
+      // Temperature uses functions, others use factors
+      if (currentCategory === 'temperature') {
+        const baseValue = fromDef.toBase(value);
+        result = toDef.fromBase(baseValue);
+      } else {
+        if (!fromDef.factor || !toDef.factor) {
+          outputValue.value = 'N/A';
+          formulaEl.innerHTML = '<span class="highlight">Conversion requires additional info</span>';
+          return;
+        }
+        const baseValue = value * fromDef.factor;
+        result = baseValue / toDef.factor;
+      }
+
+      // Format result
+      const formatted = formatNumber(result);
+      outputValue.value = formatted;
+
+      // Update formula
+      const oneConverted = formatNumber(
+        currentCategory === 'temperature' 
+          ? toDef.fromBase(fromDef.toBase(1))
+          : fromDef.factor / toDef.factor
+      );
+      formulaEl.innerHTML = `<span class="highlight">1</span> ${fromUnit} = <span class="highlight">${oneConverted}</span> ${toUnit}`;
+    }
+
+    function formatNumber(num) {
+      if (Math.abs(num) >= 1e9 || (Math.abs(num) < 1e-6 && num !== 0)) {
+        return num.toExponential(6);
+      }
+      
+      // Determine appropriate decimal places
+      const absNum = Math.abs(num);
+      let decimals;
+      if (absNum >= 1000) decimals = 2;
+      else if (absNum >= 1) decimals = 4;
+      else if (absNum >= 0.001) decimals = 6;
+      else decimals = 8;
+
+      return parseFloat(num.toFixed(decimals)).toString();
+    }
+
+    function updateQuickRef() {
+      const category = units[currentCategory];
+      quickRefContent.innerHTML = `
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>From</th>
+              <th>To</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${category.refs.map(ref => `
+              <tr>
+                <td>${ref.from}</td>
+                <td>${ref.to}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // Initialize
+    updateUnitSelects();
+    convert();
+    updateQuickRef();
+  </script>
+</body>
+</html>

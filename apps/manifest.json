@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-09T07:17:50.658Z",
+  "generatedAt": "2026-02-10T07:18:45.454Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -26,6 +26,10 @@
       "hasIndex": true
     },
     {
+      "name": "password-gen",
+      "hasIndex": true
+    },
+    {
       "name": "pnw-weekly-weather",
       "hasIndex": true
     },
@@ -43,6 +47,10 @@
     },
     {
       "name": "ung-trader",
+      "hasIndex": true
+    },
+    {
+      "name": "unit-converter",
       "hasIndex": true
     },
     {
