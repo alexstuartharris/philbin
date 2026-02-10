@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Invoice Generator — No Sign Up Required | Philbin</title>
+  <title>Pekoe — Free Invoice Generator, No Sign Up Required</title>
   <meta name="description" content="Create beautiful, professional invoices in 60 seconds. No sign-up, no account, 100% free. Mobile-friendly invoice generator with live preview and PDF download.">
   
   <!-- Open Graph / Social -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Free Invoice Generator — No Sign Up Required">
+  <meta property="og:title" content="Pekoe — Free Invoice Generator, No Sign Up">
   <meta property="og:description" content="Create beautiful invoices in 60 seconds. No sign-up. No bullshit.">
-  <meta property="og:image" content="https://philbin.app/og-invoice.png">
+  <meta property="og:image" content="https://pekoe.app/og-invoice.png">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -693,6 +693,62 @@
       white-space: pre-wrap;
     }
 
+    /* Payment Button */
+    .payment-button {
+      margin: 2rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .payment-button a {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: var(--brand-color, #6366f1);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .payment-button a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .payment-button .payment-url {
+      font-size: 0.75rem;
+      color: #999;
+      word-break: break-all;
+    }
+
+    /* Pekoe Branding Footer */
+    .pekoe-footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+    }
+
+    .pekoe-footer p {
+      font-size: 0.75rem;
+      color: #999;
+      margin: 0;
+    }
+
+    .pekoe-footer a {
+      color: #999;
+      text-decoration: none;
+    }
+
+    .pekoe-footer a:hover {
+      color: #666;
+    }
+
     /* Template: Classic */
     .template-classic .invoice-title {
       text-align: center;
@@ -953,7 +1009,7 @@
     <!-- Header -->
     <div class="app-header">
       <div>
-        <h2 class="section-title">Invoice Generator</h2>
+        <h2 class="section-title">Pekoe</h2>
       </div>
       <button class="theme-toggle" onclick="toggleTheme()">
         <span id="themeIcon">🌙</span>
@@ -1092,6 +1148,11 @@
                 <label for="dueDate">Due Date *</label>
                 <input type="date" id="dueDate" oninput="updatePreview()">
               </div>
+            </div>
+
+            <div class="form-group">
+              <label for="paymentLink">Payment Link (optional)</label>
+              <input type="url" id="paymentLink" placeholder="https://pay.stripe.com/... or PayPal.me link" oninput="updatePreview()">
             </div>
           </div>
 
@@ -1267,9 +1328,18 @@
               </div>
             </div>
 
+            <div class="payment-button hidden" id="previewPaymentButton">
+              <a href="#" id="previewPaymentLink" target="_blank">Pay Now</a>
+              <div class="payment-url" id="previewPaymentUrl"></div>
+            </div>
+
             <div class="invoice-notes hidden" id="previewNotesSection">
               <h3>Notes</h3>
               <p id="previewNotes"></p>
+            </div>
+
+            <div class="pekoe-footer">
+              <p>Created with Pekoe · <a href="https://pekoe.app" target="_blank">pekoe.app</a></p>
             </div>
           </div>
         </div>
@@ -1286,7 +1356,7 @@
   <footer class="app-footer">
     <p>Your data stays in your browser. Nothing is sent to any server.</p>
     <p style="margin-top: 0.5rem;">
-      Made with ❤️ by <a href="https://philbin.app" target="_blank">Philbin</a>
+      Made with ❤️ by Pekoe
     </p>
   </footer>
 
@@ -1524,6 +1594,17 @@
       } else {
         notesSection.classList.add('hidden');
       }
+
+      // Payment Link
+      const paymentLink = document.getElementById('paymentLink').value;
+      const paymentButton = document.getElementById('previewPaymentButton');
+      if (paymentLink) {
+        paymentButton.classList.remove('hidden');
+        document.getElementById('previewPaymentLink').href = paymentLink;
+        document.getElementById('previewPaymentUrl').textContent = paymentLink;
+      } else {
+        paymentButton.classList.add('hidden');
+      }
       
       // Apply brand color to both UI accent and invoice preview
       const brandColor = document.getElementById('brandColor').value;
@@ -1725,6 +1806,7 @@
         currency: document.getElementById('currency').value,
         issueDate: document.getElementById('issueDate').value,
         dueDate: document.getElementById('dueDate').value,
+        paymentLink: document.getElementById('paymentLink').value,
         template: currentTemplate
       };
       
@@ -1768,6 +1850,7 @@
       document.getElementById('taxRate').value = invoice.taxRate || 0;
       document.getElementById('discount').value = invoice.discount || 0;
       document.getElementById('notes').value = invoice.notes || '';
+      document.getElementById('paymentLink').value = invoice.paymentLink || '';
       
       // Load line items
       document.getElementById('lineItemsContainer').innerHTML = '';
@@ -1802,6 +1885,7 @@
         document.getElementById('taxRate').value = 0;
         document.getElementById('discount').value = 0;
         document.getElementById('notes').value = '';
+        document.getElementById('paymentLink').value = '';
         
         document.getElementById('lineItemsContainer').innerHTML = '';
         lineItemCounter = 0;
