@@ -2345,7 +2345,7 @@
         
         // Use html2canvas to capture the clone
         const canvas = await html2canvas(clone, {
-          scale: 2,
+          scale: 1,
           backgroundColor: '#ffffff',
           logging: false,
           useCORS: true,
@@ -2355,7 +2355,7 @@
         
         document.body.removeChild(clone);
         
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
         
         // Create PDF
         const pdf = new jsPDF({
@@ -2374,14 +2374,14 @@
         let position = margin;
         
         // Add first page
-        pdf.addImage(imgData, 'PNG', margin, position, contentWidth, imgHeight);
+        pdf.addImage(imgData, 'JPEG', margin, position, contentWidth, imgHeight);
         heightLeft -= (pdfHeight - margin * 2);
         
         // Add more pages if needed
         while (heightLeft > 0) {
           pdf.addPage();
           position = margin - (imgHeight - heightLeft);
-          pdf.addImage(imgData, 'PNG', margin, position, contentWidth, imgHeight);
+          pdf.addImage(imgData, 'JPEG', margin, position, contentWidth, imgHeight);
           heightLeft -= (pdfHeight - margin * 2);
         }
         
