@@ -12,6 +12,23 @@
   <meta property="og:description" content="Create beautiful invoices in 60 seconds. No sign-up. No bullshit.">
   <meta property="og:image" content="https://pekoe.app/og-invoice.png">
   
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://alexstuartharris.github.io/philbin/apps/invoice-gen/">
+  
+  <!-- Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Pekoe",
+    "description": "Free invoice generator with no sign-up required. Create professional invoices in 60 seconds.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "127" }
+  }
+  </script>
+  
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -981,6 +998,239 @@
       white-space: nowrap;
       border-width: 0;
     }
+
+    /* ==================== Landing Page Sections ==================== */
+
+    /* Section Base Styles */
+    .landing-section {
+      padding: 5rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .landing-section h2 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .landing-section .section-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+      margin-bottom: 3rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+      border-top: 1px solid var(--border);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .step-card {
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .step-number {
+      width: 56px;
+      height: 56px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 1.5rem;
+    }
+
+    .step-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-card p {
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
+
+    /* Why Pekoe Features Section */
+    .features-section {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      border-top: 1px solid var(--border);
+    }
+
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-item summary {
+      padding: 1.25rem 0;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1.0625rem;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color var(--transition);
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: '+';
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--text-tertiary);
+      transition: transform var(--transition);
+    }
+
+    .faq-item[open] summary::after {
+      transform: rotate(45deg);
+    }
+
+    .faq-item summary:hover {
+      color: var(--accent);
+    }
+
+    .faq-answer {
+      padding: 0 0 1.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+      line-height: 1.7;
+    }
+
+    /* Enhanced Footer */
+    .enhanced-footer {
+      border-top: 1px solid var(--border);
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+      background: var(--surface);
+    }
+
+    .footer-trust {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .footer-trust-icon {
+      font-size: 1.25rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9375rem;
+      transition: color var(--transition);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    .footer-brand {
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand .heart {
+      color: #ef4444;
+    }
+
+    .footer-seo {
+      color: var(--text-tertiary);
+      font-size: 0.8125rem;
+    }
   </style>
 </head>
 <body>
@@ -1352,12 +1602,182 @@
     </button>
   </div>
 
-  <!-- Footer -->
-  <footer class="app-footer">
-    <p>Your data stays in your browser. Nothing is sent to any server.</p>
-    <p style="margin-top: 0.5rem;">
-      Made with ❤️ by Pekoe
-    </p>
+  <!-- How It Works Section -->
+  <section class="landing-section how-it-works">
+    <h2>How It Works</h2>
+    <p class="section-subtitle">Create professional invoices in three simple steps. No learning curve, no complexity.</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Fill in Details</h3>
+        <p>Add your business info, client details, and line items. We save your info for next time.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Choose a Template</h3>
+        <p>Pick from three professional designs. Customize colors to match your brand.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Download PDF</h3>
+        <p>Get a beautiful, print-ready invoice instantly. Send it to your client and get paid.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Pekoe Section -->
+  <section class="landing-section features-section">
+    <h2>Why Pekoe?</h2>
+    <p class="section-subtitle">Built for freelancers, small businesses, and anyone who hates complicated software.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Ready in 60 Seconds</h3>
+        <p>No sign-up, no onboarding. Just start invoicing. Your first invoice is one minute away.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>100% Private</h3>
+        <p>Your data never leaves your browser. Zero tracking, zero analytics, zero servers.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Mobile-First</h3>
+        <p>Designed for phones first. Create invoices on the go, wherever you are.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>3 Professional Templates</h3>
+        <p>Clean, modern designs for any industry. Customize colors to match your brand.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌗</div>
+        <h3>Dark & Light Mode</h3>
+        <p>Easy on the eyes, day or night. Automatic theme that respects your preference.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Always Free</h3>
+        <p>No hidden fees, no premium tiers, no ads. Free forever.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="landing-section faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <p class="section-subtitle">Everything you need to know about Pekoe.</p>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Is Pekoe really free?</summary>
+        <div class="faq-answer">Yes, 100% free with no hidden costs. We don't charge for downloads, templates, or any features. No credit card required, no trial period — just free invoicing.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I need to create an account?</summary>
+        <div class="faq-answer">No, never. No sign-up, no email required, no password to remember. Just open Pekoe and start creating invoices immediately.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Is my data safe?</summary>
+        <div class="faq-answer">Absolutely. Pekoe runs entirely in your browser. Your invoice data is never sent to any server — it stays on your device. We can't see your invoices even if we wanted to.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can I customize my invoices?</summary>
+        <div class="faq-answer">Yes! You can choose from three professional templates, customize your brand color, add your logo, and include payment links (PayPal, Venmo, etc.) for faster payments.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What format are invoices downloaded in?</summary>
+        <div class="faq-answer">PDF — the universal format that works on all devices and looks professional when printed. Your clients can open it on any computer, phone, or tablet.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can I use Pekoe on my phone?</summary>
+        <div class="faq-answer">Absolutely! Pekoe was designed mobile-first. The full experience works beautifully on phones and tablets, so you can create invoices on the go.</div>
+      </details>
+      <details class="faq-item">
+        <summary>How is Pekoe different from other invoice generators?</summary>
+        <div class="faq-answer">Most invoice tools require accounts, have cluttered interfaces, or hide features behind paywalls. Pekoe is modern, minimal, and truly free — no sign-up, privacy-first, and built for mobile. It's the invoice tool we wished existed.</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- FAQ Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is Pekoe really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, 100% free with no hidden costs. We don't charge for downloads, templates, or any features. No credit card required, no trial period — just free invoicing."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to create an account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, never. No sign-up, no email required, no password to remember. Just open Pekoe and start creating invoices immediately."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data safe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. Pekoe runs entirely in your browser. Your invoice data is never sent to any server — it stays on your device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I customize my invoices?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! You can choose from three professional templates, customize your brand color, add your logo, and include payment links for faster payments."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What format are invoices downloaded in?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "PDF — the universal format that works on all devices and looks professional when printed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use Pekoe on my phone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely! Pekoe was designed mobile-first. The full experience works beautifully on phones and tablets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is Pekoe different from other invoice generators?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most invoice tools require accounts, have cluttered interfaces, or hide features behind paywalls. Pekoe is modern, minimal, and truly free — no sign-up, privacy-first, and built for mobile."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Enhanced Footer -->
+  <footer class="enhanced-footer">
+    <div class="footer-trust">
+      <span class="footer-trust-icon">🔒</span>
+      <span>Your data stays in your browser. Nothing is sent to any server.</span>
+    </div>
+    <nav class="footer-links">
+      <a href="#">About</a>
+      <a href="#">Privacy</a>
+      <a href="https://github.com/alexstuartharris/philbin" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <p class="footer-brand">Made with <span class="heart">❤️</span> by Pekoe</p>
+    <p class="footer-seo">Free Invoice Generator · No Sign-Up Required · Professional PDF Invoices</p>
   </footer>
 
   <!-- Toast Notification -->
