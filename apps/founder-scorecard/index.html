@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Founder Alignment Scorecard — Will You Enjoy This Business? | Philbin</title>
+  <meta name="description" content="Score your business idea on 5 key criteria for founder happiness. Based on lessons from 8 years of bootstrapping. Free, no sign-up required." />
+  <meta name="keywords" content="founder scorecard, business idea validator, startup alignment, indie hacker tools, solopreneur planning" />
+  <link rel="canonical" href="https://alexstuartharris.github.io/philbin/apps/founder-scorecard/" />
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121a33; --muted:#9fb0d0; --text:#eaf0ff;
+      --accent:#7aa2ff; --accent2:#5ef0c6; --danger:#ff6b6b; --warning:#fdcb6e;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--sans);background:linear-gradient(180deg,var(--bg),#070a14);color:var(--text);min-height:100vh}
+    a{color:var(--accent)}
+    .wrap{max-width:800px;margin:0 auto;padding:24px}
+    header{text-align:center;margin-bottom:28px}
+    h1{margin:0;font-size:26px;letter-spacing:.3px}
+    .sub{color:var(--muted);margin-top:10px;line-height:1.6;max-width:600px;margin-left:auto;margin-right:auto}
+    .pill{display:inline-block;font-size:12px;background:rgba(94,240,198,.14);border:1px solid rgba(94,240,198,.35);color:#d8fff2;padding:4px 10px;border-radius:999px;margin-left:8px}
+    .card{background:rgba(18,26,51,.92);border:1px solid rgba(122,162,255,.18);border-radius:14px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.25);margin-bottom:20px}
+    .card h2{font-size:13px;margin:0 0 14px 0;color:#cfe0ff;text-transform:uppercase;letter-spacing:.12em}
+    label{display:block;font-size:14px;color:var(--text);margin:16px 0 8px;font-weight:500}
+    input[type="text"]{width:100%;background:#0c1329;color:var(--text);border:1px solid rgba(159,176,208,.25);border-radius:10px;padding:12px;font-size:15px;outline:none}
+    input:focus{border-color:var(--accent)}
+    .criterion{padding:16px 0;border-bottom:1px solid rgba(159,176,208,.12)}
+    .criterion:last-child{border-bottom:none}
+    .criterion-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:10px}
+    .criterion-title{font-size:16px;font-weight:600;color:var(--text)}
+    .criterion-score{font-size:24px;font-weight:700;min-width:50px;text-align:right}
+    .criterion-desc{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:12px}
+    .slider-row{display:flex;align-items:center;gap:12px}
+    .slider-label{font-size:12px;color:var(--muted);min-width:60px}
+    .slider-label.right{text-align:right}
+    input[type="range"]{flex:1;-webkit-appearance:none;background:rgba(122,162,255,.2);height:8px;border-radius:4px;outline:none}
+    input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+    input[type="range"]::-moz-range-thumb{width:22px;height:22px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;cursor:pointer;border:none}
+    .results{text-align:center;padding:24px}
+    .total-score{font-size:64px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .total-label{font-size:14px;color:var(--muted);margin-top:4px}
+    .verdict{font-size:20px;font-weight:600;margin-top:16px;padding:12px 20px;border-radius:12px;display:inline-block}
+    .verdict.great{background:rgba(94,240,198,.15);color:#7effd4;border:1px solid rgba(94,240,198,.4)}
+    .verdict.good{background:rgba(122,162,255,.15);color:#a8c5ff;border:1px solid rgba(122,162,255,.4)}
+    .verdict.caution{background:rgba(253,203,110,.15);color:#ffe082;border:1px solid rgba(253,203,110,.4)}
+    .verdict.rethink{background:rgba(255,107,107,.15);color:#ffb4b4;border:1px solid rgba(255,107,107,.4)}
+    .bar-chart{margin-top:20px}
+    .bar{display:flex;align-items:center;gap:10px;margin:8px 0}
+    .bar-label{font-size:12px;color:var(--muted);width:120px;text-align:right}
+    .bar-track{flex:1;height:12px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:6px;transition:width .4s ease}
+    .insights{margin-top:24px;text-align:left}
+    .insights h3{font-size:14px;color:#cfe0ff;margin:0 0 12px 0}
+    .insight{padding:10px 14px;background:rgba(255,255,255,.04);border-radius:10px;margin:8px 0;font-size:13px;line-height:1.5;border-left:3px solid var(--accent)}
+    .insight.warning{border-left-color:var(--warning)}
+    .insight.danger{border-left-color:var(--danger)}
+    .btns{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+    button{border:1px solid rgba(122,162,255,.35);background:rgba(122,162,255,.15);color:var(--text);padding:12px 20px;border-radius:12px;cursor:pointer;font-size:14px;transition:all .15s}
+    button:hover{background:rgba(122,162,255,.25)}
+    button.primary{background:linear-gradient(135deg,rgba(122,162,255,.35),rgba(94,240,198,.22));border-color:rgba(94,240,198,.5)}
+    .attribution{margin-top:20px;padding:16px;background:rgba(255,255,255,.03);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6}
+    .attribution a{color:var(--accent2)}
+    footer{text-align:center;margin-top:24px;color:var(--muted);font-size:12px}
+    .emoji{font-size:20px;margin-right:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Founder Alignment Scorecard<span class="pill">no sign-up</span></h1>
+      <p class="sub">Not all profitable businesses are worth building. Score your idea on 5 criteria that actually predict founder happiness — inspired by lessons from 8 years of bootstrapping.</p>
+    </header>
+
+    <div class="card">
+      <h2>Your Business Idea</h2>
+      <label for="ideaName">What's the business? (brief description)</label>
+      <input type="text" id="ideaName" placeholder="e.g., SaaS tool for freelancer invoicing" />
+    </div>
+
+    <div class="card">
+      <h2>Rate Each Criterion (1-10)</h2>
+
+      <div class="criterion">
+        <div class="criterion-header">
+          <div>
+            <div class="criterion-title"><span class="emoji">💡</span>Domain Enjoyment</div>
+            <div class="criterion-desc">Do you genuinely find this problem space interesting? Would you read about it, think about it, talk about it even if you weren't building a business?</div>
+          </div>
+          <div class="criterion-score" id="score1">5</div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Boring</span>
+          <input type="range" id="slider1" min="1" max="10" value="5" />
+          <span class="slider-label right">Fascinating</span>
+        </div>
+      </div>
+
+      <div class="criterion">
+        <div class="criterion-header">
+          <div>
+            <div class="criterion-title"><span class="emoji">🛠️</span>Skill Leverage</div>
+            <div class="criterion-desc">How well does this business use skills you already have and enjoy using? Do you get to do work you're good at, or will you spend most time on things you dislike?</div>
+          </div>
+          <div class="criterion-score" id="score2">5</div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">No leverage</span>
+          <input type="range" id="slider2" min="1" max="10" value="5" />
+          <span class="slider-label right">Perfect fit</span>
+        </div>
+      </div>
+
+      <div class="criterion">
+        <div class="criterion-header">
+          <div>
+            <div class="criterion-title"><span class="emoji">💰</span>Earning Potential</div>
+            <div class="criterion-desc">Is there a realistic path to earning what you need? Consider market size, willingness to pay, competition, and your ability to reach customers.</div>
+          </div>
+          <div class="criterion-score" id="score3">5</div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Unlikely</span>
+          <input type="range" id="slider3" min="1" max="10" value="5" />
+          <span class="slider-label right">Very likely</span>
+        </div>
+      </div>
+
+      <div class="criterion">
+        <div class="criterion-header">
+          <div>
+            <div class="criterion-title"><span class="emoji">⚖️</span>Work-Life Balance</div>
+            <div class="criterion-desc">Will this business let you live the life you want? Consider time demands, stress levels, on-call requirements, and flexibility.</div>
+          </div>
+          <div class="criterion-score" id="score4">5</div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">All-consuming</span>
+          <input type="range" id="slider4" min="1" max="10" value="5" />
+          <span class="slider-label right">Sustainable</span>
+        </div>
+      </div>
+
+      <div class="criterion">
+        <div class="criterion-header">
+          <div>
+            <div class="criterion-title"><span class="emoji">🤝</span>Founder-User Alignment</div>
+            <div class="criterion-desc">Are you building for people you understand and respect? Do you share their values? Would you enjoy talking to them every day?</div>
+          </div>
+          <div class="criterion-score" id="score5">5</div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Misaligned</span>
+          <input type="range" id="slider5" min="1" max="10" value="5" />
+          <span class="slider-label right">Perfect match</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="resultsCard">
+      <h2>Your Score</h2>
+      <div class="results">
+        <div class="total-score" id="totalScore">25</div>
+        <div class="total-label">out of 50</div>
+        <div class="verdict good" id="verdict">Promising — Worth Exploring</div>
+
+        <div class="bar-chart" id="barChart"></div>
+
+        <div class="insights" id="insights"></div>
+
+        <div class="btns">
+          <button id="shareBtn">Share Results</button>
+          <button id="resetBtn">Start Over</button>
+          <button id="compareBtn" class="primary">Compare Another Idea</button>
+        </div>
+      </div>
+
+      <div class="attribution">
+        <strong>Why these 5 criteria?</strong> Based on <a href="https://mtlynch.io/bootstrapped-founder-year-8/" target="_blank" rel="noreferrer">Michael Lynch's reflection</a> on 8 years as a bootstrapped founder: <em>"I found a business that aligns with me."</em> Most founders optimize for revenue alone. The ones who last optimize for alignment. Revenue without enjoyment leads to burnout. Enjoyment without revenue isn't sustainable. You need both.
+      </div>
+    </div>
+
+    <footer>
+      <a href="https://github.com/alexstuartharris/philbin" target="_blank" rel="noreferrer">alexstuartharris/philbin</a> · Built during a nightly research session
+    </footer>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    const criteria = [
+      { id: 1, name: 'Domain Enjoyment', color: '#7aa2ff' },
+      { id: 2, name: 'Skill Leverage', color: '#5ef0c6' },
+      { id: 3, name: 'Earning Potential', color: '#fdcb6e' },
+      { id: 4, name: 'Work-Life Balance', color: '#a29bfe' },
+      { id: 5, name: 'Founder-User Alignment', color: '#fd79a8' },
+    ];
+
+    function getScores() {
+      return criteria.map(c => parseInt($(`slider${c.id}`).value));
+    }
+
+    function updateDisplay() {
+      const scores = getScores();
+      const total = scores.reduce((a, b) => a + b, 0);
+
+      // Update individual scores
+      scores.forEach((s, i) => {
+        $(`score${i + 1}`).textContent = s;
+      });
+
+      // Update total
+      $('totalScore').textContent = total;
+
+      // Update verdict
+      const verdict = $('verdict');
+      verdict.className = 'verdict';
+      if (total >= 42) {
+        verdict.textContent = '🚀 Excellent Alignment — Go Build It!';
+        verdict.classList.add('great');
+      } else if (total >= 35) {
+        verdict.textContent = '✅ Promising — Worth Exploring';
+        verdict.classList.add('good');
+      } else if (total >= 25) {
+        verdict.textContent = '⚠️ Proceed with Caution';
+        verdict.classList.add('caution');
+      } else {
+        verdict.textContent = '🛑 Rethink This — High Burnout Risk';
+        verdict.classList.add('rethink');
+      }
+
+      // Update bar chart
+      const barChart = $('barChart');
+      barChart.innerHTML = criteria.map((c, i) => `
+        <div class="bar">
+          <span class="bar-label">${c.name}</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${scores[i] * 10}%;background:${c.color}"></div>
+          </div>
+        </div>
+      `).join('');
+
+      // Generate insights
+      const insights = $('insights');
+      const insightList = [];
+
+      // Find weakest areas
+      const minScore = Math.min(...scores);
+      const weakAreas = criteria.filter((c, i) => scores[i] === minScore && minScore <= 4);
+      
+      if (weakAreas.length > 0) {
+        weakAreas.forEach(area => {
+          insightList.push({
+            type: minScore <= 2 ? 'danger' : 'warning',
+            text: `<strong>${area.name}</strong> is your weakest area. This could become a major source of frustration. Can you change the business model to improve this?`
+          });
+        });
+      }
+
+      // Specific insights
+      if (scores[0] <= 3) {
+        insightList.push({
+          type: 'warning',
+          text: `Low domain interest is a red flag. You'll spend years in this space — if it bores you now, it'll be unbearable later.`
+        });
+      }
+
+      if (scores[2] <= 4 && scores[0] >= 7) {
+        insightList.push({
+          type: 'warning',
+          text: `You love the domain but earning potential is low. Consider: Could this be a side project? Is there a premium segment you're overlooking?`
+        });
+      }
+
+      if (scores[3] <= 3) {
+        insightList.push({
+          type: 'danger',
+          text: `Poor work-life balance burns founders out. What's driving this? Client demands? Technical complexity? On-call requirements? Address it early.`
+        });
+      }
+
+      if (scores[4] <= 4) {
+        insightList.push({
+          type: 'warning',
+          text: `Low founder-user alignment means sales and support will drain you. You'll dread customer calls instead of enjoying them.`
+        });
+      }
+
+      if (total >= 40 && minScore >= 6) {
+        insightList.push({
+          type: 'positive',
+          text: `Strong across the board with no major gaps! This is rare. Trust your gut and start building.`
+        });
+      }
+
+      if (scores[1] >= 8 && scores[2] >= 7) {
+        insightList.push({
+          type: 'positive',
+          text: `High skill leverage + good earning potential = you can outcompete on quality while staying efficient. Great combination.`
+        });
+      }
+
+      insights.innerHTML = insightList.length > 0 
+        ? `<h3>💡 Insights</h3>` + insightList.map(i => 
+            `<div class="insight ${i.type}">${i.text}</div>`
+          ).join('')
+        : '';
+    }
+
+    // Bind sliders
+    criteria.forEach(c => {
+      $(`slider${c.id}`).oninput = updateDisplay;
+    });
+
+    // Share button
+    $('shareBtn').onclick = async () => {
+      const scores = getScores();
+      const total = scores.reduce((a, b) => a + b, 0);
+      const idea = $('ideaName').value || 'My business idea';
+      
+      const text = `Founder Alignment Scorecard for "${idea}":
+📊 Total: ${total}/50
+
+${criteria.map((c, i) => `${c.name}: ${scores[i]}/10`).join('\n')}
+
+Test your idea: https://alexstuartharris.github.io/philbin/apps/founder-scorecard/`;
+
+      try {
+        if (navigator.share) {
+          await navigator.share({ text });
+        } else {
+          await navigator.clipboard.writeText(text);
+          $('shareBtn').textContent = 'Copied!';
+          setTimeout(() => $('shareBtn').textContent = 'Share Results', 2000);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    // Reset button
+    $('resetBtn').onclick = () => {
+      criteria.forEach(c => {
+        $(`slider${c.id}`).value = 5;
+      });
+      $('ideaName').value = '';
+      updateDisplay();
+    };
+
+    // Compare button
+    $('compareBtn').onclick = () => {
+      const scores = getScores();
+      const idea = $('ideaName').value;
+      if (idea) {
+        // Store in localStorage for comparison
+        const comparisons = JSON.parse(localStorage.getItem('founderScorecard') || '[]');
+        comparisons.push({ idea, scores, date: new Date().toISOString() });
+        if (comparisons.length > 5) comparisons.shift();
+        localStorage.setItem('founderScorecard', JSON.stringify(comparisons));
+        alert(`Saved "${idea}" for comparison!\n\nNow enter a new idea and score it to compare.`);
+      }
+      criteria.forEach(c => {
+        $(`slider${c.id}`).value = 5;
+      });
+      $('ideaName').value = '';
+      $('ideaName').focus();
+      updateDisplay();
+    };
+
+    // Initial render
+    updateDisplay();
+  </script>
+</body>
+</html>
