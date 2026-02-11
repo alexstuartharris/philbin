@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QR Code Generator — Free, No Sign Up | Philbin</title>
+  <meta name="description" content="Generate QR codes instantly. No account needed. 100% free, runs in your browser. Download as PNG or SVG." />
+  <meta name="keywords" content="qr code generator, free qr code, qr code no sign up, qr generator online, create qr code free" />
+  <link rel="canonical" href="https://alexstuartharris.github.io/philbin/apps/qr-gen/" />
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121a33; --muted:#9fb0d0; --text:#eaf0ff;
+      --accent:#7aa2ff; --accent2:#5ef0c6; --danger:#ff6b6b;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--sans);background:linear-gradient(180deg,var(--bg),#070a14);color:var(--text);min-height:100vh}
+    a{color:var(--accent)}
+    .wrap{max-width:900px;margin:0 auto;padding:24px}
+    header{text-align:center;margin-bottom:24px}
+    h1{margin:0;font-size:28px;letter-spacing:.3px}
+    .sub{color:var(--muted);margin-top:8px;line-height:1.5}
+    .pill{display:inline-block;font-size:12px;background:rgba(94,240,198,.14);border:1px solid rgba(94,240,198,.35);color:#d8fff2;padding:4px 10px;border-radius:999px;margin-left:8px}
+    .main{display:grid;grid-template-columns:1fr;gap:20px}
+    @media(min-width:700px){.main{grid-template-columns:1fr 1fr}}
+    .card{background:rgba(18,26,51,.92);border:1px solid rgba(122,162,255,.18);border-radius:14px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .card h2{font-size:13px;margin:0 0 14px 0;color:#cfe0ff;text-transform:uppercase;letter-spacing:.12em}
+    label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+    input[type="text"],input[type="url"],input[type="number"],textarea,select{width:100%;background:#0c1329;color:var(--text);border:1px solid rgba(159,176,208,.25);border-radius:10px;padding:12px;font-size:14px;outline:none;font-family:var(--sans)}
+    input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+    textarea{min-height:100px;resize:vertical;font-family:var(--mono)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    button{border:1px solid rgba(122,162,255,.35);background:rgba(122,162,255,.15);color:var(--text);padding:12px 16px;border-radius:12px;cursor:pointer;font-size:14px;transition:all .15s}
+    button:hover{background:rgba(122,162,255,.25);border-color:var(--accent)}
+    button.primary{background:linear-gradient(135deg,rgba(122,162,255,.35),rgba(94,240,198,.22));border-color:rgba(94,240,198,.5)}
+    button.primary:hover{background:linear-gradient(135deg,rgba(122,162,255,.5),rgba(94,240,198,.35))}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .qr-display{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;background:rgba(255,255,255,.03);border-radius:12px;padding:20px}
+    .qr-display canvas,.qr-display svg{border-radius:8px;max-width:100%}
+    .qr-placeholder{color:var(--muted);font-size:14px;text-align:center}
+    .hint{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5}
+    .color-row{display:flex;gap:12px;align-items:center}
+    .color-input{display:flex;align-items:center;gap:8px;flex:1}
+    .color-input input[type="color"]{width:40px;height:40px;border:none;border-radius:8px;cursor:pointer;background:transparent}
+    .color-input input[type="text"]{width:90px;font-family:var(--mono);font-size:12px}
+    .presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .preset{width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:all .15s}
+    .preset:hover{transform:scale(1.1)}
+    .preset.active{border-color:var(--accent2)}
+    footer{text-align:center;margin-top:24px;color:var(--muted);font-size:12px}
+    .branding{margin-top:16px;padding-top:12px;border-top:1px solid rgba(159,176,208,.15);font-size:11px;color:var(--muted);text-align:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>QR Code Generator<span class="pill">no sign-up</span></h1>
+      <p class="sub">Generate QR codes for URLs, text, WiFi, contacts, or anything. Download as PNG or SVG. 100% client-side — your data never leaves your browser.</p>
+    </header>
+
+    <div class="main">
+      <div class="card">
+        <h2>Content</h2>
+
+        <label for="qrType">Type</label>
+        <select id="qrType">
+          <option value="text">Plain Text / URL</option>
+          <option value="wifi">WiFi Network</option>
+          <option value="vcard">Contact (vCard)</option>
+          <option value="email">Email</option>
+          <option value="sms">SMS</option>
+          <option value="phone">Phone Number</option>
+        </select>
+
+        <!-- Plain text / URL -->
+        <div id="textFields">
+          <label for="textContent">Text or URL</label>
+          <textarea id="textContent" placeholder="https://example.com or any text..."></textarea>
+        </div>
+
+        <!-- WiFi -->
+        <div id="wifiFields" style="display:none">
+          <label for="wifiSsid">Network Name (SSID)</label>
+          <input type="text" id="wifiSsid" placeholder="MyWiFi" />
+          <label for="wifiPass">Password</label>
+          <input type="text" id="wifiPass" placeholder="secret123" />
+          <label for="wifiType">Security</label>
+          <select id="wifiType">
+            <option value="WPA">WPA/WPA2</option>
+            <option value="WEP">WEP</option>
+            <option value="nopass">None (Open)</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:8px;margin-top:12px">
+            <input type="checkbox" id="wifiHidden" /> Hidden network
+          </label>
+        </div>
+
+        <!-- vCard -->
+        <div id="vcardFields" style="display:none">
+          <div class="row">
+            <div>
+              <label for="vcardFirst">First Name</label>
+              <input type="text" id="vcardFirst" placeholder="John" />
+            </div>
+            <div>
+              <label for="vcardLast">Last Name</label>
+              <input type="text" id="vcardLast" placeholder="Doe" />
+            </div>
+          </div>
+          <label for="vcardPhone">Phone</label>
+          <input type="text" id="vcardPhone" placeholder="+1-555-123-4567" />
+          <label for="vcardEmail">Email</label>
+          <input type="text" id="vcardEmail" placeholder="john@example.com" />
+          <label for="vcardOrg">Organization</label>
+          <input type="text" id="vcardOrg" placeholder="Acme Corp" />
+          <label for="vcardUrl">Website</label>
+          <input type="text" id="vcardUrl" placeholder="https://example.com" />
+        </div>
+
+        <!-- Email -->
+        <div id="emailFields" style="display:none">
+          <label for="emailTo">Email Address</label>
+          <input type="text" id="emailTo" placeholder="hello@example.com" />
+          <label for="emailSubject">Subject (optional)</label>
+          <input type="text" id="emailSubject" placeholder="Hello!" />
+          <label for="emailBody">Body (optional)</label>
+          <textarea id="emailBody" placeholder="Hi there..."></textarea>
+        </div>
+
+        <!-- SMS -->
+        <div id="smsFields" style="display:none">
+          <label for="smsPhone">Phone Number</label>
+          <input type="text" id="smsPhone" placeholder="+1-555-123-4567" />
+          <label for="smsBody">Message (optional)</label>
+          <textarea id="smsBody" placeholder="Hey!"></textarea>
+        </div>
+
+        <!-- Phone -->
+        <div id="phoneFields" style="display:none">
+          <label for="phoneNum">Phone Number</label>
+          <input type="text" id="phoneNum" placeholder="+1-555-123-4567" />
+        </div>
+
+        <h2 style="margin-top:20px">Style</h2>
+        <div class="row">
+          <div>
+            <label for="qrSize">Size (px)</label>
+            <input type="number" id="qrSize" value="300" min="100" max="1000" step="50" />
+          </div>
+          <div>
+            <label for="errorLevel">Error Correction</label>
+            <select id="errorLevel">
+              <option value="L">Low (7%)</option>
+              <option value="M" selected>Medium (15%)</option>
+              <option value="Q">Quartile (25%)</option>
+              <option value="H">High (30%)</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Colors</label>
+        <div class="color-row">
+          <div class="color-input">
+            <input type="color" id="fgColor" value="#000000" />
+            <input type="text" id="fgHex" value="#000000" placeholder="Foreground" />
+          </div>
+          <div class="color-input">
+            <input type="color" id="bgColor" value="#ffffff" />
+            <input type="text" id="bgHex" value="#ffffff" placeholder="Background" />
+          </div>
+        </div>
+        <div class="presets" id="presets"></div>
+
+        <div class="btns">
+          <button id="generateBtn" class="primary">Generate QR Code</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Preview</h2>
+        <div class="qr-display" id="qrDisplay">
+          <div class="qr-placeholder">Enter content and click "Generate QR Code"</div>
+        </div>
+        <div class="btns" style="justify-content:center">
+          <button id="downloadPng" disabled>Download PNG</button>
+          <button id="downloadSvg" disabled>Download SVG</button>
+          <button id="copyBtn" disabled>Copy to Clipboard</button>
+        </div>
+        <div class="hint" style="text-align:center">
+          Higher error correction = more scannable even if partially obscured, but denser pattern.
+        </div>
+        <div class="branding">Created with <a href="https://alexstuartharris.github.io/philbin/apps/qr-gen/">Philbin QR Generator</a></div>
+      </div>
+    </div>
+
+    <footer>
+      <a href="https://github.com/alexstuartharris/philbin" target="_blank" rel="noreferrer">alexstuartharris/philbin</a> · No data is sent to any server
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script>
+    const $ = id => document.getElementById(id);
+
+    // Color presets
+    const presets = [
+      { fg: '#000000', bg: '#ffffff', name: 'Classic' },
+      { fg: '#1a1a2e', bg: '#eef1f5', name: 'Slate' },
+      { fg: '#2d3436', bg: '#dfe6e9', name: 'Cool Gray' },
+      { fg: '#0984e3', bg: '#ffffff', name: 'Blue' },
+      { fg: '#00b894', bg: '#ffffff', name: 'Green' },
+      { fg: '#6c5ce7', bg: '#ffffff', name: 'Purple' },
+      { fg: '#e17055', bg: '#ffffff', name: 'Coral' },
+      { fg: '#fdcb6e', bg: '#2d3436', name: 'Gold Dark' },
+    ];
+
+    const presetsEl = $('presets');
+    presets.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'preset';
+      div.style.background = `linear-gradient(135deg, ${p.fg} 50%, ${p.bg} 50%)`;
+      div.title = p.name;
+      div.onclick = () => {
+        $('fgColor').value = p.fg;
+        $('fgHex').value = p.fg;
+        $('bgColor').value = p.bg;
+        $('bgHex').value = p.bg;
+        document.querySelectorAll('.preset').forEach(el => el.classList.remove('active'));
+        div.classList.add('active');
+      };
+      if (i === 0) div.classList.add('active');
+      presetsEl.appendChild(div);
+    });
+
+    // Sync color inputs
+    $('fgColor').oninput = () => $('fgHex').value = $('fgColor').value;
+    $('bgColor').oninput = () => $('bgHex').value = $('bgColor').value;
+    $('fgHex').oninput = () => {
+      if (/^#[0-9a-f]{6}$/i.test($('fgHex').value)) $('fgColor').value = $('fgHex').value;
+    };
+    $('bgHex').oninput = () => {
+      if (/^#[0-9a-f]{6}$/i.test($('bgHex').value)) $('bgColor').value = $('bgHex').value;
+    };
+
+    // Type switching
+    const fieldSets = ['textFields', 'wifiFields', 'vcardFields', 'emailFields', 'smsFields', 'phoneFields'];
+    $('qrType').onchange = () => {
+      const type = $('qrType').value;
+      fieldSets.forEach(id => {
+        $(id).style.display = id.startsWith(type) ? 'block' : 'none';
+      });
+    };
+
+    function getContent() {
+      const type = $('qrType').value;
+      switch (type) {
+        case 'text':
+          return $('textContent').value.trim();
+        case 'wifi': {
+          const ssid = $('wifiSsid').value.trim();
+          const pass = $('wifiPass').value;
+          const sec = $('wifiType').value;
+          const hidden = $('wifiHidden').checked ? 'H:true;' : '';
+          if (!ssid) return '';
+          return `WIFI:T:${sec};S:${ssid};P:${pass};${hidden};`;
+        }
+        case 'vcard': {
+          const first = $('vcardFirst').value.trim();
+          const last = $('vcardLast').value.trim();
+          const phone = $('vcardPhone').value.trim();
+          const email = $('vcardEmail').value.trim();
+          const org = $('vcardOrg').value.trim();
+          const url = $('vcardUrl').value.trim();
+          if (!first && !last) return '';
+          let vcard = 'BEGIN:VCARD\nVERSION:3.0\n';
+          vcard += `N:${last};${first};;;\n`;
+          vcard += `FN:${first} ${last}\n`;
+          if (phone) vcard += `TEL:${phone}\n`;
+          if (email) vcard += `EMAIL:${email}\n`;
+          if (org) vcard += `ORG:${org}\n`;
+          if (url) vcard += `URL:${url}\n`;
+          vcard += 'END:VCARD';
+          return vcard;
+        }
+        case 'email': {
+          const to = $('emailTo').value.trim();
+          const subj = $('emailSubject').value.trim();
+          const body = $('emailBody').value.trim();
+          if (!to) return '';
+          let mailto = `mailto:${to}`;
+          const params = [];
+          if (subj) params.push(`subject=${encodeURIComponent(subj)}`);
+          if (body) params.push(`body=${encodeURIComponent(body)}`);
+          if (params.length) mailto += '?' + params.join('&');
+          return mailto;
+        }
+        case 'sms': {
+          const phone = $('smsPhone').value.trim();
+          const body = $('smsBody').value.trim();
+          if (!phone) return '';
+          return body ? `sms:${phone}?body=${encodeURIComponent(body)}` : `sms:${phone}`;
+        }
+        case 'phone':
+          return $('phoneNum').value.trim() ? `tel:${$('phoneNum').value.trim()}` : '';
+        default:
+          return '';
+      }
+    }
+
+    let currentCanvas = null;
+    let currentSvg = null;
+
+    async function generate() {
+      const content = getContent();
+      const display = $('qrDisplay');
+      
+      if (!content) {
+        display.innerHTML = '<div class="qr-placeholder">Enter some content first</div>';
+        $('downloadPng').disabled = true;
+        $('downloadSvg').disabled = true;
+        $('copyBtn').disabled = true;
+        return;
+      }
+
+      const size = parseInt($('qrSize').value) || 300;
+      const errorLevel = $('errorLevel').value;
+      const fg = $('fgHex').value || '#000000';
+      const bg = $('bgHex').value || '#ffffff';
+
+      try {
+        // Generate canvas
+        const canvas = document.createElement('canvas');
+        await QRCode.toCanvas(canvas, content, {
+          width: size,
+          margin: 2,
+          errorCorrectionLevel: errorLevel,
+          color: { dark: fg, light: bg }
+        });
+        currentCanvas = canvas;
+
+        // Generate SVG string
+        currentSvg = await QRCode.toString(content, {
+          type: 'svg',
+          width: size,
+          margin: 2,
+          errorCorrectionLevel: errorLevel,
+          color: { dark: fg, light: bg }
+        });
+
+        display.innerHTML = '';
+        display.appendChild(canvas);
+
+        $('downloadPng').disabled = false;
+        $('downloadSvg').disabled = false;
+        $('copyBtn').disabled = false;
+      } catch (err) {
+        display.innerHTML = `<div class="qr-placeholder" style="color:#ff6b6b">Error: ${err.message}</div>`;
+        $('downloadPng').disabled = true;
+        $('downloadSvg').disabled = true;
+        $('copyBtn').disabled = true;
+      }
+    }
+
+    $('generateBtn').onclick = generate;
+
+    $('downloadPng').onclick = () => {
+      if (!currentCanvas) return;
+      const link = document.createElement('a');
+      link.download = `qr-code-${Date.now()}.png`;
+      link.href = currentCanvas.toDataURL('image/png');
+      link.click();
+    };
+
+    $('downloadSvg').onclick = () => {
+      if (!currentSvg) return;
+      const blob = new Blob([currentSvg], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = `qr-code-${Date.now()}.svg`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+    };
+
+    $('copyBtn').onclick = async () => {
+      if (!currentCanvas) return;
+      try {
+        const blob = await new Promise(resolve => currentCanvas.toBlob(resolve, 'image/png'));
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        $('copyBtn').textContent = 'Copied!';
+        setTimeout(() => $('copyBtn').textContent = 'Copy to Clipboard', 2000);
+      } catch (err) {
+        alert('Copy failed: ' + err.message);
+      }
+    };
+
+    // Auto-generate on enter
+    document.querySelectorAll('input, textarea').forEach(el => {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey && el.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          generate();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
