@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Founder Alignment Scorecard — Rate Your Business Idea | Philbin</title>
+  <meta name="description" content="Score your business idea on 5 key factors for founder happiness. Based on 8 years of bootstrapped founder lessons. No sign-up required.">
+  <meta name="keywords" content="business idea validator, startup scorecard, founder fit, indie hacker tools, business alignment">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface-hover: #252525;
+      --border: #333;
+      --text: #e5e5e5;
+      --text-muted: #888;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .intro {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .intro strong {
+      color: var(--text);
+    }
+    .idea-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .idea-input label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    .idea-input input {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    .idea-input input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .criteria-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .criteria-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .criteria-icon {
+      font-size: 1.5rem;
+    }
+    .criteria-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .criteria-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .criteria-question {
+      font-size: 0.9rem;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      outline: none;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+    .slider-value {
+      width: 50px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+      padding: 0 2px;
+    }
+    .results {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .total-score {
+      font-size: 4rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .score-excellent { color: var(--success); }
+    .score-good { color: #84cc16; }
+    .score-okay { color: var(--warning); }
+    .score-poor { color: var(--error); }
+    .score-label {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+    .score-bar {
+      height: 12px;
+      background: var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease, background 0.5s ease;
+    }
+    .breakdown {
+      text-align: left;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .breakdown h3 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      font-size: 0.9rem;
+    }
+    .breakdown-item .label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .verdict {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      text-align: left;
+    }
+    .verdict-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .share-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .share-btn:hover {
+      background: var(--accent-hover);
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .credit {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--bg);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .credit a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎯 Founder Alignment Scorecard</h1>
+      <p class="subtitle">Will you actually enjoy building this business? Score your idea on 5 key factors.</p>
+    </header>
+
+    <div class="intro">
+      <strong>Based on real founder experience:</strong> After 8 years of bootstrapping, the lesson is clear — chasing revenue in a domain you hate leads to burnout. This scorecard helps you evaluate whether a business idea <em>aligns with you</em>, not just whether it can make money.
+    </div>
+
+    <div class="idea-input">
+      <label for="idea-name">What's your business idea?</label>
+      <input type="text" id="idea-name" placeholder="e.g., No-sign-up invoice generator for freelancers">
+    </div>
+
+    <div id="criteria-container">
+      <!-- Criteria cards will be generated here -->
+    </div>
+
+    <div class="results" id="results">
+      <div class="total-score" id="total-score">50</div>
+      <div class="score-label" id="score-label">Decent Fit</div>
+      <div class="score-bar">
+        <div class="score-bar-fill" id="score-bar-fill" style="width: 50%;"></div>
+      </div>
+      
+      <div class="breakdown">
+        <h3>Score Breakdown</h3>
+        <div id="breakdown-items"></div>
+      </div>
+
+      <div class="verdict" id="verdict"></div>
+
+      <button class="share-btn" id="share-btn">📋 Copy Results</button>
+    </div>
+
+    <div class="credit">
+      💡 Framework inspired by <a href="https://mtlynch.io/bootstrapped-founder-year-8/" target="_blank" rel="noopener">mtlynch's 8th year retrospective</a> — the key insight being that <em>founder-business alignment</em> matters as much as market opportunity.
+    </div>
+
+    <footer>
+      <p>100% free. Your answers stay in your browser.</p>
+      <p style="margin-top: 0.5rem;">Created with <a href="https://alexstuartharris.github.io/philbin/">Philbin</a></p>
+    </footer>
+  </div>
+
+  <script>
+    const criteria = [
+      {
+        id: 'domain',
+        icon: '💡',
+        title: 'Domain Enjoyment',
+        desc: 'Do you genuinely find the problem space interesting? Would you read about this for fun?',
+        question: '"Would I enjoy learning everything about this domain?"',
+        low: 'Hate it',
+        high: 'Love it'
+      },
+      {
+        id: 'skills',
+        icon: '🛠️',
+        title: 'Skill Leverage',
+        desc: 'Does this business let you use skills you already have and want to develop further?',
+        question: '"Can I build this with skills I\'m proud of?"',
+        low: 'Wrong skills',
+        high: 'Perfect match'
+      },
+      {
+        id: 'money',
+        icon: '💰',
+        title: 'Earning Potential',
+        desc: 'Can this realistically generate meaningful income? Is there a clear path to revenue?',
+        question: '"Do I see a real path to making money?"',
+        low: 'Unclear',
+        high: 'Clear path'
+      },
+      {
+        id: 'lifestyle',
+        icon: '⚖️',
+        title: 'Work-Life Fit',
+        desc: 'Does this business model fit how you want to live? Hours, stress, location flexibility?',
+        question: '"Will this let me live the way I want?"',
+        low: 'Terrible fit',
+        high: 'Perfect fit'
+      },
+      {
+        id: 'users',
+        icon: '🤝',
+        title: 'User Alignment',
+        desc: 'Do you understand and relate to your target users? Would you be your own customer?',
+        question: '"Am I building for people I understand?"',
+        low: "Don't get them",
+        high: 'I am them'
+      }
+    ];
+
+    const scores = {};
+    const container = document.getElementById('criteria-container');
+    const resultsEl = document.getElementById('results');
+    const totalScoreEl = document.getElementById('total-score');
+    const scoreLabelEl = document.getElementById('score-label');
+    const scoreBarFill = document.getElementById('score-bar-fill');
+    const breakdownEl = document.getElementById('breakdown-items');
+    const verdictEl = document.getElementById('verdict');
+
+    // Initialize
+    criteria.forEach(c => {
+      scores[c.id] = 5;
+      
+      const card = document.createElement('div');
+      card.className = 'criteria-card';
+      card.innerHTML = `
+        <div class="criteria-header">
+          <span class="criteria-icon">${c.icon}</span>
+          <span class="criteria-title">${c.title}</span>
+        </div>
+        <div class="criteria-desc">${c.desc}</div>
+        <div class="criteria-question">${c.question}</div>
+        <div class="slider-container">
+          <input type="range" class="slider" id="slider-${c.id}" min="1" max="10" value="5">
+          <span class="slider-value" id="value-${c.id}">5</span>
+        </div>
+        <div class="slider-labels">
+          <span>${c.low}</span>
+          <span>${c.high}</span>
+        </div>
+      `;
+      container.appendChild(card);
+
+      const slider = document.getElementById(`slider-${c.id}`);
+      const valueEl = document.getElementById(`value-${c.id}`);
+      
+      slider.addEventListener('input', () => {
+        scores[c.id] = parseInt(slider.value);
+        valueEl.textContent = slider.value;
+        updateResults();
+      });
+    });
+
+    function updateResults() {
+      const total = Object.values(scores).reduce((a, b) => a + b, 0);
+      const percent = (total / 50) * 100;
+      
+      totalScoreEl.textContent = total;
+      scoreBarFill.style.width = `${percent}%`;
+
+      // Color and label based on score
+      totalScoreEl.className = 'total-score';
+      if (total >= 40) {
+        totalScoreEl.classList.add('score-excellent');
+        scoreBarFill.style.background = 'var(--success)';
+        scoreLabelEl.textContent = '🚀 Excellent Alignment';
+      } else if (total >= 30) {
+        totalScoreEl.classList.add('score-good');
+        scoreBarFill.style.background = '#84cc16';
+        scoreLabelEl.textContent = '✅ Good Fit';
+      } else if (total >= 20) {
+        totalScoreEl.classList.add('score-okay');
+        scoreBarFill.style.background = 'var(--warning)';
+        scoreLabelEl.textContent = '⚠️ Mixed Signals';
+      } else {
+        totalScoreEl.classList.add('score-poor');
+        scoreBarFill.style.background = 'var(--error)';
+        scoreLabelEl.textContent = '🛑 Poor Fit';
+      }
+
+      // Breakdown
+      breakdownEl.innerHTML = criteria.map(c => `
+        <div class="breakdown-item">
+          <span class="label">${c.icon} ${c.title}</span>
+          <span>${scores[c.id]}/10</span>
+        </div>
+      `).join('');
+
+      // Verdict
+      const weakest = criteria.reduce((min, c) => scores[c.id] < scores[min.id] ? c : min);
+      const strongest = criteria.reduce((max, c) => scores[c.id] > scores[max.id] ? c : max);
+
+      let verdictHtml = `<div class="verdict-title">🔍 Analysis</div>`;
+      
+      if (total >= 40) {
+        verdictHtml += `<p>This looks like a strong founder-business match. Your alignment across all dimensions suggests you'd enjoy the journey, not just the destination.</p>`;
+      } else if (total >= 30) {
+        verdictHtml += `<p>Solid foundation. You've got enough alignment to stay motivated through the hard parts.</p>`;
+      } else if (total >= 20) {
+        verdictHtml += `<p>Some red flags here. Consider whether you're chasing this for the right reasons.</p>`;
+      } else {
+        verdictHtml += `<p>Strong misalignment detected. Even if this makes money, you might hate the process. That's a recipe for burnout.</p>`;
+      }
+
+      if (scores[weakest.id] <= 3) {
+        verdictHtml += `<p style="margin-top: 0.75rem;"><strong>⚠️ Weak spot:</strong> ${weakest.title} scored only ${scores[weakest.id]}/10. This could become a major friction point over time.</p>`;
+      }
+
+      if (scores[strongest.id] >= 8) {
+        verdictHtml += `<p style="margin-top: 0.75rem;"><strong>💪 Strength:</strong> ${strongest.title} is a solid ${scores[strongest.id]}/10. Lean into this.</p>`;
+      }
+
+      verdictEl.innerHTML = verdictHtml;
+    }
+
+    // Share/Copy
+    document.getElementById('share-btn').addEventListener('click', async () => {
+      const ideaName = document.getElementById('idea-name').value || 'My business idea';
+      const total = Object.values(scores).reduce((a, b) => a + b, 0);
+      
+      let text = `🎯 Founder Alignment Scorecard\n\n`;
+      text += `Idea: ${ideaName}\n`;
+      text += `Total Score: ${total}/50\n\n`;
+      criteria.forEach(c => {
+        text += `${c.icon} ${c.title}: ${scores[c.id]}/10\n`;
+      });
+      text += `\n→ https://alexstuartharris.github.io/philbin/apps/founder-scorecard/`;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = document.getElementById('share-btn');
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy Results'; }, 2000);
+      } catch (e) {
+        alert('Could not copy. Here are your results:\n\n' + text);
+      }
+    });
+
+    // Initial render
+    updateResults();
+  </script>
+</body>
+</html>

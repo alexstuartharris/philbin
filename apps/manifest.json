@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-10T13:40:53.996Z",
+  "generatedAt": "2026-02-12T07:17:24.976Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -11,6 +11,10 @@
     },
     {
       "name": "field-kit-planner",
+      "hasIndex": true
+    },
+    {
+      "name": "founder-scorecard",
       "hasIndex": true
     },
     {
@@ -31,6 +35,10 @@
     },
     {
       "name": "prompt-library",
+      "hasIndex": true
+    },
+    {
+      "name": "qr-gen",
       "hasIndex": true
     },
     {
