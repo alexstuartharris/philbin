@@ -1,6 +1,10 @@
 {
-  "generatedAt": "2026-02-10T13:40:53.996Z",
+  "generatedAt": "2026-02-12T17:01:05.039Z",
   "apps": [
+    {
+      "name": "color-palette",
+      "hasIndex": true
+    },
     {
       "name": "csv-to-geojson",
       "hasIndex": true
@@ -26,11 +30,23 @@
       "hasIndex": true
     },
     {
+      "name": "md-table-gen",
+      "hasIndex": true
+    },
+    {
+      "name": "password-gen",
+      "hasIndex": false
+    },
+    {
       "name": "pnw-weekly-weather",
       "hasIndex": true
     },
     {
       "name": "prompt-library",
+      "hasIndex": true
+    },
+    {
+      "name": "qr-gen",
       "hasIndex": true
     },
     {

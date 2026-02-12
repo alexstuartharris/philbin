@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Table Generator — CSV to Markdown | Philbin</title>
+  <meta name="description" content="Convert CSV, TSV, or pasted data to formatted markdown tables instantly. Also converts markdown tables back to CSV. No sign-up required.">
+  <link rel="canonical" href="https://alexstuartharris.github.io/philbin/apps/md-table-gen/">
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface-hover: #252525;
+      --border: #333;
+      --text: #e5e5e5;
+      --text-muted: #888;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    
+    .mode-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .mode-btn {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+    
+    .mode-btn:hover {
+      background: var(--surface-hover);
+    }
+    
+    .mode-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    
+    .editor-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .editor-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .editor-pane {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    
+    .editor-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    
+    .editor-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    
+    .btn:hover {
+      background: var(--accent-hover);
+    }
+    
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8rem;
+    }
+    
+    .btn-secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+    }
+    
+    .btn-icon {
+      padding: 0.375rem 0.5rem;
+    }
+    
+    textarea {
+      flex: 1;
+      min-height: 300px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      color: var(--text);
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      font-size: 0.875rem;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .options-bar {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      padding: 1rem;
+      background: var(--surface);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .option-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .option-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    
+    select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text);
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    
+    .checkbox-label input {
+      width: 1rem;
+      height: 1rem;
+      accent-color: var(--accent);
+    }
+    
+    .preview-section {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .preview-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    
+    .preview-table {
+      overflow-x: auto;
+    }
+    
+    .preview-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    
+    .preview-table th,
+    .preview-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    
+    .preview-table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    
+    .preview-table tr:nth-child(even) td {
+      background: rgba(255,255,255,0.02);
+    }
+    
+    .stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--success);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .toast.error {
+      background: var(--error);
+    }
+    
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .help-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    
+    .swap-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    
+    .swap-btn:hover {
+      background: var(--accent-hover);
+    }
+    
+    .editor-wrapper {
+      position: relative;
+    }
+    
+    @media (max-width: 768px) {
+      .swap-btn {
+        position: static;
+        transform: none;
+        margin: 0.5rem auto;
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 Markdown Table Generator</h1>
+      <p class="subtitle">Convert between CSV and Markdown tables • Instant formatting</p>
+    </header>
+    
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="csv-to-md">CSV → Markdown</button>
+      <button class="mode-btn" data-mode="md-to-csv">Markdown → CSV</button>
+    </div>
+    
+    <div class="options-bar">
+      <div class="option-group">
+        <span class="option-label">Delimiter:</span>
+        <select id="delimiter">
+          <option value="auto">Auto-detect</option>
+          <option value=",">Comma (,)</option>
+          <option value="&#9;">Tab</option>
+          <option value=";">Semicolon (;)</option>
+          <option value="|">Pipe (|)</option>
+        </select>
+      </div>
+      <div class="option-group">
+        <span class="option-label">Alignment:</span>
+        <select id="alignment">
+          <option value="left">Left</option>
+          <option value="center">Center</option>
+          <option value="right">Right</option>
+          <option value="auto">Auto (numbers right)</option>
+        </select>
+      </div>
+      <label class="checkbox-label">
+        <input type="checkbox" id="firstRowHeader" checked>
+        First row is header
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="prettyPrint" checked>
+        Pretty print (aligned columns)
+      </label>
+    </div>
+    
+    <div class="editor-wrapper">
+      <div class="editor-container">
+        <div class="editor-pane">
+          <div class="editor-header">
+            <span class="editor-label" id="inputLabel">Input (CSV/TSV)</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-secondary" onclick="loadSample()">📋 Sample</button>
+              <button class="btn btn-sm btn-secondary" onclick="clearInput()">🗑️ Clear</button>
+            </div>
+          </div>
+          <textarea id="input" placeholder="Paste your CSV, TSV, or table data here...
+
+Example:
+Name,Age,City
+Alice,28,Vancouver
+Bob,35,Toronto"></textarea>
+        </div>
+        
+        <div class="editor-pane">
+          <div class="editor-header">
+            <span class="editor-label" id="outputLabel">Output (Markdown)</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm" onclick="copyOutput()">📋 Copy</button>
+              <button class="btn btn-sm btn-secondary" onclick="downloadOutput()">⬇️ Download</button>
+            </div>
+          </div>
+          <textarea id="output" readonly placeholder="Markdown table will appear here..."></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <div class="preview-section">
+      <div class="preview-header">
+        <span class="preview-title">Table Preview</span>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="preview-table" id="preview">
+        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
+          Enter data above to see preview
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>Created with <a href="https://alexstuartharris.github.io/philbin/">Philbin</a> • No sign-up required</p>
+  </footer>
+  
+  <div class="toast" id="toast">Copied!</div>
+  
+  <script>
+    const inputEl = document.getElementById('input');
+    const outputEl = document.getElementById('output');
+    const previewEl = document.getElementById('preview');
+    const statsEl = document.getElementById('stats');
+    const delimiterEl = document.getElementById('delimiter');
+    const alignmentEl = document.getElementById('alignment');
+    const firstRowHeaderEl = document.getElementById('firstRowHeader');
+    const prettyPrintEl = document.getElementById('prettyPrint');
+    const inputLabel = document.getElementById('inputLabel');
+    const outputLabel = document.getElementById('outputLabel');
+    
+    let mode = 'csv-to-md';
+    
+    // Mode toggle
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        mode = btn.dataset.mode;
+        updateLabels();
+        convert();
+      });
+    });
+    
+    function updateLabels() {
+      if (mode === 'csv-to-md') {
+        inputLabel.textContent = 'Input (CSV/TSV)';
+        outputLabel.textContent = 'Output (Markdown)';
+        inputEl.placeholder = 'Paste your CSV, TSV, or table data here...\n\nExample:\nName,Age,City\nAlice,28,Vancouver\nBob,35,Toronto';
+      } else {
+        inputLabel.textContent = 'Input (Markdown)';
+        outputLabel.textContent = 'Output (CSV)';
+        inputEl.placeholder = 'Paste your Markdown table here...\n\nExample:\n| Name | Age | City |\n|------|-----|------|\n| Alice | 28 | Vancouver |\n| Bob | 35 | Toronto |';
+      }
+    }
+    
+    // Live conversion
+    inputEl.addEventListener('input', convert);
+    delimiterEl.addEventListener('change', convert);
+    alignmentEl.addEventListener('change', convert);
+    firstRowHeaderEl.addEventListener('change', convert);
+    prettyPrintEl.addEventListener('change', convert);
+    
+    function convert() {
+      const input = inputEl.value.trim();
+      if (!input) {
+        outputEl.value = '';
+        previewEl.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Enter data above to see preview</p>';
+        statsEl.textContent = '';
+        return;
+      }
+      
+      try {
+        if (mode === 'csv-to-md') {
+          convertCsvToMarkdown(input);
+        } else {
+          convertMarkdownToCsv(input);
+        }
+      } catch (e) {
+        outputEl.value = '// Error: ' + e.message;
+        previewEl.innerHTML = `<p style="color: var(--error); text-align: center; padding: 2rem;">${e.message}</p>`;
+      }
+    }
+    
+    function detectDelimiter(text) {
+      const firstLine = text.split('\n')[0];
+      const counts = {
+        ',': (firstLine.match(/,/g) || []).length,
+        '\t': (firstLine.match(/\t/g) || []).length,
+        ';': (firstLine.match(/;/g) || []).length,
+        '|': (firstLine.match(/\|/g) || []).length
+      };
+      
+      // Pipe is tricky - markdown tables use it
+      if (counts['|'] > 0 && firstLine.trim().startsWith('|')) {
+        return '|';
+      }
+      
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      return sorted[0][1] > 0 ? sorted[0][0] : ',';
+    }
+    
+    function parseCSV(text, delimiter) {
+      const rows = [];
+      let currentRow = [];
+      let currentCell = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+        
+        if (inQuotes) {
+          if (char === '"' && nextChar === '"') {
+            currentCell += '"';
+            i++;
+          } else if (char === '"') {
+            inQuotes = false;
+          } else {
+            currentCell += char;
+          }
+        } else {
+          if (char === '"') {
+            inQuotes = true;
+          } else if (char === delimiter) {
+            currentRow.push(currentCell.trim());
+            currentCell = '';
+          } else if (char === '\n' || (char === '\r' && nextChar === '\n')) {
+            currentRow.push(currentCell.trim());
+            if (currentRow.some(cell => cell !== '')) {
+              rows.push(currentRow);
+            }
+            currentRow = [];
+            currentCell = '';
+            if (char === '\r') i++;
+          } else {
+            currentCell += char;
+          }
+        }
+      }
+      
+      // Don't forget the last cell/row
+      currentRow.push(currentCell.trim());
+      if (currentRow.some(cell => cell !== '')) {
+        rows.push(currentRow);
+      }
+      
+      return rows;
+    }
+    
+    function convertCsvToMarkdown(input) {
+      let delimiter = delimiterEl.value;
+      if (delimiter === 'auto') {
+        delimiter = detectDelimiter(input);
+      }
+      
+      const rows = parseCSV(input, delimiter);
+      if (rows.length === 0) return;
+      
+      // Normalize column count
+      const maxCols = Math.max(...rows.map(r => r.length));
+      rows.forEach(row => {
+        while (row.length < maxCols) row.push('');
+      });
+      
+      const hasHeader = firstRowHeaderEl.checked;
+      const alignment = alignmentEl.value;
+      const pretty = prettyPrintEl.checked;
+      
+      // Calculate column widths for pretty print
+      const colWidths = [];
+      for (let i = 0; i < maxCols; i++) {
+        colWidths.push(Math.max(3, ...rows.map(r => (r[i] || '').length)));
+      }
+      
+      // Determine alignment per column
+      const colAlignments = [];
+      for (let i = 0; i < maxCols; i++) {
+        if (alignment === 'auto') {
+          // Check if column is numeric (excluding header)
+          const dataRows = hasHeader ? rows.slice(1) : rows;
+          const isNumeric = dataRows.every(r => {
+            const val = (r[i] || '').trim();
+            return val === '' || !isNaN(parseFloat(val));
+          });
+          colAlignments.push(isNumeric ? 'right' : 'left');
+        } else {
+          colAlignments.push(alignment);
+        }
+      }
+      
+      // Build markdown
+      const lines = [];
+      
+      // Header row
+      const headerRow = hasHeader ? rows[0] : rows[0].map((_, i) => `Column ${i + 1}`);
+      if (pretty) {
+        lines.push('| ' + headerRow.map((cell, i) => cell.padEnd(colWidths[i])).join(' | ') + ' |');
+      } else {
+        lines.push('| ' + headerRow.join(' | ') + ' |');
+      }
+      
+      // Separator
+      const separators = colAlignments.map((align, i) => {
+        const width = pretty ? colWidths[i] : 3;
+        const dashes = '-'.repeat(width);
+        if (align === 'center') return ':' + dashes.slice(1, -1) + ':';
+        if (align === 'right') return dashes.slice(0, -1) + ':';
+        return dashes;
+      });
+      lines.push('| ' + separators.join(' | ') + ' |');
+      
+      // Data rows
+      const dataRows = hasHeader ? rows.slice(1) : rows;
+      dataRows.forEach(row => {
+        if (pretty) {
+          lines.push('| ' + row.map((cell, i) => {
+            if (colAlignments[i] === 'right') {
+              return cell.padStart(colWidths[i]);
+            }
+            return cell.padEnd(colWidths[i]);
+          }).join(' | ') + ' |');
+        } else {
+          lines.push('| ' + row.join(' | ') + ' |');
+        }
+      });
+      
+      outputEl.value = lines.join('\n');
+      renderPreview(hasHeader ? rows[0] : null, hasHeader ? rows.slice(1) : rows);
+      statsEl.innerHTML = `<span>${rows.length} rows</span><span>${maxCols} columns</span>`;
+    }
+    
+    function convertMarkdownToCsv(input) {
+      const lines = input.split('\n').filter(line => line.trim());
+      const rows = [];
+      
+      for (const line of lines) {
+        // Skip separator lines
+        if (/^\|?\s*[-:]+\s*(\|\s*[-:]+\s*)*\|?\s*$/.test(line)) continue;
+        
+        // Parse table row
+        let cells = line.split('|');
+        
+        // Remove empty first/last elements from leading/trailing pipes
+        if (cells[0].trim() === '') cells.shift();
+        if (cells[cells.length - 1].trim() === '') cells.pop();
+        
+        cells = cells.map(cell => cell.trim());
+        if (cells.length > 0) {
+          rows.push(cells);
+        }
+      }
+      
+      if (rows.length === 0) {
+        throw new Error('No valid table found');
+      }
+      
+      // Convert to CSV
+      const csvLines = rows.map(row => {
+        return row.map(cell => {
+          // Quote cells that contain commas, quotes, or newlines
+          if (cell.includes(',') || cell.includes('"') || cell.includes('\n')) {
+            return '"' + cell.replace(/"/g, '""') + '"';
+          }
+          return cell;
+        }).join(',');
+      });
+      
+      outputEl.value = csvLines.join('\n');
+      renderPreview(firstRowHeaderEl.checked ? rows[0] : null, firstRowHeaderEl.checked ? rows.slice(1) : rows);
+      statsEl.innerHTML = `<span>${rows.length} rows</span><span>${rows[0]?.length || 0} columns</span>`;
+    }
+    
+    function renderPreview(headers, rows) {
+      if (!rows || rows.length === 0) {
+        previewEl.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No data</p>';
+        return;
+      }
+      
+      let html = '<table>';
+      
+      if (headers) {
+        html += '<thead><tr>';
+        headers.forEach(h => {
+          html += `<th>${escapeHtml(h)}</th>`;
+        });
+        html += '</tr></thead>';
+      }
+      
+      html += '<tbody>';
+      rows.forEach(row => {
+        html += '<tr>';
+        row.forEach(cell => {
+          html += `<td>${escapeHtml(cell)}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      
+      previewEl.innerHTML = html;
+    }
+    
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+    
+    function loadSample() {
+      if (mode === 'csv-to-md') {
+        inputEl.value = `Name,Age,City,Salary
+Alice Smith,28,Vancouver,$75,000
+Bob Johnson,35,Toronto,$92,500
+Carol Williams,42,Montreal,$88,000
+David Brown,31,Calgary,$71,250`;
+      } else {
+        inputEl.value = `| Name | Age | City | Salary |
+|------|-----|------|--------|
+| Alice Smith | 28 | Vancouver | $75,000 |
+| Bob Johnson | 35 | Toronto | $92,500 |
+| Carol Williams | 42 | Montreal | $88,000 |
+| David Brown | 31 | Calgary | $71,250 |`;
+      }
+      convert();
+    }
+    
+    function clearInput() {
+      inputEl.value = '';
+      outputEl.value = '';
+      previewEl.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Enter data above to see preview</p>';
+      statsEl.textContent = '';
+    }
+    
+    function copyOutput() {
+      if (!outputEl.value) {
+        showToast('Nothing to copy', true);
+        return;
+      }
+      navigator.clipboard.writeText(outputEl.value);
+      showToast('Copied to clipboard!');
+    }
+    
+    function downloadOutput() {
+      if (!outputEl.value) {
+        showToast('Nothing to download', true);
+        return;
+      }
+      
+      const ext = mode === 'csv-to-md' ? 'md' : 'csv';
+      const mime = mode === 'csv-to-md' ? 'text/markdown' : 'text/csv';
+      const blob = new Blob([outputEl.value], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `table.${ext}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Downloaded!');
+    }
+    
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast' + (isError ? ' error' : '');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+  </script>
+</body>
+</html>
