@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-10T13:40:53.996Z",
+  "generatedAt": "2026-02-12T21:55:04.504Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -34,11 +34,19 @@
       "hasIndex": true
     },
     {
+      "name": "qr-gen",
+      "hasIndex": true
+    },
+    {
       "name": "receipt-tracker",
       "hasIndex": true
     },
     {
       "name": "status",
+      "hasIndex": true
+    },
+    {
+      "name": "steep-suite",
       "hasIndex": true
     },
     {
