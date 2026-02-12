@@ -1980,14 +1980,14 @@
           const snap = p.snapshot || p.snap || null;
           return `${p.id} | ${p.symbol} | ${p.side} | entry ${p.entry} | expiry ${exp} | opened ${openedAt} | NEΔ ${snap?.neDhdd14 ?? ''} MWΔ ${snap?.mwDhdd14 ?? ''} SΔ ${snap?.sDhdd14 ?? ''}`;
         });
-        el('simOpenList').textContent = openLines.length ? openLines.join('\\n') : '(none)';
+        el('simOpenList').textContent = openLines.length ? openLines.join('\n') : '(none)';
 
         const closedLines = (sim.closed || []).slice(-80).map(p => {
           const openedAt = p.opened_at || p.openedAt || '';
           const closedAt = p.closed_at || p.closedAt || '';
           return `${p.id} | ${p.symbol} | ${p.side} | entry ${p.entry} -> exit ${p.exit} | P/L ${p.pl} | opened ${openedAt} closed ${closedAt}`;
         });
-        el('simClosedList').textContent = closedLines.length ? closedLines.join('\\n') : '(none)';
+        el('simClosedList').textContent = closedLines.length ? closedLines.join('\n') : '(none)';
       }
 
       async function refreshSim(){
