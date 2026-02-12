@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T17:01:05.039Z",
+  "generatedAt": "2026-02-12T17:02:25.845Z",
   "apps": [
     {
       "name": "color-palette",
@@ -35,7 +35,7 @@
     },
     {
       "name": "password-gen",
-      "hasIndex": false
+      "hasIndex": true
     },
     {
       "name": "pnw-weekly-weather",
