@@ -1372,9 +1372,18 @@
 
             <hr style="border: none; border-top: 1px solid var(--border); margin: 1rem 0;">
 
+            <div class="form-group">
+              <label for="docType">Document Type</label>
+              <select id="docType" onchange="updatePreview()">
+                <option value="invoice">Invoice</option>
+                <option value="quote">Quote</option>
+                <option value="contract">Contract</option>
+              </select>
+            </div>
+
             <div class="form-grid form-grid-2">
               <div class="form-group">
-                <label for="invoiceNumber">Invoice Number *</label>
+                <label for="invoiceNumber" id="invoiceNumberLabel">Invoice Number *</label>
                 <input type="text" id="invoiceNumber" placeholder="INV-001" oninput="updatePreview()">
               </div>
               <div class="form-group">
@@ -1391,11 +1400,11 @@
 
             <div class="form-grid form-grid-2">
               <div class="form-group">
-                <label for="issueDate">Issue Date *</label>
+                <label for="issueDate" id="issueDateLabel">Issue Date *</label>
                 <input type="date" id="issueDate" oninput="updatePreview()">
               </div>
               <div class="form-group">
-                <label for="dueDate">Due Date *</label>
+                <label for="dueDate" id="dueDateLabel">Due Date *</label>
                 <input type="date" id="dueDate" oninput="updatePreview()">
               </div>
             </div>
@@ -1516,7 +1525,7 @@
               </div>
 
               <div class="party-section">
-                <h3>Bill To</h3>
+                <h3 id="previewBillToLabel">Bill To</h3>
                 <div class="party-name" id="previewClientName">Client Company</div>
                 <div class="party-details">
                   <div id="previewClientEmail">client@company.com</div>
@@ -1528,11 +1537,11 @@
 
             <div class="invoice-meta">
               <div class="meta-item">
-                <label>Issue Date</label>
+                <label id="previewIssueLabel">Issue Date</label>
                 <div class="value" id="previewIssueDate">-</div>
               </div>
               <div class="meta-item">
-                <label>Due Date</label>
+                <label id="previewDueLabel">Due Date</label>
                 <div class="value" id="previewDueDate">-</div>
               </div>
               <div class="meta-item">
@@ -1598,7 +1607,7 @@
 
     <!-- Mobile Preview Toggle -->
     <button class="btn btn-primary mobile-preview-toggle" onclick="togglePreview()">
-      👁️ Preview Invoice
+      👁️ Preview
     </button>
   </div>
 
@@ -1815,6 +1824,16 @@
       
       // Generate initial invoice number
       generateInvoiceNumber();
+
+      const docTypeEl = document.getElementById('docType');
+      if(docTypeEl){
+        docTypeEl.addEventListener('change', () => {
+          const current = document.getElementById('invoiceNumber').value || '';
+          if(!current || /^[A-Z]{3}-\d+/.test(current)){
+            generateInvoiceNumber();
+          }
+        });
+      }
       
       // Add initial line item
       addLineItem();
@@ -1939,6 +1958,17 @@
       document.getElementById('previewClientEmail').textContent = clientEmail;
       document.getElementById('previewClientPhone').textContent = clientPhone;
       document.getElementById('previewClientAddress').textContent = clientAddress;
+
+      // Document type
+      const docType = document.getElementById('docType')?.value || 'invoice';
+      const titleMap = { invoice: 'INVOICE', quote: 'QUOTE', contract: 'CONTRACT' };
+      document.getElementById('previewTitle').textContent = titleMap[docType] || 'INVOICE';
+      document.getElementById('previewBillToLabel').textContent = docType === 'contract' ? 'Client' : 'Bill To';
+      document.getElementById('previewIssueLabel').textContent = docType === 'contract' ? 'Start Date' : 'Issue Date';
+      document.getElementById('previewDueLabel').textContent = docType === 'contract' ? 'End Date' : (docType === 'quote' ? 'Valid Until' : 'Due Date');
+      document.getElementById('invoiceNumberLabel').textContent = docType === 'quote' ? 'Quote Number *' : (docType === 'contract' ? 'Contract Number *' : 'Invoice Number *');
+      document.getElementById('issueDateLabel').textContent = docType === 'contract' ? 'Start Date *' : 'Issue Date *';
+      document.getElementById('dueDateLabel').textContent = docType === 'contract' ? 'End Date *' : (docType === 'quote' ? 'Valid Until *' : 'Due Date *');
       
       // Invoice meta
       const invoiceNumber = document.getElementById('invoiceNumber').value || 'INV-001';
@@ -2063,7 +2093,9 @@
       const invoices = getInvoices();
       const lastNumber = invoices.length > 0 ? 
         parseInt(invoices[0].invoiceNumber.replace(/\D/g, '')) || 0 : 0;
-      document.getElementById('invoiceNumber').value = `INV-${String(lastNumber + 1).padStart(3, '0')}`;
+      const docType = document.getElementById('docType')?.value || 'invoice';
+      const prefix = docType === 'quote' ? 'QTE' : (docType === 'contract' ? 'CTR' : 'INV');
+      document.getElementById('invoiceNumber').value = `${prefix}-${String(lastNumber + 1).padStart(3, '0')}`;
     }
 
     // Logo Upload
@@ -2215,6 +2247,7 @@
       
       const invoice = {
         id: Date.now(),
+        docType: document.getElementById('docType')?.value || 'invoice',
         invoiceNumber: document.getElementById('invoiceNumber').value,
         date: new Date().toISOString(),
         business: getBusinessInfo(),
@@ -2263,6 +2296,9 @@
       document.getElementById('clientAddress').value = invoice.client.address || '';
       
       // Load meta
+      if(document.getElementById('docType')){
+        document.getElementById('docType').value = invoice.docType || 'invoice';
+      }
       document.getElementById('invoiceNumber').value = invoice.invoiceNumber || '';
       document.getElementById('currency').value = invoice.currency || 'USD';
       document.getElementById('issueDate').value = invoice.issueDate || '';
@@ -2294,6 +2330,9 @@
         document.getElementById('clientPhone').value = '';
         document.getElementById('clientAddress').value = '';
         
+        if(document.getElementById('docType')){
+          document.getElementById('docType').value = 'invoice';
+        }
         generateInvoiceNumber();
         
         const today = new Date().toISOString().split('T')[0];
@@ -2386,8 +2425,9 @@
         }
         
         // Download
-        const invoiceNumber = document.getElementById('invoiceNumber').value || 'invoice';
-        pdf.save(`${invoiceNumber}.pdf`);
+        const invoiceNumber = document.getElementById('invoiceNumber').value || 'document';
+        const docType = document.getElementById('docType')?.value || 'invoice';
+        pdf.save(`${docType}-${invoiceNumber}.pdf`);
         
         showToast('✓', 'PDF downloaded!');
       } catch (error) {
