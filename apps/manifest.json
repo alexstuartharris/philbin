@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T17:02:25.845Z",
+  "generatedAt": "2026-02-12T17:33:12.110Z",
   "apps": [
     {
       "name": "color-palette",
@@ -31,10 +31,6 @@
     },
     {
       "name": "md-table-gen",
-      "hasIndex": true
-    },
-    {
-      "name": "password-gen",
       "hasIndex": true
     },
     {
