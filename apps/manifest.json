@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T21:55:04.504Z",
+  "generatedAt": "2026-02-12T22:26:03.449Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -43,10 +43,6 @@
     },
     {
       "name": "status",
-      "hasIndex": true
-    },
-    {
-      "name": "steep-suite",
       "hasIndex": true
     },
     {
