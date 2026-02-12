@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://alexstuartharris.github.io/philbin/sitemap.xml
