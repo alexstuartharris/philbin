@@ -1334,6 +1334,21 @@
       const sD  = dd(s);
       const demD = dd(demand);
 
+      const p90Abs = (arr) => {
+        const abs = (arr || []).map(v => (v===null || v===undefined ? null : Math.abs(Number(v))));
+        const st = computeStats(abs);
+        return st ? st.p90 : null;
+      };
+      const makePointStyles = (arr, p90, base) => {
+        const radius = (arr||[]).map(v => (v===null || v===undefined || !Number.isFinite(p90)) ? 1 : (Math.abs(Number(v)) >= p90 ? 4 : 1));
+        const colors = (arr||[]).map(v => (v===null || v===undefined || !Number.isFinite(p90)) ? base : (Math.abs(Number(v)) >= p90 ? '#ff8a00' : base));
+        return { pointRadius: radius, pointBackgroundColor: colors };
+      };
+      const p90Dem = p90Abs(demD);
+      const p90Ne = p90Abs(neD);
+      const p90Mw = p90Abs(mwD);
+      const p90S = p90Abs(sD);
+
       rawChart.data.labels = labels;
       rawChart.data.datasets = [
         { label:'Demand', data: demand, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, pointRadius: 2 },
@@ -1344,12 +1359,17 @@
       ];
       rawChart.update();
 
+      const demPts = makePointStyles(demD, p90Dem, 'rgba(36,81,255,.8)');
+      const nePts = makePointStyles(neD, p90Ne, 'rgba(31,139,76,.8)');
+      const mwPts = makePointStyles(mwD, p90Mw, 'rgba(192,106,0,.8)');
+      const sPts = makePointStyles(sD, p90S, 'rgba(180,35,24,.75)');
+
       deltaChart.data.labels = labels;
       deltaChart.data.datasets = [
-        { label:'ΔΔ Demand', data: demD, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, pointRadius: 2 },
-        { label:'ΔΔ NE', data: neD, borderColor:'rgba(31,139,76,.8)', tension:.25, pointRadius: 1 },
-        { label:'ΔΔ MW', data: mwD, borderColor:'rgba(192,106,0,.8)', tension:.25, pointRadius: 1 },
-        { label:'ΔΔ South', data: sD, borderColor:'rgba(180,35,24,.75)', tension:.25, pointRadius: 1 },
+        { label:'ΔΔ Demand', data: demD, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, ...demPts },
+        { label:'ΔΔ NE', data: neD, borderColor:'rgba(31,139,76,.8)', tension:.25, ...nePts },
+        { label:'ΔΔ MW', data: mwD, borderColor:'rgba(192,106,0,.8)', tension:.25, ...mwPts },
+        { label:'ΔΔ South', data: sD, borderColor:'rgba(180,35,24,.75)', tension:.25, ...sPts },
         { label:'UNG close', data: ungClose, yAxisID:'yPrice', borderColor:'rgba(60,60,60,.85)', tension:.15, pointRadius: 1, borderDash:[4,3] },
       ];
       deltaChart.update();
