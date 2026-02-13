@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-12T22:26:03.449Z",
+  "generatedAt": "2026-02-13T16:07:58.563Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -19,6 +19,10 @@
     },
     {
       "name": "geojson-metrics",
+      "hasIndex": true
+    },
+    {
+      "name": "habit-streaks",
       "hasIndex": true
     },
     {
@@ -42,7 +46,15 @@
       "hasIndex": true
     },
     {
+      "name": "retainer-burn-down",
+      "hasIndex": true
+    },
+    {
       "name": "status",
+      "hasIndex": true
+    },
+    {
+      "name": "steep-suite",
       "hasIndex": true
     },
     {

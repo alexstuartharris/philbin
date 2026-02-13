@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habit Streak Calendar | Philbin Tools</title>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --border: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --success: #3fb950;
+      --warning: #d29922;
+      --danger: #f85149;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      text-align: center;
+      padding: 22px 0 30px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 2.1rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--text-secondary);
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    @media (min-width: 960px) {
+      .grid.two {
+        grid-template-columns: 1fr 1.4fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      color: var(--accent);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    input, select, button {
+      font-family: inherit;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+
+    .form-row {
+      display: grid;
+      gap: 12px;
+    }
+
+    @media (min-width: 680px) {
+      .form-row.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .habit-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .habit-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 680px) {
+      .habit-item {
+        grid-template-columns: 1.6fr 1fr 1fr auto;
+        align-items: center;
+      }
+    }
+
+    .habit-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .weekday {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .day {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      min-height: 78px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .day.muted {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .day-number {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .day.today {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(88, 166, 255, 0.3);
+    }
+
+    .dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .selected-habit {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .stats {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    @media (min-width: 680px) {
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .metric {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .metric h3 {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .metric p {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .muted {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .month-nav button {
+      min-width: 44px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Habit Streak Calendar</h1>
+      <p>Build daily momentum with streaks, monthly visuals, and quick exports.</p>
+    </header>
+
+    <div class="grid two">
+      <section class="card">
+        <h2>Add Habit</h2>
+        <div class="form-row two">
+          <div>
+            <label for="habitName">Habit name</label>
+            <input type="text" id="habitName" placeholder="Read 20 pages">
+          </div>
+          <div>
+            <label for="habitColor">Color</label>
+            <select id="habitColor">
+              <option value="#58a6ff">Blue</option>
+              <option value="#3fb950">Green</option>
+              <option value="#f78166">Coral</option>
+              <option value="#d29922">Amber</option>
+              <option value="#db61a2">Pink</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top: 12px;">
+          <button class="btn btn-primary" id="addHabit">Add habit</button>
+        </div>
+        <div class="habit-list" id="habitList"></div>
+      </section>
+
+      <section class="card">
+        <div class="month-nav">
+          <button class="btn btn-secondary" id="prevMonth">◀</button>
+          <div>
+            <h2 id="monthLabel" style="margin-bottom: 4px;">Month</h2>
+            <p class="muted" id="monthHint">Click a day to toggle completion.</p>
+          </div>
+          <button class="btn btn-secondary" id="nextMonth">▶</button>
+        </div>
+
+        <div class="selected-habit">
+          <label for="selectedHabit" style="margin: 0;">Active habit</label>
+          <select id="selectedHabit"></select>
+        </div>
+
+        <div class="calendar" id="weekdayRow"></div>
+        <div class="calendar" id="calendarGrid"></div>
+
+        <div class="stats" id="stats"></div>
+        <div style="margin-top: 12px;">
+          <button class="btn btn-secondary" id="exportCsv">Export CSV</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const storageKey = "habitStreaks.v1";
+    const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    const defaultState = {
+      habits: [],
+      completions: {}
+    };
+
+    let state = loadState();
+    let viewDate = new Date();
+
+    const elements = {
+      habitName: document.getElementById("habitName"),
+      habitColor: document.getElementById("habitColor"),
+      addHabit: document.getElementById("addHabit"),
+      habitList: document.getElementById("habitList"),
+      monthLabel: document.getElementById("monthLabel"),
+      monthHint: document.getElementById("monthHint"),
+      prevMonth: document.getElementById("prevMonth"),
+      nextMonth: document.getElementById("nextMonth"),
+      selectedHabit: document.getElementById("selectedHabit"),
+      weekdayRow: document.getElementById("weekdayRow"),
+      calendarGrid: document.getElementById("calendarGrid"),
+      stats: document.getElementById("stats"),
+      exportCsv: document.getElementById("exportCsv")
+    };
+
+    function loadState() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return structuredClone(defaultState);
+      try {
+        const parsed = JSON.parse(raw);
+        return {
+          habits: Array.isArray(parsed.habits) ? parsed.habits : [],
+          completions: parsed.completions || {}
+        };
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function isoDate(date) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function getHabitCompletions(habitId) {
+      if (!state.completions[habitId]) state.completions[habitId] = {};
+      return state.completions[habitId];
+    }
+
+    function toggleCompletion(habitId, dateStr) {
+      const completions = getHabitCompletions(habitId);
+      completions[dateStr] = !completions[dateStr];
+      if (!completions[dateStr]) {
+        delete completions[dateStr];
+      }
+      saveState();
+      render();
+    }
+
+    function currentStreak(habitId) {
+      const completions = getHabitCompletions(habitId);
+      let count = 0;
+      let cursor = new Date();
+      while (completions[isoDate(cursor)]) {
+        count += 1;
+        cursor.setDate(cursor.getDate() - 1);
+      }
+      return count;
+    }
+
+    function bestStreak(habitId) {
+      const completions = Object.keys(getHabitCompletions(habitId)).sort();
+      let best = 0;
+      let streak = 0;
+      let prevDate = null;
+      completions.forEach((dateStr) => {
+        if (!prevDate) {
+          streak = 1;
+        } else {
+          const diff = (new Date(dateStr) - new Date(prevDate)) / (1000 * 60 * 60 * 24);
+          streak = diff === 1 ? streak + 1 : 1;
+        }
+        best = Math.max(best, streak);
+        prevDate = dateStr;
+      });
+      return best;
+    }
+
+    function renderHabits() {
+      elements.habitList.innerHTML = "";
+      if (state.habits.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "muted";
+        empty.textContent = "No habits yet. Add one to start building streaks.";
+        elements.habitList.appendChild(empty);
+        return;
+      }
+
+      state.habits.forEach((habit) => {
+        const item = document.createElement("div");
+        item.className = "habit-item";
+        const today = isoDate(new Date());
+        const isDone = !!getHabitCompletions(habit.id)[today];
+        item.innerHTML = `
+          <div class="habit-name"><span class="dot" style="background:${habit.color}"></span>${habit.name}</div>
+          <div class="muted">Streak: ${currentStreak(habit.id)} days</div>
+          <div class="muted">Best: ${bestStreak(habit.id)} days</div>
+          <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn btn-secondary" data-action="toggle" data-id="${habit.id}">${isDone ? "Undo" : "Today"}</button>
+            <button class="btn btn-danger" data-action="delete" data-id="${habit.id}">Delete</button>
+          </div>
+        `;
+        item.querySelectorAll("button").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const action = btn.getAttribute("data-action");
+            if (action === "toggle") toggleCompletion(habit.id, today);
+            if (action === "delete") removeHabit(habit.id);
+          });
+        });
+        elements.habitList.appendChild(item);
+      });
+    }
+
+    function renderWeekdays() {
+      elements.weekdayRow.innerHTML = "";
+      weekdays.forEach((day) => {
+        const cell = document.createElement("div");
+        cell.className = "weekday";
+        cell.textContent = day;
+        elements.weekdayRow.appendChild(cell);
+      });
+    }
+
+    function renderCalendar() {
+      elements.calendarGrid.innerHTML = "";
+      const year = viewDate.getFullYear();
+      const month = viewDate.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const startDay = firstDay.getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const todayStr = isoDate(new Date());
+
+      elements.monthLabel.textContent = viewDate.toLocaleDateString(undefined, {
+        month: "long",
+        year: "numeric"
+      });
+
+      const selectedHabitId = elements.selectedHabit.value;
+      elements.monthHint.textContent = selectedHabitId
+        ? "Click a day to toggle completion for the active habit."
+        : "Select a habit to toggle completions.";
+
+      const totalCells = Math.ceil((startDay + daysInMonth) / 7) * 7;
+      for (let i = 0; i < totalCells; i += 1) {
+        const dayNumber = i - startDay + 1;
+        const cell = document.createElement("div");
+        cell.className = "day";
+        if (dayNumber < 1 || dayNumber > daysInMonth) {
+          cell.classList.add("muted");
+          elements.calendarGrid.appendChild(cell);
+          continue;
+        }
+
+        const date = new Date(year, month, dayNumber);
+        const dateStr = isoDate(date);
+        const dots = document.createElement("div");
+        dots.className = "dots";
+
+        state.habits.forEach((habit) => {
+          if (getHabitCompletions(habit.id)[dateStr]) {
+            const dot = document.createElement("span");
+            dot.className = "dot";
+            dot.style.background = habit.color;
+            dots.appendChild(dot);
+          }
+        });
+
+        cell.innerHTML = `<div class="day-number">${dayNumber}</div>`;
+        cell.appendChild(dots);
+        if (dateStr === todayStr) cell.classList.add("today");
+
+        if (selectedHabitId) {
+          cell.addEventListener("click", () => toggleCompletion(selectedHabitId, dateStr));
+        } else {
+          cell.classList.add("muted");
+        }
+
+        elements.calendarGrid.appendChild(cell);
+      }
+    }
+
+    function renderSelectedHabit() {
+      elements.selectedHabit.innerHTML = "";
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "Select habit";
+      elements.selectedHabit.appendChild(option);
+
+      state.habits.forEach((habit) => {
+        const opt = document.createElement("option");
+        opt.value = habit.id;
+        opt.textContent = habit.name;
+        elements.selectedHabit.appendChild(opt);
+      });
+
+      if (state.habits.length > 0 && !elements.selectedHabit.value) {
+        elements.selectedHabit.value = state.habits[0].id;
+      }
+    }
+
+    function renderStats() {
+      const now = new Date();
+      const month = now.getMonth();
+      const year = now.getFullYear();
+      let monthCompletions = 0;
+      let bestOverall = 0;
+      let totalCompletions = 0;
+
+      state.habits.forEach((habit) => {
+        const completions = getHabitCompletions(habit.id);
+        Object.keys(completions).forEach((dateStr) => {
+          const date = new Date(dateStr);
+          if (date.getMonth() === month && date.getFullYear() === year) {
+            monthCompletions += 1;
+          }
+          totalCompletions += 1;
+        });
+        bestOverall = Math.max(bestOverall, bestStreak(habit.id));
+      });
+
+      elements.stats.innerHTML = `
+        <div class="metric">
+          <h3>Total habits</h3>
+          <p>${state.habits.length}</p>
+        </div>
+        <div class="metric">
+          <h3>Completions this month</h3>
+          <p>${monthCompletions}</p>
+        </div>
+        <div class="metric">
+          <h3>Best streak</h3>
+          <p>${bestOverall} days</p>
+        </div>
+      `;
+    }
+
+    function addHabit() {
+      const name = elements.habitName.value.trim();
+      if (!name) return;
+      const habit = {
+        id: crypto.randomUUID(),
+        name,
+        color: elements.habitColor.value,
+        createdAt: isoDate(new Date())
+      };
+      state.habits.push(habit);
+      elements.habitName.value = "";
+      saveState();
+      render();
+    }
+
+    function removeHabit(habitId) {
+      state.habits = state.habits.filter((habit) => habit.id !== habitId);
+      delete state.completions[habitId];
+      saveState();
+      render();
+    }
+
+    function exportCsv() {
+      const rows = [["date", "habit", "completed"]];
+      state.habits.forEach((habit) => {
+        const completions = getHabitCompletions(habit.id);
+        Object.keys(completions).sort().forEach((dateStr) => {
+          rows.push([dateStr, habit.name, "true"]);
+        });
+      });
+      const csv = rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, "\"\"")}"`).join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "habit-streaks.csv";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function render() {
+      renderSelectedHabit();
+      renderWeekdays();
+      renderHabits();
+      renderCalendar();
+      renderStats();
+    }
+
+    elements.addHabit.addEventListener("click", addHabit);
+    elements.prevMonth.addEventListener("click", () => {
+      viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
+      renderCalendar();
+    });
+    elements.nextMonth.addEventListener("click", () => {
+      viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
+      renderCalendar();
+    });
+    elements.selectedHabit.addEventListener("change", renderCalendar);
+    elements.exportCsv.addEventListener("click", exportCsv);
+
+    render();
+  </script>
+</body>
+</html>

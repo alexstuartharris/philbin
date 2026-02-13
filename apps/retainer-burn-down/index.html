@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retainer Burn-Down Tracker | Philbin Tools</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --border: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --success: #3fb950;
+      --warning: #d29922;
+      --danger: #f85149;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      text-align: center;
+      padding: 24px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    header h1 {
+      font-size: 2.1rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--text-secondary);
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    @media (min-width: 960px) {
+      .grid.two {
+        grid-template-columns: 1.05fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      color: var(--accent);
+    }
+
+    .form-row {
+      display: grid;
+      gap: 12px;
+    }
+
+    @media (min-width: 680px) {
+      .form-row.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .form-row.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+
+    .summary {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    @media (min-width: 680px) {
+      .summary {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .summary .metric {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .metric h3 {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .metric p {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .metric p.negative {
+      color: var(--danger);
+    }
+
+    .metric p.positive {
+      color: var(--success);
+    }
+
+    .entry-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .entry-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    @media (min-width: 680px) {
+      .entry-item {
+        grid-template-columns: 1fr 1fr 2fr auto;
+        align-items: center;
+      }
+    }
+
+    .entry-note {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .chart-wrap {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 280px;
+      display: block;
+    }
+
+    .muted {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      width: 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Retainer Burn-Down Tracker</h1>
+      <p>Track usage, forecast remaining hours, and generate client-ready summaries.</p>
+    </header>
+
+    <div class="grid two">
+      <section class="card">
+        <h2>Retainer Setup</h2>
+        <div class="form-row two">
+          <div>
+            <label for="retainerHours">Retainer hours</label>
+            <input type="number" id="retainerHours" min="0" step="0.25" value="40">
+          </div>
+          <div>
+            <label for="hourlyRate">Hourly rate</label>
+            <input type="number" id="hourlyRate" min="0" step="1" value="125">
+          </div>
+        </div>
+        <div class="form-row two" style="margin-top: 12px;">
+          <div>
+            <label for="startDate">Start date</label>
+            <input type="date" id="startDate">
+          </div>
+          <div>
+            <label for="periodDays">Billing period (days)</label>
+            <input type="number" id="periodDays" min="7" max="120" value="30">
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="saveSettings">Save settings</button>
+          <span class="pill" id="periodLabel">Period: --</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Retainer Health</h2>
+        <div class="summary">
+          <div class="metric">
+            <h3>Hours used</h3>
+            <p id="hoursUsed">0.0</p>
+          </div>
+          <div class="metric">
+            <h3>Hours remaining</h3>
+            <p id="hoursRemaining" class="positive">0.0</p>
+          </div>
+          <div class="metric">
+            <h3>Value used</h3>
+            <p id="valueUsed">$0</p>
+          </div>
+          <div class="metric">
+            <h3>Value remaining</h3>
+            <p id="valueRemaining">$0</p>
+          </div>
+        </div>
+        <div class="bar" aria-hidden="true">
+          <span id="progressFill"></span>
+        </div>
+        <p class="muted" id="windowLabel" style="margin-top: 10px;">Billing window: --</p>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top: 20px;">
+      <section class="card">
+        <h2>Log Time Entry</h2>
+        <div class="form-row three">
+          <div>
+            <label for="entryDate">Date</label>
+            <input type="date" id="entryDate">
+          </div>
+          <div>
+            <label for="entryHours">Hours</label>
+            <input type="number" id="entryHours" min="0" step="0.25" placeholder="2.5">
+          </div>
+          <div>
+            <label for="entryNote">Note</label>
+            <input type="text" id="entryNote" placeholder="Discovery call + recap">
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="addEntry">Add entry</button>
+          <button class="btn btn-secondary" id="exportPdf">Export client summary PDF</button>
+        </div>
+        <div class="entry-list" id="entryList"></div>
+      </section>
+
+      <section class="card">
+        <h2>Burn-Down Chart</h2>
+        <p class="muted">Remaining hours across the billing period.</p>
+        <div class="chart-wrap" style="margin-top: 12px;">
+          <canvas id="burnChart" width="900" height="300" aria-label="Burn-down chart"></canvas>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const storageKey = "retainerBurnDown.v1";
+    const defaultState = {
+      settings: {
+        hours: 40,
+        rate: 125,
+        startDate: new Date().toISOString().slice(0, 10),
+        periodDays: 30
+      },
+      entries: []
+    };
+
+    const elements = {
+      retainerHours: document.getElementById("retainerHours"),
+      hourlyRate: document.getElementById("hourlyRate"),
+      startDate: document.getElementById("startDate"),
+      periodDays: document.getElementById("periodDays"),
+      saveSettings: document.getElementById("saveSettings"),
+      periodLabel: document.getElementById("periodLabel"),
+      hoursUsed: document.getElementById("hoursUsed"),
+      hoursRemaining: document.getElementById("hoursRemaining"),
+      valueUsed: document.getElementById("valueUsed"),
+      valueRemaining: document.getElementById("valueRemaining"),
+      windowLabel: document.getElementById("windowLabel"),
+      progressFill: document.getElementById("progressFill"),
+      entryDate: document.getElementById("entryDate"),
+      entryHours: document.getElementById("entryHours"),
+      entryNote: document.getElementById("entryNote"),
+      addEntry: document.getElementById("addEntry"),
+      exportPdf: document.getElementById("exportPdf"),
+      entryList: document.getElementById("entryList"),
+      burnChart: document.getElementById("burnChart")
+    };
+
+    const currency = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0
+    });
+
+    let state = loadState();
+
+    function loadState() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return structuredClone(defaultState);
+      try {
+        const parsed = JSON.parse(raw);
+        return {
+          settings: { ...defaultState.settings, ...parsed.settings },
+          entries: Array.isArray(parsed.entries) ? parsed.entries : []
+        };
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function formatHours(value) {
+      return Number(value).toFixed(2);
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "--";
+      return new Date(dateStr + "T00:00:00").toLocaleDateString();
+    }
+
+    function getPeriodEnd() {
+      const start = new Date(state.settings.startDate + "T00:00:00");
+      const end = new Date(start);
+      end.setDate(end.getDate() + Number(state.settings.periodDays) - 1);
+      return end;
+    }
+
+    function computeTotals() {
+      const total = state.entries.reduce((sum, entry) => sum + Number(entry.hours || 0), 0);
+      const remaining = Number(state.settings.hours) - total;
+      return { total, remaining };
+    }
+
+    function updateSummary() {
+      const { total, remaining } = computeTotals();
+      const rate = Number(state.settings.rate);
+      elements.hoursUsed.textContent = formatHours(total);
+      elements.hoursRemaining.textContent = formatHours(remaining);
+      elements.hoursRemaining.className = remaining < 0 ? "negative" : "positive";
+      elements.valueUsed.textContent = currency.format(total * rate);
+      elements.valueRemaining.textContent = currency.format(Math.max(remaining, 0) * rate);
+
+      const periodEnd = getPeriodEnd();
+      elements.windowLabel.textContent = `Billing window: ${formatDate(state.settings.startDate)} to ${periodEnd.toLocaleDateString()}`;
+      elements.periodLabel.textContent = `Period: ${state.settings.periodDays} days`;
+
+      const percent = state.settings.hours > 0 ? Math.min(100, (total / state.settings.hours) * 100) : 0;
+      elements.progressFill.style.width = `${percent}%`;
+    }
+
+    function renderEntries() {
+      elements.entryList.innerHTML = "";
+      if (state.entries.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "muted";
+        empty.textContent = "No entries yet. Log time to populate the burn-down chart.";
+        elements.entryList.appendChild(empty);
+        return;
+      }
+
+      const sorted = [...state.entries].sort((a, b) => b.date.localeCompare(a.date));
+      sorted.forEach((entry) => {
+        const row = document.createElement("div");
+        row.className = "entry-item";
+        row.innerHTML = `
+          <div>${formatDate(entry.date)}</div>
+          <div>${formatHours(entry.hours)} hrs</div>
+          <div class="entry-note">${entry.note ? entry.note : "No note"}</div>
+          <button class="btn btn-danger" data-id="${entry.id}">Remove</button>
+        `;
+        row.querySelector("button").addEventListener("click", () => removeEntry(entry.id));
+        elements.entryList.appendChild(row);
+      });
+    }
+
+    function renderChart() {
+      const canvas = elements.burnChart;
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const days = Number(state.settings.periodDays);
+      const hoursTotal = Number(state.settings.hours);
+      if (!days || !hoursTotal) {
+        ctx.fillStyle = "#8b949e";
+        ctx.fillText("Add retainer settings to view chart.", 20, 40);
+        return;
+      }
+
+      const daily = Array.from({ length: days }, () => 0);
+      const start = new Date(state.settings.startDate + "T00:00:00");
+
+      state.entries.forEach((entry) => {
+        const entryDate = new Date(entry.date + "T00:00:00");
+        const diff = Math.floor((entryDate - start) / (1000 * 60 * 60 * 24));
+        if (diff >= 0 && diff < days) {
+          daily[diff] += Number(entry.hours || 0);
+        }
+      });
+
+      const remaining = [];
+      let cumulative = 0;
+      daily.forEach((value) => {
+        cumulative += value;
+        remaining.push(Math.max(hoursTotal - cumulative, -hoursTotal));
+      });
+
+      const padding = 36;
+      const chartWidth = width - padding * 2;
+      const chartHeight = height - padding * 2;
+
+      ctx.strokeStyle = "#30363d";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i += 1) {
+        const y = padding + (chartHeight / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "#58a6ff";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      remaining.forEach((value, index) => {
+        const x = padding + (chartWidth / Math.max(days - 1, 1)) * index;
+        const normalized = (value + hoursTotal) / (hoursTotal * 2);
+        const y = padding + chartHeight - normalized * chartHeight;
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.stroke();
+
+      ctx.fillStyle = "#8b949e";
+      ctx.font = "12px sans-serif";
+      ctx.fillText(`Start`, padding, height - 10);
+      ctx.fillText(`End`, width - padding - 20, height - 10);
+      ctx.fillText(`${hoursTotal}h`, 8, padding + 6);
+      ctx.fillText(`0h`, 12, padding + chartHeight + 4);
+    }
+
+    function addEntry() {
+      const date = elements.entryDate.value;
+      const hours = parseFloat(elements.entryHours.value);
+      const note = elements.entryNote.value.trim();
+      if (!date || !hours) return;
+      state.entries.push({
+        id: crypto.randomUUID(),
+        date,
+        hours,
+        note
+      });
+      elements.entryHours.value = "";
+      elements.entryNote.value = "";
+      saveState();
+      render();
+    }
+
+    function removeEntry(id) {
+      state.entries = state.entries.filter((entry) => entry.id !== id);
+      saveState();
+      render();
+    }
+
+    function updateSettingsFromInputs() {
+      state.settings.hours = parseFloat(elements.retainerHours.value) || 0;
+      state.settings.rate = parseFloat(elements.hourlyRate.value) || 0;
+      state.settings.startDate = elements.startDate.value;
+      state.settings.periodDays = parseInt(elements.periodDays.value, 10) || 30;
+      saveState();
+      render();
+    }
+
+    function exportPdf() {
+      const { jsPDF } = window.jspdf || {};
+      if (!jsPDF) return;
+      const doc = new jsPDF();
+      const { total, remaining } = computeTotals();
+      const rate = Number(state.settings.rate);
+      let y = 16;
+
+      doc.setFontSize(18);
+      doc.text("Retainer Summary", 14, y);
+      y += 10;
+
+      doc.setFontSize(11);
+      doc.text(`Billing window: ${formatDate(state.settings.startDate)} - ${formatDate(getPeriodEnd().toISOString().slice(0, 10))}`, 14, y);
+      y += 7;
+      doc.text(`Retainer hours: ${formatHours(state.settings.hours)} | Rate: ${currency.format(rate)}`, 14, y);
+      y += 7;
+      doc.text(`Hours used: ${formatHours(total)} | Remaining: ${formatHours(remaining)}`, 14, y);
+      y += 7;
+      doc.text(`Value used: ${currency.format(total * rate)} | Value remaining: ${currency.format(Math.max(remaining, 0) * rate)}`, 14, y);
+      y += 10;
+
+      doc.setFontSize(12);
+      doc.text("Time Entries", 14, y);
+      y += 6;
+      doc.setFontSize(10);
+      const entries = [...state.entries].sort((a, b) => a.date.localeCompare(b.date));
+      if (entries.length === 0) {
+        doc.text("No time entries logged.", 14, y);
+      } else {
+        entries.forEach((entry) => {
+          const line = `${formatDate(entry.date)} | ${formatHours(entry.hours)} hrs | ${entry.note || "No note"}`;
+          doc.text(line.slice(0, 110), 14, y);
+          y += 6;
+          if (y > 270) {
+            doc.addPage();
+            y = 16;
+          }
+        });
+      }
+
+      doc.save("retainer-summary.pdf");
+    }
+
+    function render() {
+      elements.retainerHours.value = state.settings.hours;
+      elements.hourlyRate.value = state.settings.rate;
+      elements.startDate.value = state.settings.startDate;
+      elements.periodDays.value = state.settings.periodDays;
+      if (!elements.entryDate.value) {
+        elements.entryDate.value = new Date().toISOString().slice(0, 10);
+      }
+      updateSummary();
+      renderEntries();
+      renderChart();
+    }
+
+    elements.saveSettings.addEventListener("click", updateSettingsFromInputs);
+    elements.addEntry.addEventListener("click", addEntry);
+    elements.exportPdf.addEventListener("click", exportPdf);
+
+    render();
+  </script>
+</body>
+</html>

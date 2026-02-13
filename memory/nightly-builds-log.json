@@ -1,0 +1,10 @@
+[
+  {
+    "date": "2026-02-13",
+    "apps": [
+      "retainer-burn-down",
+      "habit-streaks"
+    ],
+    "note": "Added a retainer burn-down tracker and a habit streaks calendar with exports."
+  }
+]
