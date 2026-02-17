@@ -85,6 +85,7 @@
         <option value="oboe_summit">Whistler Backcountry — Oboe Summit (approx)</option>
         <option value="keiths_hut">Joffre Area — Keith’s Hut (approx)</option>
         <option value="skypilot_basin">Skypilot Basin (from your pin)</option>
+        <option value="decker_lake">Decker Lake / Tarn near Blackcomb (approx)</option>
       </select>
       <button id="refreshBtn">Refresh forecast</button>
       <span id="status" class="muted">Waiting to load…</span>
@@ -112,7 +113,8 @@
       paul_ridge: { key: 'paul_ridge', lat: 49.691, lon: -123.086, elevM: 1300, name: 'Paul Ridge' },
       oboe_summit: { key: 'oboe_summit', lat: 50.067, lon: -123.026, elevM: 1850, name: 'Oboe Summit (approx)' },
       keiths_hut: { key: 'keiths_hut', lat: 50.352, lon: -122.501, elevM: 1700, name: 'Keith’s Hut (approx)' },
-      skypilot_basin: { key: 'skypilot_basin', lat: 49.639106, lon: -123.0910315, elevM: 1950, name: 'Skypilot Basin' }
+      skypilot_basin: { key: 'skypilot_basin', lat: 49.639106, lon: -123.0910315, elevM: 1950, name: 'Skypilot Basin' },
+      decker_lake: { key: 'decker_lake', lat: 50.0681689, lon: -122.8719660, elevM: 1850, name: 'Decker Lake / Tarn (approx)' }
     };
     let currentLoc = LOCATIONS.paul_ridge;
 
@@ -224,14 +226,14 @@
       const cloud48 = avg(days.slice(0,2).map(d => d.cloud_cover_mean || 0));
       const wind48 = avg(days.slice(0,2).map(d => d.wind_speed_10m_max || 0));
 
-      const stationNote = observed?.stations?.length
+      const stationLines = observed?.stations?.length
         ? observed.stations.map(s => {
-            const d = Number.isFinite(s.distanceKm) ? `, ${fmt(s.distanceKm,1)} km` : '';
-            const w = Number.isFinite(s.baseWeight) ? `, w=${fmt((s.baseWeight||0)*100,0)}%` : '';
-            const qc = s.jumpFlag ? ' (QC jump noted)' : '';
-            return `${s.name}: Δ48h ${fmt(s.delta48Cm,1)} cm${d}${w}${qc}`;
-          }).join(' • ')
-        : 'Using modeled snowfall (Open-Meteo)';
+            const d = Number.isFinite(s.distanceKm) ? `${fmt(s.distanceKm,1)} km` : '— km';
+            const w = Number.isFinite(s.baseWeight) ? `${fmt((s.baseWeight||0)*100,0)}%` : '—';
+            const qc = s.jumpFlag ? ' · QC jump noted' : '';
+            return `<li>${s.name}: Δ48h ${fmt(s.delta48Cm,1)} cm · ${d} · w=${w}${qc}</li>`;
+          }).join('')
+        : '<li>Using modeled snowfall (Open-Meteo)</li>';
 
       $('snapshot').innerHTML = `
         <div class="kpi"><div class="muted small">Recent snowfall (48h)</div><div><strong>${fmt(recentSnow48,1)} cm</strong></div></div>
@@ -241,7 +243,7 @@
         <div class="kpi"><div class="muted small">Wind max (48h avg)</div><div><strong>${fmt(wind48)} km/h</strong></div></div>
         <div class="kpi"><div class="muted small">Recent snow source</div><div><strong>${observed?.source ? 'BC stations' : 'Model'}</strong></div></div>
       `;
-      $('snapshot').insertAdjacentHTML('beforeend', `<p class="muted small" style="grid-column:1/-1;margin-top:.4rem">${stationNote}</p>`);
+      $('snapshot').insertAdjacentHTML('beforeend', `<div class="muted small" style="grid-column:1/-1;margin-top:.4rem"><strong>Station blend details</strong><ul style="margin:.35rem 0 0 1rem">${stationLines}</ul></div>`);
     }
 
     function renderBins(results) {
