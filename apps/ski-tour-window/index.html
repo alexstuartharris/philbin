@@ -191,8 +191,9 @@
       return { score, reasons, metrics: { snow, rain, tmin, tmax, cloud, wind, freeze } };
     }
 
-    function buildBins(days) {
-      const recentSnow48 = (days[0]?.snowfall_sum || 0) + (days[1]?.snowfall_sum || 0);
+    function buildBins(days, observedRecentSnow48Cm = null) {
+      const modeledRecentSnow48 = (days[0]?.snowfall_sum || 0) + (days[1]?.snowfall_sum || 0);
+      const recentSnow48 = Number.isFinite(observedRecentSnow48Cm) ? observedRecentSnow48Cm : modeledRecentSnow48;
       return [
         { key: 'today', name: 'Today', slice: days.slice(0,1) },
         { key: 'd2_3', name: 'Next 2–3 days', slice: days.slice(1,4) },
@@ -200,12 +201,19 @@
       ].map(bin => ({ ...bin, ...scoreWindow(bin.slice, recentSnow48) }));
     }
 
-    function renderSnapshot(days) {
-      const recentSnow48 = (days[0]?.snowfall_sum || 0) + (days[1]?.snowfall_sum || 0);
+    function renderSnapshot(days, observed = null) {
+      const modeledRecentSnow48 = (days[0]?.snowfall_sum || 0) + (days[1]?.snowfall_sum || 0);
+      const recentSnow48 = Number.isFinite(observed?.observedRecentSnow48Cm)
+        ? observed.observedRecentSnow48Cm
+        : modeledRecentSnow48;
       const nearRain48 = (days[0]?.rain_sum || 0) + (days[1]?.rain_sum || 0);
       const freeze48 = avg(days.slice(0,2).map(d => d.freezing_level_height_mean || 9999));
       const cloud48 = avg(days.slice(0,2).map(d => d.cloud_cover_mean || 0));
       const wind48 = avg(days.slice(0,2).map(d => d.wind_speed_10m_max || 0));
+
+      const stationNote = observed?.stations?.length
+        ? observed.stations.map(s => `${s.name}: Δ48h ${fmt(s.delta48Cm,1)} cm${s.jumpFlag ? ' (jump filtered)' : ''}`).join(' • ')
+        : 'Using modeled snowfall (Open-Meteo)';
 
       $('snapshot').innerHTML = `
         <div class="kpi"><div class="muted small">Recent snowfall (48h)</div><div><strong>${fmt(recentSnow48,1)} cm</strong></div></div>
@@ -213,7 +221,9 @@
         <div class="kpi"><div class="muted small">Freeze level (48h avg)</div><div><strong>${fmt(freeze48)} m</strong></div></div>
         <div class="kpi"><div class="muted small">Cloud cover (48h avg)</div><div><strong>${fmt(cloud48)}%</strong></div></div>
         <div class="kpi"><div class="muted small">Wind max (48h avg)</div><div><strong>${fmt(wind48)} km/h</strong></div></div>
+        <div class="kpi"><div class="muted small">Recent snow source</div><div><strong>${observed?.source ? 'BC stations' : 'Model'}</strong></div></div>
       `;
+      $('snapshot').insertAdjacentHTML('beforeend', `<p class="muted small" style="grid-column:1/-1;margin-top:.4rem">${stationNote}</p>`);
     }
 
     function renderBins(results) {
@@ -228,6 +238,15 @@
           </div>
         `;
       }).join('');
+    }
+
+    async function fetchObservedSnow() {
+      const url = 'https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/snow-observed';
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Obs API ${res.status}`);
+      const json = await res.json();
+      if (!json?.ok) throw new Error('Obs API failed');
+      return json;
     }
 
     async function loadWeather() {
@@ -288,9 +307,16 @@
       const idx = rows.findIndex(r => r.time === today);
       const windowDays = idx >= 0 ? rows.slice(idx, idx + 8) : rows.slice(2,10);
 
-      renderSnapshot(windowDays);
-      renderBins(buildBins(windowDays));
-      $('status').textContent = `Updated for ${PAUL_RIDGE.name} (${today})`;
+      let observed = null;
+      try {
+        observed = await fetchObservedSnow();
+      } catch {
+        // fallback to modeled snowfall
+      }
+
+      renderSnapshot(windowDays, observed);
+      renderBins(buildBins(windowDays, observed?.observedRecentSnow48Cm ?? null));
+      $('status').textContent = `Updated for ${PAUL_RIDGE.name} (${today})${observed ? ' · station snow blended' : ' · model fallback'}`;
     }
 
     async function refresh() {
