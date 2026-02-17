@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ski Tour Window Finder — Paul Ridge</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111d;
+      --panel: #0f1d31;
+      --line: #243a5e;
+      --text: #edf4ff;
+      --muted: #9db4d6;
+      --good: #27d17c;
+      --ok: #f1bf47;
+      --bad: #f26a6a;
+      --blue: #69b9ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #07101c, #0d1830 45%, #0a1423);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .wrap { max-width: 980px; margin: 2rem auto; padding: 1rem; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    h1 { margin: 0 0 .5rem; font-size: 1.6rem; }
+    h2 { margin: 0 0 .75rem; font-size: 1.05rem; }
+    p { margin: .35rem 0; }
+    .muted { color: var(--muted); }
+    .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+    button {
+      border: none;
+      background: var(--blue);
+      color: #062542;
+      border-radius: 10px;
+      font-weight: 700;
+      padding: .6rem .95rem;
+      cursor: pointer;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: .7rem; }
+    .bin {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: .8rem;
+      background: #0b1a2c;
+    }
+    .pill {
+      display: inline-block;
+      padding: .2rem .55rem;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 700;
+      margin-left: .5rem;
+    }
+    .great { background: rgba(39,209,124,.2); color: #8ff6c1; }
+    .good { background: rgba(109,185,255,.2); color: #b9e0ff; }
+    .marginal { background: rgba(241,191,71,.2); color: #ffdd8d; }
+    .poor { background: rgba(242,106,106,.2); color: #ffc0c0; }
+    ul { margin: .5rem 0 0 1rem; padding: 0; }
+    li { margin: .22rem 0; color: #dbe9ff; }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: .55rem; }
+    .kpi { border: 1px solid var(--line); border-radius: 10px; padding: .6rem; background: #0a1728; }
+    .small { font-size: .85rem; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Ski Tour Window Finder</h1>
+    <p class="muted">Prototype for <strong>Paul Ridge (Squamish)</strong>. Scores touring windows using recent snowfall + upcoming weather.</p>
+
+    <div class="card row">
+      <button id="refreshBtn">Refresh forecast</button>
+      <span id="status" class="muted">Waiting to load…</span>
+    </div>
+
+    <div class="card">
+      <h2>Current snapshot</h2>
+      <div class="kpis" id="snapshot"></div>
+    </div>
+
+    <div class="card">
+      <h2>Touring windows</h2>
+      <div class="grid" id="bins"></div>
+    </div>
+
+    <div class="card small muted">
+      <p><strong>How score works (v1):</strong> rewards recent snow + cold temps + low rain + lower wind + clearer skies. Penalizes warm/rainy/windy periods.</p>
+      <p><strong>Safety:</strong> this is weather-window guidance only. Always check avalanche bulletins, hazard ratings, route conditions, and field observations.</p>
+      <p class="mono">Data: Open-Meteo (no login, no API key)</p>
+    </div>
+  </div>
+
+  <script>
+    const PAUL_RIDGE = { lat: 49.691, lon: -123.086, elevM: 1300, name: 'Paul Ridge' };
+
+    const $ = (id) => document.getElementById(id);
+
+    function fmt(n, digits = 0) {
+      if (n === null || n === undefined || Number.isNaN(n)) return '—';
+      return Number(n).toFixed(digits);
+    }
+
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+    function labelFor(score) {
+      if (score >= 80) return ['Great', 'great'];
+      if (score >= 60) return ['Good', 'good'];
+      if (score >= 40) return ['Marginal', 'marginal'];
+      return ['Poor', 'poor'];
+    }
+
+    function avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0) / arr.length : 0; }
+    function sum(arr) { return arr.reduce((a,b)=>a+b,0); }
+
+    function scoreWindow(days, recentSnow48) {
+      const snow = sum(days.map(d => d.snowfall_sum || 0));
+      const rain = sum(days.map(d => d.rain_sum || 0));
+      const pcp = sum(days.map(d => d.precipitation_sum || 0));
+      const tmin = avg(days.map(d => d.temperature_2m_min || 0));
+      const tmax = avg(days.map(d => d.temperature_2m_max || 0));
+      const cloud = avg(days.map(d => d.cloud_cover_mean || 0));
+      const wind = avg(days.map(d => d.wind_speed_10m_max || 0));
+      const freeze = avg(days.map(d => d.freezing_level_height_mean || 9999));
+
+      let score = 50;
+      const reasons = [];
+
+      const freshBoost = clamp(recentSnow48 * 1.2, 0, 28);
+      score += freshBoost;
+      if (freshBoost > 6) reasons.push(`+${fmt(freshBoost)} fresh snow last 48h (${fmt(recentSnow48,1)} cm)`);
+
+      const snowBoost = clamp(snow * 0.8, 0, 16);
+      score += snowBoost;
+      if (snowBoost > 4) reasons.push(`+${fmt(snowBoost)} forecast snowfall (${fmt(snow,1)} cm)`);
+
+      const rainPenalty = clamp(rain * 3.0, 0, 40);
+      score -= rainPenalty;
+      if (rainPenalty > 4) reasons.push(`-${fmt(rainPenalty)} rain risk (${fmt(rain,1)} mm)`);
+
+      if (freeze > 1700) {
+        const p = clamp((freeze - 1700) / 45, 0, 25);
+        score -= p;
+        reasons.push(`-${fmt(p)} high freezing level (${fmt(freeze)} m)`);
+      } else if (freeze < 1300) {
+        score += 6;
+        reasons.push(`+6 favorable freezing level (${fmt(freeze)} m)`);
+      }
+
+      if (tmax > 3) {
+        const p = clamp((tmax - 3) * 2, 0, 14);
+        score -= p;
+        reasons.push(`-${fmt(p)} warm daytime temps (${fmt(tmax,1)}°C)`);
+      } else if (tmax <= 0) {
+        score += 6;
+        reasons.push(`+6 cold daytime temps (${fmt(tmax,1)}°C)`);
+      }
+
+      if (wind > 30) {
+        const p = clamp((wind - 30) * 0.7, 0, 16);
+        score -= p;
+        reasons.push(`-${fmt(p)} windy (${fmt(wind)} km/h)`);
+      } else if (wind < 20) {
+        score += 4;
+        reasons.push(`+4 manageable wind (${fmt(wind)} km/h)`);
+      }
+
+      if (cloud <= 40) {
+        score += 8;
+        reasons.push(`+8 clearer visibility (${fmt(cloud)}% cloud)`);
+      } else if (cloud > 80) {
+        score -= 8;
+        reasons.push(`-8 poor visibility (${fmt(cloud)}% cloud)`);
+      }
+
+      if (pcp > 18 && snow < 5) {
+        score -= 8;
+        reasons.push('-8 wet pattern without enough snow gain');
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+      return { score, reasons, metrics: { snow, rain, tmin, tmax, cloud, wind, freeze } };
+    }
+
+    function buildBins(days) {
+      const recentSnow48 = (days[0]?.snowfall_sum || 0) + (days[1]?.snowfall_sum || 0);
+      return [
+        { key: 'today', name: 'Today', slice: days.slice(0,1) },
+        { key: 'd2_3', name: 'Next 2–3 days', slice: days.slice(1,4) },
+        { key: 'd4_7', name: 'Next 4–7 days', slice: days.slice(4,8) },
+      ].map(bin => ({ ...bin, ...scoreWindow(bin.slice, recentSnow48) }));
+    }
+
+    function renderSnapshot(days) {
+      const recentSnow48 = (days[0]?.snowfall_sum || 0) + (days[1]?.snowfall_sum || 0);
+      const nearRain48 = (days[0]?.rain_sum || 0) + (days[1]?.rain_sum || 0);
+      const freeze48 = avg(days.slice(0,2).map(d => d.freezing_level_height_mean || 9999));
+      const cloud48 = avg(days.slice(0,2).map(d => d.cloud_cover_mean || 0));
+      const wind48 = avg(days.slice(0,2).map(d => d.wind_speed_10m_max || 0));
+
+      $('snapshot').innerHTML = `
+        <div class="kpi"><div class="muted small">Recent snowfall (48h)</div><div><strong>${fmt(recentSnow48,1)} cm</strong></div></div>
+        <div class="kpi"><div class="muted small">Recent rain (48h)</div><div><strong>${fmt(nearRain48,1)} mm</strong></div></div>
+        <div class="kpi"><div class="muted small">Freeze level (48h avg)</div><div><strong>${fmt(freeze48)} m</strong></div></div>
+        <div class="kpi"><div class="muted small">Cloud cover (48h avg)</div><div><strong>${fmt(cloud48)}%</strong></div></div>
+        <div class="kpi"><div class="muted small">Wind max (48h avg)</div><div><strong>${fmt(wind48)} km/h</strong></div></div>
+      `;
+    }
+
+    function renderBins(results) {
+      $('bins').innerHTML = results.map(r => {
+        const [label, css] = labelFor(r.score);
+        const m = r.metrics;
+        return `
+          <div class="bin">
+            <div><strong>${r.name}</strong> <span class="pill ${css}">${label} · ${r.score}/100</span></div>
+            <p class="small muted">Snow ${fmt(m.snow,1)} cm · Rain ${fmt(m.rain,1)} mm · Wind ${fmt(m.wind)} km/h · Cloud ${fmt(m.cloud)}%</p>
+            <ul>${r.reasons.slice(0,5).map(x => `<li>${x}</li>`).join('')}</ul>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadWeather() {
+      $('status').textContent = 'Loading weather…';
+      const params = new URLSearchParams({
+        latitude: PAUL_RIDGE.lat,
+        longitude: PAUL_RIDGE.lon,
+        timezone: 'America/Vancouver',
+        forecast_days: '8',
+        past_days: '2',
+        daily: [
+          'temperature_2m_min',
+          'temperature_2m_max',
+          'precipitation_sum',
+          'rain_sum',
+          'snowfall_sum',
+          'cloud_cover_mean',
+          'wind_speed_10m_max',
+          'freezing_level_height_mean'
+        ].join(',')
+      });
+      const url = `https://api.open-meteo.com/v1/forecast?${params}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Weather API ${res.status}`);
+      const json = await res.json();
+
+      const d = json.daily;
+      const rows = d.time.map((time, i) => ({
+        time,
+        temperature_2m_min: d.temperature_2m_min?.[i],
+        temperature_2m_max: d.temperature_2m_max?.[i],
+        precipitation_sum: d.precipitation_sum?.[i],
+        rain_sum: d.rain_sum?.[i],
+        snowfall_sum: d.snowfall_sum?.[i],
+        cloud_cover_mean: d.cloud_cover_mean?.[i],
+        wind_speed_10m_max: d.wind_speed_10m_max?.[i],
+        freezing_level_height_mean: d.freezing_level_height_mean?.[i],
+      }));
+
+      // keep: today + next 7 days (API includes 2 past days first)
+      const today = new Date().toISOString().slice(0,10);
+      const idx = rows.findIndex(r => r.time === today);
+      const windowDays = idx >= 0 ? rows.slice(idx, idx + 8) : rows.slice(2,10);
+
+      renderSnapshot(windowDays);
+      renderBins(buildBins(windowDays));
+      $('status').textContent = `Updated for ${PAUL_RIDGE.name} (${today})`;
+    }
+
+    async function refresh() {
+      try {
+        await loadWeather();
+      } catch (err) {
+        $('status').textContent = `Error: ${err.message}`;
+      }
+    }
+
+    $('refreshBtn').addEventListener('click', refresh);
+    refresh();
+  </script>
+</body>
+</html>
