@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time-to-Invoice Batcher</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#151d34; --muted:#9fb1d1; --text:#eef3ff; --accent:#66d9ef; }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,#0b1020,#0e1630);color:var(--text)}
+    .wrap{max-width:980px;margin:2rem auto;padding:1rem}
+    .card{background:var(--panel);border:1px solid #233055;border-radius:14px;padding:1rem;margin-bottom:1rem}
+    textarea,input{width:100%;background:#0b1328;border:1px solid #2b3b67;color:var(--text);border-radius:10px;padding:.7rem}
+    textarea{min-height:120px} label{display:block;margin:.6rem 0 .3rem;color:var(--muted)}
+    button{background:var(--accent);color:#001018;border:none;padding:.65rem .95rem;border-radius:10px;font-weight:700;cursor:pointer}
+    table{width:100%;border-collapse:collapse;margin-top:.6rem} th,td{padding:.55rem;border-bottom:1px solid #2a3760;text-align:left}
+    .right{text-align:right} .muted{color:var(--muted)} .row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+    @media(max-width:700px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Time-to-Invoice Batcher</h1>
+    <p class="muted">Paste time logs (one per line, format: <code>Task | Hours</code>) and generate invoice-ready line items instantly.</p>
+
+    <div class="card">
+      <label>Client</label><input id="client" placeholder="Acme Co." />
+      <div class="row">
+        <div><label>Hourly Rate (CAD)</label><input id="rate" type="number" value="120" min="0" step="0.01"/></div>
+        <div><label>Tax %</label><input id="tax" type="number" value="5" min="0" step="0.01"/></div>
+      </div>
+      <label>Time Log</label>
+      <textarea id="log" placeholder="Hydrology analysis | 3.5\nField notes cleanup | 1.25\nMap export + QA | 2"></textarea>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem">
+        <button id="parseBtn">Build Invoice Items</button>
+        <button id="csvBtn" style="background:#9dd8ff">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Invoice Line Items</h2>
+      <table id="tbl"><thead><tr><th>Description</th><th class="right">Hours</th><th class="right">Amount</th></tr></thead><tbody></tbody></table>
+      <p id="totals" class="muted"></p>
+    </div>
+  </div>
+
+<script>
+const $ = (id)=>document.getElementById(id);
+let rows=[];
+
+function parse(){
+  const rate=parseFloat($("rate").value)||0;
+  const taxPct=parseFloat($("tax").value)||0;
+  rows=$("log").value.split(/\n+/).map(l=>l.trim()).filter(Boolean).map(line=>{
+    const [desc,h]=line.split("|").map(s=>s.trim());
+    const hrs=parseFloat(h||0)||0;
+    return {desc:desc||"Work item", hrs, amount:hrs*rate};
+  }).filter(r=>r.hrs>0);
+
+  const body=$("tbl").querySelector("tbody"); body.innerHTML="";
+  let subtotal=0;
+  rows.forEach(r=>{
+    subtotal+=r.amount;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${r.desc}</td><td class="right">${r.hrs.toFixed(2)}</td><td class="right">$${r.amount.toFixed(2)}</td>`;
+    body.appendChild(tr);
+  });
+  const tax=subtotal*(taxPct/100), total=subtotal+tax;
+  $("totals").textContent=`Items: ${rows.length} • Subtotal: $${subtotal.toFixed(2)} • Tax: $${tax.toFixed(2)} • Total: $${total.toFixed(2)}`;
+}
+
+function exportCsv(){
+  if(!rows.length) parse();
+  if(!rows.length) return alert("Add at least one valid time-log line first.");
+  const header=["Client","Description","Hours","Rate","Amount"]; const rate=parseFloat($("rate").value)||0;
+  const lines=[header.join(",")].concat(rows.map(r=>[
+    `"${($("client").value||"Client").replaceAll('"','""')}"`,
+    `"${r.desc.replaceAll('"','""')}"`,r.hrs.toFixed(2),rate.toFixed(2),r.amount.toFixed(2)
+  ].join(",")));
+  const blob=new Blob([lines.join("\n")],{type:"text/csv"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="invoice-line-items.csv"; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+$("parseBtn").addEventListener("click",parse);
+$("csvBtn").addEventListener("click",exportCsv);
+</script>
+</body>
+</html>

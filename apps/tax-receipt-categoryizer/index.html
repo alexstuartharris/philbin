@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tax-Ready Receipt Categoryizer</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1020;--panel:#151d34;--line:#2a3760;--muted:#9fb1d1;--text:#eef3ff;--accent:#7ce7be}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b1020,#12193a);color:var(--text);font-family:Inter,system-ui,sans-serif}
+    .wrap{max-width:1000px;margin:2rem auto;padding:1rem}.card{background:var(--panel);border:1px solid #223057;border-radius:14px;padding:1rem;margin-bottom:1rem}
+    button{background:var(--accent);border:none;color:#042018;padding:.65rem .9rem;border-radius:10px;font-weight:700;cursor:pointer}
+    table{width:100%;border-collapse:collapse}th,td{padding:.55rem;border-bottom:1px solid var(--line);text-align:left}.right{text-align:right}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Tax-Ready Receipt Categoryizer</h1>
+  <p class="muted">Offline CSV categorizer for freelancers. Upload receipt exports, auto-group by tax categories, then export a summary CSV.</p>
+
+  <div class="card">
+    <input id="file" type="file" accept=".csv" />
+    <p class="muted" style="margin:.5rem 0">Expected columns: <code>date,merchant,amount,description</code> (any order is fine).</p>
+    <button id="exportBtn">Export Category Summary CSV</button>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0">Categorized Receipts</h2>
+    <table id="rows"><thead><tr><th>Date</th><th>Merchant</th><th>Category</th><th class="right">Amount</th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0">Schedule-C Style Summary</h2>
+    <table id="summary"><thead><tr><th>Category</th><th class="right">Total</th></tr></thead><tbody></tbody></table>
+    <p id="grand" class="muted"></p>
+  </div>
+</div>
+
+<script>
+const categories=[
+  {name:'Office Supplies',keys:['staples','office','paper','ink']},
+  {name:'Software & Subscriptions',keys:['adobe','figma','openai','google','notion','github','subscription']},
+  {name:'Travel',keys:['uber','lyft','airbnb','hotel','flight','taxi']},
+  {name:'Meals',keys:['cafe','coffee','restaurant','meal','lunch']},
+  {name:'Equipment',keys:['laptop','monitor','keyboard','mouse','camera']},
+  {name:'Professional Services',keys:['legal','accounting','consulting','contractor']}
+];
+let categorized=[];
+
+function parseCsv(text){
+  const lines=text.trim().split(/\r?\n/).filter(Boolean);
+  const headers=lines.shift().split(',').map(h=>h.trim().toLowerCase());
+  const idx=(name)=>headers.indexOf(name);
+  const di=idx('date'), mi=idx('merchant'), ai=idx('amount'), descI=idx('description');
+  return lines.map(line=>{
+    const cols=line.split(',');
+    return {date:cols[di]||'',merchant:cols[mi]||'',amount:parseFloat(cols[ai]||0)||0,description:cols[descI]||''};
+  });
+}
+
+function pickCategory(r){
+  const hay=(`${r.merchant} ${r.description}`).toLowerCase();
+  for(const c of categories){ if(c.keys.some(k=>hay.includes(k))) return c.name; }
+  return 'Other Business Expense';
+}
+
+function render(){
+  const rowsBody=document.querySelector('#rows tbody'); rowsBody.innerHTML='';
+  const sums={}; let grand=0;
+  categorized.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.date}</td><td>${r.merchant}</td><td>${r.category}</td><td class="right">$${r.amount.toFixed(2)}</td>`;
+    rowsBody.appendChild(tr);
+    sums[r.category]=(sums[r.category]||0)+r.amount; grand+=r.amount;
+  });
+  const sumBody=document.querySelector('#summary tbody'); sumBody.innerHTML='';
+  Object.entries(sums).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+    const tr=document.createElement('tr'); tr.innerHTML=`<td>${k}</td><td class="right">$${v.toFixed(2)}</td>`; sumBody.appendChild(tr);
+  });
+  document.getElementById('grand').textContent=`Total categorized expenses: $${grand.toFixed(2)}`;
+}
+
+document.getElementById('file').addEventListener('change', async (e)=>{
+  const file=e.target.files?.[0]; if(!file) return;
+  const text=await file.text();
+  categorized=parseCsv(text).map(r=>({...r,category:pickCategory(r)}));
+  render();
+});
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  if(!categorized.length) return alert('Upload a receipt CSV first.');
+  const sums={}; categorized.forEach(r=>sums[r.category]=(sums[r.category]||0)+r.amount);
+  const out=['category,total'].concat(Object.entries(sums).map(([k,v])=>`"${k}",${v.toFixed(2)}`)).join('\n');
+  const blob=new Blob([out],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='tax-category-summary.csv'; a.click(); URL.revokeObjectURL(a.href);
+});
+</script>
+</body>
+</html>

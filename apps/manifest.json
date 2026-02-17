@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T16:20:55.905Z",
+  "generatedAt": "2026-02-17T07:17:32.264Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -43,6 +43,22 @@
     },
     {
       "name": "receipt-tracker",
+      "hasIndex": true
+    },
+    {
+      "name": "status",
+      "hasIndex": true
+    },
+    {
+      "name": "steep-suite",
+      "hasIndex": true
+    },
+    {
+      "name": "tax-receipt-categoryizer",
+      "hasIndex": true
+    },
+    {
+      "name": "time-to-invoice-batcher",
       "hasIndex": true
     },
     {
