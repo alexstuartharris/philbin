@@ -84,6 +84,7 @@
         <option value="paul_ridge">Paul Ridge (Squamish)</option>
         <option value="oboe_summit">Whistler Backcountry — Oboe Summit (approx)</option>
         <option value="keiths_hut">Joffre Area — Keith’s Hut (approx)</option>
+        <option value="skypilot_basin">Skypilot Basin (from your pin)</option>
       </select>
       <button id="refreshBtn">Refresh forecast</button>
       <span id="status" class="muted">Waiting to load…</span>
@@ -110,7 +111,8 @@
     const LOCATIONS = {
       paul_ridge: { key: 'paul_ridge', lat: 49.691, lon: -123.086, elevM: 1300, name: 'Paul Ridge' },
       oboe_summit: { key: 'oboe_summit', lat: 50.067, lon: -123.026, elevM: 1850, name: 'Oboe Summit (approx)' },
-      keiths_hut: { key: 'keiths_hut', lat: 50.352, lon: -122.501, elevM: 1700, name: 'Keith’s Hut (approx)' }
+      keiths_hut: { key: 'keiths_hut', lat: 50.352, lon: -122.501, elevM: 1700, name: 'Keith’s Hut (approx)' },
+      skypilot_basin: { key: 'skypilot_basin', lat: 49.639106, lon: -123.0910315, elevM: 1950, name: 'Skypilot Basin' }
     };
     let currentLoc = LOCATIONS.paul_ridge;
 
@@ -223,7 +225,12 @@
       const wind48 = avg(days.slice(0,2).map(d => d.wind_speed_10m_max || 0));
 
       const stationNote = observed?.stations?.length
-        ? observed.stations.map(s => `${s.name}: Δ48h ${fmt(s.delta48Cm,1)} cm${s.jumpFlag ? ' (QC jump noted)' : ''}`).join(' • ')
+        ? observed.stations.map(s => {
+            const d = Number.isFinite(s.distanceKm) ? `, ${fmt(s.distanceKm,1)} km` : '';
+            const w = Number.isFinite(s.baseWeight) ? `, w=${fmt((s.baseWeight||0)*100,0)}%` : '';
+            const qc = s.jumpFlag ? ' (QC jump noted)' : '';
+            return `${s.name}: Δ48h ${fmt(s.delta48Cm,1)} cm${d}${w}${qc}`;
+          }).join(' • ')
         : 'Using modeled snowfall (Open-Meteo)';
 
       $('snapshot').innerHTML = `
