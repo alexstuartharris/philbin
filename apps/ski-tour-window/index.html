@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ski Tour Window Finder — Paul Ridge</title>
+  <title>Ski Tour Window Finder — Sea to Sky</title>
   <style>
     :root {
       color-scheme: dark;
@@ -76,9 +76,14 @@
 <body>
   <div class="wrap">
     <h1>Ski Tour Window Finder</h1>
-    <p class="muted">Prototype for <strong>Paul Ridge (Squamish)</strong>. Scores touring windows using recent snowfall + upcoming weather.</p>
+    <p class="muted">Prototype for Sea-to-Sky touring zones. Scores windows using recent snowfall + upcoming weather.</p>
 
     <div class="card row">
+      <label class="muted small" for="locSelect">Location</label>
+      <select id="locSelect" style="background:#0a1728;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .6rem">
+        <option value="paul_ridge">Paul Ridge (Squamish)</option>
+        <option value="oboe_summit">Whistler Backcountry — Oboe Summit (approx)</option>
+      </select>
       <button id="refreshBtn">Refresh forecast</button>
       <span id="status" class="muted">Waiting to load…</span>
     </div>
@@ -101,7 +106,11 @@
   </div>
 
   <script>
-    const PAUL_RIDGE = { lat: 49.691, lon: -123.086, elevM: 1300, name: 'Paul Ridge' };
+    const LOCATIONS = {
+      paul_ridge: { key: 'paul_ridge', lat: 49.691, lon: -123.086, elevM: 1300, name: 'Paul Ridge' },
+      oboe_summit: { key: 'oboe_summit', lat: 50.067, lon: -123.026, elevM: 1850, name: 'Oboe Summit (approx)' }
+    };
+    let currentLoc = LOCATIONS.paul_ridge;
 
     const $ = (id) => document.getElementById(id);
 
@@ -240,8 +249,8 @@
       }).join('');
     }
 
-    async function fetchObservedSnow() {
-      const url = 'https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/snow-observed';
+    async function fetchObservedSnow(locKey) {
+      const url = `https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/snow-observed?loc=${encodeURIComponent(locKey || 'paul_ridge')}`;
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error(`Obs API ${res.status}`);
       const json = await res.json();
@@ -253,8 +262,8 @@
       $('status').textContent = 'Loading weather…';
 
       const params = new URLSearchParams();
-      params.set('latitude', String(PAUL_RIDGE.lat));
-      params.set('longitude', String(PAUL_RIDGE.lon));
+      params.set('latitude', String(currentLoc.lat));
+      params.set('longitude', String(currentLoc.lon));
       params.set('timezone', 'America/Vancouver');
       params.set('forecast_days', '8');
       params.set('past_days', '2');
@@ -309,14 +318,14 @@
 
       let observed = null;
       try {
-        observed = await fetchObservedSnow();
+        observed = await fetchObservedSnow(currentLoc.key);
       } catch {
         // fallback to modeled snowfall
       }
 
       renderSnapshot(windowDays, observed);
       renderBins(buildBins(windowDays, observed?.observedRecentSnow48Cm ?? null));
-      $('status').textContent = `Updated for ${PAUL_RIDGE.name} (${today})${observed ? ' · station snow blended' : ' · model fallback'}`;
+      $('status').textContent = `Updated for ${currentLoc.name} (${today})${observed ? ' · station snow blended' : ' · model fallback'}`;
     }
 
     async function refresh() {
@@ -326,6 +335,13 @@
         $('status').textContent = `Error: ${err.message}`;
       }
     }
+
+    $('locSelect').value = currentLoc.key;
+    $('locSelect').addEventListener('change', (e) => {
+      const key = e.target.value;
+      currentLoc = LOCATIONS[key] || LOCATIONS.paul_ridge;
+      refresh();
+    });
 
     $('refreshBtn').addEventListener('click', refresh);
     refresh();
