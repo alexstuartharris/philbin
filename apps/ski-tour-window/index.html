@@ -83,6 +83,7 @@
       <select id="locSelect" style="background:#0a1728;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .6rem">
         <option value="paul_ridge">Paul Ridge (Squamish)</option>
         <option value="oboe_summit">Whistler Backcountry — Oboe Summit (approx)</option>
+        <option value="keiths_hut">Joffre Area — Keith’s Hut (approx)</option>
       </select>
       <button id="refreshBtn">Refresh forecast</button>
       <span id="status" class="muted">Waiting to load…</span>
@@ -108,7 +109,8 @@
   <script>
     const LOCATIONS = {
       paul_ridge: { key: 'paul_ridge', lat: 49.691, lon: -123.086, elevM: 1300, name: 'Paul Ridge' },
-      oboe_summit: { key: 'oboe_summit', lat: 50.067, lon: -123.026, elevM: 1850, name: 'Oboe Summit (approx)' }
+      oboe_summit: { key: 'oboe_summit', lat: 50.067, lon: -123.026, elevM: 1850, name: 'Oboe Summit (approx)' },
+      keiths_hut: { key: 'keiths_hut', lat: 50.352, lon: -122.501, elevM: 1700, name: 'Keith’s Hut (approx)' }
     };
     let currentLoc = LOCATIONS.paul_ridge;
 
