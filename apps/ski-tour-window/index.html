@@ -232,27 +232,43 @@
 
     async function loadWeather() {
       $('status').textContent = 'Loading weather…';
-      const params = new URLSearchParams({
-        latitude: PAUL_RIDGE.lat,
-        longitude: PAUL_RIDGE.lon,
-        timezone: 'America/Vancouver',
-        forecast_days: '8',
-        past_days: '2',
-        daily: [
-          'temperature_2m_min',
-          'temperature_2m_max',
-          'precipitation_sum',
-          'rain_sum',
-          'snowfall_sum',
-          'cloud_cover_mean',
-          'wind_speed_10m_max',
-          'freezing_level_height_mean'
-        ].join(',')
-      });
-      const url = `https://api.open-meteo.com/v1/forecast?${params}`;
+
+      const params = new URLSearchParams();
+      params.set('latitude', String(PAUL_RIDGE.lat));
+      params.set('longitude', String(PAUL_RIDGE.lon));
+      params.set('timezone', 'America/Vancouver');
+      params.set('forecast_days', '8');
+      params.set('past_days', '2');
+
+      [
+        'temperature_2m_min',
+        'temperature_2m_max',
+        'precipitation_sum',
+        'rain_sum',
+        'snowfall_sum',
+        'cloud_cover_mean',
+        'wind_speed_10m_max'
+      ].forEach(v => params.append('daily', v));
+
+      // freezing level is hourly-only on Open-Meteo; we aggregate to daily mean below
+      params.append('hourly', 'freezing_level_height');
+
+      const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Weather API ${res.status}`);
       const json = await res.json();
+
+      const hourly = json.hourly || {};
+      const freezeByDay = {};
+      if (Array.isArray(hourly.time) && Array.isArray(hourly.freezing_level_height)) {
+        for (let i = 0; i < hourly.time.length; i++) {
+          const day = String(hourly.time[i]).slice(0, 10);
+          const v = hourly.freezing_level_height[i];
+          if (v == null || Number.isNaN(v)) continue;
+          if (!freezeByDay[day]) freezeByDay[day] = [];
+          freezeByDay[day].push(v);
+        }
+      }
 
       const d = json.daily;
       const rows = d.time.map((time, i) => ({
@@ -264,7 +280,7 @@
         snowfall_sum: d.snowfall_sum?.[i],
         cloud_cover_mean: d.cloud_cover_mean?.[i],
         wind_speed_10m_max: d.wind_speed_10m_max?.[i],
-        freezing_level_height_mean: d.freezing_level_height_mean?.[i],
+        freezing_level_height_mean: freezeByDay[time]?.length ? avg(freezeByDay[time]) : null,
       }));
 
       // keep: today + next 7 days (API includes 2 past days first)
