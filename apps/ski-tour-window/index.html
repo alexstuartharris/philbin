@@ -87,6 +87,7 @@
         <option value="skypilot_basin">Skypilot Basin (from your pin)</option>
         <option value="decker_lake">Decker Lake / Tarn near Blackcomb (approx)</option>
       </select>
+      <span id="locMeta" class="muted small"></span>
       <button id="refreshBtn">Refresh forecast</button>
       <span id="status" class="muted">Waiting to load…</span>
     </div>
@@ -94,6 +95,11 @@
     <div class="card">
       <h2>Current snapshot</h2>
       <div class="kpis" id="snapshot"></div>
+    </div>
+
+    <div class="card">
+      <h2>Mountain profile (quick visual)</h2>
+      <div id="profile"></div>
     </div>
 
     <div class="card">
@@ -110,11 +116,11 @@
 
   <script>
     const LOCATIONS = {
-      paul_ridge: { key: 'paul_ridge', lat: 49.691, lon: -123.086, elevM: 1300, name: 'Paul Ridge' },
-      oboe_summit: { key: 'oboe_summit', lat: 50.067, lon: -123.026, elevM: 1850, name: 'Oboe Summit (approx)' },
-      keiths_hut: { key: 'keiths_hut', lat: 50.352, lon: -122.501, elevM: 1700, name: 'Keith’s Hut (approx)' },
-      skypilot_basin: { key: 'skypilot_basin', lat: 49.639106, lon: -123.0910315, elevM: 1950, name: 'Skypilot Basin' },
-      decker_lake: { key: 'decker_lake', lat: 50.0681689, lon: -122.8719660, elevM: 1850, name: 'Decker Lake / Tarn (approx)' }
+      paul_ridge: { key: 'paul_ridge', lat: 49.691, lon: -123.086, elevM: 1300, baseM: 650, name: 'Paul Ridge' },
+      oboe_summit: { key: 'oboe_summit', lat: 50.067, lon: -123.026, elevM: 1850, baseM: 1100, name: 'Oboe Summit (approx)' },
+      keiths_hut: { key: 'keiths_hut', lat: 50.352, lon: -122.501, elevM: 1700, baseM: 1050, name: 'Keith’s Hut (approx)' },
+      skypilot_basin: { key: 'skypilot_basin', lat: 49.639106, lon: -123.0910315, elevM: 1950, baseM: 700, name: 'Skypilot Basin' },
+      decker_lake: { key: 'decker_lake', lat: 50.0681689, lon: -122.8719660, elevM: 1850, baseM: 1200, name: 'Decker Lake / Tarn (approx)' }
     };
     let currentLoc = LOCATIONS.paul_ridge;
 
@@ -239,7 +245,6 @@
       const nextRunLine = window.__nextRunLine || 'Next cycle estimate unavailable';
 
       $('snapshot').innerHTML = `
-        <div class="kpi"><div class="muted small">Location elevation</div><div><strong>${fmt(currentLoc.elevM)} m</strong></div></div>
         <div class="kpi"><div class="muted small">Recent snowfall (48h)</div><div><strong>${fmt(recentSnow48,1)} cm</strong></div></div>
         <div class="kpi"><div class="muted small">Recent rain (48h)</div><div><strong>${fmt(nearRain48,1)} mm</strong></div></div>
         <div class="kpi"><div class="muted small">Freeze level (48h avg)</div><div><strong>${fmt(freeze48)} m</strong></div></div>
@@ -250,6 +255,32 @@
         <div class="kpi"><div class="muted small">Next model cycle</div><div><strong>${nextRunLine}</strong></div></div>
       `;
       $('snapshot').insertAdjacentHTML('beforeend', `<div class="muted small" style="grid-column:1/-1;margin-top:.4rem"><strong>Station blend details</strong><ul style="margin:.35rem 0 0 1rem">${stationLines}</ul></div>`);
+      renderProfile({ freeze48, cloud48 });
+    }
+
+    function renderProfile({ freeze48, cloud48 }) {
+      const maxM = 2600;
+      const h = 180, w = 760;
+      const y = (m) => Math.max(8, Math.min(h - 8, h - (m / maxM) * h));
+      const base = currentLoc.baseM || 700;
+      const tour = currentLoc.elevM || 1300;
+      const freeze = Number.isFinite(freeze48) ? freeze48 : null;
+      const cloud = Number.isFinite(cloud48) ? cloud48 : 0;
+      const cloudOpacity = Math.max(0.05, Math.min(0.65, (cloud / 100) * 0.65));
+
+      const svg = `
+      <svg viewBox="0 0 ${w} ${h}" width="100%" height="190" role="img" aria-label="Terrain profile and weather levels">
+        <rect x="0" y="0" width="${w}" height="${h}" fill="#091425" rx="10" />
+        <rect x="0" y="0" width="${w}" height="${h*0.45}" fill="rgba(190,210,255,${cloudOpacity})" />
+        <polygon points="80,${h-18} 350,${y(tour)} 640,${h-18}" fill="#1c304e" stroke="#4c6a94" stroke-width="2" />
+        <line x1="40" y1="${y(base)}" x2="720" y2="${y(base)}" stroke="#7ec8ff" stroke-dasharray="5 5" />
+        <line x1="40" y1="${y(tour)}" x2="720" y2="${y(tour)}" stroke="#7cffb0" stroke-dasharray="5 5" />
+        ${freeze ? `<line x1="40" y1="${y(freeze)}" x2="720" y2="${y(freeze)}" stroke="#ffd166" stroke-width="2" />` : ''}
+        <text x="46" y="${y(base)-6}" fill="#9fd6ff" font-size="12">Base (~${Math.round(base)}m)</text>
+        <text x="46" y="${y(tour)-6}" fill="#95f7c2" font-size="12">Tour elevation (${Math.round(tour)}m)</text>
+        ${freeze ? `<text x="46" y="${y(freeze)-6}" fill="#ffe08a" font-size="12">Freezing level (~${Math.round(freeze)}m)</text>` : ''}
+      </svg>`;
+      $('profile').innerHTML = `${svg}<p class="muted small" style="margin-top:.35rem">Cloud layer tint reflects ~${fmt(cloud,0)}% average cloud cover (48h).</p>`;
     }
 
     function renderBins(results) {
@@ -362,10 +393,16 @@
       }
     }
 
+    function renderLocMeta() {
+      $('locMeta').textContent = `${currentLoc.name} · tour ${fmt(currentLoc.elevM)} m · base ~${fmt(currentLoc.baseM)} m`;
+    }
+
     $('locSelect').value = currentLoc.key;
+    renderLocMeta();
     $('locSelect').addEventListener('change', (e) => {
       const key = e.target.value;
       currentLoc = LOCATIONS[key] || LOCATIONS.paul_ridge;
+      renderLocMeta();
       refresh();
     });
 
