@@ -212,7 +212,7 @@
       const wind48 = avg(days.slice(0,2).map(d => d.wind_speed_10m_max || 0));
 
       const stationNote = observed?.stations?.length
-        ? observed.stations.map(s => `${s.name}: Δ48h ${fmt(s.delta48Cm,1)} cm${s.jumpFlag ? ' (jump filtered)' : ''}`).join(' • ')
+        ? observed.stations.map(s => `${s.name}: Δ48h ${fmt(s.delta48Cm,1)} cm${s.jumpFlag ? ' (QC jump noted)' : ''}`).join(' • ')
         : 'Using modeled snowfall (Open-Meteo)';
 
       $('snapshot').innerHTML = `
