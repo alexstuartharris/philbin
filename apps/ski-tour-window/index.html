@@ -235,13 +235,19 @@
           }).join('')
         : '<li>Using modeled snowfall (Open-Meteo)</li>';
 
+      const modelRunLine = window.__modelRunLine || 'Open-Meteo blend · run metadata unavailable';
+      const nextRunLine = window.__nextRunLine || 'Next cycle estimate unavailable';
+
       $('snapshot').innerHTML = `
+        <div class="kpi"><div class="muted small">Location elevation</div><div><strong>${fmt(currentLoc.elevM)} m</strong></div></div>
         <div class="kpi"><div class="muted small">Recent snowfall (48h)</div><div><strong>${fmt(recentSnow48,1)} cm</strong></div></div>
         <div class="kpi"><div class="muted small">Recent rain (48h)</div><div><strong>${fmt(nearRain48,1)} mm</strong></div></div>
         <div class="kpi"><div class="muted small">Freeze level (48h avg)</div><div><strong>${fmt(freeze48)} m</strong></div></div>
         <div class="kpi"><div class="muted small">Cloud cover (48h avg)</div><div><strong>${fmt(cloud48)}%</strong></div></div>
         <div class="kpi"><div class="muted small">Wind max (48h avg)</div><div><strong>${fmt(wind48)} km/h</strong></div></div>
         <div class="kpi"><div class="muted small">Recent snow source</div><div><strong>${observed?.source ? 'BC stations' : 'Model'}</strong></div></div>
+        <div class="kpi"><div class="muted small">Model run</div><div><strong>${modelRunLine}</strong></div></div>
+        <div class="kpi"><div class="muted small">Next model cycle</div><div><strong>${nextRunLine}</strong></div></div>
       `;
       $('snapshot').insertAdjacentHTML('beforeend', `<div class="muted small" style="grid-column:1/-1;margin-top:.4rem"><strong>Station blend details</strong><ul style="margin:.35rem 0 0 1rem">${stationLines}</ul></div>`);
     }
@@ -308,6 +314,15 @@
           freezeByDay[day].push(v);
         }
       }
+
+      const now = new Date();
+      const cycleMs = 6 * 60 * 60 * 1000; // 6-hour cycle proxy
+      const lastCycle = new Date(Math.floor(now.getTime() / cycleMs) * cycleMs);
+      const nextCycle = new Date(lastCycle.getTime() + cycleMs);
+      const mins = Math.max(0, Math.round((nextCycle.getTime() - now.getTime()) / 60000));
+      const h = Math.floor(mins / 60), m = mins % 60;
+      window.__modelRunLine = `Open-Meteo blend · cycle proxy ${lastCycle.toISOString().slice(0,16).replace('T',' ')} UTC`;
+      window.__nextRunLine = `${nextCycle.toISOString().slice(0,16).replace('T',' ')} UTC (in ${h}h ${m}m)`;
 
       const d = json.daily;
       const rows = d.time.map((time, i) => ({
