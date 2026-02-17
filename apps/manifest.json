@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-13T16:20:55.905Z",
+  "generatedAt": "2026-02-17T04:07:26.108Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -34,6 +34,10 @@
       "hasIndex": true
     },
     {
+      "name": "project-handoff",
+      "hasIndex": true
+    },
+    {
       "name": "prompt-library",
       "hasIndex": true
     },
@@ -43,6 +47,10 @@
     },
     {
       "name": "receipt-tracker",
+      "hasIndex": true
+    },
+    {
+      "name": "scope-tracker",
       "hasIndex": true
     },
     {

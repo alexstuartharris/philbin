@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Handoff Generator | Philbin Tools</title>
+  <meta name="description" content="Generate professional project handoff PDFs for clients. No sign-up required.">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --border: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --success: #3fb950;
+      --warning: #d29922;
+      --danger: #f85149;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      padding: 30px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 30px;
+    }
+    
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    
+    header p {
+      color: var(--text-secondary);
+    }
+    
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    @media (max-width: 600px) {
+      .row { grid-template-columns: 1fr; }
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    /* Deliverables list */
+    .deliverable-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .deliverable-item {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .deliverable-item input {
+      flex: 1;
+    }
+    
+    .deliverable-item .remove-btn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    
+    .add-btn {
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--text-secondary);
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    
+    .add-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    /* File list */
+    .file-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    @media (max-width: 600px) {
+      .file-item {
+        grid-template-columns: 1fr;
+      }
+      .file-item .remove-btn {
+        justify-self: end;
+      }
+    }
+    
+    /* Access info */
+    .access-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    @media (max-width: 700px) {
+      .access-item {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    /* Preview section */
+    .preview-section {
+      background: #fff;
+      color: #000;
+      padding: 40px;
+      border-radius: 8px;
+      font-family: Georgia, serif;
+    }
+    
+    .preview-section h1 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+      color: #1a1a2e;
+    }
+    
+    .preview-section .subtitle {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 30px;
+    }
+    
+    .preview-section h2 {
+      font-size: 1.2rem;
+      color: #1a1a2e;
+      margin: 25px 0 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    
+    .preview-section ul {
+      margin-left: 20px;
+    }
+    
+    .preview-section li {
+      margin-bottom: 5px;
+    }
+    
+    .preview-section p {
+      margin-bottom: 10px;
+    }
+    
+    .preview-section .meta {
+      display: flex;
+      gap: 30px;
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    
+    .preview-section table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+    
+    .preview-section th, .preview-section td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .preview-section th {
+      color: #666;
+      font-weight: 500;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+    
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    .hidden { display: none !important; }
+    
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .tab-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📦 Project Handoff Generator</h1>
+      <p>Create professional handoff documents for client deliveries</p>
+    </header>
+    
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="edit">Edit</button>
+      <button class="tab-btn" data-tab="preview">Preview</button>
+    </div>
+    
+    <div id="tab-edit" class="tab-content active">
+      <!-- Project Info -->
+      <div class="card">
+        <h2>📋 Project Details</h2>
+        <div class="row">
+          <div class="form-group">
+            <label for="projectName">Project Name *</label>
+            <input type="text" id="projectName" placeholder="Website Redesign" required>
+          </div>
+          <div class="form-group">
+            <label for="clientName">Client Name *</label>
+            <input type="text" id="clientName" placeholder="Acme Corp" required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label for="completionDate">Completion Date</label>
+            <input type="date" id="completionDate">
+          </div>
+          <div class="form-group">
+            <label for="yourName">Your Name / Company</label>
+            <input type="text" id="yourName" placeholder="Jane Designer">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="projectSummary">Project Summary</label>
+          <textarea id="projectSummary" placeholder="Brief overview of what was delivered..."></textarea>
+        </div>
+      </div>
+      
+      <!-- Deliverables -->
+      <div class="card">
+        <h2>✅ Deliverables</h2>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">List all items delivered to the client</p>
+        <div class="deliverable-list" id="deliverableList">
+          <div class="deliverable-item">
+            <input type="text" placeholder="e.g., Homepage design (Figma)">
+            <button class="remove-btn" onclick="removeItem(this)">×</button>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addDeliverable()">+ Add Deliverable</button>
+      </div>
+      
+      <!-- Files -->
+      <div class="card">
+        <h2>📁 Files & Assets</h2>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">Document file locations and access info</p>
+        <div id="fileList">
+          <div class="file-item">
+            <input type="text" placeholder="File/folder name">
+            <input type="text" placeholder="Location (URL, Google Drive, etc.)">
+            <button class="remove-btn" onclick="removeItem(this)">×</button>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addFile()">+ Add File/Asset</button>
+      </div>
+      
+      <!-- Access & Credentials -->
+      <div class="card">
+        <h2>🔑 Access & Credentials</h2>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">Logins, API keys, hosting info (be careful with sensitive data!)</p>
+        <div id="accessList">
+          <div class="access-item">
+            <input type="text" placeholder="Service">
+            <input type="text" placeholder="URL">
+            <input type="text" placeholder="Notes">
+            <button class="remove-btn" onclick="removeItem(this)">×</button>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addAccess()">+ Add Access Info</button>
+      </div>
+      
+      <!-- Notes -->
+      <div class="card">
+        <h2>📝 Additional Notes</h2>
+        <div class="form-group">
+          <label for="handoffNotes">Important Information for the Client</label>
+          <textarea id="handoffNotes" placeholder="Maintenance notes, known issues, recommendations, next steps..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="supportInfo">Support / Contact Info</label>
+          <textarea id="supportInfo" rows="2" placeholder="How to reach you for questions or future work..."></textarea>
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="showPreview()">👁️ Preview</button>
+        <button class="btn btn-success" onclick="downloadPdf()">📄 Download PDF</button>
+        <button class="btn btn-secondary" onclick="saveToStorage()">💾 Save Draft</button>
+        <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear</button>
+      </div>
+    </div>
+    
+    <div id="tab-preview" class="tab-content">
+      <div class="preview-section" id="previewContent">
+        <!-- Generated preview -->
+      </div>
+      <div style="margin-top: 20px;" class="btn-group">
+        <button class="btn btn-secondary" onclick="switchTab('edit')">← Back to Edit</button>
+        <button class="btn btn-success" onclick="downloadPdf()">📄 Download PDF</button>
+      </div>
+    </div>
+    
+    <footer>
+      <p>Part of <a href="../">Philbin Tools</a> • No sign-up, no tracking</p>
+      <p style="margin-top: 5px;">Need to invoice this project? Try <a href="../invoice-gen/">Steep Invoice Generator</a></p>
+    </footer>
+  </div>
+  
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+    
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      
+      if (tab === 'preview') generatePreview();
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('completionDate').valueAsDate = new Date();
+      loadFromStorage();
+    });
+    
+    // Dynamic list management
+    function addDeliverable() {
+      const list = document.getElementById('deliverableList');
+      const item = document.createElement('div');
+      item.className = 'deliverable-item';
+      item.innerHTML = `
+        <input type="text" placeholder="e.g., Mobile responsive design">
+        <button class="remove-btn" onclick="removeItem(this)">×</button>
+      `;
+      list.appendChild(item);
+    }
+    
+    function addFile() {
+      const list = document.getElementById('fileList');
+      const item = document.createElement('div');
+      item.className = 'file-item';
+      item.innerHTML = `
+        <input type="text" placeholder="File/folder name">
+        <input type="text" placeholder="Location (URL, Google Drive, etc.)">
+        <button class="remove-btn" onclick="removeItem(this)">×</button>
+      `;
+      list.appendChild(item);
+    }
+    
+    function addAccess() {
+      const list = document.getElementById('accessList');
+      const item = document.createElement('div');
+      item.className = 'access-item';
+      item.innerHTML = `
+        <input type="text" placeholder="Service">
+        <input type="text" placeholder="URL">
+        <input type="text" placeholder="Notes">
+        <button class="remove-btn" onclick="removeItem(this)">×</button>
+      `;
+      list.appendChild(item);
+    }
+    
+    function removeItem(btn) {
+      btn.parentElement.remove();
+    }
+    
+    // Gather form data
+    function gatherData() {
+      const deliverables = [];
+      document.querySelectorAll('#deliverableList .deliverable-item input').forEach(input => {
+        if (input.value.trim()) deliverables.push(input.value.trim());
+      });
+      
+      const files = [];
+      document.querySelectorAll('#fileList .file-item').forEach(item => {
+        const inputs = item.querySelectorAll('input');
+        if (inputs[0].value.trim() || inputs[1].value.trim()) {
+          files.push({ name: inputs[0].value.trim(), location: inputs[1].value.trim() });
+        }
+      });
+      
+      const access = [];
+      document.querySelectorAll('#accessList .access-item').forEach(item => {
+        const inputs = item.querySelectorAll('input');
+        if (inputs[0].value.trim()) {
+          access.push({ 
+            service: inputs[0].value.trim(), 
+            url: inputs[1].value.trim(),
+            notes: inputs[2].value.trim()
+          });
+        }
+      });
+      
+      return {
+        projectName: document.getElementById('projectName').value.trim(),
+        clientName: document.getElementById('clientName').value.trim(),
+        completionDate: document.getElementById('completionDate').value,
+        yourName: document.getElementById('yourName').value.trim(),
+        projectSummary: document.getElementById('projectSummary').value.trim(),
+        deliverables,
+        files,
+        access,
+        handoffNotes: document.getElementById('handoffNotes').value.trim(),
+        supportInfo: document.getElementById('supportInfo').value.trim()
+      };
+    }
+    
+    // Generate preview
+    function generatePreview() {
+      const data = gatherData();
+      const preview = document.getElementById('previewContent');
+      
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        return new Date(dateStr + 'T00:00').toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+      };
+      
+      let html = `
+        <h1>${escapeHtml(data.projectName) || 'Project Handoff'}</h1>
+        <p class="subtitle">Prepared for ${escapeHtml(data.clientName) || 'Client'}</p>
+        <div class="meta">
+          ${data.completionDate ? `<span>📅 ${formatDate(data.completionDate)}</span>` : ''}
+          ${data.yourName ? `<span>👤 ${escapeHtml(data.yourName)}</span>` : ''}
+        </div>
+      `;
+      
+      if (data.projectSummary) {
+        html += `<h2>Project Summary</h2><p>${escapeHtml(data.projectSummary)}</p>`;
+      }
+      
+      if (data.deliverables.length > 0) {
+        html += `<h2>Deliverables</h2><ul>`;
+        data.deliverables.forEach(d => {
+          html += `<li>${escapeHtml(d)}</li>`;
+        });
+        html += `</ul>`;
+      }
+      
+      if (data.files.length > 0) {
+        html += `<h2>Files & Assets</h2><table><tr><th>Name</th><th>Location</th></tr>`;
+        data.files.forEach(f => {
+          html += `<tr><td>${escapeHtml(f.name)}</td><td>${escapeHtml(f.location)}</td></tr>`;
+        });
+        html += `</table>`;
+      }
+      
+      if (data.access.length > 0) {
+        html += `<h2>Access Information</h2><table><tr><th>Service</th><th>URL</th><th>Notes</th></tr>`;
+        data.access.forEach(a => {
+          html += `<tr><td>${escapeHtml(a.service)}</td><td>${escapeHtml(a.url)}</td><td>${escapeHtml(a.notes)}</td></tr>`;
+        });
+        html += `</table>`;
+      }
+      
+      if (data.handoffNotes) {
+        html += `<h2>Additional Notes</h2><p>${escapeHtml(data.handoffNotes).replace(/\n/g, '<br>')}</p>`;
+      }
+      
+      if (data.supportInfo) {
+        html += `<h2>Support & Contact</h2><p>${escapeHtml(data.supportInfo).replace(/\n/g, '<br>')}</p>`;
+      }
+      
+      html += `<p style="margin-top: 40px; color: #999; font-size: 0.8rem; text-align: center;">Generated with Philbin Project Handoff</p>`;
+      
+      preview.innerHTML = html;
+    }
+    
+    function showPreview() {
+      switchTab('preview');
+    }
+    
+    // PDF Generation
+    function downloadPdf() {
+      const data = gatherData();
+      if (!data.projectName) {
+        alert('Please enter a project name');
+        return;
+      }
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 20;
+      const margin = 20;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const maxWidth = pageWidth - margin * 2;
+      
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        return new Date(dateStr + 'T00:00').toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+      };
+      
+      const addPage = () => {
+        doc.addPage();
+        y = 20;
+      };
+      
+      const checkPage = (needed = 20) => {
+        if (y + needed > 280) addPage();
+      };
+      
+      // Title
+      doc.setFontSize(24);
+      doc.setTextColor(26, 26, 46);
+      doc.text(data.projectName || 'Project Handoff', margin, y);
+      y += 10;
+      
+      doc.setFontSize(12);
+      doc.setTextColor(100);
+      doc.text(`Prepared for ${data.clientName || 'Client'}`, margin, y);
+      y += 8;
+      
+      // Meta info
+      let meta = [];
+      if (data.completionDate) meta.push(`Date: ${formatDate(data.completionDate)}`);
+      if (data.yourName) meta.push(`By: ${data.yourName}`);
+      if (meta.length) {
+        doc.text(meta.join('  |  '), margin, y);
+        y += 15;
+      } else {
+        y += 7;
+      }
+      
+      // Line
+      doc.setDrawColor(200);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 10;
+      
+      // Summary
+      if (data.projectSummary) {
+        checkPage(30);
+        doc.setFontSize(14);
+        doc.setTextColor(26, 26, 46);
+        doc.text('Project Summary', margin, y);
+        y += 8;
+        
+        doc.setFontSize(10);
+        doc.setTextColor(60);
+        const summaryLines = doc.splitTextToSize(data.projectSummary, maxWidth);
+        doc.text(summaryLines, margin, y);
+        y += summaryLines.length * 5 + 10;
+      }
+      
+      // Deliverables
+      if (data.deliverables.length > 0) {
+        checkPage(30);
+        doc.setFontSize(14);
+        doc.setTextColor(26, 26, 46);
+        doc.text('Deliverables', margin, y);
+        y += 8;
+        
+        doc.setFontSize(10);
+        doc.setTextColor(60);
+        data.deliverables.forEach(d => {
+          checkPage(8);
+          doc.text(`• ${d}`, margin + 2, y);
+          y += 6;
+        });
+        y += 5;
+      }
+      
+      // Files
+      if (data.files.length > 0) {
+        checkPage(30);
+        doc.setFontSize(14);
+        doc.setTextColor(26, 26, 46);
+        doc.text('Files & Assets', margin, y);
+        y += 8;
+        
+        doc.setFontSize(10);
+        data.files.forEach(f => {
+          checkPage(12);
+          doc.setTextColor(40);
+          doc.text(f.name || 'Unnamed', margin + 2, y);
+          if (f.location) {
+            doc.setTextColor(100);
+            const locLines = doc.splitTextToSize(f.location, maxWidth - 10);
+            doc.text(locLines, margin + 4, y + 5);
+            y += 5 + locLines.length * 4;
+          }
+          y += 6;
+        });
+        y += 5;
+      }
+      
+      // Access
+      if (data.access.length > 0) {
+        checkPage(30);
+        doc.setFontSize(14);
+        doc.setTextColor(26, 26, 46);
+        doc.text('Access Information', margin, y);
+        y += 8;
+        
+        doc.setFontSize(10);
+        data.access.forEach(a => {
+          checkPage(15);
+          doc.setTextColor(40);
+          doc.text(a.service, margin + 2, y);
+          if (a.url) {
+            doc.setTextColor(100);
+            doc.text(a.url, margin + 4, y + 5);
+          }
+          if (a.notes) {
+            doc.setTextColor(120);
+            doc.text(a.notes, margin + 4, y + (a.url ? 10 : 5));
+          }
+          y += (a.url && a.notes ? 16 : a.url || a.notes ? 11 : 6);
+        });
+        y += 5;
+      }
+      
+      // Notes
+      if (data.handoffNotes) {
+        checkPage(30);
+        doc.setFontSize(14);
+        doc.setTextColor(26, 26, 46);
+        doc.text('Additional Notes', margin, y);
+        y += 8;
+        
+        doc.setFontSize(10);
+        doc.setTextColor(60);
+        const noteLines = doc.splitTextToSize(data.handoffNotes, maxWidth);
+        noteLines.forEach(line => {
+          checkPage(6);
+          doc.text(line, margin, y);
+          y += 5;
+        });
+        y += 5;
+      }
+      
+      // Support
+      if (data.supportInfo) {
+        checkPage(25);
+        doc.setFontSize(14);
+        doc.setTextColor(26, 26, 46);
+        doc.text('Support & Contact', margin, y);
+        y += 8;
+        
+        doc.setFontSize(10);
+        doc.setTextColor(60);
+        const supportLines = doc.splitTextToSize(data.supportInfo, maxWidth);
+        doc.text(supportLines, margin, y);
+        y += supportLines.length * 5 + 10;
+      }
+      
+      // Footer
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text('Generated with Philbin Project Handoff', margin, 290);
+        doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin - 20, 290);
+      }
+      
+      const filename = `${data.projectName.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-handoff.pdf`;
+      doc.save(filename);
+    }
+    
+    // Storage
+    function saveToStorage() {
+      const data = gatherData();
+      localStorage.setItem('projectHandoff', JSON.stringify(data));
+      alert('Draft saved!');
+    }
+    
+    function loadFromStorage() {
+      const saved = localStorage.getItem('projectHandoff');
+      if (!saved) return;
+      
+      try {
+        const data = JSON.parse(saved);
+        
+        document.getElementById('projectName').value = data.projectName || '';
+        document.getElementById('clientName').value = data.clientName || '';
+        if (data.completionDate) document.getElementById('completionDate').value = data.completionDate;
+        document.getElementById('yourName').value = data.yourName || '';
+        document.getElementById('projectSummary').value = data.projectSummary || '';
+        document.getElementById('handoffNotes').value = data.handoffNotes || '';
+        document.getElementById('supportInfo').value = data.supportInfo || '';
+        
+        // Restore deliverables
+        if (data.deliverables?.length > 0) {
+          const list = document.getElementById('deliverableList');
+          list.innerHTML = '';
+          data.deliverables.forEach(d => {
+            const item = document.createElement('div');
+            item.className = 'deliverable-item';
+            item.innerHTML = `
+              <input type="text" value="${escapeHtml(d)}">
+              <button class="remove-btn" onclick="removeItem(this)">×</button>
+            `;
+            list.appendChild(item);
+          });
+        }
+        
+        // Restore files
+        if (data.files?.length > 0) {
+          const list = document.getElementById('fileList');
+          list.innerHTML = '';
+          data.files.forEach(f => {
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.innerHTML = `
+              <input type="text" value="${escapeHtml(f.name)}">
+              <input type="text" value="${escapeHtml(f.location)}">
+              <button class="remove-btn" onclick="removeItem(this)">×</button>
+            `;
+            list.appendChild(item);
+          });
+        }
+        
+        // Restore access
+        if (data.access?.length > 0) {
+          const list = document.getElementById('accessList');
+          list.innerHTML = '';
+          data.access.forEach(a => {
+            const item = document.createElement('div');
+            item.className = 'access-item';
+            item.innerHTML = `
+              <input type="text" value="${escapeHtml(a.service)}">
+              <input type="text" value="${escapeHtml(a.url)}">
+              <input type="text" value="${escapeHtml(a.notes)}">
+              <button class="remove-btn" onclick="removeItem(this)">×</button>
+            `;
+            list.appendChild(item);
+          });
+        }
+      } catch (e) {
+        console.error('Failed to load draft', e);
+      }
+    }
+    
+    function clearAll() {
+      if (confirm('Clear all fields?')) {
+        localStorage.removeItem('projectHandoff');
+        location.reload();
+      }
+    }
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
