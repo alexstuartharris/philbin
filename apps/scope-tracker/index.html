@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scope Creep Tracker | Philbin Tools</title>
+  <meta name="description" content="Track project scope changes and generate change order PDFs. No sign-up required.">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --border: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --success: #3fb950;
+      --warning: #d29922;
+      --danger: #f85149;
+      --purple: #a371f7;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      padding: 30px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 30px;
+    }
+    
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    
+    header p {
+      color: var(--text-secondary);
+    }
+    
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    
+    @media (max-width: 600px) {
+      .row, .row-3 { grid-template-columns: 1fr; }
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+    
+    .btn-warning {
+      background: var(--warning);
+      color: #000;
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    /* Scope items */
+    .scope-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    
+    .scope-item.original {
+      border-left: 3px solid var(--success);
+    }
+    
+    .scope-item.addition {
+      border-left: 3px solid var(--warning);
+    }
+    
+    .scope-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    
+    .scope-item h3 {
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+    
+    .scope-item .meta {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    
+    .scope-item .description {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .tag-original {
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--success);
+    }
+    
+    .tag-addition {
+      background: rgba(210, 153, 34, 0.15);
+      color: var(--warning);
+    }
+    
+    .tag-approved {
+      background: rgba(163, 113, 247, 0.15);
+      color: var(--purple);
+    }
+    
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .stat-card .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .stat-card .label {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+    
+    .stat-card.warning .value { color: var(--warning); }
+    .stat-card.success .value { color: var(--success); }
+    .stat-card.danger .value { color: var(--danger); }
+    
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+    }
+    
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    
+    .timeline-item.addition::before {
+      background: var(--warning);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+    
+    .empty-state .icon {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    
+    .tab-btn:hover {
+      background: var(--bg-tertiary);
+    }
+    
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+    
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 Scope Creep Tracker</h1>
+      <p>Document original scope, track additions, generate change orders</p>
+    </header>
+    
+    <!-- Project Setup -->
+    <div class="card" id="projectSetup">
+      <h2>📋 Project Setup</h2>
+      <div class="row">
+        <div class="form-group">
+          <label for="projectName">Project Name *</label>
+          <input type="text" id="projectName" placeholder="Website Redesign">
+        </div>
+        <div class="form-group">
+          <label for="clientName">Client Name *</label>
+          <input type="text" id="clientName" placeholder="Acme Corp">
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <label for="startDate">Project Start Date</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="form-group">
+          <label for="hourlyRate">Hourly Rate ($)</label>
+          <input type="number" id="hourlyRate" step="0.01" placeholder="75.00">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card success">
+        <div class="value" id="statOriginal">0</div>
+        <div class="label">Original Items</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="value" id="statAdditions">0</div>
+        <div class="label">Scope Additions</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="statHours">0h</div>
+        <div class="label">Added Hours</div>
+      </div>
+      <div class="stat-card danger">
+        <div class="value" id="statCost">$0</div>
+        <div class="label">Added Cost</div>
+      </div>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="scope">Scope Items</button>
+      <button class="tab-btn" data-tab="timeline">Timeline</button>
+      <button class="tab-btn" data-tab="export">Change Order</button>
+    </div>
+    
+    <!-- Scope Items Tab -->
+    <div id="tab-scope" class="tab-content active">
+      <div class="btn-group" style="margin-bottom: 20px;">
+        <button class="btn btn-success btn-sm" onclick="openAddModal('original')">+ Original Scope</button>
+        <button class="btn btn-warning btn-sm" onclick="openAddModal('addition')">+ Scope Addition</button>
+      </div>
+      
+      <div id="scopeList">
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <p>No scope items yet. Start by adding your original scope.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Timeline Tab -->
+    <div id="tab-timeline" class="tab-content">
+      <div class="timeline" id="timeline">
+        <div class="empty-state">
+          <div class="icon">📅</div>
+          <p>Timeline will appear as you add scope items.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Export Tab -->
+    <div id="tab-export" class="tab-content">
+      <div class="card">
+        <h2>📄 Generate Change Order</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 16px;">
+          Create a professional change order document to send to your client for approval.
+        </p>
+        
+        <div class="form-group">
+          <label for="changeOrderTitle">Change Order Title</label>
+          <input type="text" id="changeOrderTitle" placeholder="Change Order #1 - Additional Features">
+        </div>
+        
+        <div class="form-group">
+          <label for="changeOrderNotes">Notes / Justification</label>
+          <textarea id="changeOrderNotes" placeholder="Explanation of why these changes are needed..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="includeOriginal" style="width: auto; margin-right: 8px;">
+            Include original scope for reference
+          </label>
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-success" onclick="downloadChangeOrder()">📄 Download Change Order PDF</button>
+          <button class="btn btn-secondary" onclick="downloadScopeSummary()">📋 Download Full Scope PDF</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>💾 Data Management</h2>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="exportJson()">Export JSON Backup</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
+          <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importJson(event)">
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>Part of <a href="../">Philbin Tools</a> • No sign-up, no tracking</p>
+      <p style="margin-top: 5px;">Ready to bill? Try <a href="../invoice-gen/">Steep Invoice Generator</a></p>
+    </footer>
+  </div>
+  
+  <!-- Add Item Modal -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Scope Item</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="itemType">
+        <input type="hidden" id="editIndex" value="-1">
+        
+        <div class="form-group">
+          <label for="itemName">Item Name *</label>
+          <input type="text" id="itemName" placeholder="e.g., Homepage design">
+        </div>
+        
+        <div class="form-group">
+          <label for="itemDescription">Description</label>
+          <textarea id="itemDescription" placeholder="Details about this scope item..."></textarea>
+        </div>
+        
+        <div class="row">
+          <div class="form-group">
+            <label for="itemDate">Date Added</label>
+            <input type="date" id="itemDate">
+          </div>
+          <div class="form-group">
+            <label for="itemHours">Estimated Hours</label>
+            <input type="number" id="itemHours" step="0.5" placeholder="0">
+          </div>
+        </div>
+        
+        <div class="form-group" id="approvedGroup" style="display: none;">
+          <label>
+            <input type="checkbox" id="itemApproved" style="width: auto; margin-right: 8px;">
+            Client Approved
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveItem()">Save</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // State
+    let project = {
+      name: '',
+      client: '',
+      startDate: '',
+      hourlyRate: 0,
+      items: []
+    };
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('startDate').valueAsDate = new Date();
+      loadFromStorage();
+      setupAutoSave();
+      render();
+    });
+    
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+      });
+    });
+    
+    // Auto-save project details
+    function setupAutoSave() {
+      ['projectName', 'clientName', 'startDate', 'hourlyRate'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+          project.name = document.getElementById('projectName').value.trim();
+          project.client = document.getElementById('clientName').value.trim();
+          project.startDate = document.getElementById('startDate').value;
+          project.hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+          saveToStorage();
+        });
+      });
+    }
+    
+    // Modal handling
+    function openAddModal(type) {
+      document.getElementById('itemType').value = type;
+      document.getElementById('editIndex').value = -1;
+      document.getElementById('modalTitle').textContent = 
+        type === 'original' ? 'Add Original Scope Item' : 'Add Scope Addition';
+      document.getElementById('approvedGroup').style.display = 
+        type === 'addition' ? 'block' : 'none';
+      
+      document.getElementById('itemName').value = '';
+      document.getElementById('itemDescription').value = '';
+      document.getElementById('itemDate').valueAsDate = new Date();
+      document.getElementById('itemHours').value = '';
+      document.getElementById('itemApproved').checked = false;
+      
+      document.getElementById('addModal').classList.add('active');
+      document.getElementById('itemName').focus();
+    }
+    
+    function editItem(index) {
+      const item = project.items[index];
+      document.getElementById('itemType').value = item.type;
+      document.getElementById('editIndex').value = index;
+      document.getElementById('modalTitle').textContent = 'Edit Scope Item';
+      document.getElementById('approvedGroup').style.display = 
+        item.type === 'addition' ? 'block' : 'none';
+      
+      document.getElementById('itemName').value = item.name;
+      document.getElementById('itemDescription').value = item.description || '';
+      document.getElementById('itemDate').value = item.date || '';
+      document.getElementById('itemHours').value = item.hours || '';
+      document.getElementById('itemApproved').checked = item.approved || false;
+      
+      document.getElementById('addModal').classList.add('active');
+    }
+    
+    function closeModal() {
+      document.getElementById('addModal').classList.remove('active');
+    }
+    
+    function saveItem() {
+      const name = document.getElementById('itemName').value.trim();
+      if (!name) {
+        alert('Please enter an item name');
+        return;
+      }
+      
+      const item = {
+        type: document.getElementById('itemType').value,
+        name: name,
+        description: document.getElementById('itemDescription').value.trim(),
+        date: document.getElementById('itemDate').value,
+        hours: parseFloat(document.getElementById('itemHours').value) || 0,
+        approved: document.getElementById('itemApproved').checked
+      };
+      
+      const editIndex = parseInt(document.getElementById('editIndex').value);
+      if (editIndex >= 0) {
+        project.items[editIndex] = item;
+      } else {
+        project.items.push(item);
+      }
+      
+      saveToStorage();
+      render();
+      closeModal();
+    }
+    
+    function deleteItem(index) {
+      if (confirm('Delete this scope item?')) {
+        project.items.splice(index, 1);
+        saveToStorage();
+        render();
+      }
+    }
+    
+    // Render
+    function render() {
+      renderScopeList();
+      renderTimeline();
+      renderStats();
+    }
+    
+    function renderScopeList() {
+      const container = document.getElementById('scopeList');
+      
+      if (project.items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📋</div>
+            <p>No scope items yet. Start by adding your original scope.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Sort: original first, then additions by date
+      const sorted = [...project.items].sort((a, b) => {
+        if (a.type !== b.type) return a.type === 'original' ? -1 : 1;
+        return (a.date || '').localeCompare(b.date || '');
+      });
+      
+      container.innerHTML = sorted.map((item, i) => {
+        const realIndex = project.items.indexOf(item);
+        return `
+          <div class="scope-item ${item.type}">
+            <div class="scope-item-header">
+              <div>
+                <h3>${escapeHtml(item.name)}</h3>
+                <span class="tag tag-${item.type}">${item.type === 'original' ? 'Original' : 'Addition'}</span>
+                ${item.approved ? '<span class="tag tag-approved">Approved</span>' : ''}
+              </div>
+              <div class="btn-group">
+                <button class="btn btn-secondary btn-sm" onclick="editItem(${realIndex})">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteItem(${realIndex})">×</button>
+              </div>
+            </div>
+            <div class="meta">
+              ${item.date ? formatDate(item.date) : ''}
+              ${item.hours ? ` • ${item.hours}h` : ''}
+              ${item.hours && project.hourlyRate ? ` • $${(item.hours * project.hourlyRate).toFixed(2)}` : ''}
+            </div>
+            ${item.description ? `<div class="description">${escapeHtml(item.description)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function renderTimeline() {
+      const container = document.getElementById('timeline');
+      const items = project.items.filter(i => i.date).sort((a, b) => a.date.localeCompare(b.date));
+      
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📅</div>
+            <p>Timeline will appear as you add dated scope items.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = items.map(item => `
+        <div class="timeline-item ${item.type}">
+          <div class="scope-item ${item.type}" style="margin-bottom: 0;">
+            <div class="scope-item-header">
+              <h3>${escapeHtml(item.name)}</h3>
+              <span class="tag tag-${item.type}">${item.type === 'original' ? 'Original' : 'Addition'}</span>
+            </div>
+            <div class="meta">${formatDate(item.date)}${item.hours ? ` • ${item.hours}h` : ''}</div>
+            ${item.description ? `<div class="description">${escapeHtml(item.description)}</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function renderStats() {
+      const original = project.items.filter(i => i.type === 'original');
+      const additions = project.items.filter(i => i.type === 'addition');
+      const addedHours = additions.reduce((sum, i) => sum + (i.hours || 0), 0);
+      const addedCost = addedHours * (project.hourlyRate || 0);
+      
+      document.getElementById('statOriginal').textContent = original.length;
+      document.getElementById('statAdditions').textContent = additions.length;
+      document.getElementById('statHours').textContent = `${addedHours}h`;
+      document.getElementById('statCost').textContent = `$${addedCost.toFixed(0)}`;
+    }
+    
+    // PDF Generation
+    function downloadChangeOrder() {
+      const additions = project.items.filter(i => i.type === 'addition');
+      if (additions.length === 0) {
+        alert('No scope additions to include in change order');
+        return;
+      }
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 20;
+      const margin = 20;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      
+      // Title
+      doc.setFontSize(22);
+      doc.setTextColor(26, 26, 46);
+      const title = document.getElementById('changeOrderTitle').value.trim() || 'Change Order';
+      doc.text(title, margin, y);
+      y += 10;
+      
+      // Project info
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      doc.text(`Project: ${project.name || 'Untitled Project'}`, margin, y);
+      y += 6;
+      doc.text(`Client: ${project.client || 'Client'}`, margin, y);
+      y += 6;
+      doc.text(`Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y);
+      y += 12;
+      
+      // Line
+      doc.setDrawColor(200);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 10;
+      
+      // Notes
+      const notes = document.getElementById('changeOrderNotes').value.trim();
+      if (notes) {
+        doc.setFontSize(12);
+        doc.setTextColor(40);
+        const noteLines = doc.splitTextToSize(notes, pageWidth - margin * 2);
+        doc.text(noteLines, margin, y);
+        y += noteLines.length * 5 + 10;
+      }
+      
+      // Include original scope
+      if (document.getElementById('includeOriginal').checked) {
+        const original = project.items.filter(i => i.type === 'original');
+        if (original.length > 0) {
+          doc.setFontSize(14);
+          doc.setTextColor(26, 26, 46);
+          doc.text('Original Scope (for reference)', margin, y);
+          y += 8;
+          
+          doc.setFontSize(10);
+          doc.setTextColor(80);
+          original.forEach(item => {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.text(`• ${item.name}`, margin + 2, y);
+            y += 6;
+          });
+          y += 8;
+        }
+      }
+      
+      // Scope additions
+      doc.setFontSize(14);
+      doc.setTextColor(26, 26, 46);
+      doc.text('Requested Changes', margin, y);
+      y += 8;
+      
+      let totalHours = 0;
+      doc.setFontSize(10);
+      additions.forEach((item, i) => {
+        if (y > 250) { doc.addPage(); y = 20; }
+        
+        doc.setTextColor(40);
+        doc.text(`${i + 1}. ${item.name}`, margin, y);
+        y += 5;
+        
+        if (item.description) {
+          doc.setTextColor(100);
+          const descLines = doc.splitTextToSize(item.description, pageWidth - margin * 2 - 10);
+          doc.text(descLines, margin + 5, y);
+          y += descLines.length * 4 + 2;
+        }
+        
+        if (item.hours) {
+          doc.setTextColor(80);
+          const cost = item.hours * (project.hourlyRate || 0);
+          doc.text(`Estimated: ${item.hours}h${cost ? ` ($${cost.toFixed(2)})` : ''}`, margin + 5, y);
+          totalHours += item.hours;
+          y += 5;
+        }
+        
+        y += 5;
+      });
+      
+      // Total
+      y += 5;
+      doc.setDrawColor(200);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 8;
+      
+      doc.setFontSize(12);
+      doc.setTextColor(26, 26, 46);
+      const totalCost = totalHours * (project.hourlyRate || 0);
+      doc.text(`Total Additional Hours: ${totalHours}h`, margin, y);
+      if (totalCost) {
+        doc.text(`Total Additional Cost: $${totalCost.toFixed(2)}`, margin, y + 7);
+        y += 7;
+      }
+      y += 20;
+      
+      // Signature lines
+      if (y > 240) { doc.addPage(); y = 20; }
+      doc.setFontSize(10);
+      doc.setTextColor(60);
+      doc.text('Approval:', margin, y);
+      y += 15;
+      
+      doc.line(margin, y, margin + 70, y);
+      doc.text('Client Signature', margin, y + 5);
+      
+      doc.line(pageWidth - margin - 50, y, pageWidth - margin, y);
+      doc.text('Date', pageWidth - margin - 50, y + 5);
+      
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text('Generated with Philbin Scope Tracker', margin, 290);
+      
+      const filename = `change-order-${(project.name || 'project').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`;
+      doc.save(filename);
+    }
+    
+    function downloadScopeSummary() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 20;
+      const margin = 20;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      
+      // Title
+      doc.setFontSize(22);
+      doc.setTextColor(26, 26, 46);
+      doc.text('Project Scope Summary', margin, y);
+      y += 10;
+      
+      // Project info
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      doc.text(`Project: ${project.name || 'Untitled'}`, margin, y);
+      y += 6;
+      doc.text(`Client: ${project.client || 'Client'}`, margin, y);
+      y += 6;
+      if (project.startDate) {
+        doc.text(`Start Date: ${formatDate(project.startDate)}`, margin, y);
+        y += 6;
+      }
+      y += 8;
+      
+      doc.setDrawColor(200);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 10;
+      
+      // Original scope
+      const original = project.items.filter(i => i.type === 'original');
+      if (original.length > 0) {
+        doc.setFontSize(14);
+        doc.setTextColor(63, 185, 80);
+        doc.text('Original Scope', margin, y);
+        y += 8;
+        
+        doc.setFontSize(10);
+        doc.setTextColor(60);
+        original.forEach(item => {
+          if (y > 270) { doc.addPage(); y = 20; }
+          doc.text(`• ${item.name}${item.hours ? ` (${item.hours}h)` : ''}`, margin + 2, y);
+          y += 6;
+        });
+        y += 8;
+      }
+      
+      // Additions
+      const additions = project.items.filter(i => i.type === 'addition');
+      if (additions.length > 0) {
+        doc.setFontSize(14);
+        doc.setTextColor(210, 153, 34);
+        doc.text('Scope Additions', margin, y);
+        y += 8;
+        
+        doc.setFontSize(10);
+        additions.forEach(item => {
+          if (y > 260) { doc.addPage(); y = 20; }
+          doc.setTextColor(60);
+          doc.text(`• ${item.name}`, margin + 2, y);
+          y += 5;
+          
+          const meta = [];
+          if (item.date) meta.push(formatDate(item.date));
+          if (item.hours) meta.push(`${item.hours}h`);
+          if (item.approved) meta.push('Approved');
+          
+          if (meta.length) {
+            doc.setTextColor(120);
+            doc.text(`  ${meta.join(' | ')}`, margin + 2, y);
+            y += 5;
+          }
+          y += 3;
+        });
+      }
+      
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text('Generated with Philbin Scope Tracker', margin, 290);
+      
+      const filename = `scope-summary-${(project.name || 'project').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`;
+      doc.save(filename);
+    }
+    
+    // Storage
+    function saveToStorage() {
+      localStorage.setItem('scopeTracker', JSON.stringify(project));
+    }
+    
+    function loadFromStorage() {
+      const saved = localStorage.getItem('scopeTracker');
+      if (saved) {
+        try {
+          project = JSON.parse(saved);
+          document.getElementById('projectName').value = project.name || '';
+          document.getElementById('clientName').value = project.client || '';
+          if (project.startDate) document.getElementById('startDate').value = project.startDate;
+          if (project.hourlyRate) document.getElementById('hourlyRate').value = project.hourlyRate;
+        } catch (e) {
+          console.error('Failed to load', e);
+        }
+      }
+    }
+    
+    function exportJson() {
+      const data = JSON.stringify(project, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `scope-tracker-${(project.name || 'project').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+    function importJson(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (confirm('This will replace your current project. Continue?')) {
+            project = imported;
+            document.getElementById('projectName').value = project.name || '';
+            document.getElementById('clientName').value = project.client || '';
+            if (project.startDate) document.getElementById('startDate').value = project.startDate;
+            if (project.hourlyRate) document.getElementById('hourlyRate').value = project.hourlyRate;
+            saveToStorage();
+            render();
+          }
+        } catch (err) {
+          alert('Invalid JSON file');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+    
+    // Helpers
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      return new Date(dateStr + 'T00:00').toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric'
+      });
+    }
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
