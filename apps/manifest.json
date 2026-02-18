@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T16:35:47.523Z",
+  "generatedAt": "2026-02-18T07:16:33.396Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -42,7 +42,15 @@
       "hasIndex": true
     },
     {
+      "name": "quote-contract-invoice-bundle",
+      "hasIndex": true
+    },
+    {
       "name": "receipt-tracker",
+      "hasIndex": true
+    },
+    {
+      "name": "retainer-burn-down",
       "hasIndex": true
     },
     {
