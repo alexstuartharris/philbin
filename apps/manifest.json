@@ -1,12 +1,20 @@
 {
-  "generatedAt": "2026-02-17T16:35:47.523Z",
+  "generatedAt": "2026-02-19T07:16:46.732Z",
   "apps": [
     {
       "name": "csv-to-geojson",
       "hasIndex": true
     },
     {
+      "name": "dmr-qa-checker",
+      "hasIndex": true
+    },
+    {
       "name": "driveway-tetris",
+      "hasIndex": true
+    },
+    {
+      "name": "environmental-scope-deliverables",
       "hasIndex": true
     },
     {
@@ -42,7 +50,15 @@
       "hasIndex": true
     },
     {
+      "name": "quote-contract-invoice-bundle",
+      "hasIndex": true
+    },
+    {
       "name": "receipt-tracker",
+      "hasIndex": true
+    },
+    {
+      "name": "retainer-burn-down",
       "hasIndex": true
     },
     {

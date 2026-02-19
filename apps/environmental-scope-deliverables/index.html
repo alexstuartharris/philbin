@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Environmental Scope-to-Deliverables Generator — No Sign Up | Philbin</title>
+  <meta name="description" content="Generate environmental consulting scope matrix, assumptions, exclusions, and change-order language. Export as text or markdown." />
+  <style>
+    :root{--bg:#08111a;--panel:#101b29;--line:#25354a;--text:#eaf2ff;--muted:#96a7bf;--accent:#34d399}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:22px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:860px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input,textarea,select{width:100%;background:#0a1422;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px}
+    textarea{min-height:84px} h1{margin:0 0 8px} p{color:var(--muted)}
+    .btn{border:0;border-radius:9px;padding:10px 12px;background:var(--accent);color:#042116;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#1f2a3d;color:#d9e6ff;border:1px solid var(--line)}
+    .row{display:flex;gap:8px;flex-wrap:wrap}.out{white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.45;max-height:520px;overflow:auto}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🌿 Environmental Scope → Deliverables Generator</h1>
+    <p>Build a client-ready scope matrix with assumptions, exclusions, and change-order clauses. Local-only, no account.</p>
+
+    <div class="grid">
+      <div class="card">
+        <label>Project Name</label>
+        <input id="project" value="Creek Reach Restoration Monitoring" />
+
+        <label style="margin-top:10px">Client</label>
+        <input id="client" value="District of Example" />
+
+        <label style="margin-top:10px">Discipline</label>
+        <select id="discipline">
+          <option>Hydrology + Fisheries</option>
+          <option>Water Quality</option>
+          <option>Land Reclamation</option>
+          <option>Environmental Compliance</option>
+        </select>
+
+        <label style="margin-top:10px">Core Tasks (one per line: task | deliverable | timeline)</label>
+        <textarea id="tasks">Baseline field survey | Site visit memo + geotagged photos | Week 1
+Hydraulic cross-sections | Cross-section dataset + method note | Week 2
+Habitat suitability review | Habitat constraints summary | Week 3
+Draft recommendations | Draft restoration options memo | Week 4</textarea>
+
+        <label style="margin-top:10px">Assumptions (one per line)</label>
+        <textarea id="assumptions">Client provides safe access and permissions.
+Weather/flow conditions allow field access.
+Existing background data provided by client is current.</textarea>
+
+        <label style="margin-top:10px">Exclusions (one per line)</label>
+        <textarea id="exclusions">Detailed engineered design drawings.
+Permit application preparation/submission.
+Construction supervision and contractor management.</textarea>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn" id="generate">Generate</button>
+          <button class="btn secondary" id="copy">Copy</button>
+          <button class="btn secondary" id="download">Download .md</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <strong>Generated Scope Document</strong>
+        <div id="output" class="out" style="margin-top:10px"></div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px"><a href="../" style="color:#86efac">← Back to Philbin Tools</a></p>
+  </div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+function toRows(text){return text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean)}
+
+function build(){
+  const project=$("project").value.trim();
+  const client=$("client").value.trim();
+  const discipline=$("discipline").value;
+  const tasks = toRows($("tasks").value).map((line,i)=>{
+    const [task,deliverable,timeline] = line.split('|').map(v=>(v||'').trim());
+    return {n:i+1,task:task||`Task ${i+1}`,deliverable:deliverable||'TBD deliverable',timeline:timeline||'TBD'};
+  });
+  const assumptions = toRows($("assumptions").value);
+  const exclusions = toRows($("exclusions").value);
+
+  const today = new Date().toISOString().slice(0,10);
+  let txt = `# Scope-to-Deliverables Matrix\n\n`;
+  txt += `**Project:** ${project}\n`;
+  txt += `**Client:** ${client}\n`;
+  txt += `**Discipline:** ${discipline}\n`;
+  txt += `**Generated:** ${today}\n\n`;
+
+  txt += `## 1) Scope Matrix\n`;
+  txt += `| # | Scope Task | Deliverable | Timeline |\n|---|---|---|---|\n`;
+  txt += tasks.map(t=>`| ${t.n} | ${t.task} | ${t.deliverable} | ${t.timeline} |`).join('\n') + '\n\n';
+
+  txt += `## 2) Assumptions\n`;
+  txt += assumptions.map((a,i)=>`${i+1}. ${a}`).join('\n') + '\n\n';
+
+  txt += `## 3) Exclusions\n`;
+  txt += exclusions.map((e,i)=>`${i+1}. ${e}`).join('\n') + '\n\n';
+
+  txt += `## 4) Change-Order Trigger Language\n`;
+  txt += `Any request outside the listed scope, assumptions, and exclusions will be documented as a change request. `;
+  txt += `A change-order will define revised effort, schedule, and fee impacts before additional work proceeds.\n\n`;
+
+  txt += `## 5) Acceptance\n`;
+  txt += `Client acceptance of this scope confirms shared understanding of deliverables, boundaries, and assumptions.`;
+
+  $("output").textContent = txt;
+}
+
+$("generate").onclick=build;
+$("copy").onclick=async()=>{await navigator.clipboard.writeText($("output").textContent);};
+$("download").onclick=()=>{
+  const blob = new Blob([$("output").textContent], {type:'text/markdown'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='scope-deliverables.md'; a.click(); URL.revokeObjectURL(a.href);
+};
+build();
+</script>
+</body>
+</html>

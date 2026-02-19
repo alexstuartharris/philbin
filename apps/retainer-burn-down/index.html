@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retainer Burn-Down Tracker</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0a1022;--panel:#141e3b;--text:#eef3ff;--muted:#9fb1d1;--accent:#66d9ef;--ok:#5dd39e;}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,#0a1022,#0d1733);color:var(--text)}
+    .wrap{max-width:1040px;margin:1.4rem auto;padding:1rem}.card{background:var(--panel);border:1px solid #26345d;border-radius:14px;padding:1rem;margin-bottom:1rem}
+    h1,h2{margin:.2rem 0 .5rem}.muted{color:var(--muted)}
+    .row{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}label{display:block;margin:.55rem 0 .25rem;color:var(--muted)}
+    input,textarea{width:100%;background:#0b1328;border:1px solid #2c3e70;color:var(--text);border-radius:10px;padding:.65rem}
+    textarea{min-height:130px}
+    button{background:var(--accent);color:#001018;border:none;border-radius:10px;padding:.62rem .9rem;font-weight:700;cursor:pointer}
+    button.secondary{background:#9dd8ff}
+    table{width:100%;border-collapse:collapse}th,td{padding:.55rem;border-bottom:1px solid #2b3c6b;text-align:left}.right{text-align:right}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}.kpi{background:#0d1733;border:1px solid #26345d;border-radius:12px;padding:.7rem}
+    .kpi .v{font-size:1.2rem;font-weight:700}.ok{color:var(--ok)}
+    @media(max-width:900px){.row,.kpis{grid-template-columns:1fr 1fr}} @media(max-width:650px){.row,.kpis{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Retainer Burn-Down Tracker</h1>
+    <p class="muted">Track monthly retainer usage and export a clean client-ready CSV summary. No login, no cloud sync.</p>
+
+    <div class="card">
+      <div class="row">
+        <div><label>Client</label><input id="client" placeholder="North Shore Ecology Ltd." /></div>
+        <div><label>Retainer Hours</label><input id="retainer" type="number" min="0" step="0.25" value="20" /></div>
+        <div><label>Hourly Rate (CAD)</label><input id="rate" type="number" min="0" step="0.01" value="150" /></div>
+        <div><label>Month</label><input id="month" type="month" /></div>
+      </div>
+      <label>Work Log (one per line: <code>YYYY-MM-DD | Task | Hours</code>)</label>
+      <textarea id="log" placeholder="2026-02-03 | Site visit + sampling | 3.5&#10;2026-02-06 | Data QA and maps | 4&#10;2026-02-11 | Client check-in + summary | 1.5"></textarea>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem">
+        <button id="calcBtn">Update Burn-Down</button>
+        <button id="csvBtn" class="secondary">Export Client CSV</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Snapshot</h2>
+      <div class="kpis">
+        <div class="kpi"><div class="muted">Used Hours</div><div id="usedH" class="v">0.00</div></div>
+        <div class="kpi"><div class="muted">Hours Remaining</div><div id="leftH" class="v ok">0.00</div></div>
+        <div class="kpi"><div class="muted">Used Value</div><div id="usedV" class="v">$0.00</div></div>
+        <div class="kpi"><div class="muted">Burn %</div><div id="burnP" class="v">0%</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Entries</h2>
+      <table id="tbl">
+        <thead><tr><th>Date</th><th>Task</th><th class="right">Hours</th><th class="right">Value</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+const $=id=>document.getElementById(id);
+const month = new Date().toISOString().slice(0,7); $('month').value = month;
+let rows=[];
+
+function parseRows(){
+  const rate=parseFloat($('rate').value)||0;
+  rows = $('log').value.split(/\n+/).map(l=>l.trim()).filter(Boolean).map(line=>{
+    const [date,task,hoursRaw]=line.split('|').map(s=>(s||'').trim());
+    const hours=parseFloat(hoursRaw)||0;
+    return {date:date||'—', task:task||'Work item', hours, value:hours*rate};
+  }).filter(r=>r.hours>0);
+}
+
+function render(){
+  parseRows();
+  const retainer=parseFloat($('retainer').value)||0;
+  const used=rows.reduce((a,b)=>a+b.hours,0);
+  const left=Math.max(0, retainer-used);
+  const usedValue=rows.reduce((a,b)=>a+b.value,0);
+  const burn=retainer>0 ? (used/retainer)*100 : 0;
+
+  $('usedH').textContent=used.toFixed(2);
+  $('leftH').textContent=left.toFixed(2);
+  $('usedV').textContent=`$${usedValue.toFixed(2)}`;
+  $('burnP').textContent=`${burn.toFixed(1)}%`;
+
+  const body=$('tbl').querySelector('tbody'); body.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.date}</td><td>${r.task}</td><td class="right">${r.hours.toFixed(2)}</td><td class="right">$${r.value.toFixed(2)}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+function exportCsv(){
+  parseRows();
+  if(!rows.length) return alert('Add at least one valid log entry first.');
+  const client=($('client').value||'Client').replaceAll('"','""');
+  const monthVal=$('month').value||'';
+  const retainer=parseFloat($('retainer').value)||0;
+  const used=rows.reduce((a,b)=>a+b.hours,0);
+  const left=Math.max(0, retainer-used);
+  const burn=retainer>0 ? (used/retainer)*100 : 0;
+
+  const header=['Client','Month','Date','Task','Hours','Rate','Value'];
+  const rate=parseFloat($('rate').value)||0;
+  const lines=[header.join(',')]
+    .concat(rows.map(r=>[`"${client}"`,`"${monthVal}"`,`"${r.date}"`,`"${r.task.replaceAll('"','""')}"`,r.hours.toFixed(2),rate.toFixed(2),r.value.toFixed(2)].join(',')))
+    .concat([''])
+    .concat([
+      ['Summary','','','','','',''].join(','),
+      ['Retainer Hours',retainer.toFixed(2)].join(','),
+      ['Used Hours',used.toFixed(2)].join(','),
+      ['Remaining Hours',left.toFixed(2)].join(','),
+      ['Burn Percent',burn.toFixed(1)+'%'].join(',')
+    ]);
+
+  const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='retainer-burn-down.csv'; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+$('calcBtn').addEventListener('click',render);
+$('csvBtn').addEventListener('click',exportCsv);
+render();
+</script>
+</body>
+</html>

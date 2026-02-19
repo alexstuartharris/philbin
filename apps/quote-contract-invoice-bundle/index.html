@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quote → Contract → Invoice Bundle</title>
+  <style>
+    :root{color-scheme:dark;--bg:#091124;--panel:#14203f;--text:#eef3ff;--muted:#9fb1d1;--accent:#66d9ef}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#091124,#0e1833);color:var(--text);font-family:Inter,system-ui,sans-serif}
+    .wrap{max-width:980px;margin:1.4rem auto;padding:1rem}.card{background:var(--panel);border:1px solid #2a3a67;border-radius:14px;padding:1rem;margin-bottom:1rem}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}@media(max-width:760px){.row{grid-template-columns:1fr}}
+    label{display:block;margin:.55rem 0 .25rem;color:var(--muted)}input,textarea{width:100%;background:#0b1328;border:1px solid #2d3f72;color:var(--text);border-radius:10px;padding:.65rem}
+    textarea{min-height:110px}button{background:var(--accent);color:#001018;border:none;border-radius:10px;padding:.62rem .9rem;font-weight:700;cursor:pointer}
+    pre{white-space:pre-wrap;background:#0b1328;border:1px solid #2d3f72;padding:.8rem;border-radius:10px;line-height:1.45}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Quote → Contract → Invoice Bundle</h1>
+    <p class="muted">One input form, three ready-to-send documents. Copy as text or download .txt bundle instantly.</p>
+
+    <div class="card">
+      <div class="row">
+        <div><label>Freelancer / Business Name</label><input id="biz" placeholder="Philbin Studio" /></div>
+        <div><label>Client Name</label><input id="client" placeholder="Acme Construction" /></div>
+      </div>
+      <div class="row">
+        <div><label>Project Name</label><input id="project" placeholder="Hydrology Risk Review" /></div>
+        <div><label>Total Price (CAD)</label><input id="price" type="number" min="0" step="0.01" value="2800" /></div>
+      </div>
+      <div class="row">
+        <div><label>Deposit %</label><input id="deposit" type="number" min="0" max="100" step="1" value="40" /></div>
+        <div><label>Due in Days</label><input id="due" type="number" min="1" step="1" value="14" /></div>
+      </div>
+      <label>Scope / Deliverables (one per line)</label>
+      <textarea id="scope" placeholder="- Site review and baseline notes&#10;- GIS map package (PDF + GeoJSON)&#10;- Summary memo + recommendations"></textarea>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem">
+        <button id="buildBtn">Generate Bundle</button>
+        <button id="downloadBtn" style="background:#9dd8ff">Download .txt Bundle</button>
+      </div>
+    </div>
+
+    <div class="card"><h2 style="margin-top:0">1) Quote</h2><pre id="quoteOut"></pre></div>
+    <div class="card"><h2 style="margin-top:0">2) Contract (e-sign ready text)</h2><pre id="contractOut"></pre></div>
+    <div class="card"><h2 style="margin-top:0">3) Invoice</h2><pre id="invoiceOut"></pre></div>
+  </div>
+
+<script>
+const $=id=>document.getElementById(id);
+function money(v){return `$${(parseFloat(v)||0).toFixed(2)}`}
+function addDays(d){const x=new Date();x.setDate(x.getDate()+d);return x.toISOString().slice(0,10)}
+
+let bundle='';
+function build(){
+  const biz=$('biz').value||'Your Business';
+  const client=$('client').value||'Client';
+  const project=$('project').value||'Project';
+  const total=parseFloat($('price').value)||0;
+  const depPct=Math.min(100,Math.max(0,parseFloat($('deposit').value)||0));
+  const dueDays=Math.max(1,parseInt($('due').value||'14',10));
+  const deposit=total*(depPct/100);
+  const remaining=total-deposit;
+  const scope=$('scope').value.trim()||'- Deliverables to be defined';
+  const today=new Date().toISOString().slice(0,10);
+  const dueDate=addDays(dueDays);
+
+  const quote=`QUOTE\nFrom: ${biz}\nTo: ${client}\nDate: ${today}\nProject: ${project}\n\nScope:\n${scope}\n\nPrice Summary:\n- Total project fee: ${money(total)}\n- Deposit (${depPct}%): ${money(deposit)}\n- Final payment: ${money(remaining)}\n\nQuote valid for 14 days.`;
+
+  const contract=`CONTRACT (E-SIGN READY TEXT)\nParties: ${biz} (Provider) and ${client} (Client)\nEffective Date: ${today}\nProject: ${project}\n\nScope of Work:\n${scope}\n\nPayment Terms:\n- Total fee: ${money(total)}\n- Deposit due on signing: ${money(deposit)}\n- Balance due before final deliverable handoff: ${money(remaining)}\n\nTimeline:\n- Work begins after deposit receipt.\n- Target completion based on scope and revision rounds agreed in writing.\n\nApproval:\nClient Signature: ____________________ Date: __________\nProvider Signature: __________________ Date: __________`;
+
+  const invoice=`INVOICE\nInvoice Date: ${today}\nDue Date: ${dueDate}\nFrom: ${biz}\nBill To: ${client}\n\nLine Items:\n1) ${project} - Deposit (${depPct}%) ........ ${money(deposit)}\n\nSubtotal: ${money(deposit)}\nTax: ${money(0)}\nTotal Due: ${money(deposit)}\n\nNotes:\n- Remaining balance (${money(remaining)}) due before final delivery.\n- Thank you for your business.`;
+
+  $('quoteOut').textContent=quote;
+  $('contractOut').textContent=contract;
+  $('invoiceOut').textContent=invoice;
+  bundle=`${quote}\n\n---\n\n${contract}\n\n---\n\n${invoice}\n`;
+}
+
+function download(){
+  if(!bundle.trim()) build();
+  const blob=new Blob([bundle],{type:'text/plain'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quote-contract-invoice-bundle.txt'; a.click();
+  URL.revokeObjectURL(a.href);
+}
+$('buildBtn').addEventListener('click',build);
+$('downloadBtn').addEventListener('click',download);
+build();
+</script>
+</body>
+</html>

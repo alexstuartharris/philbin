@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NPDES/DMR Pre-Submission QA Checker — No Sign Up | Philbin</title>
+  <meta name="description" content="Validate DMR rows before filing. Catch missing values, negative flows, out-of-range pH, and date gaps. 100% local, no signup." />
+  <style>
+    :root { --bg:#0b1020; --card:#131a2a; --muted:#9aa4bf; --text:#edf1ff; --ok:#22c55e; --warn:#f59e0b; --err:#ef4444; --line:#27304a; --accent:#60a5fa; }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1000px;margin:0 auto;padding:24px} h1{margin:0 0 8px} p{color:var(--muted)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+    textarea{width:100%;min-height:180px;background:#0c1324;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:ui-monospace,Consolas,monospace}
+    .row{display:flex;gap:10px;flex-wrap:wrap}.btn{background:var(--accent);color:#081023;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#1e293b;color:#dbe4ff;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;font-size:14px} th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    .tag{font-size:12px;border-radius:999px;padding:2px 8px;display:inline-block}
+    .ok{background:rgba(34,197,94,.2);color:#86efac}.warn{background:rgba(245,158,11,.2);color:#fcd34d}.err{background:rgba(239,68,68,.2);color:#fca5a5}
+    .small{font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🧪 NPDES/DMR QA Checker</h1>
+    <p>Paste CSV rows and run a pre-submission QA pass. Local-only processing.</p>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <strong>Input CSV</strong>
+        <span class="small">Columns: sample_date,outfall,parameter,result,units,min_limit,max_limit,flow_mgd,pH,remarks</span>
+      </div>
+      <textarea id="csv">sample_date,outfall,parameter,result,units,min_limit,max_limit,flow_mgd,pH,remarks
+2026-02-01,001,TSS,28,mg/L,,30,0.42,7.1,
+2026-02-02,001,BOD5,31,mg/L,,30,0.38,6.1,
+2026-02-03,001,pH,8.8,su,6,9,0.41,8.8,
+2026-02-05,001,TSS,-2,mg/L,,30,0.40,7.0,
+</textarea>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="run">Run QA</button>
+        <button class="btn secondary" id="download">Export Issues CSV</button>
+      </div>
+    </div>
+
+    <div class="card" id="summary"></div>
+    <div class="card">
+      <strong>Issues</strong>
+      <table id="issuesTbl"><thead><tr><th>Severity</th><th>Row</th><th>Check</th><th>Details</th></tr></thead><tbody></tbody></table>
+    </div>
+    <p class="small">Checks included: required fields, numeric parse, negative values, pH range (0–14 + permit band), result vs limits, missing sample date gaps.</p>
+    <p class="small"><a href="../" style="color:#93c5fd">← Back to Philbin Tools</a></p>
+  </div>
+<script>
+const $ = id => document.getElementById(id);
+let lastIssues = [];
+
+function parseCsv(text){
+  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  const headers = lines[0].split(',').map(s=>s.trim());
+  return lines.slice(1).map((line,i)=>{
+    const cols = line.split(',');
+    const row = { _row: i+2 };
+    headers.forEach((h,idx)=> row[h] = (cols[idx]??'').trim());
+    return row;
+  });
+}
+
+function addIssue(arr, severity, row, check, details){ arr.push({severity,row,check,details}); }
+
+function runQA(){
+  const rows = parseCsv($("csv").value);
+  const issues = [];
+  const required = ["sample_date","outfall","parameter","result"];
+  const dates = [];
+
+  rows.forEach(r=>{
+    required.forEach(f=>{ if(!r[f]) addIssue(issues,'error',r._row,'Missing required field',`${f} is blank`); });
+
+    const result = Number(r.result);
+    if (Number.isNaN(result)) addIssue(issues,'error',r._row,'Invalid numeric','result is not numeric');
+    else if (result < 0) addIssue(issues,'error',r._row,'Negative value',`result ${result} is below 0`);
+
+    if (r.flow_mgd){ const flow = Number(r.flow_mgd); if(Number.isNaN(flow)||flow<0) addIssue(issues,'error',r._row,'Flow invalid','flow_mgd must be non-negative number'); }
+
+    if (r.pH){
+      const ph = Number(r.pH);
+      if (Number.isNaN(ph) || ph<0 || ph>14) addIssue(issues,'error',r._row,'pH impossible','pH must be between 0 and 14');
+      if (r.min_limit && r.max_limit && r.parameter.toLowerCase()==='ph'){
+        const min = Number(r.min_limit), max = Number(r.max_limit);
+        if (!Number.isNaN(min) && ph < min) addIssue(issues,'warning',r._row,'pH below permit minimum',`${ph} < ${min}`);
+        if (!Number.isNaN(max) && ph > max) addIssue(issues,'warning',r._row,'pH above permit maximum',`${ph} > ${max}`);
+      }
+    }
+
+    const min = Number(r.min_limit), max = Number(r.max_limit);
+    if (!Number.isNaN(max) && !Number.isNaN(result) && result > max){
+      addIssue(issues,'warning',r._row,'Above max limit',`${r.parameter}: ${result} ${r.units||''} > ${max}`.trim());
+    }
+    if (!Number.isNaN(min) && !Number.isNaN(result) && result < min){
+      addIssue(issues,'warning',r._row,'Below min limit',`${r.parameter}: ${result} ${r.units||''} < ${min}`.trim());
+    }
+
+    if(r.sample_date){ const d = new Date(r.sample_date); if(!isNaN(d)) dates.push(d); else addIssue(issues,'error',r._row,'Bad date',`sample_date ${r.sample_date} is invalid`); }
+  });
+
+  dates.sort((a,b)=>a-b);
+  for(let i=1;i<dates.length;i++){
+    const days = Math.round((dates[i]-dates[i-1])/(1000*60*60*24));
+    if(days>1) addIssue(issues,'warning','—','Sampling date gap',`${days} day gap between ${dates[i-1].toISOString().slice(0,10)} and ${dates[i].toISOString().slice(0,10)}`);
+  }
+
+  const errors = issues.filter(i=>i.severity==='error').length;
+  const warnings = issues.filter(i=>i.severity==='warning').length;
+  $("summary").innerHTML = `<strong>QA Summary</strong><div style="margin-top:8px">Rows checked: <b>${rows.length}</b> · <span class='tag err'>Errors ${errors}</span> · <span class='tag warn'>Warnings ${warnings}</span> · ${errors===0?"<span class='tag ok'>Ready for filing QA review</span>":"Resolve errors before submission"}</div>`;
+
+  const tbody = $("issuesTbl").querySelector('tbody');
+  tbody.innerHTML = issues.map(i=>`<tr><td><span class="tag ${i.severity==='error'?'err':'warn'}">${i.severity}</span></td><td>${i.row}</td><td>${i.check}</td><td>${i.details}</td></tr>`).join('') || '<tr><td colspan="4">No issues found.</td></tr>';
+
+  lastIssues = issues;
+}
+
+$("run").onclick = runQA;
+$("download").onclick = () => {
+  if(!lastIssues.length){ alert('Run QA first.'); return; }
+  const csv = ['severity,row,check,details', ...lastIssues.map(i=>`${i.severity},${JSON.stringify(i.row)},${JSON.stringify(i.check)},${JSON.stringify(i.details)}`)].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'}); const a=document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download='dmr-qa-issues.csv'; a.click(); URL.revokeObjectURL(a.href);
+};
+runQA();
+</script>
+</body>
+</html>
