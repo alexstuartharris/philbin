@@ -1,12 +1,20 @@
 {
-  "generatedAt": "2026-02-18T07:16:33.396Z",
+  "generatedAt": "2026-02-19T07:16:46.732Z",
   "apps": [
     {
       "name": "csv-to-geojson",
       "hasIndex": true
     },
     {
+      "name": "dmr-qa-checker",
+      "hasIndex": true
+    },
+    {
       "name": "driveway-tetris",
+      "hasIndex": true
+    },
+    {
+      "name": "environmental-scope-deliverables",
       "hasIndex": true
     },
     {
