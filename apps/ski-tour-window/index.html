@@ -46,7 +46,7 @@
       padding: .6rem .95rem;
       cursor: pointer;
     }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: .7rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px,1fr)); gap: .7rem; }
     .bin {
       border: 1px solid var(--line);
       border-radius: 12px;
@@ -103,12 +103,12 @@
     </div>
 
     <div class="card">
-      <h2>Touring windows</h2>
+      <h2>Daily touring forecast</h2>
       <div class="grid" id="bins"></div>
     </div>
 
     <div class="card small muted">
-      <p><strong>How score works (v1):</strong> rewards recent snow + cold temps + low rain + lower wind + clearer skies. Penalizes warm/rainy/windy periods.</p>
+      <p><strong>How score works (v2):</strong> Each day scored individually. Rewards recent snow from the prior 2 days + cold temps + low rain + lower wind + clearer skies. Penalizes warm/rainy/windy days.</p>
       <p><strong>Safety:</strong> this is weather-window guidance only. Always check avalanche bulletins, hazard ratings, route conditions, and field observations.</p>
       <p class="mono">Data: Open-Meteo (no login, no API key)</p>
     </div>
@@ -143,30 +143,31 @@
     function avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0) / arr.length : 0; }
     function sum(arr) { return arr.reduce((a,b)=>a+b,0); }
 
-    function scoreWindow(days, recentSnow48) {
-      const snow = sum(days.map(d => d.snowfall_sum || 0));
-      const rain = sum(days.map(d => d.rain_sum || 0));
-      const pcp = sum(days.map(d => d.precipitation_sum || 0));
-      const tmin = avg(days.map(d => d.temperature_2m_min || 0));
-      const tmax = avg(days.map(d => d.temperature_2m_max || 0));
-      const cloud = avg(days.map(d => d.cloud_cover_mean || 0));
-      const wind = avg(days.map(d => d.wind_speed_10m_max || 0));
-      const freeze = avg(days.map(d => d.freezing_level_height_mean || 9999));
+    /* Score a SINGLE day. priorSnow48 = snow in the 2 days before this one */
+    function scoreDay(day, priorSnow48) {
+      const snow = day.snowfall_sum || 0;
+      const rain = day.rain_sum || 0;
+      const pcp = day.precipitation_sum || 0;
+      const tmin = day.temperature_2m_min || 0;
+      const tmax = day.temperature_2m_max || 0;
+      const cloud = day.cloud_cover_mean || 0;
+      const wind = day.wind_speed_10m_max || 0;
+      const freeze = day.freezing_level_height_mean || 9999;
 
       let score = 50;
       const reasons = [];
 
-      const freshBoost = clamp(recentSnow48 * 1.2, 0, 28);
+      const freshBoost = clamp(priorSnow48 * 1.2, 0, 28);
       score += freshBoost;
-      if (freshBoost > 6) reasons.push(`+${fmt(freshBoost)} fresh snow last 48h (${fmt(recentSnow48,1)} cm)`);
+      if (freshBoost > 6) reasons.push(`+${fmt(freshBoost)} fresh snow prior 48h (${fmt(priorSnow48,1)} cm)`);
 
       const snowBoost = clamp(snow * 0.8, 0, 16);
       score += snowBoost;
-      if (snowBoost > 4) reasons.push(`+${fmt(snowBoost)} forecast snowfall (${fmt(snow,1)} cm)`);
+      if (snowBoost > 4) reasons.push(`+${fmt(snowBoost)} snowfall today (${fmt(snow,1)} cm)`);
 
       const rainPenalty = clamp(rain * 3.0, 0, 40);
       score -= rainPenalty;
-      if (rainPenalty > 4) reasons.push(`-${fmt(rainPenalty)} rain risk (${fmt(rain,1)} mm)`);
+      if (rainPenalty > 4) reasons.push(`-${fmt(rainPenalty)} rain (${fmt(rain,1)} mm)`);
 
       if (freeze > 1700) {
         const p = clamp((freeze - 1700) / 45, 0, 25);
@@ -180,10 +181,10 @@
       if (tmax > 3) {
         const p = clamp((tmax - 3) * 2, 0, 14);
         score -= p;
-        reasons.push(`-${fmt(p)} warm daytime temps (${fmt(tmax,1)}°C)`);
+        reasons.push(`-${fmt(p)} warm (${fmt(tmax,1)}°C high)`);
       } else if (tmax <= 0) {
         score += 6;
-        reasons.push(`+6 cold daytime temps (${fmt(tmax,1)}°C)`);
+        reasons.push(`+6 cold (${fmt(tmax,1)}°C high)`);
       }
 
       if (wind > 30) {
@@ -192,34 +193,73 @@
         reasons.push(`-${fmt(p)} windy (${fmt(wind)} km/h)`);
       } else if (wind < 20) {
         score += 4;
-        reasons.push(`+4 manageable wind (${fmt(wind)} km/h)`);
+        reasons.push(`+4 calm wind (${fmt(wind)} km/h)`);
       }
 
-      if (cloud <= 40) {
-        score += 8;
-        reasons.push(`+8 clearer visibility (${fmt(cloud)}% cloud)`);
-      } else if (cloud > 80) {
-        score -= 8;
-        reasons.push(`-8 poor visibility (${fmt(cloud)}% cloud)`);
+      if (cloud <= 30) {
+        score += 10;
+        reasons.push(`+10 bluebird (${fmt(cloud)}% cloud)`);
+      } else if (cloud <= 55) {
+        score += 5;
+        reasons.push(`+5 decent vis (${fmt(cloud)}% cloud)`);
+      } else if (cloud > 90) {
+        const p = clamp(12 + (cloud - 90) * 0.4, 0, 16);
+        score -= p;
+        reasons.push(`-${fmt(p)} socked in (${fmt(cloud)}% cloud)`);
+      } else if (cloud > 70) {
+        const p = clamp(2 + (cloud - 70) * 0.6, 0, 14);
+        score -= p;
+        reasons.push(`-${fmt(p)} poor vis (${fmt(cloud)}% cloud)`);
       }
 
       if (pcp > 18 && snow < 5) {
         score -= 8;
-        reasons.push('-8 wet pattern without enough snow gain');
+        reasons.push('-8 wet without snow gain');
       }
 
       score = Math.round(clamp(score, 0, 100));
+      // Soft cap: socked-in days can still be fun powder days but not top-tier
+      if (cloud > 80 && score > 85) {
+        reasons.push(`capped from ${score} → 85 (low vis)`);
+        score = 85;
+      }
       return { score, reasons, metrics: { snow, rain, tmin, tmax, cloud, wind, freeze } };
     }
 
-    function buildBins(days, observedRecentSnow48Cm = null) {
-      const modeledRecentSnow48 = (days[0]?.snowfall_sum || 0) + (days[1]?.snowfall_sum || 0);
-      const recentSnow48 = Number.isFinite(observedRecentSnow48Cm) ? observedRecentSnow48Cm : modeledRecentSnow48;
-      return [
-        { key: 'today', name: 'Today', slice: days.slice(0,1) },
-        { key: 'd2_3', name: 'Next 2–3 days', slice: days.slice(1,4) },
-        { key: 'd4_7', name: 'Next 4–7 days', slice: days.slice(4,8) },
-      ].map(bin => ({ ...bin, ...scoreWindow(bin.slice, recentSnow48) }));
+    /* Build per-day scored cards. allRows includes 2 past days + forecast.
+       observedRecentSnow48Cm overrides modeled snow for the first day's "prior 48h". */
+    function buildDays(forecastDays, allRows, observedRecentSnow48Cm = null) {
+      const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      return forecastDays.map((day, i) => {
+        let priorSnow48;
+        if (i === 0) {
+          // For today: use observed station data if available, else model prior 2 days
+          if (Number.isFinite(observedRecentSnow48Cm)) {
+            priorSnow48 = observedRecentSnow48Cm;
+          } else {
+            // allRows has 2 past days before forecastDays
+            const todayIdx = allRows.findIndex(r => r.time === day.time);
+            const d1 = todayIdx > 0 ? (allRows[todayIdx - 1]?.snowfall_sum || 0) : 0;
+            const d2 = todayIdx > 1 ? (allRows[todayIdx - 2]?.snowfall_sum || 0) : 0;
+            priorSnow48 = d1 + d2;
+          }
+        } else if (i === 1) {
+          // yesterday (today) + day before
+          const todaySnow = forecastDays[0]?.snowfall_sum || 0;
+          const todayIdx = allRows.findIndex(r => r.time === forecastDays[0].time);
+          const prevSnow = todayIdx > 0 ? (allRows[todayIdx - 1]?.snowfall_sum || 0) : 0;
+          priorSnow48 = todaySnow + prevSnow;
+        } else {
+          priorSnow48 = (forecastDays[i-1]?.snowfall_sum || 0) + (forecastDays[i-2]?.snowfall_sum || 0);
+        }
+
+        const dt = new Date(day.time + 'T12:00:00');
+        const dayLabel = dayNames[dt.getDay()];
+        const dateStr = dt.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
+        const name = i === 0 ? `Today · ${dateStr}` : `${dayLabel} · ${dateStr}`;
+
+        return { name, ...scoreDay(day, priorSnow48) };
+      });
     }
 
     function renderSnapshot(days, observed = null) {
@@ -283,14 +323,14 @@
       $('profile').innerHTML = `${svg}<p class="muted small" style="margin-top:.35rem">Cloud layer tint reflects ~${fmt(cloud,0)}% average cloud cover (48h).</p>`;
     }
 
-    function renderBins(results) {
+    function renderDays(results) {
       $('bins').innerHTML = results.map(r => {
         const [label, css] = labelFor(r.score);
         const m = r.metrics;
         return `
           <div class="bin">
             <div><strong>${r.name}</strong> <span class="pill ${css}">${label} · ${r.score}/100</span></div>
-            <p class="small muted">Snow ${fmt(m.snow,1)} cm · Rain ${fmt(m.rain,1)} mm · Wind ${fmt(m.wind)} km/h · Cloud ${fmt(m.cloud)}%</p>
+            <p class="small muted">Snow ${fmt(m.snow,1)} cm · Rain ${fmt(m.rain,1)} mm · Wind ${fmt(m.wind)} km/h · Cloud ${fmt(m.cloud)}% · FLvl ${fmt(m.freeze)} m</p>
             <ul>${r.reasons.slice(0,5).map(x => `<li>${x}</li>`).join('')}</ul>
           </div>
         `;
@@ -312,6 +352,7 @@
       const params = new URLSearchParams();
       params.set('latitude', String(currentLoc.lat));
       params.set('longitude', String(currentLoc.lon));
+      params.set('elevation', String(currentLoc.elevM));
       params.set('timezone', 'America/Vancouver');
       params.set('forecast_days', '8');
       params.set('past_days', '2');
@@ -368,6 +409,35 @@
         freezing_level_height_mean: freezeByDay[time]?.length ? avg(freezeByDay[time]) : null,
       }));
 
+      /* --- Rain/snow reclassification based on freezing level vs tour elev ---
+         Open-Meteo's rain_sum can be unreliable in steep terrain.  If the
+         freezing level is well below the touring elevation the reported "rain"
+         is almost certainly snow at the point of interest.
+
+         Transition band: 300 m above and below touring elevation.
+         - freeze <= elevM - 300  →  100% snow (rain → 0)
+         - freeze >= elevM + 300  →  keep as-is (trust API rain)
+         - in between              →  linear blend                          */
+      const tourElev = currentLoc.elevM;
+      const BAND = 300; // metres for transition zone
+      for (const row of rows) {
+        const fl = row.freezing_level_height_mean;
+        if (fl == null || row.rain_sum == null || row.rain_sum <= 0) continue;
+        if (fl <= tourElev - BAND) {
+          // Freezing level well below tour — all precip is snow at elevation
+          // Open-Meteo snowfall is in cm; rain is in mm. 1mm rain ≈ 1cm snow.
+          row.snowfall_sum = (row.snowfall_sum || 0) + row.rain_sum;
+          row.rain_sum = 0;
+        } else if (fl < tourElev + BAND) {
+          // Transition zone — proportionally reclassify
+          const snowFrac = clamp((tourElev + BAND - fl) / (2 * BAND), 0, 1);
+          const reclassified = row.rain_sum * snowFrac;
+          row.snowfall_sum = (row.snowfall_sum || 0) + reclassified;
+          row.rain_sum = row.rain_sum - reclassified;
+        }
+        // else: freezing level above tour elev + band → keep rain as reported
+      }
+
       // keep: today + next 7 days (API includes 2 past days first)
       const today = new Date().toISOString().slice(0,10);
       const idx = rows.findIndex(r => r.time === today);
@@ -381,7 +451,7 @@
       }
 
       renderSnapshot(windowDays, observed);
-      renderBins(buildBins(windowDays, observed?.observedRecentSnow48Cm ?? null));
+      renderDays(buildDays(windowDays, rows, observed?.observedRecentSnow48Cm ?? null));
       $('status').textContent = `Updated for ${currentLoc.name} (${today})${observed ? ' · station snow blended' : ' · model fallback'}`;
     }
 
