@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ski Tour Window Finder — Sea to Sky</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111d;
+      --panel: #0f1d31;
+      --line: #243a5e;
+      --text: #edf4ff;
+      --muted: #9db4d6;
+      --good: #27d17c;
+      --ok: #f1bf47;
+      --bad: #f26a6a;
+      --blue: #69b9ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #07101c, #0d1830 45%, #0a1423);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .wrap { max-width: 980px; margin: 2rem auto; padding: 1rem; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    h1 { margin: 0 0 .5rem; font-size: 1.6rem; }
+    h2 { margin: 0 0 .75rem; font-size: 1.05rem; }
+    p { margin: .35rem 0; }
+    .muted { color: var(--muted); }
+    .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+    button {
+      border: none;
+      background: var(--blue);
+      color: #062542;
+      border-radius: 10px;
+      font-weight: 700;
+      padding: .6rem .95rem;
+      cursor: pointer;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px,1fr)); gap: .7rem; }
+    .bin {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: .8rem;
+      background: #0b1a2c;
+    }
+    .pill {
+      display: inline-block;
+      padding: .2rem .55rem;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 700;
+      margin-left: .5rem;
+    }
+    .great { background: rgba(39,209,124,.2); color: #8ff6c1; }
+    .good { background: rgba(109,185,255,.2); color: #b9e0ff; }
+    .marginal { background: rgba(241,191,71,.2); color: #ffdd8d; }
+    .poor { background: rgba(242,106,106,.2); color: #ffc0c0; }
+    ul { margin: .5rem 0 0 1rem; padding: 0; }
+    li { margin: .22rem 0; color: #dbe9ff; }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: .55rem; }
+    .kpi { border: 1px solid var(--line); border-radius: 10px; padding: .6rem; background: #0a1728; }
+    .small { font-size: .85rem; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Ski Tour Window Finder</h1>
+    <p class="muted">Prototype for Sea-to-Sky touring zones. Scores windows using recent snowfall + upcoming weather.</p>
+
+    <div class="card row">
+      <label class="muted small" for="locSelect">Location</label>
+      <select id="locSelect" style="background:#0a1728;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .6rem">
+        <option value="paul_ridge">Paul Ridge (Squamish)</option>
+        <option value="oboe_summit">Whistler Backcountry — Oboe Summit (approx)</option>
+        <option value="keiths_hut">Joffre Area — Keith’s Hut (approx)</option>
+        <option value="skypilot_basin">Skypilot Basin (from your pin)</option>
+        <option value="decker_lake">Decker Lake / Tarn near Blackcomb (approx)</option>
+      </select>
+      <span id="locMeta" class="muted small"></span>
+      <button id="refreshBtn">Refresh forecast</button>
+      <span id="status" class="muted">Waiting to load…</span>
+    </div>
+
+    <div class="card">
+      <h2>Current snapshot</h2>
+      <div class="kpis" id="snapshot"></div>
+    </div>
+
+    <div class="card">
+      <h2>Mountain profile (quick visual)</h2>
+      <div id="profile"></div>
+    </div>
+
+    <div class="card">
+      <h2>Daily touring forecast</h2>
+      <div class="grid" id="bins"></div>
+    </div>
+
+    <div class="card small muted">
+      <p><strong>How score works (v2):</strong> Each day scored individually. Rewards recent snow from the prior 2 days + cold temps + low rain + lower wind + clearer skies. Penalizes warm/rainy/windy days.</p>
+      <p><strong>Safety:</strong> this is weather-window guidance only. Always check avalanche bulletins, hazard ratings, route conditions, and field observations.</p>
+      <p class="mono">Data: Open-Meteo (no login, no API key)</p>
+    </div>
+  </div>
+
+  <script>
+    const LOCATIONS = {
+      paul_ridge: { key: 'paul_ridge', lat: 49.691, lon: -123.086, elevM: 1300, baseM: 650, name: 'Paul Ridge' },
+      oboe_summit: { key: 'oboe_summit', lat: 50.067, lon: -123.026, elevM: 1850, baseM: 1100, name: 'Oboe Summit (approx)' },
+      keiths_hut: { key: 'keiths_hut', lat: 50.352, lon: -122.501, elevM: 1700, baseM: 1050, name: 'Keith’s Hut (approx)' },
+      skypilot_basin: { key: 'skypilot_basin', lat: 49.639106, lon: -123.0910315, elevM: 1950, baseM: 700, name: 'Skypilot Basin' },
+      decker_lake: { key: 'decker_lake', lat: 50.0681689, lon: -122.8719660, elevM: 1850, baseM: 1200, name: 'Decker Lake / Tarn (approx)' }
+    };
+    let currentLoc = LOCATIONS.paul_ridge;
+
+    const $ = (id) => document.getElementById(id);
+
+    function fmt(n, digits = 0) {
+      if (n === null || n === undefined || Number.isNaN(n)) return '—';
+      return Number(n).toFixed(digits);
+    }
+
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+    function labelFor(score) {
+      if (score >= 80) return ['Great', 'great'];
+      if (score >= 60) return ['Good', 'good'];
+      if (score >= 40) return ['Marginal', 'marginal'];
+      return ['Poor', 'poor'];
+    }
+
+    function avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0) / arr.length : 0; }
+    function sum(arr) { return arr.reduce((a,b)=>a+b,0); }
+
+    /* Score a SINGLE day. priorSnow48 = snow in the 2 days before this one */
+    function scoreDay(day, priorSnow48) {
+      const snow = day.snowfall_sum || 0;
+      const rain = day.rain_sum || 0;
+      const pcp = day.precipitation_sum || 0;
+      const tmin = day.temperature_2m_min || 0;
+      const tmax = day.temperature_2m_max || 0;
+      const cloud = day.cloud_cover_mean || 0;
+      const wind = day.wind_speed_10m_max || 0;
+      const freeze = day.freezing_level_height_mean || 9999;
+
+      let score = 50;
+      const reasons = [];
+
+      const freshBoost = clamp(priorSnow48 * 1.2, 0, 28);
+      score += freshBoost;
+      if (freshBoost > 6) reasons.push(`+${fmt(freshBoost)} fresh snow prior 48h (${fmt(priorSnow48,1)} cm)`);
+
+      const snowBoost = clamp(snow * 0.8, 0, 16);
+      score += snowBoost;
+      if (snowBoost > 4) reasons.push(`+${fmt(snowBoost)} snowfall today (${fmt(snow,1)} cm)`);
+
+      const rainPenalty = clamp(rain * 3.0, 0, 40);
+      score -= rainPenalty;
+      if (rainPenalty > 4) reasons.push(`-${fmt(rainPenalty)} rain (${fmt(rain,1)} mm)`);
+
+      if (freeze > 1700) {
+        const p = clamp((freeze - 1700) / 45, 0, 25);
+        score -= p;
+        reasons.push(`-${fmt(p)} high freezing level (${fmt(freeze)} m)`);
+      } else if (freeze < 1300) {
+        score += 6;
+        reasons.push(`+6 favorable freezing level (${fmt(freeze)} m)`);
+      }
+
+      if (tmax > 3) {
+        const p = clamp((tmax - 3) * 2, 0, 14);
+        score -= p;
+        reasons.push(`-${fmt(p)} warm (${fmt(tmax,1)}°C high)`);
+      } else if (tmax <= 0) {
+        score += 6;
+        reasons.push(`+6 cold (${fmt(tmax,1)}°C high)`);
+      }
+
+      if (wind > 30) {
+        const p = clamp((wind - 30) * 0.7, 0, 16);
+        score -= p;
+        reasons.push(`-${fmt(p)} windy (${fmt(wind)} km/h)`);
+      } else if (wind < 20) {
+        score += 4;
+        reasons.push(`+4 calm wind (${fmt(wind)} km/h)`);
+      }
+
+      if (cloud <= 30) {
+        score += 10;
+        reasons.push(`+10 bluebird (${fmt(cloud)}% cloud)`);
+      } else if (cloud <= 55) {
+        score += 5;
+        reasons.push(`+5 decent vis (${fmt(cloud)}% cloud)`);
+      } else if (cloud > 90) {
+        const p = clamp(12 + (cloud - 90) * 0.4, 0, 16);
+        score -= p;
+        reasons.push(`-${fmt(p)} socked in (${fmt(cloud)}% cloud)`);
+      } else if (cloud > 70) {
+        const p = clamp(2 + (cloud - 70) * 0.6, 0, 14);
+        score -= p;
+        reasons.push(`-${fmt(p)} poor vis (${fmt(cloud)}% cloud)`);
+      }
+
+      if (pcp > 18 && snow < 5) {
+        score -= 8;
+        reasons.push('-8 wet without snow gain');
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+      // Soft cap: socked-in days can still be fun powder days but not top-tier
+      if (cloud > 80 && score > 85) {
+        reasons.push(`capped from ${score} → 85 (low vis)`);
+        score = 85;
+      }
+      return { score, reasons, metrics: { snow, rain, tmin, tmax, cloud, wind, freeze } };
+    }
+
+    /* Build per-day scored cards. allRows includes 2 past days + forecast.
+       observedRecentSnow48Cm overrides modeled snow for the first day's "prior 48h". */
+    function buildDays(forecastDays, allRows, observedRecentSnow48Cm = null) {
+      const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      return forecastDays.map((day, i) => {
+        let priorSnow48;
+        if (i === 0) {
+          // For today: use observed station data if available, else model prior 2 days
+          if (Number.isFinite(observedRecentSnow48Cm)) {
+            priorSnow48 = observedRecentSnow48Cm;
+          } else {
+            // allRows has 2 past days before forecastDays
+            const todayIdx = allRows.findIndex(r => r.time === day.time);
+            const d1 = todayIdx > 0 ? (allRows[todayIdx - 1]?.snowfall_sum || 0) : 0;
+            const d2 = todayIdx > 1 ? (allRows[todayIdx - 2]?.snowfall_sum || 0) : 0;
+            priorSnow48 = d1 + d2;
+          }
+        } else if (i === 1) {
+          // yesterday (today) + day before
+          const todaySnow = forecastDays[0]?.snowfall_sum || 0;
+          const todayIdx = allRows.findIndex(r => r.time === forecastDays[0].time);
+          const prevSnow = todayIdx > 0 ? (allRows[todayIdx - 1]?.snowfall_sum || 0) : 0;
+          priorSnow48 = todaySnow + prevSnow;
+        } else {
+          priorSnow48 = (forecastDays[i-1]?.snowfall_sum || 0) + (forecastDays[i-2]?.snowfall_sum || 0);
+        }
+
+        const dt = new Date(day.time + 'T12:00:00');
+        const dayLabel = dayNames[dt.getDay()];
+        const dateStr = dt.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
+        const name = i === 0 ? `Today · ${dateStr}` : `${dayLabel} · ${dateStr}`;
+
+        return { name, ...scoreDay(day, priorSnow48) };
+      });
+    }
+
+    function renderSnapshot(days, observed = null) {
+      const modeledRecentSnow48 = (days[0]?.snowfall_sum || 0) + (days[1]?.snowfall_sum || 0);
+      const recentSnow48 = Number.isFinite(observed?.observedRecentSnow48Cm)
+        ? observed.observedRecentSnow48Cm
+        : modeledRecentSnow48;
+      const nearRain48 = (days[0]?.rain_sum || 0) + (days[1]?.rain_sum || 0);
+      const freeze48 = avg(days.slice(0,2).map(d => d.freezing_level_height_mean || 9999));
+      const cloud48 = avg(days.slice(0,2).map(d => d.cloud_cover_mean || 0));
+      const wind48 = avg(days.slice(0,2).map(d => d.wind_speed_10m_max || 0));
+
+      const stationLines = observed?.stations?.length
+        ? observed.stations.map(s => {
+            const d = Number.isFinite(s.distanceKm) ? `${fmt(s.distanceKm,1)} km` : '— km';
+            const w = Number.isFinite(s.baseWeight) ? `${fmt((s.baseWeight||0)*100,0)}%` : '—';
+            const qc = s.jumpFlag ? ' · QC jump noted' : '';
+            return `<li>${s.name}: Δ48h ${fmt(s.delta48Cm,1)} cm · ${d} · w=${w}${qc}</li>`;
+          }).join('')
+        : '<li>Using modeled snowfall (Open-Meteo)</li>';
+
+      const modelRunLine = window.__modelRunLine || 'Open-Meteo blend · run metadata unavailable';
+      const nextRunLine = window.__nextRunLine || 'Next cycle estimate unavailable';
+
+      $('snapshot').innerHTML = `
+        <div class="kpi"><div class="muted small">Recent snowfall (48h)</div><div><strong>${fmt(recentSnow48,1)} cm</strong></div></div>
+        <div class="kpi"><div class="muted small">Recent rain (48h)</div><div><strong>${fmt(nearRain48,1)} mm</strong></div></div>
+        <div class="kpi"><div class="muted small">Freeze level (48h avg)</div><div><strong>${fmt(freeze48)} m</strong></div></div>
+        <div class="kpi"><div class="muted small">Cloud cover (48h avg)</div><div><strong>${fmt(cloud48)}%</strong></div></div>
+        <div class="kpi"><div class="muted small">Wind max (48h avg)</div><div><strong>${fmt(wind48)} km/h</strong></div></div>
+        <div class="kpi"><div class="muted small">Recent snow source</div><div><strong>${observed?.source ? 'BC stations' : 'Model'}</strong></div></div>
+        <div class="kpi"><div class="muted small">Model run</div><div><strong>${modelRunLine}</strong></div></div>
+        <div class="kpi"><div class="muted small">Next model cycle</div><div><strong>${nextRunLine}</strong></div></div>
+      `;
+      $('snapshot').insertAdjacentHTML('beforeend', `<div class="muted small" style="grid-column:1/-1;margin-top:.4rem"><strong>Station blend details</strong><ul style="margin:.35rem 0 0 1rem">${stationLines}</ul></div>`);
+      renderProfile({ freeze48, cloud48 });
+    }
+
+    function renderProfile({ freeze48, cloud48 }) {
+      const maxM = 2600;
+      const h = 180, w = 760;
+      const y = (m) => Math.max(8, Math.min(h - 8, h - (m / maxM) * h));
+      const base = currentLoc.baseM || 700;
+      const tour = currentLoc.elevM || 1300;
+      const freeze = Number.isFinite(freeze48) ? freeze48 : null;
+      const cloud = Number.isFinite(cloud48) ? cloud48 : 0;
+      const cloudOpacity = Math.max(0.05, Math.min(0.65, (cloud / 100) * 0.65));
+
+      const svg = `
+      <svg viewBox="0 0 ${w} ${h}" width="100%" height="190" role="img" aria-label="Terrain profile and weather levels">
+        <rect x="0" y="0" width="${w}" height="${h}" fill="#091425" rx="10" />
+        <rect x="0" y="0" width="${w}" height="${h*0.45}" fill="rgba(190,210,255,${cloudOpacity})" />
+        <polygon points="80,${h-18} 350,${y(tour)} 640,${h-18}" fill="#1c304e" stroke="#4c6a94" stroke-width="2" />
+        <line x1="40" y1="${y(base)}" x2="720" y2="${y(base)}" stroke="#7ec8ff" stroke-dasharray="5 5" />
+        <line x1="40" y1="${y(tour)}" x2="720" y2="${y(tour)}" stroke="#7cffb0" stroke-dasharray="5 5" />
+        ${freeze ? `<line x1="40" y1="${y(freeze)}" x2="720" y2="${y(freeze)}" stroke="#ffd166" stroke-width="2" />` : ''}
+        <text x="46" y="${y(base)-6}" fill="#9fd6ff" font-size="12">Base (~${Math.round(base)}m)</text>
+        <text x="46" y="${y(tour)-6}" fill="#95f7c2" font-size="12">Tour elevation (${Math.round(tour)}m)</text>
+        ${freeze ? `<text x="46" y="${y(freeze)-6}" fill="#ffe08a" font-size="12">Freezing level (~${Math.round(freeze)}m)</text>` : ''}
+      </svg>`;
+      $('profile').innerHTML = `${svg}<p class="muted small" style="margin-top:.35rem">Cloud layer tint reflects ~${fmt(cloud,0)}% average cloud cover (48h).</p>`;
+    }
+
+    function renderDays(results) {
+      $('bins').innerHTML = results.map(r => {
+        const [label, css] = labelFor(r.score);
+        const m = r.metrics;
+        return `
+          <div class="bin">
+            <div><strong>${r.name}</strong> <span class="pill ${css}">${label} · ${r.score}/100</span></div>
+            <p class="small muted">Snow ${fmt(m.snow,1)} cm · Rain ${fmt(m.rain,1)} mm · Wind ${fmt(m.wind)} km/h · Cloud ${fmt(m.cloud)}% · FLvl ${fmt(m.freeze)} m</p>
+            <ul>${r.reasons.slice(0,5).map(x => `<li>${x}</li>`).join('')}</ul>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function fetchObservedSnow(locKey) {
+      const url = `https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/snow-observed?loc=${encodeURIComponent(locKey || 'paul_ridge')}`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Obs API ${res.status}`);
+      const json = await res.json();
+      if (!json?.ok) throw new Error('Obs API failed');
+      return json;
+    }
+
+    async function loadWeather() {
+      $('status').textContent = 'Loading weather…';
+
+      const params = new URLSearchParams();
+      params.set('latitude', String(currentLoc.lat));
+      params.set('longitude', String(currentLoc.lon));
+      params.set('elevation', String(currentLoc.elevM));
+      params.set('timezone', 'America/Vancouver');
+      params.set('forecast_days', '8');
+      params.set('past_days', '2');
+
+      [
+        'temperature_2m_min',
+        'temperature_2m_max',
+        'precipitation_sum',
+        'rain_sum',
+        'snowfall_sum',
+        'cloud_cover_mean',
+        'wind_speed_10m_max'
+      ].forEach(v => params.append('daily', v));
+
+      // freezing level is hourly-only on Open-Meteo; we aggregate to daily mean below
+      params.append('hourly', 'freezing_level_height');
+
+      const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Weather API ${res.status}`);
+      const json = await res.json();
+
+      const hourly = json.hourly || {};
+      const freezeByDay = {};
+      if (Array.isArray(hourly.time) && Array.isArray(hourly.freezing_level_height)) {
+        for (let i = 0; i < hourly.time.length; i++) {
+          const day = String(hourly.time[i]).slice(0, 10);
+          const v = hourly.freezing_level_height[i];
+          if (v == null || Number.isNaN(v)) continue;
+          if (!freezeByDay[day]) freezeByDay[day] = [];
+          freezeByDay[day].push(v);
+        }
+      }
+
+      const now = new Date();
+      const cycleMs = 6 * 60 * 60 * 1000; // 6-hour cycle proxy
+      const lastCycle = new Date(Math.floor(now.getTime() / cycleMs) * cycleMs);
+      const nextCycle = new Date(lastCycle.getTime() + cycleMs);
+      const mins = Math.max(0, Math.round((nextCycle.getTime() - now.getTime()) / 60000));
+      const h = Math.floor(mins / 60), m = mins % 60;
+      window.__modelRunLine = `Open-Meteo blend · cycle proxy ${lastCycle.toISOString().slice(0,16).replace('T',' ')} UTC`;
+      window.__nextRunLine = `${nextCycle.toISOString().slice(0,16).replace('T',' ')} UTC (in ${h}h ${m}m)`;
+
+      const d = json.daily;
+      const rows = d.time.map((time, i) => ({
+        time,
+        temperature_2m_min: d.temperature_2m_min?.[i],
+        temperature_2m_max: d.temperature_2m_max?.[i],
+        precipitation_sum: d.precipitation_sum?.[i],
+        rain_sum: d.rain_sum?.[i],
+        snowfall_sum: d.snowfall_sum?.[i],
+        cloud_cover_mean: d.cloud_cover_mean?.[i],
+        wind_speed_10m_max: d.wind_speed_10m_max?.[i],
+        freezing_level_height_mean: freezeByDay[time]?.length ? avg(freezeByDay[time]) : null,
+      }));
+
+      /* --- Rain/snow reclassification based on freezing level vs tour elev ---
+         Open-Meteo's rain_sum can be unreliable in steep terrain.  If the
+         freezing level is well below the touring elevation the reported "rain"
+         is almost certainly snow at the point of interest.
+
+         Transition band: 300 m above and below touring elevation.
+         - freeze <= elevM - 300  →  100% snow (rain → 0)
+         - freeze >= elevM + 300  →  keep as-is (trust API rain)
+         - in between              →  linear blend                          */
+      const tourElev = currentLoc.elevM;
+      const BAND = 300; // metres for transition zone
+      for (const row of rows) {
+        const fl = row.freezing_level_height_mean;
+        if (fl == null || row.rain_sum == null || row.rain_sum <= 0) continue;
+        if (fl <= tourElev - BAND) {
+          // Freezing level well below tour — all precip is snow at elevation
+          // Open-Meteo snowfall is in cm; rain is in mm. 1mm rain ≈ 1cm snow.
+          row.snowfall_sum = (row.snowfall_sum || 0) + row.rain_sum;
+          row.rain_sum = 0;
+        } else if (fl < tourElev + BAND) {
+          // Transition zone — proportionally reclassify
+          const snowFrac = clamp((tourElev + BAND - fl) / (2 * BAND), 0, 1);
+          const reclassified = row.rain_sum * snowFrac;
+          row.snowfall_sum = (row.snowfall_sum || 0) + reclassified;
+          row.rain_sum = row.rain_sum - reclassified;
+        }
+        // else: freezing level above tour elev + band → keep rain as reported
+      }
+
+      // keep: today + next 7 days (API includes 2 past days first)
+      const today = new Date().toISOString().slice(0,10);
+      const idx = rows.findIndex(r => r.time === today);
+      const windowDays = idx >= 0 ? rows.slice(idx, idx + 8) : rows.slice(2,10);
+
+      let observed = null;
+      try {
+        observed = await fetchObservedSnow(currentLoc.key);
+      } catch {
+        // fallback to modeled snowfall
+      }
+
+      renderSnapshot(windowDays, observed);
+      renderDays(buildDays(windowDays, rows, observed?.observedRecentSnow48Cm ?? null));
+      $('status').textContent = `Updated for ${currentLoc.name} (${today})${observed ? ' · station snow blended' : ' · model fallback'}`;
+    }
+
+    async function refresh() {
+      try {
+        await loadWeather();
+      } catch (err) {
+        $('status').textContent = `Error: ${err.message}`;
+      }
+    }
+
+    function renderLocMeta() {
+      $('locMeta').textContent = `${currentLoc.name} · tour ${fmt(currentLoc.elevM)} m · base ~${fmt(currentLoc.baseM)} m`;
+    }
+
+    $('locSelect').value = currentLoc.key;
+    renderLocMeta();
+    $('locSelect').addEventListener('change', (e) => {
+      const key = e.target.value;
+      currentLoc = LOCATIONS[key] || LOCATIONS.paul_ridge;
+      renderLocMeta();
+      refresh();
+    });
+
+    $('refreshBtn').addEventListener('click', refresh);
+    refresh();
+  </script>
+</body>
+</html>
