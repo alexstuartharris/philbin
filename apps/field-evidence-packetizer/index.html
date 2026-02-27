@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Field Evidence Packetizer</title>
+  <style>
+    :root{--bg:#0c111d;--card:#141c2f;--line:#2b3857;--text:#edf2ff;--muted:#a9b7d9;--accent:#6aa8ff}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0c111d,#101728);color:var(--text);font-family:Inter,system-ui,sans-serif}
+    .wrap{max-width:1000px;margin:0 auto;padding:24px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+    h1,h2{margin:0 0 10px} p{color:var(--muted)}
+    input,textarea,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#0f172a;color:var(--text)}
+    textarea{min-height:84px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    button{background:var(--accent);color:white;border:none;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+    button.secondary{background:#33456f}
+    ul{padding-left:18px}
+    .item{padding:8px;border:1px dashed var(--line);border-radius:10px;margin-bottom:8px}
+    @media (max-width:820px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Field Evidence Packetizer</h1>
+      <p>Create a clean, indexed evidence packet from field notes, observations, and photo metadata. Export JSON packet for client/regulator handoff.</p>
+      <div class="row">
+        <button id="addObs">Add observation</button>
+        <button id="addPhoto">Add photo metadata</button>
+        <button class="secondary" id="loadSample">Load sample</button>
+        <button id="export">Export packet (.json)</button>
+      </div>
+    </div>
+
+    <div class="card grid">
+      <div>
+        <h2>Project info</h2>
+        <label>Project name<input id="project" placeholder="e.g., Mamquam River Outfall Monitoring" /></label><br/><br/>
+        <label>Client / regulator<input id="client" placeholder="e.g., District of Squamish" /></label><br/><br/>
+        <label>Site / location<input id="site" placeholder="e.g., Outfall Station O-3" /></label>
+      </div>
+      <div>
+        <h2>Field session</h2>
+        <label>Date<input id="date" type="date" /></label><br/><br/>
+        <label>Crew<textarea id="crew" placeholder="Names and roles"></textarea></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Observations</h2>
+      <div id="obs"></div>
+    </div>
+
+    <div class="card">
+      <h2>Photo metadata (appendix index)</h2>
+      <div id="photos"></div>
+    </div>
+
+    <div class="card">
+      <h2>Preview</h2>
+      <pre id="preview" style="white-space:pre-wrap;color:#c9d6ff"></pre>
+    </div>
+  </div>
+
+<script>
+const obsWrap = document.getElementById('obs');
+const photoWrap = document.getElementById('photos');
+const preview = document.getElementById('preview');
+
+function obsItem(v={}){
+  const d=document.createElement('div'); d.className='item';
+  d.innerHTML=`
+    <div class="grid">
+      <label>Time<input data-k="time" type="time" value="${v.time||''}" /></label>
+      <label>Category
+        <select data-k="category">
+          ${['Water quality','Habitat','Erosion','Compliance','Safety'].map(c=>`<option ${v.category===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </label>
+    </div>
+    <label>Observation<textarea data-k="text" placeholder="What did you observe?">${v.text||''}</textarea></label>
+    <label>Action / follow-up<textarea data-k="action" placeholder="Required follow-up or recommendation">${v.action||''}</textarea></label>
+    <button type="button" class="secondary">Remove</button>
+  `;
+  d.querySelector('button').onclick=()=>{d.remove(); render();};
+  d.querySelectorAll('input,textarea,select').forEach(el=>el.oninput=render);
+  return d;
+}
+
+function photoItem(v={}){
+  const d=document.createElement('div'); d.className='item';
+  d.innerHTML=`
+    <div class="grid">
+      <label>Photo ID<input data-k="id" value="${v.id||''}" placeholder="IMG_1024" /></label>
+      <label>Timestamp<input data-k="ts" type="datetime-local" value="${v.ts||''}" /></label>
+    </div>
+    <div class="grid">
+      <label>GPS (lat,lon)<input data-k="gps" value="${v.gps||''}" placeholder="49.7012,-123.1550" /></label>
+      <label>Tag<input data-k="tag" value="${v.tag||''}" placeholder="Outfall plume" /></label>
+    </div>
+    <label>Caption<textarea data-k="caption" placeholder="What does this photo show?">${v.caption||''}</textarea></label>
+    <button type="button" class="secondary">Remove</button>
+  `;
+  d.querySelector('button').onclick=()=>{d.remove(); render();};
+  d.querySelectorAll('input,textarea').forEach(el=>el.oninput=render);
+  return d;
+}
+
+function collectItems(wrap){
+  return [...wrap.querySelectorAll('.item')].map(item=>{
+    const o={}; item.querySelectorAll('[data-k]').forEach(el=>o[el.dataset.k]=el.value);
+    return o;
+  });
+}
+
+function packet(){
+  return {
+    generatedAt:new Date().toISOString(),
+    project:document.getElementById('project').value,
+    client:document.getElementById('client').value,
+    site:document.getElementById('site').value,
+    sessionDate:document.getElementById('date').value,
+    crew:document.getElementById('crew').value,
+    observations:collectItems(obsWrap),
+    photoAppendixIndex:collectItems(photoWrap),
+    summary:{
+      observationCount:collectItems(obsWrap).length,
+      photoCount:collectItems(photoWrap).length
+    }
+  };
+}
+
+function render(){ preview.textContent = JSON.stringify(packet(),null,2); }
+
+document.getElementById('addObs').onclick=()=>{obsWrap.appendChild(obsItem());render();};
+document.getElementById('addPhoto').onclick=()=>{photoWrap.appendChild(photoItem());render();};
+document.getElementById('export').onclick=()=>{
+  const data=packet();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`field-evidence-packet-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById('loadSample').onclick=()=>{
+  document.getElementById('project').value='Mamquam River Outfall Monitoring';
+  document.getElementById('client').value='District of Squamish';
+  document.getElementById('site').value='Station O-3';
+  document.getElementById('date').value='2026-02-26';
+  document.getElementById('crew').value='A. Harris (lead), J. Lee (sampler)';
+  obsWrap.innerHTML=''; photoWrap.innerHTML='';
+  obsWrap.appendChild(obsItem({time:'09:20',category:'Water quality',text:'Slight turbidity increase downstream of outfall.',action:'Collect confirmatory turbidity grab sample at DS-2.'}));
+  obsWrap.appendChild(obsItem({time:'10:05',category:'Compliance',text:'Signage at access gate missing permit contact number.',action:'Replace sign panel by next site visit.'}));
+  photoWrap.appendChild(photoItem({id:'IMG_2041',ts:'2026-02-26T09:21',gps:'49.7012,-123.1550',tag:'Outfall plume',caption:'Visible plume edge at low flow.'}));
+  photoWrap.appendChild(photoItem({id:'IMG_2054',ts:'2026-02-26T10:06',gps:'49.7008,-123.1541',tag:'Signage',caption:'Gate sign with faded emergency contact section.'}));
+  render();
+};
+
+['project','client','site','date','crew'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+document.getElementById('addObs').click();
+document.getElementById('addPhoto').click();
+render();
+</script>
+</body>
+</html>
