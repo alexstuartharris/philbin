@@ -427,8 +427,7 @@
       const pad = Math.max(14, Math.round(c.width * 0.02));
       const fontSize = Math.max(20, Math.round(c.width * 0.026));
       ctx.font = `600 ${fontSize}px Arial, sans-serif`;
-      const lines = stampText.split('
-');
+      const lines = stampText.split('\n');
       const lineH = Math.round(fontSize * 1.25);
       const blockH = (lines.length * lineH) + pad;
 
@@ -570,8 +569,7 @@ ${formatStamp(capturedAt, geo)}`;
     }
 
     function asJsonl(items) {
-      return items.map((r) => JSON.stringify(sanitizeRecordForExport(r))).join('
-');
+      return items.map((r) => JSON.stringify(sanitizeRecordForExport(r))).join('\n');
     }
 
     function asCsv(items) {
@@ -585,8 +583,7 @@ ${formatStamp(capturedAt, geo)}`;
         r.geo?.lat, r.geo?.lon, r.geo?.accuracyM, r.integrity?.originalSha256, r.integrity?.stampedSha256,
         r.file?.name, r.file?.type, r.file?.size
       ].map(esc).join(','));
-      return [headers.join(','), ...rows].join('
-');
+      return [headers.join(','), ...rows].join('\n');
     }
 
     function downloadText(name, text, type='text/plain') {
