@@ -307,6 +307,24 @@
         </label>
       </div>
 
+      <div class="three" style="margin-top:10px;">
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Calibration (Brier, 1-step)</div>
+          <div class="kpi" id="calBrier">—</div>
+          <div class="mini" id="calBrierMeta">predicted demand→next UNG close direction</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Hit rate</div>
+          <div class="kpi" id="calHitRate">—</div>
+          <div class="mini" id="calHitMeta">directional accuracy</div>
+        </div>
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Filtered Demand (EWMA)</div>
+          <div class="kpi" id="fltDemand">—</div>
+          <div class="mini" id="fltDemandMeta">alpha=0.35</div>
+        </div>
+      </div>
+
       <div style="margin-top:10px; overflow:auto;">
         <table id="deltaStatsTable">
           <thead>
@@ -822,7 +840,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-06.5';
+    const APP_VERSION = '2026-02-28.1';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1232,6 +1250,40 @@
       return { label: 'NORMAL', kind: 'ok' };
     }
 
+    function ewma(series, alpha=0.35){
+      const out = [];
+      let prev = null;
+      for(const v of (series || [])){
+        if(!Number.isFinite(v)) { out.push(prev); continue; }
+        prev = (prev === null || !Number.isFinite(prev)) ? Number(v) : (alpha * Number(v) + (1 - alpha) * prev);
+        out.push(prev);
+      }
+      return out;
+    }
+
+    function sigmoid(x){
+      if(!Number.isFinite(x)) return null;
+      return 1 / (1 + Math.exp(-x));
+    }
+
+    function computeOneStepCalibration(demandSeries, ungCloseSeries){
+      const pairs = [];
+      for(let i=0; i<Math.min(demandSeries.length-1, ungCloseSeries.length-1); i++){
+        const d = Number(demandSeries[i]);
+        const p0 = Number(ungCloseSeries[i]);
+        const p1 = Number(ungCloseSeries[i+1]);
+        if(!Number.isFinite(d) || !Number.isFinite(p0) || !Number.isFinite(p1) || p0 === p1) continue;
+        const pred = sigmoid(d / 20); // soft mapping: colder demand -> higher bullish odds
+        if(pred === null) continue;
+        const actual = p1 > p0 ? 1 : 0;
+        pairs.push({ pred, actual });
+      }
+      if(!pairs.length) return null;
+      const brier = pairs.reduce((a, x) => a + (x.pred - x.actual) ** 2, 0) / pairs.length;
+      const hit = pairs.reduce((a, x) => a + ((x.pred >= 0.5) === (x.actual === 1) ? 1 : 0), 0) / pairs.length;
+      return { brier, hit, n: pairs.length };
+    }
+
     function ensureCharts(){
       if(!window.Chart) return false;
       const rawEl = document.getElementById('chartRaw');
@@ -1317,6 +1369,7 @@
       const mw = rows.map(r => (r.mw_dhdd14===null || r.mw_dhdd14===undefined ? null : Number(r.mw_dhdd14)));
       const s  = rows.map(r => (r.s_dhdd14===null  || r.s_dhdd14===undefined  ? null : Number(r.s_dhdd14)));
       const demand = rows.map((_,i) => (ne[i]===null || mw[i]===null || s[i]===null ? null : (0.50*ne[i] + 0.40*mw[i] + 0.10*s[i])));
+      const demandFiltered = ewma(demand, 0.35);
       const ungClose = rows.map(r => {
         const day = toNyYmd(r.ts);
         const v = pxMap.get(day);
@@ -1333,6 +1386,7 @@
       const mwD = dd(mw);
       const sD  = dd(s);
       const demD = dd(demand);
+      const demFD = dd(demandFiltered);
 
       const p90Abs = (arr) => {
         const abs = (arr || []).map(v => (v===null || v===undefined ? null : Math.abs(Number(v))));
@@ -1351,7 +1405,8 @@
 
       rawChart.data.labels = labels;
       rawChart.data.datasets = [
-        { label:'Demand', data: demand, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, pointRadius: 2 },
+        { label:'Demand (raw)', data: demand, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, pointRadius: 2 },
+        { label:'Demand (filtered)', data: demandFiltered, borderColor:'#5c7cff', tension:.2, pointRadius: 0, borderDash:[6,3] },
         { label:'NE', data: ne, borderColor:'rgba(31,139,76,.9)', tension:.25, pointRadius: 1 },
         { label:'MW', data: mw, borderColor:'rgba(192,106,0,.9)', tension:.25, pointRadius: 1 },
         { label:'South', data: s, borderColor:'rgba(180,35,24,.85)', tension:.25, pointRadius: 1 },
@@ -1366,7 +1421,8 @@
 
       deltaChart.data.labels = labels;
       deltaChart.data.datasets = [
-        { label:'ΔΔ Demand', data: demD, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, ...demPts },
+        { label:'ΔΔ Demand (raw)', data: demD, borderColor:'#2451ff', backgroundColor:'rgba(36,81,255,.08)', tension:.25, ...demPts },
+        { label:'ΔΔ Demand (filtered)', data: demFD, borderColor:'#5c7cff', tension:.2, pointRadius: 0, borderDash:[6,3] },
         { label:'ΔΔ NE', data: neD, borderColor:'rgba(31,139,76,.8)', tension:.25, ...nePts },
         { label:'ΔΔ MW', data: mwD, borderColor:'rgba(192,106,0,.8)', tension:.25, ...mwPts },
         { label:'ΔΔ South', data: sD, borderColor:'rgba(180,35,24,.75)', tension:.25, ...sPts },
@@ -1399,6 +1455,31 @@
           const dir = v > 0 ? 'getting colder' : (v < 0 ? 'getting warmer' : 'flat');
           sumEl.textContent = `Trend: ${dir} in the next 14 days (Demand ΔΔ ${v>0?'+':''}${v.toFixed(1)}).`;
         }
+      }
+
+      // Calibration + filtered signal KPIs
+      const cal = computeOneStepCalibration(demandFiltered, ungClose);
+      const fltNow = demandFiltered.length ? demandFiltered[demandFiltered.length - 1] : null;
+      const calBrierEl = document.getElementById('calBrier');
+      const calBrierMetaEl = document.getElementById('calBrierMeta');
+      const calHitEl = document.getElementById('calHitRate');
+      const calHitMetaEl = document.getElementById('calHitMeta');
+      const fltDemandEl = document.getElementById('fltDemand');
+      const fltDemandMetaEl = document.getElementById('fltDemandMeta');
+
+      if(fltDemandEl) fltDemandEl.textContent = Number.isFinite(fltNow) ? Number(fltNow).toFixed(1) : '—';
+      if(fltDemandMetaEl) fltDemandMetaEl.textContent = 'alpha=0.35, smoothed demand anomaly';
+
+      if(cal){
+        if(calBrierEl) calBrierEl.textContent = cal.brier.toFixed(3);
+        if(calBrierMetaEl) calBrierMetaEl.textContent = `n=${cal.n} aligned steps • lower is better`;
+        if(calHitEl) calHitEl.textContent = `${(100 * cal.hit).toFixed(1)}%`;
+        if(calHitMetaEl) calHitMetaEl.textContent = 'filtered-demand sign vs next UNG close';
+      } else {
+        if(calBrierEl) calBrierEl.textContent = '—';
+        if(calBrierMetaEl) calBrierMetaEl.textContent = 'need more aligned UNG close points';
+        if(calHitEl) calHitEl.textContent = '—';
+        if(calHitMetaEl) calHitMetaEl.textContent = 'insufficient data';
       }
 
       // Render stats table
