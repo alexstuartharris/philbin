@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-27T07:16:47.794Z",
+  "generatedAt": "2026-02-28T07:17:20.454Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -7,6 +7,10 @@
     },
     {
       "name": "driveway-tetris",
+      "hasIndex": true
+    },
+    {
+      "name": "field-evidence-capture",
       "hasIndex": true
     },
     {
@@ -31,6 +35,14 @@
     },
     {
       "name": "invoice-gen",
+      "hasIndex": true
+    },
+    {
+      "name": "netdmr-preflight-qa-copilot",
+      "hasIndex": true
+    },
+    {
+      "name": "permit-renewal-diff-checker",
       "hasIndex": true
     },
     {

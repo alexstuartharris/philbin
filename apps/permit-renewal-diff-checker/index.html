@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Permit Renewal Diff Checker</title>
+  <style>
+    :root { --bg:#0b1020; --card:#151d36; --text:#e8ecff; --muted:#a7b3d6; --ok:#20c997; --warn:#ffb020; --err:#ff6b6b; --line:#2b3a67; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Inter, system-ui, sans-serif; background:linear-gradient(180deg,#0b1020,#131c34); color:var(--text); }
+    .wrap { max-width: 1100px; margin:0 auto; padding:24px; }
+    .card { background:rgba(21,29,54,.92); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px; }
+    h1,h2 { margin:0 0 10px; }
+    p { color:var(--muted); }
+    textarea { width:100%; min-height:180px; border-radius:10px; border:1px solid var(--line); background:#0e1530; color:var(--text); padding:10px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    button { background:#4f7cff; border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; }
+    button.secondary { background:#33446f; }
+    .pill { display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; margin-right:6px; }
+    .ok { background:rgba(32,201,151,.2); color:#89f5cf; }
+    .warn { background:rgba(255,176,32,.2); color:#ffd07f; }
+    .err { background:rgba(255,107,107,.2); color:#ffb3b3; }
+    table { width:100%; border-collapse:collapse; }
+    th,td { border-bottom:1px solid var(--line); padding:8px; text-align:left; font-size:14px; vertical-align:top; }
+    code { color:#d4dcff; }
+    @media (max-width: 900px){ .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Permit Renewal Diff Checker</h1>
+      <p>Compare old vs renewed permit tables and produce an operational change checklist. Works fully in-browser (no uploads/server).</p>
+      <div class="row">
+        <button id="loadSample">Load sample permits</button>
+        <button id="run">Run diff</button>
+        <button class="secondary" id="download">Download change checklist (.json)</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Old Permit (JSON array)</h2>
+        <p>Each row should include <code>parameter, limitType, value, units, frequency</code>.</p>
+        <textarea id="oldPermit"></textarea>
+      </div>
+      <div class="card">
+        <h2>Renewed Permit (JSON array)</h2>
+        <p>Same schema as old permit. Matching key: <code>parameter + limitType</code>.</p>
+        <textarea id="newPermit"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Diff Summary</h2>
+      <div id="summary"></div>
+      <table>
+        <thead><tr><th>Priority</th><th>Parameter</th><th>Change</th><th>From</th><th>To</th><th>Action</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+const oldEl = document.getElementById('oldPermit');
+const newEl = document.getElementById('newPermit');
+const summaryEl = document.getElementById('summary');
+const rowsEl = document.getElementById('rows');
+let lastReport = null;
+
+const oldSample = [
+  { parameter:'Flow', limitType:'MonthlyAvg', value:1200, units:'m3/day', frequency:'Weekly' },
+  { parameter:'BOD5', limitType:'MonthlyAvg', value:30, units:'mg/L', frequency:'Monthly' },
+  { parameter:'TSS', limitType:'MonthlyAvg', value:45, units:'mg/L', frequency:'Monthly' },
+  { parameter:'Ammonia', limitType:'DailyMax', value:2.5, units:'mg/L', frequency:'Monthly' }
+];
+
+const newSample = [
+  { parameter:'Flow', limitType:'MonthlyAvg', value:1100, units:'m3/day', frequency:'Weekly' },
+  { parameter:'BOD5', limitType:'MonthlyAvg', value:25, units:'mg/L', frequency:'Monthly' },
+  { parameter:'TSS', limitType:'MonthlyAvg', value:45, units:'mg/L', frequency:'Biweekly' },
+  { parameter:'Ammonia', limitType:'DailyMax', value:2.0, units:'mg/L', frequency:'Monthly' },
+  { parameter:'Total Phosphorus', limitType:'MonthlyAvg', value:1.0, units:'mg/L', frequency:'Monthly' }
+];
+
+function keyOf(r){ return `${(r.parameter||'').trim()}|${(r.limitType||'').trim()}`; }
+function fmt(v){ return v === undefined || v === null || v === '' ? '—' : String(v); }
+
+function assessPriority(type, fromVal, toVal){
+  if (type === 'added' || type === 'removed') return 'high';
+  if (type === 'limit-change') {
+    const a = Number(fromVal), b = Number(toVal);
+    if (!Number.isNaN(a) && !Number.isNaN(b) && b < a) return 'high';
+    return 'medium';
+  }
+  if (type === 'frequency-change') return 'medium';
+  return 'low';
+}
+
+function actionText(change, parameter){
+  if (change.type === 'added') return `Add ${parameter} to sampling plan and lab order.`;
+  if (change.type === 'removed') return `Retire ${parameter} from routine DMR workflow after confirmation.`;
+  if (change.type === 'limit-change') return 'Update permit limit in QA/preflight rulepack and alert reviewers.';
+  if (change.type === 'frequency-change') return 'Update sampling calendar and assignment cadence.';
+  if (change.type === 'units-change') return 'Update unit conversion checks and report templates.';
+  return 'Review change with compliance lead.';
+}
+
+function buildDiff(oldRows, newRows){
+  const oldMap = new Map(oldRows.map(r => [keyOf(r), r]));
+  const newMap = new Map(newRows.map(r => [keyOf(r), r]));
+  const keys = new Set([...oldMap.keys(), ...newMap.keys()]);
+  const changes = [];
+
+  for (const key of keys) {
+    const oldR = oldMap.get(key);
+    const newR = newMap.get(key);
+    const [parameter='(unknown)'] = key.split('|');
+
+    if (!oldR && newR) {
+      changes.push({ type:'added', parameter, from:'—', to: JSON.stringify(newR), priority:'high' });
+      continue;
+    }
+    if (oldR && !newR) {
+      changes.push({ type:'removed', parameter, from: JSON.stringify(oldR), to:'—', priority:'high' });
+      continue;
+    }
+
+    if (String(oldR.value) !== String(newR.value)) {
+      const priority = assessPriority('limit-change', oldR.value, newR.value);
+      changes.push({ type:'limit-change', parameter, from: fmt(oldR.value), to: fmt(newR.value), priority });
+    }
+    if (String(oldR.frequency) !== String(newR.frequency)) {
+      changes.push({ type:'frequency-change', parameter, from: fmt(oldR.frequency), to: fmt(newR.frequency), priority:'medium' });
+    }
+    if (String(oldR.units) !== String(newR.units)) {
+      changes.push({ type:'units-change', parameter, from: fmt(oldR.units), to: fmt(newR.units), priority:'medium' });
+    }
+  }
+
+  changes.forEach(c => c.action = actionText(c, c.parameter));
+
+  const totals = {
+    totalChanges: changes.length,
+    high: changes.filter(c => c.priority === 'high').length,
+    medium: changes.filter(c => c.priority === 'medium').length,
+    low: changes.filter(c => c.priority === 'low').length
+  };
+
+  return { generatedAt: new Date().toISOString(), totals, changes };
+}
+
+function parseJSON(text, label){
+  try { return JSON.parse(text); }
+  catch (e) { throw new Error(`Invalid ${label} JSON: ${e.message}`); }
+}
+
+function render(report){
+  const t = report.totals;
+  summaryEl.innerHTML = `
+    <span class="pill warn">Changes: ${t.totalChanges}</span>
+    <span class="pill ${t.high ? 'err':'ok'}">High: ${t.high}</span>
+    <span class="pill ${t.medium ? 'warn':'ok'}">Medium: ${t.medium}</span>
+    <span class="pill ${t.low ? 'warn':'ok'}">Low: ${t.low}</span>
+  `;
+
+  const order = { high:0, medium:1, low:2 };
+  const sorted = [...report.changes].sort((a,b)=>order[a.priority]-order[b.priority]);
+
+  rowsEl.innerHTML = sorted.map(c => `
+    <tr>
+      <td><span class="pill ${c.priority === 'high' ? 'err' : c.priority === 'medium' ? 'warn':'ok'}">${c.priority}</span></td>
+      <td>${c.parameter}</td>
+      <td>${c.type}</td>
+      <td>${c.from}</td>
+      <td>${c.to}</td>
+      <td>${c.action}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="6">No differences found ✅</td></tr>';
+}
+
+document.getElementById('loadSample').onclick = () => {
+  oldEl.value = JSON.stringify(oldSample, null, 2);
+  newEl.value = JSON.stringify(newSample, null, 2);
+};
+
+document.getElementById('run').onclick = () => {
+  try {
+    const oldRows = parseJSON(oldEl.value, 'old permit');
+    const newRows = parseJSON(newEl.value, 'renewed permit');
+    if (!Array.isArray(oldRows) || !Array.isArray(newRows)) throw new Error('Both permits must be JSON arrays.');
+    lastReport = buildDiff(oldRows, newRows);
+    render(lastReport);
+  } catch (err) {
+    summaryEl.innerHTML = `<span class="pill err">${err.message}</span>`;
+    rowsEl.innerHTML = '';
+  }
+};
+
+document.getElementById('download').onclick = () => {
+  if (!lastReport) return alert('Run diff first.');
+  const blob = new Blob([JSON.stringify(lastReport, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'), { href:url, download:`permit-renewal-diff-${Date.now()}.json` });
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+oldEl.value = JSON.stringify(oldSample, null, 2);
+newEl.value = JSON.stringify(newSample, null, 2);
+lastReport = buildDiff(oldSample, newSample);
+render(lastReport);
+</script>
+</body>
+</html>

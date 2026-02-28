@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetDMR Preflight QA Copilot</title>
+  <style>
+    :root { --bg:#0b1020; --card:#151d36; --text:#e8ecff; --muted:#a7b3d6; --ok:#20c997; --warn:#ffb020; --err:#ff6b6b; --line:#2b3a67; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Inter,system-ui,sans-serif; background:linear-gradient(180deg,#0b1020,#131c34); color:var(--text); }
+    .wrap { max-width: 1100px; margin:0 auto; padding:24px; }
+    .card { background:rgba(21,29,54,.92); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px; }
+    h1,h2 { margin:0 0 10px; }
+    p { color:var(--muted); }
+    textarea { width:100%; min-height:180px; border-radius:10px; border:1px solid var(--line); background:#0e1530; color:var(--text); padding:10px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    button { background:#4f7cff; border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; }
+    button.secondary { background:#33446f; }
+    .pill { display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; margin-right:6px; }
+    .ok { background:rgba(32,201,151,.2); color:#89f5cf; }
+    .warn { background:rgba(255,176,32,.2); color:#ffd07f; }
+    .err { background:rgba(255,107,107,.2); color:#ffb3b3; }
+    table { width:100%; border-collapse:collapse; }
+    th,td { border-bottom:1px solid var(--line); padding:8px; text-align:left; font-size:14px; vertical-align:top; }
+    @media (max-width: 900px){ .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>NetDMR Preflight QA Copilot</h1>
+      <p>Run pre-submission checks on DMR exports against a permit profile. Browser-only and static hosting friendly.</p>
+      <div class="row">
+        <button id="loadSample">Load sample data</button>
+        <button id="run">Run preflight</button>
+        <button class="secondary" id="download">Download QA report (.json)</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Permit Profile (JSON)</h2>
+        <p>Define limits, required analytes, and expected sampling frequency.</p>
+        <textarea id="profile"></textarea>
+      </div>
+      <div class="card">
+        <h2>DMR Data Rows (JSON array)</h2>
+        <p>One row per sample period with analyte values and optional metadata.</p>
+        <textarea id="records"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Preflight Summary</h2>
+      <div id="summary"></div>
+      <table>
+        <thead><tr><th>Row</th><th>Severity</th><th>Check</th><th>Details</th></tr></thead>
+        <tbody id="issues"></tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+const profileEl = document.getElementById('profile');
+const recordsEl = document.getElementById('records');
+const summaryEl = document.getElementById('summary');
+const issuesEl = document.getElementById('issues');
+let lastReport = null;
+
+const sampleProfile = {
+  required: ['periodStart', 'periodEnd', 'Flow', 'BOD5', 'TSS', 'pH'],
+  limits: {
+    BOD5: { max: 30 },
+    TSS: { max: 45 },
+    pH: { min: 6, max: 9 }
+  },
+  expectedRowsPerMonth: 4,
+  dateFields: ['periodStart', 'periodEnd']
+};
+
+const sampleRows = [
+  { id:'row-1', periodStart:'2026-01-01', periodEnd:'2026-01-07', Flow:1300, BOD5:24, TSS:39, pH:7.2 },
+  { id:'row-2', periodStart:'2026-01-08', periodEnd:'2026-01-14', Flow:1180, BOD5:32, TSS:47, pH:7.1 },
+  { id:'row-3', periodStart:'2026-01-15', periodEnd:'2026-01-21', Flow:1260, BOD5:22, TSS:40, pH:9.5 },
+  { id:'row-4', periodStart:'2026-01-22', periodEnd:'2026-01-28', Flow:1250, BOD5:21, TSS:42 }
+];
+
+function isNum(v){ return typeof v === 'number' && !Number.isNaN(v); }
+function parseDate(v){ const t = Date.parse(v); return Number.isNaN(t) ? null : new Date(t); }
+
+function runChecks(profile, rows){
+  const issues = [];
+
+  rows.forEach((row, idx) => {
+    const id = row.id || `row-${idx+1}`;
+
+    (profile.required || []).forEach(field => {
+      if (row[field] === undefined || row[field] === null || row[field] === '') {
+        issues.push({ id, severity:'error', check:'Missing required field', details:`${field} is required by permit profile.` });
+      }
+    });
+
+    (profile.dateFields || []).forEach(field => {
+      if (row[field] !== undefined && parseDate(row[field]) === null) {
+        issues.push({ id, severity:'error', check:'Invalid date', details:`${field} must be an ISO date string.` });
+      }
+    });
+
+    if (row.periodStart && row.periodEnd) {
+      const s = parseDate(row.periodStart), e = parseDate(row.periodEnd);
+      if (s && e && e < s) {
+        issues.push({ id, severity:'error', check:'Date range inverted', details:'periodEnd is earlier than periodStart.' });
+      }
+    }
+
+    Object.entries(profile.limits || {}).forEach(([analyte, rule]) => {
+      const v = row[analyte];
+      if (v === undefined || v === null || v === '') return;
+      if (!isNum(v)) {
+        issues.push({ id, severity:'error', check:'Non-numeric analyte value', details:`${analyte} must be numeric.` });
+        return;
+      }
+      if (isNum(rule.max) && v > rule.max) {
+        issues.push({ id, severity:'error', check:'Permit exceedance', details:`${analyte}=${v} exceeds max ${rule.max}.` });
+      }
+      if (isNum(rule.min) && v < rule.min) {
+        issues.push({ id, severity:'warning', check:'Below minimum', details:`${analyte}=${v} is below min ${rule.min}.` });
+      }
+    });
+  });
+
+  if (profile.expectedRowsPerMonth && rows.length !== profile.expectedRowsPerMonth) {
+    issues.push({
+      id:'dataset',
+      severity:'warning',
+      check:'Sampling frequency mismatch',
+      details:`Expected ${profile.expectedRowsPerMonth} rows for month, found ${rows.length}.`
+    });
+  }
+
+  const totals = {
+    rows: rows.length,
+    issues: issues.length,
+    errors: issues.filter(i => i.severity === 'error').length,
+    warnings: issues.filter(i => i.severity === 'warning').length
+  };
+
+  const confidence = Math.max(0, 100 - (totals.errors * 15 + totals.warnings * 5));
+
+  return { generatedAt: new Date().toISOString(), totals, confidenceScore: confidence, issues };
+}
+
+function parseJSON(text, label){
+  try { return JSON.parse(text); }
+  catch (e) { throw new Error(`Invalid ${label} JSON: ${e.message}`); }
+}
+
+function render(report){
+  summaryEl.innerHTML = `
+    <span class="pill ok">Rows: ${report.totals.rows}</span>
+    <span class="pill ${report.totals.errors ? 'err':'ok'}">Errors: ${report.totals.errors}</span>
+    <span class="pill ${report.totals.warnings ? 'warn':'ok'}">Warnings: ${report.totals.warnings}</span>
+    <span class="pill warn">Preflight confidence: ${report.confidenceScore}/100</span>
+  `;
+
+  issuesEl.innerHTML = report.issues.map(i => `
+    <tr>
+      <td>${i.id}</td>
+      <td><span class="pill ${i.severity === 'error' ? 'err' : 'warn'}">${i.severity}</span></td>
+      <td>${i.check}</td>
+      <td>${i.details}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="4">No issues found ✅ Ready for filing review.</td></tr>';
+}
+
+document.getElementById('loadSample').onclick = () => {
+  profileEl.value = JSON.stringify(sampleProfile, null, 2);
+  recordsEl.value = JSON.stringify(sampleRows, null, 2);
+};
+
+document.getElementById('run').onclick = () => {
+  try {
+    const profile = parseJSON(profileEl.value, 'permit profile');
+    const rows = parseJSON(recordsEl.value, 'records');
+    if (!Array.isArray(rows)) throw new Error('Records must be a JSON array.');
+    lastReport = runChecks(profile, rows);
+    render(lastReport);
+  } catch (err) {
+    summaryEl.innerHTML = `<span class="pill err">${err.message}</span>`;
+    issuesEl.innerHTML = '';
+  }
+};
+
+document.getElementById('download').onclick = () => {
+  if (!lastReport) return alert('Run preflight first.');
+  const blob = new Blob([JSON.stringify(lastReport, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'), { href:url, download:`netdmr-preflight-${Date.now()}.json` });
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+profileEl.value = JSON.stringify(sampleProfile, null, 2);
+recordsEl.value = JSON.stringify(sampleRows, null, 2);
+lastReport = runChecks(sampleProfile, sampleRows);
+render(lastReport);
+</script>
+</body>
+</html>
