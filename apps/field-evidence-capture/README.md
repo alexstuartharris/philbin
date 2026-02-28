@@ -1,6 +1,6 @@
-# Field Evidence Capture (v0)
+# Field Data Capture (v0)
 
-Simple local-first prototype for field photo evidence records.
+Simple local-first prototype for field photo data records.
 
 ## Current features
 - Photo capture/upload (`capture=environment`)

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d1117" />
   <link rel="manifest" href="./manifest.webmanifest" />
-  <title>Field Evidence Capture | Philbin Tools</title>
+  <title>Field Data Capture | Philbin Tools</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <style>
     :root {
@@ -113,7 +113,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>📍 Field Evidence Capture</h1>
+      <h1>📍 Field Data Capture</h1>
       <p class="muted">Offline-friendly photo records with timestamp, location, and integrity hash.</p>
     </header>
 
@@ -148,7 +148,7 @@
       </section>
 
       <section class="card">
-        <h2 style="font-size:1.1rem; margin-bottom:10px;">2) Capture Evidence</h2>
+        <h2 style="font-size:1.1rem; margin-bottom:10px;">2) Capture Data</h2>
         <div class="capture">
           <input type="file" id="photoInput" accept="image/*" capture="environment" />
           <p>Tap to take a photo (or upload)</p>
@@ -177,14 +177,14 @@
           <textarea id="notes" placeholder="Short field note..."></textarea>
         </div>
         <div class="btn-group" style="margin-top:10px;">
-          <button class="btn-primary" id="saveRecord">Save record</button>
+          <button class="btn-primary" id="saveRecord">Save data record</button>
           <button id="clearDraft">Clear draft</button>
         </div>
         <p class="status" id="saveStatus"></p>
       </section>
 
       <section class="card">
-        <h2 style="font-size:1.1rem; margin-bottom:10px;">3) Evidence Log</h2>
+        <h2 style="font-size:1.1rem; margin-bottom:10px;">3) Data Log</h2>
         <div class="btn-group" style="margin-bottom:10px;">
           <button id="exportJson">Export JSONL</button>
           <button id="exportCsv">Export CSV</button>
@@ -487,7 +487,7 @@ ${formatStamp(capturedAt, geo)}`;
           notes: safeText(notes.value),
           geo,
           file: {
-            name: currentBlob?.name || `evidence-${Date.now()}.jpg`,
+            name: currentBlob?.name || `field-data-${Date.now()}.jpg`,
             type: currentBlob?.type || 'image/jpeg',
             size: currentBlob?.size || null
           },
@@ -504,7 +504,7 @@ ${formatStamp(capturedAt, geo)}`;
         await idbPut(rec);
         records.unshift(rec);
         await renderRecords();
-        setStatus(saveStatus, 'Saved evidence record (IndexedDB)', 'ok');
+        setStatus(saveStatus, 'Saved data record (IndexedDB)', 'ok');
         clearDraft();
       } catch (err) {
         setStatus(saveStatus, `Save failed: ${err.message}`, 'err');
@@ -615,9 +615,9 @@ ${formatStamp(capturedAt, geo)}`;
         if (r.images?.originalBlob) zip.file('original.jpg', r.images.originalBlob);
         if (r.images?.stampedBlob) zip.file('stamped.jpg', r.images.stampedBlob);
         const out = await zip.generateAsync({ type: 'blob' });
-        downloadBlob(`evidence-${r.siteCode || r.id}.zip`, out);
+        downloadBlob(`field-data-${r.siteCode || r.id}.zip`, out);
       } else {
-        downloadText(`evidence-${r.siteCode || r.id}.json`, JSON.stringify(meta, null, 2), 'application/json');
+        downloadText(`field-data-${r.siteCode || r.id}.json`, JSON.stringify(meta, null, 2), 'application/json');
       }
     }
 
@@ -632,20 +632,20 @@ ${formatStamp(capturedAt, geo)}`;
     window.deleteRecord = deleteRecord;
 
     document.getElementById('exportJson').addEventListener('click', () => {
-      downloadText(`field-evidence-${Date.now()}.jsonl`, asJsonl(records), 'application/x-ndjson');
+      downloadText(`field-data-${Date.now()}.jsonl`, asJsonl(records), 'application/x-ndjson');
     });
 
     document.getElementById('exportCsv').addEventListener('click', () => {
-      downloadText(`field-evidence-${Date.now()}.csv`, asCsv(records), 'text/csv');
+      downloadText(`field-data-${Date.now()}.csv`, asCsv(records), 'text/csv');
     });
 
     document.getElementById('downloadZipLike').addEventListener('click', async () => {
       if (!window.JSZip) {
-        downloadText(`field-evidence-bundle-${Date.now()}.json`, JSON.stringify(records.map(sanitizeRecordForExport), null, 2), 'application/json');
+        downloadText(`field-data-bundle-${Date.now()}.json`, JSON.stringify(records.map(sanitizeRecordForExport), null, 2), 'application/json');
         return;
       }
       const zip = new JSZip();
-      zip.file('evidence-log.jsonl', asJsonl(records));
+      zip.file('field-data-log.jsonl', asJsonl(records));
       zip.file('hashes.csv', asCsv(records));
       for (const r of records) {
         const prefix = `images/${r.createdAt.slice(0,10)}-${r.siteCode || 'nosite'}-${r.id}`;
@@ -653,11 +653,11 @@ ${formatStamp(capturedAt, geo)}`;
         if (r.images?.stampedBlob) zip.file(`${prefix}-stamped.jpg`, r.images.stampedBlob);
       }
       const out = await zip.generateAsync({ type: 'blob' });
-      downloadBlob(`field-evidence-bundle-${Date.now()}.zip`, out);
+      downloadBlob(`field-data-bundle-${Date.now()}.zip`, out);
     });
 
     document.getElementById('clearAll').addEventListener('click', async () => {
-      if (!confirm('Delete ALL evidence records?')) return;
+      if (!confirm('Delete ALL data records?')) return;
       await idbClear();
       records = [];
       await renderRecords();

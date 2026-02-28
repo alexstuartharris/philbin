@@ -1,10 +1,10 @@
 {
-  "name": "Field Evidence Capture",
-  "short_name": "Evidence",
+  "name": "Field Data Capture",
+  "short_name": "FieldData"
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0d1117",
   "theme_color": "#0d1117",
-  "description": "Offline-friendly field evidence capture with timestamp, GPS and hashes",
+  "description": "Offline-friendly field data capture with timestamp, GPS and hashes",
   "icons": []
 }
