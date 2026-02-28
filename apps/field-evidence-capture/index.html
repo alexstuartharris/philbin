@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d1117" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>Field Evidence Capture | Philbin Tools</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --border: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --success: #3fb950;
+      --danger: #f85149;
+      --warning: #d29922;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.4;
+    }
+    .container { max-width: 980px; margin: 0 auto; padding: 16px; }
+    header {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      margin-bottom: 14px;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 6px; }
+    .muted { color: var(--text-secondary); }
+    .grid { display: grid; gap: 14px; }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      padding: 14px;
+    }
+    .row { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    label { display: block; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    input:focus, select:focus, textarea:focus { outline: 1px solid var(--accent); }
+    textarea { min-height: 84px; resize: vertical; }
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+    .status { margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary); }
+    .status.ok { color: var(--success); }
+    .status.warn { color: var(--warning); }
+    .status.err { color: var(--danger); }
+    .capture {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: rgba(88,166,255,0.03);
+    }
+    .capture input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .thumb { width: 100%; max-height: 280px; object-fit: contain; border-radius: 8px; margin-top: 8px; border: 1px solid var(--border); }
+    .list { display: grid; gap: 10px; }
+    .map-wrap { margin: 10px 0 12px; }
+    #recordMap { width: 100%; height: 280px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 88px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      background: var(--bg-secondary);
+    }
+    .item img { width: 88px; height: 88px; object-fit: cover; border-radius: 8px; }
+    .tiny { font-size: 0.8rem; color: var(--text-secondary); word-break: break-all; }
+    .pill { font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; background: var(--bg-tertiary); color: var(--accent); }
+    footer { text-align: center; color: var(--text-secondary); padding: 22px 0; font-size: 0.85rem; }
+    @media (max-width: 640px) { .item { grid-template-columns: 1fr; } .item img { width: 100%; height: auto; max-height: 220px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📍 Field Evidence Capture</h1>
+      <p class="muted">Offline-friendly photo records with timestamp, location, and integrity hash.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2 style="font-size:1.1rem; margin-bottom:10px;">1) Site Context</h2>
+        <div class="row">
+          <div>
+            <label for="projectName">Project</label>
+            <input id="projectName" placeholder="e.g., BR-17 culvert inspection" />
+          </div>
+          <div>
+            <label for="siteCode">Site code</label>
+            <input id="siteCode" placeholder="e.g., SQM-042" />
+          </div>
+          <div>
+            <label for="collector">Collected by</label>
+            <input id="collector" placeholder="Name / initials" />
+          </div>
+          <div>
+            <label for="overlayToggle">On-image overlay</label>
+            <select id="overlayToggle">
+              <option value="no">No (keep original only)</option>
+              <option value="yes">Yes (save stamped copy)</option>
+            </select>
+          </div>
+        </div>
+        <p class="status" id="geoStatus">Location: not requested yet</p>
+        <div class="btn-group" style="margin-top:8px;">
+          <button id="refreshLocation">Refresh location now</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:1.1rem; margin-bottom:10px;">2) Capture Evidence</h2>
+        <div class="capture">
+          <input type="file" id="photoInput" accept="image/*" capture="environment" />
+          <p>Tap to take a photo (or upload)</p>
+          <p class="muted" style="font-size:0.85rem; margin-top:6px;">Each record stores timestamp, coordinates, accuracy, hash, and notes.</p>
+        </div>
+        <img id="preview" class="thumb" style="display:none;" alt="Preview" />
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label for="obsType">Observation type</label>
+            <select id="obsType">
+              <option value="site-condition">Site condition</option>
+              <option value="erosion">Erosion</option>
+              <option value="fish-habitat">Fish habitat</option>
+              <option value="water-quality">Water quality</option>
+              <option value="infrastructure">Infrastructure</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label for="weather">Weather</label>
+            <input id="weather" placeholder="e.g., light rain, 4°C" />
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <label for="notes">Notes</label>
+          <textarea id="notes" placeholder="Short field note..."></textarea>
+        </div>
+        <div class="btn-group" style="margin-top:10px;">
+          <button class="btn-primary" id="saveRecord">Save record</button>
+          <button id="clearDraft">Clear draft</button>
+        </div>
+        <p class="status" id="saveStatus"></p>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:1.1rem; margin-bottom:10px;">3) Evidence Log</h2>
+        <div class="btn-group" style="margin-bottom:10px;">
+          <button id="exportJson">Export JSONL</button>
+          <button id="exportCsv">Export CSV</button>
+          <button id="downloadZipLike">Export Photo Bundle (JSON + images)</button>
+          <button class="btn-danger" id="clearAll">Clear all</button>
+        </div>
+        <div class="btn-group" style="margin-bottom:8px;">
+          <label for="basemapSelect" class="muted" style="margin:0; align-self:center;">Basemap</label>
+          <select id="basemapSelect" style="max-width:240px;">
+            <option value="osm">OpenStreetMap</option>
+            <option value="esri">Esri World Imagery</option>
+          </select>
+        </div>
+        <div class="map-wrap">
+          <div id="recordMap"></div>
+        </div>
+        <div class="list" id="recordList"></div>
+      </section>
+    </div>
+
+    <footer>Part of <a href="../" style="color:var(--accent);">Philbin Tools</a> • local-first, no login</footer>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+    const DB_NAME = 'field_evidence_db';
+    const DB_VERSION = 1;
+    const STORE_RECORDS = 'records';
+    const FIELD_CTX_KEY = 'field_evidence_context_v1';
+    const BASEMAP_PREF_KEY = 'field_evidence_basemap_pref_v1';
+    const LEGACY_STORAGE_KEY = 'field_evidence_records_v1';
+
+    let currentBlob = null;
+    let currentPreviewUrl = null;
+    let latestGeo = null;
+    let records = [];
+
+    const projectName = document.getElementById('projectName');
+    const siteCode = document.getElementById('siteCode');
+    const collector = document.getElementById('collector');
+    const overlayToggle = document.getElementById('overlayToggle');
+    const photoInput = document.getElementById('photoInput');
+    const preview = document.getElementById('preview');
+    const obsType = document.getElementById('obsType');
+    const weather = document.getElementById('weather');
+    const notes = document.getElementById('notes');
+    const geoStatus = document.getElementById('geoStatus');
+    const saveStatus = document.getElementById('saveStatus');
+    const recordList = document.getElementById('recordList');
+    const basemapSelect = document.getElementById('basemapSelect');
+
+    let map = null;
+    let mapMarkers = null;
+    let activeBaseLayer = null;
+
+    function openDb() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains(STORE_RECORDS)) {
+            const store = db.createObjectStore(STORE_RECORDS, { keyPath: 'id' });
+            store.createIndex('createdAt', 'createdAt', { unique: false });
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function idbPut(record) {
+      const db = await openDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_RECORDS, 'readwrite');
+        tx.objectStore(STORE_RECORDS).put(record);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function idbGetAll() {
+      const db = await openDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_RECORDS, 'readonly');
+        const req = tx.objectStore(STORE_RECORDS).getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function idbDelete(id) {
+      const db = await openDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_RECORDS, 'readwrite');
+        tx.objectStore(STORE_RECORDS).delete(id);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function idbClear() {
+      const db = await openDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_RECORDS, 'readwrite');
+        tx.objectStore(STORE_RECORDS).clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    function loadContext() {
+      const ctx = JSON.parse(localStorage.getItem(FIELD_CTX_KEY) || '{}');
+      projectName.value = ctx.projectName || '';
+      siteCode.value = ctx.siteCode || '';
+      collector.value = ctx.collector || '';
+      overlayToggle.value = ctx.overlayToggle || 'no';
+    }
+
+    function persistContext() {
+      localStorage.setItem(FIELD_CTX_KEY, JSON.stringify({
+        projectName: projectName.value.trim(),
+        siteCode: siteCode.value.trim(),
+        collector: collector.value.trim(),
+        overlayToggle: overlayToggle.value
+      }));
+    }
+
+    [projectName, siteCode, collector, overlayToggle].forEach(el => el.addEventListener('change', persistContext));
+
+    function setStatus(el, text, cls = '') {
+      el.className = 'status ' + cls;
+      el.textContent = text;
+    }
+
+    function ensureMap() {
+      if (!window.L || map) return;
+      map = L.map('recordMap', { zoomControl: true }).setView([49.2827, -123.1207], 8);
+      mapMarkers = L.layerGroup().addTo(map);
+      updateBasemap();
+    }
+
+    function getBasemapLayer(kind) {
+      if (!window.L) return null;
+      if (kind === 'esri') {
+        return L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+          maxZoom: 19
+        });
+      }
+      return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      });
+    }
+
+    function updateBasemap() {
+      if (!map) return;
+      const selected = basemapSelect?.value || 'osm';
+      const next = getBasemapLayer(selected);
+      if (!next) return;
+      if (activeBaseLayer) map.removeLayer(activeBaseLayer);
+      activeBaseLayer = next;
+      activeBaseLayer.addTo(map);
+      localStorage.setItem(BASEMAP_PREF_KEY, selected);
+    }
+
+    function refreshMapMarkers() {
+      if (!map || !mapMarkers) return;
+      mapMarkers.clearLayers();
+      const withGeo = records.filter(r => r?.geo?.lat != null && r?.geo?.lon != null);
+      if (!withGeo.length) return;
+      const bounds = [];
+      for (const r of withGeo) {
+        const latlng = [r.geo.lat, r.geo.lon];
+        bounds.push(latlng);
+        const popup = `<strong>${r.siteCode || 'No site code'}</strong><br/>${r.localTime}<br/>${r.observationType}`;
+        L.marker(latlng).addTo(mapMarkers).bindPopup(popup);
+      }
+      map.fitBounds(bounds, { padding: [20, 20], maxZoom: 16 });
+    }
+
+    basemapSelect?.addEventListener('change', updateBasemap);
+
+    function requestLocation() {
+      if (!navigator.geolocation) {
+        setStatus(geoStatus, 'Location unavailable on this device/browser', 'err');
+        return;
+      }
+      setStatus(geoStatus, 'Getting location…', 'warn');
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          latestGeo = {
+            lat: pos.coords.latitude,
+            lon: pos.coords.longitude,
+            accuracyM: pos.coords.accuracy,
+            altitudeM: pos.coords.altitude,
+            headingDeg: pos.coords.heading,
+            speedMps: pos.coords.speed,
+            capturedAt: new Date().toISOString()
+          };
+          setStatus(geoStatus, `Location: ${latestGeo.lat.toFixed(6)}, ${latestGeo.lon.toFixed(6)} ±${Math.round(latestGeo.accuracyM)}m`, 'ok');
+        },
+        (err) => {
+          setStatus(geoStatus, `Location failed: ${err.message}`, 'err');
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+      );
+    }
+
+    document.getElementById('refreshLocation').addEventListener('click', requestLocation);
+
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      currentBlob = file;
+      if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
+      currentPreviewUrl = URL.createObjectURL(file);
+      preview.src = currentPreviewUrl;
+      preview.style.display = 'block';
+    });
+
+    async function sha256FromBlob(blob) {
+      const ab = await blob.arrayBuffer();
+      const digest = await crypto.subtle.digest('SHA-256', ab);
+      return Array.from(new Uint8Array(digest)).map(x => x.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function buildStampedBlob(blob, stampText) {
+      const img = new Image();
+      img.src = URL.createObjectURL(blob);
+      await img.decode();
+
+      const c = document.createElement('canvas');
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      const pad = Math.max(14, Math.round(c.width * 0.02));
+      const fontSize = Math.max(20, Math.round(c.width * 0.026));
+      ctx.font = `600 ${fontSize}px Arial, sans-serif`;
+      const lines = stampText.split('
+');
+      const lineH = Math.round(fontSize * 1.25);
+      const blockH = (lines.length * lineH) + pad;
+
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      ctx.fillRect(0, c.height - blockH, c.width, blockH);
+      ctx.fillStyle = '#ffffff';
+      lines.forEach((line, i) => {
+        ctx.fillText(line, pad, c.height - blockH + pad + (i + 1) * lineH - 8);
+      });
+
+      return await new Promise((resolve) => c.toBlob(resolve, 'image/jpeg', 0.92));
+    }
+
+    function safeText(v) { return (v || '').toString().trim(); }
+
+    function formatStamp(ts, geo) {
+      const d = new Date(ts);
+      const local = d.toLocaleString();
+      const lat = geo?.lat != null ? geo.lat.toFixed(6) : 'NA';
+      const lon = geo?.lon != null ? geo.lon.toFixed(6) : 'NA';
+      return `${local} | ${lat}, ${lon}`;
+    }
+
+    document.getElementById('saveRecord').addEventListener('click', async () => {
+      try {
+        if (!currentBlob) {
+          setStatus(saveStatus, 'Take/select a photo first', 'err');
+          return;
+        }
+        const capturedAt = new Date().toISOString();
+        const geo = latestGeo ? { ...latestGeo } : null;
+        const project = safeText(projectName.value);
+        const site = safeText(siteCode.value);
+        const who = safeText(collector.value);
+        const stamp = `Project: ${project || 'NA'}  Site: ${site || 'NA'}
+${formatStamp(capturedAt, geo)}`;
+
+        const originalHash = await sha256FromBlob(currentBlob);
+
+        let stampedBlob = null;
+        let stampedHash = null;
+        if (overlayToggle.value === 'yes') {
+          stampedBlob = await buildStampedBlob(currentBlob, stamp);
+          stampedHash = await sha256FromBlob(stampedBlob);
+        }
+
+        const rec = {
+          id: crypto.randomUUID(),
+          createdAt: capturedAt,
+          localTime: new Date(capturedAt).toLocaleString(),
+          project,
+          siteCode: site,
+          collector: who,
+          device: navigator.userAgent,
+          observationType: obsType.value,
+          weather: safeText(weather.value),
+          notes: safeText(notes.value),
+          geo,
+          file: {
+            name: currentBlob?.name || `evidence-${Date.now()}.jpg`,
+            type: currentBlob?.type || 'image/jpeg',
+            size: currentBlob?.size || null
+          },
+          integrity: {
+            originalSha256: originalHash,
+            stampedSha256: stampedHash
+          },
+          images: {
+            originalBlob: currentBlob,
+            stampedBlob
+          }
+        };
+
+        await idbPut(rec);
+        records.unshift(rec);
+        await renderRecords();
+        setStatus(saveStatus, 'Saved evidence record (IndexedDB)', 'ok');
+        clearDraft();
+      } catch (err) {
+        setStatus(saveStatus, `Save failed: ${err.message}`, 'err');
+      }
+    });
+
+    function clearDraft() {
+      currentBlob = null;
+      if (currentPreviewUrl) {
+        URL.revokeObjectURL(currentPreviewUrl);
+        currentPreviewUrl = null;
+      }
+      photoInput.value = '';
+      preview.src = '';
+      preview.style.display = 'none';
+      notes.value = '';
+      weather.value = '';
+      obsType.value = 'site-condition';
+    }
+
+    document.getElementById('clearDraft').addEventListener('click', clearDraft);
+
+    function sanitizeRecordForExport(r) {
+      return {
+        ...r,
+        images: undefined
+      };
+    }
+
+    async function renderRecords() {
+      if (!records.length) {
+        recordList.innerHTML = '<p class="muted">No records yet.</p>';
+        refreshMapMarkers();
+        return;
+      }
+      const htmlParts = [];
+      for (const r of records) {
+        const g = r.geo ? `${r.geo.lat.toFixed(6)}, ${r.geo.lon.toFixed(6)} ±${Math.round(r.geo.accuracyM || 0)}m` : 'no GPS';
+        const blob = r.images?.stampedBlob || r.images?.originalBlob;
+        const previewUrl = blob ? URL.createObjectURL(blob) : '';
+        htmlParts.push(`
+          <article class="item">
+            <img src="${previewUrl}" alt="record preview" />
+            <div>
+              <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                <strong>${r.siteCode || 'No site code'}</strong>
+                <span class="pill">${r.observationType}</span>
+              </div>
+              <div class="muted" style="font-size:0.85rem; margin-top:2px;">${r.localTime}</div>
+              <div class="tiny">${g}</div>
+              <div class="tiny">SHA256: ${r.integrity.originalSha256.slice(0, 16)}...</div>
+            </div>
+            <div class="btn-group">
+              <button onclick="downloadRecord('${r.id}')">Download</button>
+              <button onclick="deleteRecord('${r.id}')">Delete</button>
+            </div>
+          </article>
+        `);
+      }
+      recordList.innerHTML = htmlParts.join('');
+      refreshMapMarkers();
+    }
+
+    function asJsonl(items) {
+      return items.map((r) => JSON.stringify(sanitizeRecordForExport(r))).join('
+');
+    }
+
+    function asCsv(items) {
+      const headers = [
+        'id','createdAt','project','siteCode','collector','observationType','weather','notes',
+        'lat','lon','accuracyM','originalSha256','stampedSha256','fileName','fileType','fileSize'
+      ];
+      const esc = (v) => `"${(v ?? '').toString().replaceAll('"', '""')}"`;
+      const rows = items.map((r) => [
+        r.id, r.createdAt, r.project, r.siteCode, r.collector, r.observationType, r.weather, r.notes,
+        r.geo?.lat, r.geo?.lon, r.geo?.accuracyM, r.integrity?.originalSha256, r.integrity?.stampedSha256,
+        r.file?.name, r.file?.type, r.file?.size
+      ].map(esc).join(','));
+      return [headers.join(','), ...rows].join('
+');
+    }
+
+    function downloadText(name, text, type='text/plain') {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadBlob(name, blob) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function downloadRecord(id) {
+      const r = records.find(x => x.id === id);
+      if (!r) return;
+      const meta = sanitizeRecordForExport(r);
+      if (window.JSZip) {
+        const zip = new JSZip();
+        zip.file('record.json', JSON.stringify(meta, null, 2));
+        if (r.images?.originalBlob) zip.file('original.jpg', r.images.originalBlob);
+        if (r.images?.stampedBlob) zip.file('stamped.jpg', r.images.stampedBlob);
+        const out = await zip.generateAsync({ type: 'blob' });
+        downloadBlob(`evidence-${r.siteCode || r.id}.zip`, out);
+      } else {
+        downloadText(`evidence-${r.siteCode || r.id}.json`, JSON.stringify(meta, null, 2), 'application/json');
+      }
+    }
+
+    async function deleteRecord(id) {
+      if (!confirm('Delete this record?')) return;
+      await idbDelete(id);
+      records = records.filter(r => r.id !== id);
+      await renderRecords();
+    }
+
+    window.downloadRecord = downloadRecord;
+    window.deleteRecord = deleteRecord;
+
+    document.getElementById('exportJson').addEventListener('click', () => {
+      downloadText(`field-evidence-${Date.now()}.jsonl`, asJsonl(records), 'application/x-ndjson');
+    });
+
+    document.getElementById('exportCsv').addEventListener('click', () => {
+      downloadText(`field-evidence-${Date.now()}.csv`, asCsv(records), 'text/csv');
+    });
+
+    document.getElementById('downloadZipLike').addEventListener('click', async () => {
+      if (!window.JSZip) {
+        downloadText(`field-evidence-bundle-${Date.now()}.json`, JSON.stringify(records.map(sanitizeRecordForExport), null, 2), 'application/json');
+        return;
+      }
+      const zip = new JSZip();
+      zip.file('evidence-log.jsonl', asJsonl(records));
+      zip.file('hashes.csv', asCsv(records));
+      for (const r of records) {
+        const prefix = `images/${r.createdAt.slice(0,10)}-${r.siteCode || 'nosite'}-${r.id}`;
+        if (r.images?.originalBlob) zip.file(`${prefix}-original.jpg`, r.images.originalBlob);
+        if (r.images?.stampedBlob) zip.file(`${prefix}-stamped.jpg`, r.images.stampedBlob);
+      }
+      const out = await zip.generateAsync({ type: 'blob' });
+      downloadBlob(`field-evidence-bundle-${Date.now()}.zip`, out);
+    });
+
+    document.getElementById('clearAll').addEventListener('click', async () => {
+      if (!confirm('Delete ALL evidence records?')) return;
+      await idbClear();
+      records = [];
+      await renderRecords();
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+
+    async function migrateLegacyLocalStorageIfNeeded() {
+      const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (!legacyRaw) return;
+      try {
+        const legacy = JSON.parse(legacyRaw);
+        if (!Array.isArray(legacy) || !legacy.length) {
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+          return;
+        }
+        const existing = await idbGetAll();
+        if (existing.length) {
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+          return;
+        }
+        for (const r of legacy) {
+          const originalBlob = r?.images?.originalDataUrl ? await (await fetch(r.images.originalDataUrl)).blob() : null;
+          const stampedBlob = r?.images?.stampedDataUrl ? await (await fetch(r.images.stampedDataUrl)).blob() : null;
+          const migrated = {
+            ...r,
+            images: { originalBlob, stampedBlob }
+          };
+          await idbPut(migrated);
+        }
+        localStorage.removeItem(LEGACY_STORAGE_KEY);
+      } catch {
+        // Leave legacy key untouched if migration fails.
+      }
+    }
+
+    async function init() {
+      loadContext();
+      const preferredBasemap = localStorage.getItem(BASEMAP_PREF_KEY);
+      if (preferredBasemap && basemapSelect) {
+        basemapSelect.value = preferredBasemap;
+      }
+      ensureMap();
+      await migrateLegacyLocalStorageIfNeeded();
+      records = await idbGetAll();
+      records.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      await renderRecords();
+      requestLocation();
+    }
+
+    init().catch((err) => {
+      setStatus(saveStatus, `Init failed: ${err.message}`, 'err');
+    });
+  </script>
+</body>
+</html>
