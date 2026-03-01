@@ -244,36 +244,6 @@
       </details>
     </section>
 
-    <details class="card" open>
-      <summary><span>Price context (UNG + NG1)</span><span class="caret">▾</span></summary>
-      <h2 style="display:none;">Price context (UNG + NG1)</h2>
-      <p class="small">
-        Tracks latest Stooq daily close for UNG and NG1 (front-month nat gas futures proxy). Use this as quick tape context.
-      </p>
-
-      <div class="three" style="margin-top:10px;">
-        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
-          <div class="muted">Latest UNG</div>
-          <div class="kpi" id="pxUngLast">—</div>
-          <div class="mini" id="pxUngMeta">—</div>
-        </div>
-        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
-          <div class="muted">Latest NG1</div>
-          <div class="kpi" id="pxNg1Last">—</div>
-          <div class="mini" id="pxNg1Meta">—</div>
-        </div>
-        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
-          <div class="muted">UNG / NG1 ratio</div>
-          <div class="kpi" id="pxRatio">—</div>
-          <div class="mini" id="pxRatioMeta">quick relative read</div>
-        </div>
-      </div>
-
-      <div class="btnRow" style="margin-top:10px;">
-        <button id="pxRefresh" class="secondary">Refresh prices</button>
-        <span class="small" id="pxStatus"></span>
-      </div>
-    </details>
 
     <details class="card" open>
       <summary><span id="deltaHistoryTitle">Delta history (last 7 days)</span><span class="caret">▾</span></summary>
@@ -2000,36 +1970,6 @@
         return stats;
       }
 
-      async function refreshPriceContext(){
-        const statusEl = el('pxStatus');
-        try{
-          if(statusEl) statusEl.textContent = 'Loading…';
-
-          const [ung, ng1] = await Promise.all([
-            fetchStooqLatest('ung'),
-            fetchStooqLatest('ng1'),
-          ]);
-
-          el('pxUngLast').textContent = Number.isFinite(ung.price) ? ung.price.toFixed(2) : '—';
-          el('pxUngMeta').textContent = `${ung.source} • ${ung.date || '—'}`;
-
-          el('pxNg1Last').textContent = Number.isFinite(ng1.price) ? ng1.price.toFixed(3) : '—';
-          el('pxNg1Meta').textContent = `${ng1.source} • ${ng1.date || '—'}`;
-
-          if(Number.isFinite(ung.price) && Number.isFinite(ng1.price) && ng1.price > 0){
-            const ratio = ung.price / ng1.price;
-            el('pxRatio').textContent = ratio.toFixed(3);
-            el('pxRatioMeta').textContent = `UNG ${ung.price.toFixed(2)} / NG1 ${ng1.price.toFixed(3)}`;
-          } else {
-            el('pxRatio').textContent = '—';
-            el('pxRatioMeta').textContent = 'insufficient data';
-          }
-
-          if(statusEl) statusEl.textContent = 'OK';
-        } catch(e){
-          if(statusEl) statusEl.textContent = String(e?.message || e);
-        }
-      }
 
       async function fillStooqPriceInto(fieldId, symbol='UNG'){
         const sym = String(symbol || 'UNG').toUpperCase();
@@ -2145,7 +2085,6 @@
 
       // Price context section
       try{
-        el('pxRefresh').addEventListener('click', () => refreshPriceContext());
       } catch {}
 
       el('simOpen').addEventListener('click', async () => {
@@ -2302,7 +2241,6 @@
       const winSel = (el('deltaWindow') && el('deltaWindow').value) ? el('deltaWindow').value : '7';
       refreshDeltaCharts(winSel);
       // Price context
-      try{ refreshPriceContext(); } catch {}
     }
 
     boot();
