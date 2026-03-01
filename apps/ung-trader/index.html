@@ -1150,7 +1150,7 @@
 
       let q = client
         .from('market_daily')
-        .select('date, ung_close')
+        .select('date, ung_close, ng1_close')
         .order('date', { ascending: true });
 
       if(days !== 'all'){
