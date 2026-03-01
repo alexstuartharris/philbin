@@ -524,8 +524,8 @@
     const storageKey = 'ung-trader.v3';
 
     function nextGfsRunUtc(now=new Date()){
-      // Scheduled ung-runner calls: 01:00 / 07:00 / 13:00 / 19:00 UTC
-      const hours = [1,7,13,19];
+      // Scheduled ung-runner calls: 03:00 / 09:00 / 15:00 / 21:00 UTC
+      const hours = [3,9,15,21];
       const y = now.getUTCFullYear();
       const m = now.getUTCMonth();
       const d = now.getUTCDate();
@@ -534,8 +534,8 @@
       for(const hh of hours){
         if(h < hh) return new Date(Date.UTC(y,m,d,hh,0,0));
       }
-      // next day 01:00
-      return new Date(Date.UTC(y,m,d+1,1,0,0));
+      // next day 03:00
+      return new Date(Date.UTC(y,m,d+1,3,0,0));
     }
 
     function fmtCountdown(ms){
@@ -1148,19 +1148,34 @@
       const client = getSupabaseClient();
       if(!client) return [];
 
+      const sinceYmd = (() => {
+        if(days === 'all') return null;
+        const d = Number(days);
+        const safeDays = Number.isFinite(d) && d > 0 ? d : 30;
+        return new Date(Date.now() - safeDays*86400000).toISOString().slice(0,10);
+      })();
+
+      // Primary query (new schema with NG1)
       let q = client
         .from('market_daily')
         .select('date, ung_close, ng1_close')
         .order('date', { ascending: true });
+      if(sinceYmd) q = q.gte('date', sinceYmd);
 
-      if(days !== 'all'){
-        const d = Number(days);
-        const safeDays = Number.isFinite(d) && d > 0 ? d : 30;
-        const sinceYmd = new Date(Date.now() - safeDays*86400000).toISOString().slice(0,10);
-        q = q.gte('date', sinceYmd);
+      let { data, error } = await q.limit(4000);
+
+      // Back-compat: older DBs may not have ng1_close yet.
+      if(error && /ng1_close/i.test(String(error.message || ''))){
+        let q2 = client
+          .from('market_daily')
+          .select('date, ung_close')
+          .order('date', { ascending: true });
+        if(sinceYmd) q2 = q2.gte('date', sinceYmd);
+        const r2 = await q2.limit(4000);
+        data = (r2.data || []).map(r => ({ ...r, ng1_close: null }));
+        error = r2.error;
       }
 
-      const { data, error } = await q.limit(4000);
       if(error) throw new Error('Supabase market_daily error: ' + error.message);
       return data || [];
     }
@@ -1928,8 +1943,15 @@
         // NOTE: Stooq does not send CORS headers reliably.
         // We fetch via Supabase Edge Function proxy (/functions/v1/market-data) to avoid CORS failures.
         const sym = String(symbol || 'ung').toLowerCase();
-        const url = `https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/market-data?provider=stooq&symbol=${encodeURIComponent(sym)}&kind=latest`;
-        const r = await fetch(url, { cache: 'no-store' });
+        const cfg = loadSupabaseCfg();
+        const sbUrl = String(cfg.url || DEFAULT_SB_URL).trim();
+        const sbPubKey = String(cfg.key || DEFAULT_SB_KEY).trim();
+        const url = `${sbUrl}/functions/v1/market-data?provider=stooq&symbol=${encodeURIComponent(sym)}&kind=latest`;
+        const headers = sbPubKey
+          ? { apikey: sbPubKey, Authorization: `Bearer ${sbPubKey}` }
+          : {};
+
+        const r = await fetch(url, { cache: 'no-store', headers });
         if(!r.ok) throw new Error('Price fetch failed: ' + r.status);
         const j = await r.json();
         if(!j?.ok) throw new Error(j?.error || 'Price fetch failed');
