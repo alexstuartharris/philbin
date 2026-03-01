@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sampling Schedule Drift Monitor</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1020;--panel:#151d34;--line:#2a3760;--muted:#9fb1d1;--text:#eef3ff;--ok:#7ce7be;--warn:#ffd166;--bad:#ff6b6b}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b1020,#12193a);color:var(--text);font-family:Inter,system-ui,sans-serif}
+    .wrap{max-width:1000px;margin:2rem auto;padding:1rem}.card{background:var(--panel);border:1px solid #223057;border-radius:14px;padding:1rem;margin-bottom:1rem}
+    table{width:100%;border-collapse:collapse}th,td{padding:.55rem;border-bottom:1px solid var(--line);text-align:left}.right{text-align:right}
+    .muted{color:var(--muted)} .pill{padding:.2rem .5rem;border-radius:999px;font-size:.8rem;font-weight:700}
+    .ok{background:rgba(124,231,190,.18);color:var(--ok)} .warn{background:rgba(255,209,102,.16);color:var(--warn)} .bad{background:rgba(255,107,107,.16);color:var(--bad)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Sampling Schedule Drift Monitor</h1>
+  <p class="muted">Quickly detect late/missed sampling events versus expected permit frequencies.</p>
+
+  <div class="card">
+    <h3>1) Expected Schedule CSV</h3>
+    <p class="muted">Columns: <code>parameter,frequency_days</code> (e.g., Weekly=7, Monthly=30)</p>
+    <input id="schedule" type="file" accept=".csv" />
+
+    <h3>2) Completed Events CSV</h3>
+    <p class="muted">Columns: <code>date,parameter</code></p>
+    <input id="events" type="file" accept=".csv" />
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0">Drift Status</h2>
+    <table><thead><tr><th>Parameter</th><th class="right">Freq (days)</th><th>Last Sample</th><th class="right">Days Since</th><th class="right">Days Late</th><th>Status</th></tr></thead><tbody id="status"></tbody></table>
+  </div>
+</div>
+
+<script>
+const state={schedule:null,events:null};
+
+function parseCsv(text){
+  const lines=text.trim().split(/\r?\n/).filter(Boolean);
+  if(!lines.length) return [];
+  const headers=lines.shift().split(',').map(h=>h.trim().toLowerCase());
+  return lines.map(line=>{
+    const cols=line.split(',');
+    const row={}; headers.forEach((h,i)=>row[h]=(cols[i]||'').trim());
+    return row;
+  });
+}
+
+function byParam(rows,key='parameter'){
+  const map={};
+  rows.forEach(r=>{ const p=(r[key]||'').toLowerCase(); if(!p) return; (map[p] ||= []).push(r); });
+  return map;
+}
+
+function toDate(s){ const d=new Date(s); return Number.isNaN(d.getTime())?null:d; }
+
+function analyze(){
+  if(!state.schedule || !state.events) return;
+  const now=new Date();
+  const events=byParam(state.events);
+  const body=document.getElementById('status'); body.innerHTML='';
+
+  state.schedule.forEach(rule=>{
+    const param=(rule.parameter||'').toLowerCase();
+    const freq=parseInt(rule.frequency_days,10);
+    if(!param || !Number.isFinite(freq) || freq<=0) return;
+    const rows=(events[param]||[]).map(r=>toDate(r.date)).filter(Boolean).sort((a,b)=>a-b);
+    const last=rows.length?rows[rows.length-1]:null;
+    const daysSince=last?Math.floor((now-last)/(1000*60*60*24)):null;
+    const late=daysSince===null?freq:Math.max(0,daysSince-freq);
+    let label='On track', cls='ok';
+    if(daysSince===null){label='No samples logged'; cls='bad';}
+    else if(late>0){ label = late>7 ? 'Overdue' : 'Slight drift'; cls = late>7 ? 'bad' : 'warn'; }
+
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${param.toUpperCase()}</td><td class="right">${freq}</td><td>${last?last.toISOString().slice(0,10):'—'}</td><td class="right">${daysSince??'—'}</td><td class="right">${late}</td><td><span class="pill ${cls}">${label}</span></td>`;
+    body.appendChild(tr);
+  });
+
+  if(!body.children.length){
+    body.innerHTML='<tr><td colspan="6" class="muted">No analyzable rows found. Check CSV headers.</td></tr>';
+  }
+}
+
+async function load(id,key){
+  const file=document.getElementById(id).files?.[0]; if(!file) return;
+  state[key]=parseCsv(await file.text()); analyze();
+}
+
+document.getElementById('schedule').addEventListener('change',()=>load('schedule','schedule'));
+document.getElementById('events').addEventListener('change',()=>load('events','events'));
+</script>
+</body>
+</html>

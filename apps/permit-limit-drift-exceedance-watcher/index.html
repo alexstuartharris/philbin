@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Permit Limit Drift & Exceedance Watcher</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1020;--panel:#151d34;--line:#2a3760;--muted:#9fb1d1;--text:#eef3ff;--ok:#7ce7be;--warn:#ffd166;--bad:#ff6b6b}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b1020,#12193a);color:var(--text);font-family:Inter,system-ui,sans-serif}
+    .wrap{max-width:1100px;margin:2rem auto;padding:1rem}.card{background:var(--panel);border:1px solid #223057;border-radius:14px;padding:1rem;margin-bottom:1rem}
+    table{width:100%;border-collapse:collapse}th,td{padding:.55rem;border-bottom:1px solid var(--line);text-align:left}.right{text-align:right}
+    .muted{color:var(--muted)} .pill{padding:.2rem .5rem;border-radius:999px;font-size:.8rem;font-weight:700}
+    .ok{background:rgba(124,231,190,.18);color:var(--ok)} .warn{background:rgba(255,209,102,.16);color:var(--warn)} .bad{background:rgba(255,107,107,.16);color:var(--bad)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Permit Limit Drift & Exceedance Watcher</h1>
+  <p class="muted">Upload permit thresholds and monitoring records, then flag exceedances and trend drift risk before compliance reporting.</p>
+
+  <div class="card">
+    <h3>1) Permit Limits CSV</h3>
+    <p class="muted">Columns: <code>parameter,limit,unit</code></p>
+    <input id="limits" type="file" accept=".csv" />
+    <h3>2) Monitoring Results CSV</h3>
+    <p class="muted">Columns: <code>date,parameter,value</code> (YYYY-MM-DD preferred)</p>
+    <input id="results" type="file" accept=".csv" />
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0">Risk Summary</h2>
+    <table><thead><tr><th>Parameter</th><th class="right">Limit</th><th class="right">Latest</th><th class="right">30d Avg</th><th class="right">Exceedances</th><th>Status</th></tr></thead><tbody id="summary"></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0">Flagged Events</h2>
+    <table><thead><tr><th>Date</th><th>Parameter</th><th class="right">Value</th><th class="right">Limit</th><th>Flag</th></tr></thead><tbody id="flags"></tbody></table>
+  </div>
+</div>
+
+<script>
+const state={limits:null,results:null};
+
+function parseCsv(text){
+  const lines=text.trim().split(/\r?\n/).filter(Boolean);
+  if(!lines.length) return [];
+  const headers=lines.shift().split(',').map(h=>h.trim().toLowerCase());
+  return lines.map(line=>{
+    const cols=line.split(',');
+    const row={}; headers.forEach((h,i)=>row[h]=(cols[i]||'').trim());
+    return row;
+  });
+}
+
+function byParam(rows,key='parameter'){
+  const m={};
+  rows.forEach(r=>{ const p=(r[key]||'').toLowerCase(); if(!p) return; (m[p] ||= []).push(r); });
+  return m;
+}
+
+function num(v){ const n=parseFloat(v); return Number.isFinite(n)?n:0; }
+
+function analyze(){
+  if(!state.limits || !state.results) return;
+  const limitsMap={};
+  state.limits.forEach(r=>{ const p=(r.parameter||'').toLowerCase(); if(!p) return; limitsMap[p]={limit:num(r.limit),unit:r.unit||''}; });
+
+  const grouped=byParam(state.results);
+  const sumBody=document.getElementById('summary'); sumBody.innerHTML='';
+  const flagsBody=document.getElementById('flags'); flagsBody.innerHTML='';
+
+  Object.entries(grouped).sort().forEach(([param,rows])=>{
+    const lim=limitsMap[param]?.limit ?? 0;
+    const unit=limitsMap[param]?.unit || '';
+    const sorted=rows.map(r=>({date:new Date(r.date),rawDate:r.date,value:num(r.value)})).filter(r=>!Number.isNaN(r.date.getTime())).sort((a,b)=>a.date-b.date);
+    if(!sorted.length) return;
+    const latest=sorted[sorted.length-1].value;
+    const cutoff=new Date(sorted[sorted.length-1].date); cutoff.setDate(cutoff.getDate()-30);
+    const recent=sorted.filter(r=>r.date>=cutoff).map(r=>r.value);
+    const avg=recent.length?recent.reduce((a,b)=>a+b,0)/recent.length:latest;
+    const exceedances=sorted.filter(r=>r.value>lim).length;
+
+    let status='OK', cls='ok';
+    if(exceedances>0){ status='Exceedance detected'; cls='bad'; }
+    else if(lim>0 && avg/lim>=0.8){ status='Drift warning'; cls='warn'; }
+
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${param.toUpperCase()}</td><td class="right">${lim.toFixed(2)} ${unit}</td><td class="right">${latest.toFixed(2)}</td><td class="right">${avg.toFixed(2)}</td><td class="right">${exceedances}</td><td><span class="pill ${cls}">${status}</span></td>`;
+    sumBody.appendChild(tr);
+
+    sorted.forEach(r=>{
+      if(lim<=0) return;
+      let flag='';
+      if(r.value>lim) flag='Exceedance';
+      else if(r.value/lim>=0.8) flag='Near limit';
+      if(!flag) return;
+      const fr=document.createElement('tr');
+      fr.innerHTML=`<td>${r.rawDate}</td><td>${param.toUpperCase()}</td><td class="right">${r.value.toFixed(2)}</td><td class="right">${lim.toFixed(2)}</td><td>${flag}</td>`;
+      flagsBody.appendChild(fr);
+    });
+  });
+
+  if(!sumBody.children.length){
+    sumBody.innerHTML='<tr><td colspan="6" class="muted">No analyzable rows found. Check CSV headers and date format.</td></tr>';
+  }
+}
+
+async function readFile(id,key){
+  const file=document.getElementById(id).files?.[0]; if(!file) return;
+  state[key]=parseCsv(await file.text()); analyze();
+}
+
+document.getElementById('limits').addEventListener('change',()=>readFile('limits','limits'));
+document.getElementById('results').addEventListener('change',()=>readFile('results','results'));
+</script>
+</body>
+</html>

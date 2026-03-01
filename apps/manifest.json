@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T17:11:17.000Z",
+  "generatedAt": "2026-03-01T07:16:21.312Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -34,6 +34,10 @@
       "hasIndex": true
     },
     {
+      "name": "permit-limit-drift-exceedance-watcher",
+      "hasIndex": true
+    },
+    {
       "name": "pnw-weekly-weather",
       "hasIndex": true
     },
@@ -47,6 +51,10 @@
     },
     {
       "name": "receipt-tracker",
+      "hasIndex": true
+    },
+    {
+      "name": "sampling-schedule-drift-monitor",
       "hasIndex": true
     },
     {
