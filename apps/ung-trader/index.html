@@ -326,6 +326,25 @@
       </div>
 
       <div style="margin-top:10px; overflow:auto;">
+        <div class="muted mini" style="margin-bottom:6px;">Recent model calls (for put/call bias)</div>
+        <table id="calTable">
+          <thead>
+            <tr>
+              <th>Run</th>
+              <th class="mono">P(Up)</th>
+              <th class="mono">Call</th>
+              <th class="mono">Next move</th>
+              <th class="mono">Correct</th>
+              <th class="mono">Brier</th>
+            </tr>
+          </thead>
+          <tbody id="calTableBody">
+            <tr><td colspan="6" class="muted">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:10px; overflow:auto;">
         <table id="deltaStatsTable">
           <thead>
             <tr>
@@ -840,7 +859,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-28.1';
+    const APP_VERSION = '2026-02-28.2';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1266,7 +1285,7 @@
       return 1 / (1 + Math.exp(-x));
     }
 
-    function computeOneStepCalibration(demandSeries, ungCloseSeries){
+    function computeOneStepCalibration(demandSeries, ungCloseSeries, labels=[]){
       const pairs = [];
       for(let i=0; i<Math.min(demandSeries.length-1, ungCloseSeries.length-1); i++){
         const d = Number(demandSeries[i]);
@@ -1276,12 +1295,25 @@
         const pred = sigmoid(d / 20); // soft mapping: colder demand -> higher bullish odds
         if(pred === null) continue;
         const actual = p1 > p0 ? 1 : 0;
-        pairs.push({ pred, actual });
+        const call = pred >= 0.5 ? 'CALL bias' : 'PUT bias';
+        const move = actual === 1 ? 'Up' : 'Down';
+        const correct = ((pred >= 0.5) === (actual === 1));
+        const brierPart = (pred - actual) ** 2;
+        pairs.push({
+          i,
+          run: labels[i] || `#${i+1}`,
+          pred,
+          actual,
+          call,
+          move,
+          correct,
+          brierPart,
+        });
       }
       if(!pairs.length) return null;
-      const brier = pairs.reduce((a, x) => a + (x.pred - x.actual) ** 2, 0) / pairs.length;
-      const hit = pairs.reduce((a, x) => a + ((x.pred >= 0.5) === (x.actual === 1) ? 1 : 0), 0) / pairs.length;
-      return { brier, hit, n: pairs.length };
+      const brier = pairs.reduce((a, x) => a + x.brierPart, 0) / pairs.length;
+      const hit = pairs.reduce((a, x) => a + (x.correct ? 1 : 0), 0) / pairs.length;
+      return { brier, hit, n: pairs.length, rows: pairs };
     }
 
     function ensureCharts(){
@@ -1458,7 +1490,7 @@
       }
 
       // Calibration + filtered signal KPIs
-      const cal = computeOneStepCalibration(demandFiltered, ungClose);
+      const cal = computeOneStepCalibration(demandFiltered, ungClose, labels);
       const fltNow = demandFiltered.length ? demandFiltered[demandFiltered.length - 1] : null;
       const calBrierEl = document.getElementById('calBrier');
       const calBrierMetaEl = document.getElementById('calBrierMeta');
@@ -1470,16 +1502,35 @@
       if(fltDemandEl) fltDemandEl.textContent = Number.isFinite(fltNow) ? Number(fltNow).toFixed(1) : '—';
       if(fltDemandMetaEl) fltDemandMetaEl.textContent = 'alpha=0.35, smoothed demand anomaly';
 
+      const calTableBody = document.getElementById('calTableBody');
       if(cal){
         if(calBrierEl) calBrierEl.textContent = cal.brier.toFixed(3);
         if(calBrierMetaEl) calBrierMetaEl.textContent = `n=${cal.n} aligned steps • lower is better`;
         if(calHitEl) calHitEl.textContent = `${(100 * cal.hit).toFixed(1)}%`;
-        if(calHitMetaEl) calHitMetaEl.textContent = 'filtered-demand sign vs next UNG close';
+        const latestCall = cal.rows.length ? cal.rows[cal.rows.length - 1].call : '—';
+        if(calHitMetaEl) calHitMetaEl.textContent = `latest bias: ${latestCall}`;
+
+        if(calTableBody){
+          const recent = cal.rows.slice(-20).reverse();
+          calTableBody.innerHTML = recent.map((r, idx) => {
+            const isLatest = idx === 0;
+            const badge = isLatest ? ' <b>(latest)</b>' : '';
+            return `<tr>
+              <td>${r.run}${badge}</td>
+              <td class="mono">${r.pred.toFixed(3)}</td>
+              <td class="mono">${r.call}</td>
+              <td class="mono">${r.move}</td>
+              <td class="mono">${r.correct ? '✅' : '❌'}</td>
+              <td class="mono">${r.brierPart.toFixed(3)}</td>
+            </tr>`;
+          }).join('');
+        }
       } else {
         if(calBrierEl) calBrierEl.textContent = '—';
         if(calBrierMetaEl) calBrierMetaEl.textContent = 'need more aligned UNG close points';
         if(calHitEl) calHitEl.textContent = '—';
         if(calHitMetaEl) calHitMetaEl.textContent = 'insufficient data';
+        if(calTableBody) calTableBody.innerHTML = '<tr><td colspan="6" class="muted">need more aligned UNG close points</td></tr>';
       }
 
       // Render stats table
