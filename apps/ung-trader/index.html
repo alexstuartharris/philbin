@@ -245,33 +245,32 @@
     </section>
 
     <details class="card" open>
-      <summary><span>Price context (Henry Hub)</span><span class="caret">▾</span></summary>
-      <h2 style="display:none;">Price context (Henry Hub)</h2>
+      <summary><span>Price context (UNG + NG1)</span><span class="caret">▾</span></summary>
+      <h2 style="display:none;">Price context (UNG + NG1)</h2>
       <p class="small">
-        Uses FRED Henry Hub spot (DHHNGSP) daily values and builds a month-of-year baseline from the last ~10 years.
-        This is a rough seasonal context (useful for "rich/cheap vs typical for this month").
+        Tracks latest Stooq daily close for UNG and NG1 (front-month nat gas futures proxy). Use this as quick tape context.
       </p>
 
       <div class="three" style="margin-top:10px;">
         <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
-          <div class="muted">Latest (Henry Hub)</div>
-          <div class="kpi" id="hhLast">—</div>
-          <div class="mini" id="hhLastMeta">—</div>
+          <div class="muted">Latest UNG</div>
+          <div class="kpi" id="pxUngLast">—</div>
+          <div class="mini" id="pxUngMeta">—</div>
         </div>
         <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
-          <div class="muted">Henry Hub vs 10y avg</div>
-          <div class="kpi" id="hhRel">—</div>
-          <div class="mini" id="hhRelMeta">—</div>
+          <div class="muted">Latest NG1</div>
+          <div class="kpi" id="pxNg1Last">—</div>
+          <div class="mini" id="pxNg1Meta">—</div>
         </div>
         <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
-          <div class="muted">Henry Hub month z-score</div>
-          <div class="kpi" id="hhZ">—</div>
-          <div class="mini" id="hhZMeta">—</div>
+          <div class="muted">UNG / NG1 ratio</div>
+          <div class="kpi" id="pxRatio">—</div>
+          <div class="mini" id="pxRatioMeta">quick relative read</div>
         </div>
       </div>
 
       <div class="btnRow" style="margin-top:10px;">
-        <button id="pxRefresh" class="secondary">Refresh HH baseline</button>
+        <button id="pxRefresh" class="secondary">Refresh prices</button>
         <span class="small" id="pxStatus"></span>
       </div>
     </details>
@@ -468,7 +467,7 @@
       </div>
 
       <div class="btnRow" style="margin-top:12px;">
-        <button id="simFill" class="secondary">Fetch UNG price</button>
+        <button id="simFill" class="secondary">Fetch selected price</button>
         <button id="simOpen" class="secondary">Open test contract</button>
         <button id="simExport" class="secondary">Export CSV</button>
         <button id="simClear" class="secondary">Clear</button>
@@ -490,7 +489,7 @@
           <div>
             <label for="simExit">Exit price</label>
             <input id="simExit" type="number" step="0.01" placeholder="e.g., 1.80" />
-            <div class="mini" style="margin-top:6px;">Tip: enable auto-fill above, or click “Fetch UNG price”.</div>
+            <div class="mini" style="margin-top:6px;">Tip: enable auto-fill above, or click “Fetch selected price”.</div>
           </div>
         </div>
         <div class="btnRow" style="margin-top:10px;">
@@ -859,7 +858,7 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-28.2';
+    const APP_VERSION = '2026-02-28.3';
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -1925,32 +1924,20 @@
       const simKey = 'ung-trader.sim.v1';
       let simCache = null;
 
-      async function fetchUngPriceStooq(){
+      async function fetchStooqLatest(symbol='ung'){
         // NOTE: Stooq does not send CORS headers reliably.
         // We fetch via Supabase Edge Function proxy (/functions/v1/market-data) to avoid CORS failures.
-
-        // Stooq provides daily OHLC (not true live intraday). No API key.
-        // Example: https://stooq.com/q/l/?s=ung.us&i=d
-        const url = 'https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/market-data?provider=stooq&symbol=ung&kind=latest';
+        const sym = String(symbol || 'ung').toLowerCase();
+        const url = `https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/market-data?provider=stooq&symbol=${encodeURIComponent(sym)}&kind=latest`;
         const r = await fetch(url, { cache: 'no-store' });
         if(!r.ok) throw new Error('Price fetch failed: ' + r.status);
         const j = await r.json();
         if(!j?.ok) throw new Error(j?.error || 'Price fetch failed');
-        // date comes as YYYYMMDD from Stooq
         const date = String(j.date || '');
         const ymd = date.length === 8 ? `${date.slice(0,4)}-${date.slice(4,6)}-${date.slice(6,8)}` : date;
         const close = Number(j.close);
         if(!Number.isFinite(close)) throw new Error('Price parse error');
-        return { price: close, date: ymd, source: 'stooq via Supabase (daily close)' };
-      }
-
-      async function fetchHenryHubHistoryFred(){
-        const url = 'https://wqasauklfxcsshyxqkoo.supabase.co/functions/v1/market-data?provider=fred&symbol=henryhub';
-        const r = await fetch(url, { cache: 'no-store' });
-        if(!r.ok) throw new Error('FRED fetch failed: ' + r.status);
-        const j = await r.json();
-        if(!j?.ok) throw new Error(j?.error || 'FRED fetch failed');
-        return (j.rows || []).map(x => ({ date: x.date, close: Number(x.value) })).filter(x => x.date && Number.isFinite(x.close));
+        return { symbol: String(j.symbol || sym).toUpperCase(), price: close, date: ymd, source: 'stooq via Supabase (daily close)' };
       }
 
       function monthKeyFromYmd(d){
@@ -1996,66 +1983,40 @@
         try{
           if(statusEl) statusEl.textContent = 'Loading…';
 
-          // Clear any old UNG baseline cache (we no longer use it)
-          try { localStorage.removeItem('ung-trader.ung-baseline.v1'); } catch {}
+          const [ung, ng1] = await Promise.all([
+            fetchStooqLatest('ung'),
+            fetchStooqLatest('ng1'),
+          ]);
 
-          const now = new Date();
-          const month = String(now.getUTCMonth()+1).padStart(2,'0');
+          el('pxUngLast').textContent = Number.isFinite(ung.price) ? ung.price.toFixed(2) : '—';
+          el('pxUngMeta').textContent = `${ung.source} • ${ung.date || '—'}`;
 
-          // --- Henry Hub (FRED DHHNGSP) ---
-          const hhCacheKey = 'ung-trader.hh-baseline.v1';
-          let hhBase = null;
-          try{ hhBase = JSON.parse(localStorage.getItem(hhCacheKey) || 'null'); } catch {}
-          const hhStale = !hhBase || !hhBase.builtAt || (Date.now() - Date.parse(hhBase.builtAt)) > 30*86400000;
-          if(hhStale){
-            const daily = await fetchHenryHubHistoryFred();
-            const stats = buildMonthlyBaseline(daily, 10);
-            hhBase = { builtAt: new Date().toISOString(), stats, dailyLatest: daily[daily.length-1] || null };
-            localStorage.setItem(hhCacheKey, JSON.stringify(hhBase));
-          }
+          el('pxNg1Last').textContent = Number.isFinite(ng1.price) ? ng1.price.toFixed(3) : '—';
+          el('pxNg1Meta').textContent = `${ng1.source} • ${ng1.date || '—'}`;
 
-          // Latest HH value (use cached dailyLatest if present, else refetch)
-          let hhLatest = hhBase?.dailyLatest;
-          if(!hhLatest){
-            const daily = await fetchHenryHubHistoryFred();
-            hhLatest = daily[daily.length-1] || null;
-          }
-
-          if(hhLatest && Number.isFinite(hhLatest.close)){
-            el('hhLast').textContent = hhLatest.close.toFixed(2);
-            el('hhLastMeta').textContent = `FRED DHHNGSP • ${hhLatest.date}`;
+          if(Number.isFinite(ung.price) && Number.isFinite(ng1.price) && ng1.price > 0){
+            const ratio = ung.price / ng1.price;
+            el('pxRatio').textContent = ratio.toFixed(3);
+            el('pxRatioMeta').textContent = `UNG ${ung.price.toFixed(2)} / NG1 ${ng1.price.toFixed(3)}`;
           } else {
-            el('hhLast').textContent = '—';
-            el('hhLastMeta').textContent = 'FRED not available';
+            el('pxRatio').textContent = '—';
+            el('pxRatioMeta').textContent = 'insufficient data';
           }
 
-          const hhSt = hhBase?.stats?.[month] || null;
-          if(hhLatest && hhSt && Number.isFinite(hhSt.mean) && Number.isFinite(hhSt.std) && hhSt.std > 0){
-            const rel = (hhLatest.close - hhSt.mean) / hhSt.mean;
-            const z = (hhLatest.close - hhSt.mean) / hhSt.std;
-            el('hhRel').textContent = `${(100*rel).toFixed(1)}%`;
-            el('hhRelMeta').textContent = `Month ${month} avg ${hhSt.mean.toFixed(2)} (10y)`;
-            el('hhZ').textContent = z.toFixed(2);
-            el('hhZMeta').textContent = `z vs month-${month} mean/σ (10y)`;
-          } else {
-            el('hhRel').textContent = '—';
-            el('hhRelMeta').textContent = 'HH baseline unavailable.';
-            el('hhZ').textContent = '—';
-            el('hhZMeta').textContent = 'HH baseline unavailable.';
-          }
-
-          if(statusEl) statusEl.textContent = `OK (HH baseline ${hhBase?.builtAt ? new Date(hhBase.builtAt).toISOString().slice(0,10) : '—'})`;
+          if(statusEl) statusEl.textContent = 'OK';
         } catch(e){
           if(statusEl) statusEl.textContent = String(e?.message || e);
         }
       }
 
-      async function fillUngPriceInto(fieldId){
-        el('simStatus').textContent = 'Fetching UNG price…';
+      async function fillStooqPriceInto(fieldId, symbol='UNG'){
+        const sym = String(symbol || 'UNG').toUpperCase();
+        const qSym = sym === 'NG' ? 'ng1' : 'ung';
+        el('simStatus').textContent = `Fetching ${sym} price…`;
         try{
-          const q = await fetchUngPriceStooq();
+          const q = await fetchStooqLatest(qSym);
           el(fieldId).value = String(q.price);
-          el('simPriceMeta').textContent = `Price source: ${q.source} (${q.date || 'latest'})`;
+          el('simPriceMeta').textContent = `Price source: ${q.source} (${q.date || 'latest'}) • ${q.symbol}`;
           el('simStatus').textContent = 'OK';
           return q;
         } catch(e){
@@ -2156,7 +2117,7 @@
 
       el('simFill').addEventListener('click', async () => {
         try{
-          await fillUngPriceInto('simEntry');
+          await fillStooqPriceInto('simEntry', el('simSymbol')?.value || 'UNG');
         } catch {}
       });
 
@@ -2171,8 +2132,8 @@
         const expiry = el('simExpiry').value;
 
         // Optional auto-fill
-        if(symbol === 'UNG' && el('simAutoFill')?.checked){
-          try{ await fillUngPriceInto('simEntry'); } catch {}
+        if(el('simAutoFill')?.checked){
+          try{ await fillStooqPriceInto('simEntry', symbol); } catch {}
         }
 
         const entry = Number(el('simEntry').value);
@@ -2216,8 +2177,8 @@
         // Optional auto-fill (for UNG only)
         const simTmp = loadSim();
         const pTmp = simTmp.open.find(p => p.id === id);
-        if(pTmp && pTmp.symbol === 'UNG' && el('simAutoFill')?.checked){
-          try{ await fillUngPriceInto('simExit'); } catch {}
+        if(pTmp && el('simAutoFill')?.checked){
+          try{ await fillStooqPriceInto('simExit', pTmp.symbol || 'UNG'); } catch {}
         }
 
         const exit = Number(el('simExit').value);
