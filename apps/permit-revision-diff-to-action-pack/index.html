@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Permit Revision Diff-to-Action Pack | Philbin</title>
+  <style>
+    :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--bad:#f85149;--ok:#3fb950;--warn:#d29922}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui}
+    .wrap{max-width:1000px;margin:auto;padding:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+    textarea,input,button{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#21262d;color:var(--text)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.primary{background:var(--accent);color:#fff;border-color:var(--accent)} button{cursor:pointer}
+    table{width:100%;border-collapse:collapse;font-size:.92rem}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}.muted{color:var(--muted)}
+    .tag{padding:2px 8px;border-radius:999px;font-size:.75rem}.added{background:#0f5132;color:#bbf7d0}.removed{background:#5b1a1a;color:#fecaca}.changed{background:#4a3b12;color:#fde68a}
+    @media(max-width:760px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card"><h1 style="margin:0 0 6px">📄 Permit Revision Diff-to-Action Pack</h1><div class="muted">Compare old vs new permit tables and generate a practical handoff checklist.</div></div>
+  <div class="card row">
+    <div><label>Old permit CSV (key,value)</label><textarea id="oldCsv" rows="10" placeholder="field,value&#10;TSS_limit,30&#10;Sampling_frequency,monthly"></textarea></div>
+    <div><label>New permit CSV (key,value)</label><textarea id="newCsv" rows="10" placeholder="field,value&#10;TSS_limit,25&#10;Sampling_frequency,weekly"></textarea></div>
+  </div>
+  <div class="card row">
+    <div><label>Permit/site</label><input id="name" placeholder="e.g., WWTP Outfall 001" /></div>
+    <div><label>Effective date</label><input id="effective" type="date" /></div>
+  </div>
+  <div class="card row">
+    <button id="run" class="primary">Generate diff + action pack</button>
+    <button id="download">Download action pack (.txt)</button>
+  </div>
+  <div class="card"><h3 style="margin-top:0">Diff results</h3><div id="out" class="muted">Run analysis to view changes.</div></div>
+</div>
+<script>
+const $=(i)=>document.getElementById(i);let latest='';
+const parse=(t)=>{const lines=t.trim().split(/\r?\n/).filter(Boolean);if(!lines.length)return new Map();const body=lines.slice(1);const m=new Map();for(const l of body){const [k,...rest]=l.split(',');m.set((k||'').trim(),rest.join(',').trim());}return m;};
+function actionsForKey(k,change){const s=k.toLowerCase();const list=[];if(s.includes('limit'))list.push('Validate alert thresholds and exceedance logic in monitoring sheet.');if(s.includes('frequency')||s.includes('schedule'))list.push('Update field sampling calendar and staff assignments.');if(s.includes('method')||s.includes('parameter'))list.push('Confirm lab methods and QA/QC plan are current.');if(s.includes('report'))list.push('Update reporting template and reviewer checklist.');if(!list.length)list.push('Review SOPs and communicate change in next compliance huddle.');if(change==='removed')list.push('Archive legacy references to removed requirement.');if(change==='added')list.push('Add new requirement to onboarding/checklist docs.');return list;}
+function run(){const oldMap=parse($('oldCsv').value), newMap=parse($('newCsv').value); const rows=[];
+  for(const [k,v] of newMap){if(!oldMap.has(k))rows.push({type:'added',k,from:'—',to:v}); else if(oldMap.get(k)!==v)rows.push({type:'changed',k,from:oldMap.get(k),to:v});}
+  for(const [k,v] of oldMap){if(!newMap.has(k))rows.push({type:'removed',k,from:v,to:'—'});} 
+  if(!rows.length){$('out').innerHTML='<p class="muted">No changes detected.</p>';latest='No permit changes detected.';return;}
+  const table=`<table><thead><tr><th>Type</th><th>Field</th><th>Old</th><th>New</th></tr></thead><tbody>${rows.map(r=>`<tr><td><span class='tag ${r.type}'>${r.type}</span></td><td>${r.k}</td><td>${r.from}</td><td>${r.to}</td></tr>`).join('')}</tbody></table>`;
+  const tasks=[]; rows.forEach(r=>actionsForKey(r.k,r.type).forEach(a=>tasks.push(`- ${r.k}: ${a}`)));
+  const uniq=[...new Set(tasks)];
+  $('out').innerHTML=table+`<h4>Action checklist</h4><ul>${uniq.map(t=>`<li>${t.slice(2)}</li>`).join('')}</ul>`;
+  latest=`Permit Revision Diff-to-Action Pack\nPermit: ${$('name').value||'N/A'}\nEffective date: ${$('effective').value||'N/A'}\nChanges detected: ${rows.length}\n\nChanges:\n${rows.map(r=>`- [${r.type}] ${r.k}: ${r.from} -> ${r.to}`).join('\n')}\n\nAction checklist:\n${uniq.join('\n')}\n\nGenerated: ${new Date().toISOString()}\n`;
+}
+$('run').addEventListener('click',run);
+$('download').addEventListener('click',()=>{if(!latest)run();const b=new Blob([latest],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='permit-diff-action-pack.txt';a.click();URL.revokeObjectURL(a.href);});
+</script>
+</body></html>

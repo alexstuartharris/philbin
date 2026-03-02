@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DMR Preflight Validator Lite | Philbin</title>
+  <style>
+    :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--warn:#d29922;--bad:#f85149;--ok:#3fb950}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+    h1{margin:0 0 6px}.muted{color:var(--muted)} .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    textarea,input,select,button{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#21262d;color:var(--text)}
+    button{cursor:pointer} .primary{background:var(--accent);border-color:var(--accent);color:white}
+    table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.75rem}.ok{background:#0f5132;color:#a7f3d0}.bad{background:#5b1a1a;color:#fecaca}.warn{background:#4a3b12;color:#fde68a}
+    @media (max-width:760px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>🧪 DMR Preflight Validator Lite</h1>
+    <div class="muted">No-login pre-submit QA for DMR-style data. Everything runs in your browser.</div>
+  </div>
+
+  <div class="card row">
+    <div>
+      <label>Permit limits CSV (parameter,limit,unit)</label>
+      <textarea id="limits" rows="8" placeholder="parameter,limit,unit&#10;TSS,30,mg/L&#10;pH,9,su"></textarea>
+    </div>
+    <div>
+      <label>Monitoring results CSV (date,site,parameter,value,unit)</label>
+      <textarea id="results" rows="8" placeholder="date,site,parameter,value,unit&#10;2026-02-01,Outfall-001,TSS,42,mg/L"></textarea>
+    </div>
+  </div>
+
+  <div class="card row">
+    <div><label>Reporting month</label><input id="month" type="month" /></div>
+    <div><label>Permit/site name</label><input id="permitName" placeholder="e.g., Outfall-001 monthly DMR"/></div>
+  </div>
+
+  <div class="card row">
+    <button class="primary" id="run">Run preflight checks</button>
+    <button id="download">Download QA report (.txt)</button>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Summary</h3>
+    <div id="summary" class="muted">Run checks to see results.</div>
+    <div id="issues"></div>
+  </div>
+</div>
+<script>
+  const $ = (id)=>document.getElementById(id);
+  const parseCSV=(txt)=>{const lines=txt.trim().split(/\r?\n/).filter(Boolean);if(!lines.length)return[];const h=lines[0].split(',').map(s=>s.trim());return lines.slice(1).map(l=>{const c=l.split(',');const o={};h.forEach((k,i)=>o[k]=(c[i]||'').trim());return o;});};
+  let latest='';
+  function runChecks(){
+    const limits=parseCSV($('limits').value), results=parseCSV($('results').value), month=$('month').value;
+    const limitMap=new Map(limits.map(r=>[(r.parameter||'').toLowerCase(),r]));
+    const issues=[]; let checks=0;
+    for(const [i,r] of results.entries()){
+      checks++;
+      const id=`Row ${i+2}`;
+      if(!r.date||!r.site||!r.parameter||!r.value) issues.push({sev:'bad',msg:`${id}: missing required fields`});
+      const v=Number(r.value); if(Number.isNaN(v)) issues.push({sev:'bad',msg:`${id}: value is not numeric (${r.value})`});
+      const l=limitMap.get((r.parameter||'').toLowerCase());
+      if(!l){issues.push({sev:'warn',msg:`${id}: no permit limit found for ${r.parameter}`}); continue;}
+      if(r.unit&&l.unit&&r.unit!==l.unit) issues.push({sev:'warn',msg:`${id}: unit mismatch (${r.unit} vs ${l.unit})`});
+      if(!Number.isNaN(v) && Number(v)>Number(l.limit)) issues.push({sev:'bad',msg:`${id}: exceedance ${v} > limit ${l.limit} for ${r.parameter}`});
+      if(month && r.date && !r.date.startsWith(month)) issues.push({sev:'warn',msg:`${id}: date ${r.date} outside reporting month ${month}`});
+    }
+    for(const l of limits){checks++; if(!l.parameter||!l.limit) issues.push({sev:'bad',msg:'Permit limits row missing parameter/limit'});}
+    const critical=issues.filter(i=>i.sev==='bad').length, warns=issues.filter(i=>i.sev==='warn').length;
+    $('summary').innerHTML=`<span class='pill ${critical?'bad':'ok'}'>${critical} critical</span> <span class='pill ${warns?'warn':'ok'}'>${warns} warnings</span> <span class='muted'>${checks} checks run</span>`;
+    $('issues').innerHTML=issues.length?`<table><thead><tr><th>Severity</th><th>Issue</th></tr></thead><tbody>${issues.map(i=>`<tr><td><span class='pill ${i.sev}'>${i.sev}</span></td><td>${i.msg}</td></tr>`).join('')}</tbody></table>`:'<p class="muted">No issues detected.</p>';
+    latest=`DMR Preflight Validator Lite\nPermit: ${$('permitName').value||'N/A'}\nMonth: ${month||'N/A'}\nChecks: ${checks}\nCritical: ${critical}\nWarnings: ${warns}\n\nIssues:\n${issues.map(i=>`- [${i.sev}] ${i.msg}`).join('\n')||'- None'}\n\nGenerated: ${new Date().toISOString()}\n`;
+  }
+  $('run').addEventListener('click',runChecks);
+  $('download').addEventListener('click',()=>{if(!latest) runChecks(); const b=new Blob([latest],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='dmr-preflight-report.txt'; a.click(); URL.revokeObjectURL(a.href);});
+</script>
+</body></html>

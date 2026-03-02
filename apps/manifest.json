@@ -1,8 +1,12 @@
 {
-  "generatedAt": "2026-02-28T17:11:17.000Z",
+  "generatedAt": "2026-03-02T07:16:31.267Z",
   "apps": [
     {
       "name": "csv-to-geojson",
+      "hasIndex": true
+    },
+    {
+      "name": "dmr-preflight-validator-lite",
       "hasIndex": true
     },
     {
@@ -31,6 +35,10 @@
     },
     {
       "name": "invoice-gen",
+      "hasIndex": true
+    },
+    {
+      "name": "permit-revision-diff-to-action-pack",
       "hasIndex": true
     },
     {
