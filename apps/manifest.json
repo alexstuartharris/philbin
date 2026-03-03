@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T17:11:17.000Z",
+  "generatedAt": "2026-03-03T07:16:55.721Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -27,6 +27,10 @@
     },
     {
       "name": "habit-streaks",
+      "hasIndex": true
+    },
+    {
+      "name": "hydrology-brief-generator",
       "hasIndex": true
     },
     {
@@ -79,6 +83,10 @@
     },
     {
       "name": "utm-buddy",
+      "hasIndex": true
+    },
+    {
+      "name": "wetland-qa-checklist-generator",
       "hasIndex": true
     }
   ],

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hydrology Brief Generator</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #071521; color: #e8f4ff; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 24px; }
+    .card { background: #0d2133; border: 1px solid #27445f; border-radius: 14px; padding: 16px; margin: 14px 0; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+    label { display:block; margin-bottom:8px; font-weight:700; }
+    input, select, textarea { width:100%; padding:9px; border:1px solid #345978; border-radius:8px; background:#081625; color:#ebf6ff; }
+    textarea{ min-height:90px; }
+    button{ background:#2f90ff; color:white; border:none; border-radius:9px; padding:10px 14px; cursor:pointer; font-weight:700; }
+    .secondary{ background:#2a4258; }
+    pre{ white-space:pre-wrap; background:#08131e; border:1px solid #2e4b64; border-radius:10px; padding:12px; }
+    .small{ color:#9fc2df; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Hydrology Brief Generator</h1>
+    <p class="small">Turn field/hydrology indicators into a client-ready drought/flood risk brief.</p>
+
+    <div class="card grid">
+      <div><label>Site / Basin</label><input id="site" placeholder="Cheakamus Basin" /></div>
+      <div><label>Time Window</label><input id="window" placeholder="Last 30 days" /></div>
+      <div><label>Observed Rainfall (mm)</label><input id="rain" type="number" value="42" /></div>
+      <div><label>7-day Flow vs normal</label>
+        <select id="flow"><option value="below">Below normal</option><option value="normal">Near normal</option><option value="above">Above normal</option></select>
+      </div>
+      <div><label>Soil Moisture</label>
+        <select id="soil"><option value="dry">Dry</option><option value="normal">Normal</option><option value="wet">Wet</option></select>
+      </div>
+      <div><label>Recent Exceedances</label>
+        <select id="ex"><option value="none">None</option><option value="minor">Minor advisory-level</option><option value="major">Major threshold exceedance</option></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <label>Assumptions / Notes</label>
+      <textarea id="notes" placeholder="Based on station QC'd data; no recent infrastructure changes upstream."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button id="gen">Generate Brief</button>
+        <button id="copy" class="secondary">Copy</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Brief Output</h3>
+      <pre id="out" class="small">No brief generated yet.</pre>
+    </div>
+  </div>
+
+  <script>
+    const riskFrom = ({flow, soil, ex, rain}) => {
+      let score = 0;
+      if (flow === 'above') score += 2;
+      if (soil === 'wet') score += 2;
+      if (ex === 'major') score += 3;
+      if (ex === 'minor') score += 1;
+      if (Number(rain) > 75) score += 2;
+      if (flow === 'below' && soil === 'dry') score += 1; // drought stress
+      if (score >= 6) return 'High';
+      if (score >= 3) return 'Moderate';
+      return 'Low';
+    };
+
+    const out = document.getElementById('out');
+    document.getElementById('gen').onclick = () => {
+      const site = document.getElementById('site').value || 'Unnamed site';
+      const window = document.getElementById('window').value || 'Recent period';
+      const rain = document.getElementById('rain').value || '0';
+      const flow = document.getElementById('flow').value;
+      const soil = document.getElementById('soil').value;
+      const ex = document.getElementById('ex').value;
+      const notes = document.getElementById('notes').value.trim() || 'No additional notes.';
+      const risk = riskFrom({flow, soil, ex, rain});
+
+      const focus = flow === 'below' && soil === 'dry' ? 'drought stress and baseflow resilience' : 'flood and exceedance risk';
+
+      out.textContent = [
+        `Hydrology Risk Brief`,
+        `Site: ${site}`,
+        `Window: ${window}`,
+        `Overall Risk: ${risk}`,
+        '',
+        `Indicators:`,
+        `- Rainfall: ${rain} mm`,
+        `- 7-day flow: ${flow}`,
+        `- Soil moisture: ${soil}`,
+        `- Exceedances: ${ex}`,
+        '',
+        `Interpretation:`,
+        `Current conditions indicate ${risk.toLowerCase()} ${focus}. Prioritize surveillance at known vulnerable reaches and verify threshold triggers before next reporting cycle.`,
+        '',
+        `Recommended Actions (next 7 days):`,
+        `1) Validate latest station/lab data and flag anomalies.`,
+        `2) Confirm permit/sampling thresholds for the current window.`,
+        `3) Issue a short client update with current risk and monitoring plan.`,
+        '',
+        `Assumptions & Notes:`,
+        notes,
+        '',
+        `Generated: ${new Date().toLocaleString()}`
+      ].join('\n');
+    };
+
+    document.getElementById('copy').onclick = async () => {
+      try { await navigator.clipboard.writeText(out.textContent); } catch {}
+    };
+  </script>
+</body>
+</html>
