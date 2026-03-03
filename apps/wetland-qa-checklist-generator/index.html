@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wetland QA Checklist Generator</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: Inter, system-ui, sans-serif; margin: 0; background: #0b1020; color: #e7ecff; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 24px; }
+    h1 { margin: 0 0 8px; }
+    p { color: #b7c3f3; }
+    .card { background: #121a33; border: 1px solid #2c3a67; border-radius: 14px; padding: 16px; margin: 16px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 10px; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; }
+    input, select, textarea { width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #394b82; background: #0e152b; color: #eef2ff; }
+    textarea { min-height: 80px; }
+    .item { display: flex; align-items: start; gap: 8px; margin: 10px 0; }
+    .item input[type='checkbox'] { width: 18px; height: 18px; margin-top: 2px; }
+    .muted { color: #93a2d8; font-size: 0.9rem; }
+    button { background: #4f7cff; color: white; border: none; padding: 10px 14px; border-radius: 9px; cursor: pointer; font-weight: 700; }
+    .secondary { background: #243159; }
+    pre { white-space: pre-wrap; background: #091022; border: 1px solid #26355f; border-radius: 10px; padding: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Wetland QA Checklist Generator</h1>
+    <p>Generate a review-ready completeness checklist for field delineations (no login, local-only).</p>
+
+    <div class="card grid">
+      <div>
+        <label>Project Name</label>
+        <input id="project" placeholder="Upper Creek Wetland Delineation" />
+      </div>
+      <div>
+        <label>Region Template</label>
+        <select id="region">
+          <option value="USACE-Generic">USACE Generic</option>
+          <option value="BC-Riparian">BC Riparian / Wetland</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+      <div>
+        <label>Reviewer</label>
+        <input id="reviewer" placeholder="Initials or full name" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Core QA Checks</h3>
+      <div id="checks"></div>
+    </div>
+
+    <div class="card">
+      <label>Notes / Deficiencies</label>
+      <textarea id="notes" placeholder="Missing hydrology photo set at WP-04. Need vegetation species confidence notes."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button id="make">Generate QA Summary</button>
+        <button class="secondary" id="copy">Copy Summary</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>QA Summary</h3>
+      <pre id="out" class="muted">No summary yet.</pre>
+    </div>
+  </div>
+
+  <script>
+    const checklist = [
+      'Site map and boundaries attached',
+      'Sampling/observation dates recorded',
+      'Hydrology indicators documented',
+      'Vegetation strata + dominant species listed',
+      'Soils profile and hydric indicators noted',
+      'Photo log indexed to waypoints',
+      'GPS coordinates validated and complete',
+      'Regulatory form sections complete',
+      'Assumptions and limitations disclosed',
+      'Reviewer signoff block prepared'
+    ];
+
+    const checksEl = document.getElementById('checks');
+    checklist.forEach((label, i) => {
+      const row = document.createElement('label');
+      row.className = 'item';
+      row.innerHTML = `<input type="checkbox" data-i="${i}" /><span>${label}</span>`;
+      checksEl.appendChild(row);
+    });
+
+    const out = document.getElementById('out');
+    document.getElementById('make').onclick = () => {
+      const project = document.getElementById('project').value || 'Untitled project';
+      const region = document.getElementById('region').value;
+      const reviewer = document.getElementById('reviewer').value || 'Unassigned';
+      const notes = document.getElementById('notes').value.trim();
+      const boxes = [...document.querySelectorAll('input[type="checkbox"][data-i]')];
+      const done = boxes.filter(b => b.checked).map(b => checklist[Number(b.dataset.i)]);
+      const todo = boxes.filter(b => !b.checked).map(b => checklist[Number(b.dataset.i)]);
+      const pct = Math.round((done.length / checklist.length) * 100);
+
+      out.textContent = [
+        `Wetland QA Summary`,
+        `Project: ${project}`,
+        `Template: ${region}`,
+        `Reviewer: ${reviewer}`,
+        `Completion: ${done.length}/${checklist.length} (${pct}%)`,
+        '',
+        '✅ Complete:',
+        ...(done.length ? done.map(d => `- ${d}`) : ['- None yet']),
+        '',
+        '⚠️ Missing / Needs Work:',
+        ...(todo.length ? todo.map(t => `- ${t}`) : ['- None']),
+        '',
+        'Notes:',
+        notes || 'None',
+        '',
+        `Generated: ${new Date().toLocaleString()}`
+      ].join('\n');
+    };
+
+    document.getElementById('copy').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(out.textContent);
+      } catch { /* noop */ }
+    };
+  </script>
+</body>
+</html>
