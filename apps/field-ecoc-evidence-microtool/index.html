@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Field eCOC + Evidence Packet Microtool</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #071521; color: #e8f4ff; }
+    .wrap { max-width: 1050px; margin: 0 auto; padding: 24px; }
+    .card { background: #0d2133; border: 1px solid #27445f; border-radius: 14px; padding: 16px; margin: 14px 0; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+    label { display:block; margin-bottom:8px; font-weight:700; }
+    input, textarea, select { width:100%; padding:9px; border:1px solid #345978; border-radius:8px; background:#081625; color:#ebf6ff; }
+    textarea{ min-height:90px; }
+    button{ background:#2f90ff; color:white; border:none; border-radius:9px; padding:10px 14px; cursor:pointer; font-weight:700; }
+    .secondary{ background:#2a4258; }
+    pre{ white-space:pre-wrap; background:#08131e; border:1px solid #2e4b64; border-radius:10px; padding:12px; }
+    .small{ color:#9fc2df; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Field eCOC + Evidence Packet Microtool</h1>
+    <p class="small">Create a lightweight chain-of-custody summary and indexed evidence packet text in one pass.</p>
+
+    <div class="card grid">
+      <div><label>Client / Project</label><input id="project" placeholder="Brew Creek Monitoring Program" /></div>
+      <div><label>Sampler</label><input id="sampler" placeholder="Alex Harris" /></div>
+      <div><label>Collection Date</label><input id="date" type="date" /></div>
+      <div><label>Lab Destination</label><input id="lab" placeholder="Bureau Veritas" /></div>
+      <div><label>Transport Condition</label>
+        <select id="transport"><option>On ice (0–4°C)</option><option>Ambient</option><option>Frozen</option></select>
+      </div>
+      <div><label>Transfer Custody To</label><input id="custodyTo" placeholder="Courier / Lab Receiver" /></div>
+    </div>
+
+    <div class="card">
+      <label>Sample Log (one per line: sampleId | matrix | analyses | location | time)</label>
+      <textarea id="samples" placeholder="BC-001 | water | pH, TSS, NH3 | Outfall-01 | 09:15\nBC-002 | water | pH, TSS, NH3 | Outfall-02 | 09:35"></textarea>
+
+      <label style="margin-top:10px;">Evidence Artifacts (one per line: artifactId | type | description)</label>
+      <textarea id="artifacts" placeholder="IMG_2201 | photo | Outfall-01 bottle labels\nGPS_14 | gps | 49.698,-123.146\nNOTE_3 | note | Heavy rain previous 24h"></textarea>
+
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button id="gen">Generate eCOC Packet</button>
+        <button id="save" class="secondary">Save Draft (local)</button>
+        <button id="copy" class="secondary">Copy Output</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>eCOC + Evidence Output</h3>
+      <pre id="out" class="small">No packet generated yet.</pre>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const KEY = 'philbin-field-ecoc-v1';
+
+    function parseRows(text, expected = 5) {
+      return text.split('\n').map((line) => line.trim()).filter(Boolean).map((line) => {
+        const cols = line.split('|').map((c) => c.trim());
+        while (cols.length < expected) cols.push('');
+        return cols;
+      });
+    }
+
+    function generate() {
+      const project = $('project').value || 'Unnamed Project';
+      const sampler = $('sampler').value || 'Unknown Sampler';
+      const date = $('date').value || new Date().toISOString().slice(0, 10);
+      const lab = $('lab').value || 'Unspecified Lab';
+      const transport = $('transport').value;
+      const custodyTo = $('custodyTo').value || 'Unspecified Receiver';
+
+      const sampleRows = parseRows($('samples').value, 5);
+      const artifactRows = parseRows($('artifacts').value, 3);
+
+      const sampleLines = sampleRows.map((r, i) => `- ${i + 1}. ${r[0] || `SAMPLE-${i+1}`} | ${r[1] || 'matrix n/a'} | ${r[2] || 'analyses n/a'} | ${r[3] || 'location n/a'} | ${r[4] || 'time n/a'}`);
+      const artifactLines = artifactRows.map((r, i) => `- ${i + 1}. ${r[0] || `ART-${i+1}`} | ${r[1] || 'item'} | ${r[2] || 'no description'}`);
+
+      const output = [
+        'FIELD eCOC + EVIDENCE PACKET',
+        `Project: ${project}`,
+        `Collection Date: ${date}`,
+        `Sampler: ${sampler}`,
+        `Destination Lab: ${lab}`,
+        `Transport Condition: ${transport}`,
+        `Custody Transfer To: ${custodyTo}`,
+        '',
+        'A) Chain of Custody Sample Register',
+        ...(sampleLines.length ? sampleLines : ['- No samples entered.']),
+        '',
+        'B) Custody Statement',
+        `I certify that the above samples were collected, labeled, and transferred under the stated transport conditions on ${date}.`,
+        '',
+        'C) Evidence Artifact Index',
+        ...(artifactLines.length ? artifactLines : ['- No artifacts entered.']),
+        '',
+        'D) QA Checks',
+        '- Sample IDs match bottle/label records',
+        '- Times and locations captured for all entries',
+        '- Cooler/transport condition documented',
+        '- Custody transfer recipient recorded',
+        '',
+        `Generated: ${new Date().toLocaleString()}`
+      ].join('\n');
+
+      $('out').textContent = output;
+    }
+
+    $('gen').onclick = generate;
+
+    $('save').onclick = () => {
+      const payload = {
+        project: $('project').value,
+        sampler: $('sampler').value,
+        date: $('date').value,
+        lab: $('lab').value,
+        transport: $('transport').value,
+        custodyTo: $('custodyTo').value,
+        samples: $('samples').value,
+        artifacts: $('artifacts').value
+      };
+      localStorage.setItem(KEY, JSON.stringify(payload));
+    };
+
+    $('copy').onclick = async () => {
+      try { await navigator.clipboard.writeText($('out').textContent); } catch {}
+    };
+
+    const saved = localStorage.getItem(KEY);
+    if (saved) {
+      try {
+        const d = JSON.parse(saved);
+        Object.entries(d).forEach(([k, v]) => { if ($(k)) $(k).value = v; });
+      } catch {}
+    }
+  </script>
+</body>
+</html>

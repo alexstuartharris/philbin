@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Field Notes → Compliance Pack Builder</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #071521; color: #e8f4ff; }
+    .wrap { max-width: 1050px; margin: 0 auto; padding: 24px; }
+    .card { background: #0d2133; border: 1px solid #27445f; border-radius: 14px; padding: 16px; margin: 14px 0; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+    label { display:block; margin-bottom:8px; font-weight:700; }
+    input, select, textarea { width:100%; padding:9px; border:1px solid #345978; border-radius:8px; background:#081625; color:#ebf6ff; }
+    textarea{ min-height:110px; }
+    button{ background:#2f90ff; color:white; border:none; border-radius:9px; padding:10px 14px; cursor:pointer; font-weight:700; }
+    .secondary{ background:#2a4258; }
+    pre{ white-space:pre-wrap; background:#08131e; border:1px solid #2e4b64; border-radius:10px; padding:12px; }
+    .small{ color:#9fc2df; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Field Notes → Compliance Pack Builder</h1>
+    <p class="small">Convert site notes and field evidence into a structured compliance summary and appendix index.</p>
+
+    <div class="card grid">
+      <div><label>Project / Site</label><input id="site" placeholder="Mamquam River Outfall" /></div>
+      <div><label>Inspection Date</label><input id="date" type="date" /></div>
+      <div><label>Inspector</label><input id="inspector" placeholder="Alex Harris" /></div>
+      <div><label>Permit / Ref</label><input id="permit" placeholder="BC-ENV-2026-041" /></div>
+      <div><label>Weather</label><input id="weather" placeholder="Light rain, 7°C" /></div>
+      <div><label>QA Status</label>
+        <select id="qa"><option>Draft</option><option>Ready for Internal Review</option><option>Client-Ready</option></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <label>Field Notes</label>
+      <textarea id="notes" placeholder="Point-by-point observations, unusual odors, turbidity, erosion notes, and context."></textarea>
+      <label style="margin-top:10px;">Evidence Items (one per line: type | id | summary)</label>
+      <textarea id="evidence" placeholder="photo | IMG_1024 | Outfall plume visible near diffuser\nsample | LAB-28 | Grab sample, pH 7.4\ngps | PT-14 | 49.694,-123.155"></textarea>
+      <label style="margin-top:10px;">Actions & Follow-ups (one per line)</label>
+      <textarea id="actions" placeholder="Re-sample at low tide window\nConfirm chain-of-custody signatures\nNotify client if turbidity exceeds internal threshold"></textarea>
+
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button id="gen">Generate Compliance Pack Text</button>
+        <button id="save" class="secondary">Save Draft (local)</button>
+        <button id="copy" class="secondary">Copy Output</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Compliance Pack Output</h3>
+      <pre id="out" class="small">No pack generated yet.</pre>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const KEY = 'philbin-field-notes-pack-v1';
+
+    function splitLines(text) {
+      return text.split('\n').map(v => v.trim()).filter(Boolean);
+    }
+
+    function evidenceToBullets(raw) {
+      return splitLines(raw).map((line, idx) => {
+        const parts = line.split('|').map(p => p.trim());
+        const [type='item', id=`EV-${idx+1}`, summary='No summary'] = parts;
+        return `- [${(type || 'item').toUpperCase()}] ${id}: ${summary}`;
+      });
+    }
+
+    function generate() {
+      const site = $('site').value || 'Unnamed Site';
+      const date = $('date').value || new Date().toISOString().slice(0, 10);
+      const inspector = $('inspector').value || 'Unassigned';
+      const permit = $('permit').value || 'Not provided';
+      const weather = $('weather').value || 'Not recorded';
+      const qa = $('qa').value;
+      const notes = $('notes').value.trim() || 'No field notes provided.';
+      const evidence = evidenceToBullets($('evidence').value);
+      const actions = splitLines($('actions').value).map((v, i) => `${i + 1}. ${v}`);
+
+      const output = [
+        'FIELD NOTES COMPLIANCE PACK',
+        `Project/Site: ${site}`,
+        `Date: ${date}`,
+        `Inspector: ${inspector}`,
+        `Permit/Reference: ${permit}`,
+        `Weather: ${weather}`,
+        `QA Status: ${qa}`,
+        '',
+        'A) Observation Summary',
+        notes,
+        '',
+        'B) Evidence Appendix Index',
+        ...(evidence.length ? evidence : ['- No evidence entries provided.']),
+        '',
+        'C) Recommended Follow-up Actions',
+        ...(actions.length ? actions : ['1. No follow-up actions provided.']),
+        '',
+        'D) Defensibility Checklist',
+        '- Sampling/observation times documented',
+        '- Coordinates/photos cross-referenced',
+        '- Permit thresholds reviewed against observations',
+        '- Any anomalies flagged for secondary QA',
+        '',
+        `Generated: ${new Date().toLocaleString()}`
+      ].join('\n');
+
+      $('out').textContent = output;
+    }
+
+    $('gen').onclick = generate;
+
+    $('save').onclick = () => {
+      const data = {
+        site: $('site').value,
+        date: $('date').value,
+        inspector: $('inspector').value,
+        permit: $('permit').value,
+        weather: $('weather').value,
+        qa: $('qa').value,
+        notes: $('notes').value,
+        evidence: $('evidence').value,
+        actions: $('actions').value
+      };
+      localStorage.setItem(KEY, JSON.stringify(data));
+    };
+
+    $('copy').onclick = async () => {
+      try { await navigator.clipboard.writeText($('out').textContent); } catch {}
+    };
+
+    const saved = localStorage.getItem(KEY);
+    if (saved) {
+      try {
+        const d = JSON.parse(saved);
+        Object.entries(d).forEach(([k, v]) => { if ($(k)) $(k).value = v; });
+      } catch {}
+    }
+  </script>
+</body>
+</html>

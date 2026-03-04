@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-28T17:11:17.000Z",
+  "generatedAt": "2026-03-04T07:17:15.445Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -10,11 +10,19 @@
       "hasIndex": true
     },
     {
+      "name": "field-ecoc-evidence-microtool",
+      "hasIndex": true
+    },
+    {
       "name": "field-evidence-capture",
       "hasIndex": true
     },
     {
       "name": "field-kit-planner",
+      "hasIndex": true
+    },
+    {
+      "name": "field-notes-compliance-pack-builder",
       "hasIndex": true
     },
     {
