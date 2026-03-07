@@ -357,6 +357,38 @@
     </details>
 
     <details class="card" open>
+      <summary><span>Deterministic GO / WATCH / NO-GO gate</span><span class="caret">▾</span></summary>
+      <h2 style="display:none;">Deterministic GO / WATCH / NO-GO gate</h2>
+      <p class="small">Numeric, repeatable gate based on weather + storage + roll/curve proxy + event timing guardrails.</p>
+
+      <div class="three" style="margin-top:10px;">
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Decision</div>
+          <div class="row" style="margin-top:6px;">
+            <span class="pill"><span id="gateDot" class="dot warn"></span><span id="gateDecision">—</span></span>
+            <span class="pill"><span>Confidence</span><span id="gateConfidence">—</span></span>
+          </div>
+          <div class="mini" id="gateWhy" style="margin-top:8px;">Waiting for data…</div>
+        </div>
+
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Composite regime score (0–100)</div>
+          <div class="kpi" id="gateRegime">—</div>
+          <div class="mini" id="gateComponents">Weather — | Storage — | Curve/Roll —</div>
+        </div>
+
+        <div class="kpi" style="border:1px solid var(--border); border-radius:16px; padding:12px;">
+          <div class="muted">Thresholds (explicit)</div>
+          <div class="mini" id="gateRules">
+            GO: score ≥ 62, weather ≥ 55, curve/roll ≥ 45, and EIA &gt; 24h.<br/>
+            NO-GO: score ≤ 42, or (weather &lt; 35 and curve/roll &lt; 40).<br/>
+            Otherwise: WATCH.
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="card" open>
       <summary><span>Pre‑trade checklist (1–3 week options)</span><span class="caret">▾</span></summary>
       <h2 style="display:none;">Pre‑trade checklist (1–3 week options)</h2>
       <div class="warnBox">
@@ -828,7 +860,10 @@
     }
 
     const modelKey = 'ung-trader.model-snapshots.v2';
-    const APP_VERSION = '2026-02-28.3';
+    const APP_VERSION = '2026-03-07.1';
+
+    let lastGateInputs = null; // weather + storage from latest snapshot
+    let lastMarketDaily = []; // latest market_daily rows (for curve proxy if needed later)
 
     // Supabase defaults (safe to embed publishable key)
     const DEFAULT_SB_URL = 'https://wqasauklfxcsshyxqkoo.supabase.co';
@@ -869,6 +904,171 @@
       elText.textContent = 'ΔΔ: ' + sign + v.toFixed(1);
       const a = Math.abs(v);
       setDot(elDot, a >= 20 ? 'bad' : (a >= 10 ? 'warn' : 'ok'));
+    }
+
+    function clampNum(v, lo, hi){
+      const x = Number(v);
+      if(!Number.isFinite(x)) return lo;
+      return Math.max(lo, Math.min(hi, x));
+    }
+
+    function scoreWeather(input){
+      const ne = Number(input?.ne);
+      const mw = Number(input?.mw);
+      const s = Number(input?.s);
+      const neChg = Number(input?.neChg);
+      const mwChg = Number(input?.mwChg);
+      const sChg = Number(input?.sChg);
+
+      if(!Number.isFinite(ne) || !Number.isFinite(mw) || !Number.isFinite(s)){
+        return { score: 50, demand: null, demandChg: null, missing: true };
+      }
+
+      const demand = (0.50 * ne) + (0.40 * mw) + (0.10 * s);
+      const demandChg = (Number.isFinite(neChg) && Number.isFinite(mwChg) && Number.isFinite(sChg))
+        ? (0.50 * neChg) + (0.40 * mwChg) + (0.10 * sChg)
+        : 0;
+
+      const base = 50 + (0.90 * demand);
+      const trendAdj = clampNum(1.20 * demandChg, -12, 12);
+      const score = clampNum(base + trendAdj, 0, 100);
+      return { score, demand, demandChg, missing: false };
+    }
+
+    function scoreStorage(storageWeekly){
+      if(!storageWeekly || typeof storageWeekly !== 'object'){
+        return { score: 50, wow: null, workingGas: null, missing: true };
+      }
+
+      const wow = Number(storageWeekly.wow_change_bcf);
+      const workingGas = Number(storageWeekly.working_gas_bcf);
+      let score = 50;
+
+      if(Number.isFinite(wow)){
+        if(wow <= -120) score = 75;
+        else if(wow <= -80) score = 68;
+        else if(wow <= -40) score = 60;
+        else if(wow <= 0) score = 52;
+        else if(wow <= 40) score = 42;
+        else score = 32;
+      }
+
+      // Mild level adjustment (coarse): tighter absolute storage gets a small boost.
+      if(Number.isFinite(workingGas)){
+        if(workingGas <= 1700) score += 6;
+        else if(workingGas <= 1900) score += 3;
+        else if(workingGas >= 2400) score -= 6;
+        else if(workingGas >= 2200) score -= 3;
+      }
+
+      return { score: clampNum(score, 0, 100), wow, workingGas, missing: !Number.isFinite(wow) };
+    }
+
+    function scoreCurveRoll(){
+      const now = new Date();
+      const { rollStart, lastTrade } = ngRollWindow();
+      const t = now.getTime();
+      const inRoll = t >= rollStart.getTime() && t <= lastTrade.getTime();
+      const daysToRollStart = (rollStart.getTime() - t) / 86400000;
+
+      let score;
+      if(inRoll) score = 34;
+      else if(daysToRollStart <= 3) score = 42;
+      else if(daysToRollStart <= 7) score = 48;
+      else score = 55;
+
+      return {
+        score,
+        inRoll,
+        daysToRollStart,
+      };
+    }
+
+    function computeGateDecision(){
+      const weather = scoreWeather(lastGateInputs || {});
+      const storage = scoreStorage(lastGateInputs?.storageWeekly);
+      const curve = scoreCurveRoll();
+
+      const regime = Math.round((0.35 * storage.score) + (0.35 * weather.score) + (0.30 * curve.score));
+
+      const next = nextEiaReportDates(1);
+      const now = new Date();
+      const eiaHours = next.length ? (next[0].getTime() - now.getTime()) / 3600000 : null;
+
+      let decision = 'WATCH';
+      let reason = 'Mixed stack; no asymmetric edge yet.';
+
+      const goRule = regime >= 62 && weather.score >= 55 && curve.score >= 45 && (eiaHours === null || eiaHours > 24);
+      const noGoRule = regime <= 42 || (weather.score < 35 && curve.score < 40);
+
+      if(goRule){
+        decision = 'GO';
+        reason = 'Composite and component floors pass for a tactical window.';
+      } else if(noGoRule){
+        decision = 'NO-GO';
+        reason = 'Regime too weak / adverse for the defined setup.';
+      }
+
+      if(eiaHours !== null && eiaHours <= 24 && decision === 'GO'){
+        decision = 'WATCH';
+        reason = 'Event guardrail: inside 24h to EIA, cap to WATCH.';
+      }
+
+      let confidence;
+      if(decision === 'GO') confidence = clampNum(60 + (regime - 62) * 1.3, 55, 90);
+      else if(decision === 'NO-GO') confidence = clampNum(60 + (42 - regime) * 1.3, 55, 90);
+      else confidence = clampNum(72 - Math.abs(regime - 52), 50, 78);
+
+      const missing = [];
+      if(weather.missing) missing.push('weather');
+      if(storage.missing) missing.push('storage');
+      if(missing.length) confidence = clampNum(confidence - 8 * missing.length, 35, 90);
+
+      return {
+        decision,
+        confidence: Math.round(confidence),
+        regime,
+        weather,
+        storage,
+        curve,
+        eiaHours,
+        reason,
+        missing,
+      };
+    }
+
+    function renderGateDecision(g){
+      const dot = el('gateDot');
+      const decisionEl = el('gateDecision');
+      const confEl = el('gateConfidence');
+      const regimeEl = el('gateRegime');
+      const compsEl = el('gateComponents');
+      const whyEl = el('gateWhy');
+      if(!dot || !decisionEl || !confEl || !regimeEl || !compsEl || !whyEl) return;
+
+      dot.className = 'dot';
+      if(g.decision === 'GO') dot.classList.add('ok');
+      else if(g.decision === 'NO-GO') dot.classList.add('bad');
+      else dot.classList.add('warn');
+
+      decisionEl.textContent = g.decision;
+      confEl.textContent = `${g.confidence}/100`;
+      regimeEl.textContent = `${g.regime}`;
+      compsEl.textContent = `Weather ${Math.round(g.weather.score)} | Storage ${Math.round(g.storage.score)} | Curve/Roll ${Math.round(g.curve.score)}`;
+
+      const eiaTxt = (g.eiaHours === null)
+        ? 'EIA timing unavailable'
+        : `next EIA in ${g.eiaHours.toFixed(1)}h`;
+      const missingTxt = g.missing.length ? ` Missing: ${g.missing.join(', ')}.` : '';
+      whyEl.textContent = `${g.reason} (${eiaTxt}).${missingTxt}`;
+    }
+
+    function updateGateDecision(){
+      try{
+        renderGateDecision(computeGateDecision());
+      } catch(_e){
+        // non-fatal UI feature
+      }
     }
 
     async function refreshWeather(){
@@ -954,12 +1154,25 @@
             const ref = prevDb ? ('since ' + new Date(prevDb.ts).toISOString().slice(0,16) + 'Z') : 'no prior run yet';
             el('modelChangeNote').textContent = `Model change (ΔΔHDD14): ${ref}.`;
 
+            const storageWeekly = latest?.features?.storage_weekly || null;
+            lastGateInputs = {
+              ne: neA,
+              mw: mwA,
+              s: sA,
+              neChg,
+              mwChg,
+              sChg,
+              storageWeekly,
+              ts: tsIso,
+            };
+
             setDot(el('weatherDot'), 'ok');
             el('weatherStatus').textContent = `Weather: loaded from Supabase (${tsIso.replace('T',' ').slice(0,19)}Z)`;
             el('weatherRaw').textContent = JSON.stringify({ source: 'supabase', ts: tsIso, baseF, windowKey, latest }, null, 2);
             // Update delta charts (DB)
             const winSel = (el('deltaWindow') && el('deltaWindow').value) ? el('deltaWindow').value : '7';
             refreshDeltaCharts(winSel);
+            updateGateDecision();
             return;
           }
         } catch(e){
@@ -1014,16 +1227,30 @@
         setChange(el('sChg'),  el('sChgDot'),  NaN);
         el('modelChangeNote').textContent = 'Model change (ΔΔHDD14): DB-only (fallback mode).';
 
+        lastGateInputs = {
+          ne: ne.dhdd14,
+          mw: mw.dhdd14,
+          s: s.dhdd14,
+          neChg: NaN,
+          mwChg: NaN,
+          sChg: NaN,
+          storageWeekly: null,
+          ts: new Date().toISOString(),
+        };
+
         renderHistoryPreview();
 
         setDot(el('weatherDot'), 'ok');
         el('weatherStatus').textContent = `Weather: loaded (GFS + archive normals)`;
         el('weatherRaw').textContent = JSON.stringify({ baseF, windowKey, ne, mw, south: s }, null, 2);
+        updateGateDecision();
 
       } catch(e){
         setDot(el('weatherDot'), 'bad');
         el('weatherStatus').textContent = 'Weather: error';
         el('weatherRaw').textContent = String(e?.message || e);
+        lastGateInputs = null;
+        updateGateDecision();
       }
     }
 
@@ -1079,7 +1306,7 @@
 
       const { data, error } = await client
         .from('ung_model_snapshots')
-        .select('ts, base_f, window_key, ne_hdd14, mw_hdd14, s_hdd14, ne_hdd14_norm, mw_hdd14_norm, s_hdd14_norm, ne_dhdd14, mw_dhdd14, s_dhdd14, ne_dhdd_buckets, mw_dhdd_buckets, s_dhdd_buckets, south_burst_3d, south_freeze_risk')
+        .select('ts, base_f, window_key, ne_hdd14, mw_hdd14, s_hdd14, ne_hdd14_norm, mw_hdd14_norm, s_hdd14_norm, ne_dhdd14, mw_dhdd14, s_dhdd14, ne_dhdd_buckets, mw_dhdd_buckets, s_dhdd_buckets, south_burst_3d, south_freeze_risk, features')
         .eq('base_f', baseF)
         .eq('window_key', windowKey)
         .order('ts', { ascending: false })
@@ -1370,6 +1597,7 @@
 
         let px = [];
         try{ px = await sbFetchMarketDaily({ days: priceDays }); } catch {}
+        lastMarketDaily = Array.isArray(px) ? px : [];
         const pxMap = new Map((px||[]).map(r => [String(r.date), (r.ung_close===null || r.ung_close===undefined) ? null : Number(r.ung_close)]));
 
         const labels = rows.map(r => {
@@ -1545,9 +1773,11 @@
 
         body.innerHTML = rowsHtml.join('');
       }
+      updateGateDecision();
       } catch(e){
         const statsBody = document.getElementById('deltaStatsBody');
         if(statsBody) statsBody.innerHTML = `<tr><td colspan="3">Delta stats error: ${String(e?.message||e)}</td></tr>`;
+        updateGateDecision();
       }
     }
 
@@ -1642,6 +1872,11 @@
         const sig = southColdBreakoutSignal(snap.south);
         if(sig?.label && sig.label !== '—') lines.push(sig.label);
       }
+
+      try{
+        const g = computeGateDecision();
+        lines.push(`Gate: ${g.decision} | Regime ${g.regime}/100 | Confidence ${g.confidence}/100`);
+      } catch {}
 
       lines.push(`Expiry target: ${expiry} days`);
       if(thesis) lines.push(`Thesis: ${thesis}`);
@@ -1783,6 +2018,7 @@
         }
       }
       el('expiryHint').textContent = hint;
+      updateGateDecision();
     }
 
     function boot(){
