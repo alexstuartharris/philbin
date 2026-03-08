@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IBIT Trader — Shock Odds Dashboard</title>
+  <style>
+    :root{
+      color-scheme: light;
+      --bg:#f7f4ef;
+      --panel:#fff;
+      --ink:#151515;
+      --muted:#5a5a5a;
+      --border:#e3dfd8;
+      --accent:#2451ff;
+      --ok:#1f8b4c;
+      --warn:#c06a00;
+      --bad:#b42318;
+      --shadow:0 10px 35px rgba(19,15,10,.12);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Avenir Next","Segoe UI","Helvetica Neue",sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 20% 0%, #fffaf2 0%, transparent 48%),
+        radial-gradient(circle at 90% 20%, #eef4ff 0%, transparent 45%),
+        var(--bg);
+    }
+    header{padding:34px 18px 14px; max-width:1120px; margin:0 auto;}
+    h1{margin:0 0 8px; font-size:clamp(1.7rem,3.2vw,2.2rem); letter-spacing:-.02em;}
+    .sub{margin:0; color:var(--muted); line-height:1.45; max-width:95ch;}
+    main{max-width:1120px; margin:0 auto; padding:0 18px 56px; display:grid; gap:14px;}
+    .card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);}
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+    .grid{display:grid; gap:12px; grid-template-columns: repeat(6,minmax(0,1fr));}
+    .grid .field{min-width:140px;}
+    @media (max-width:1000px){ .grid{grid-template-columns: repeat(2,minmax(0,1fr));} }
+    label{display:block; font-weight:700; margin:0 0 6px;}
+    select,input,button{font:inherit;}
+    select,input{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:#fff;}
+    button{border:0; border-radius:999px; padding:10px 14px; background:var(--accent); color:#fff; font-weight:800; cursor:pointer;}
+    button.secondary{background:transparent; color:var(--accent); border:1px solid var(--border);}
+    .pill{display:inline-flex; gap:8px; align-items:center; border:1px solid var(--border); border-radius:999px; padding:8px 12px; background:rgba(0,0,0,.03); font-size:13px;}
+    .kpiWrap{display:grid; gap:10px; grid-template-columns:repeat(4,minmax(0,1fr)); margin-top:10px;}
+    .kpi{border:1px solid var(--border); border-radius:14px; padding:10px 12px; background:#fff;}
+    .kpi .label{font-size:12px; color:var(--muted);}
+    .kpi .val{font-weight:900; font-size:1.2rem; margin-top:4px;}
+    .flag{font-weight:800; font-size:.9rem;}
+    .flag.ok{color:var(--ok);} .flag.warn{color:var(--warn);} .flag.bad{color:var(--bad);} 
+    @media (max-width:900px){ .kpiWrap{grid-template-columns:1fr 1fr;} }
+    table{width:100%; border-collapse:collapse; font-size:13px;}
+    th,td{padding:9px 8px; border-bottom:1px solid var(--border); text-align:left;}
+    th{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em;}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+    .small{font-size:.92rem; color:var(--muted);}
+    .warnBox{border-left:3px solid rgba(192,106,0,.55); padding:10px 12px; background:rgba(192,106,0,.08); border-radius:12px; color:#3a2411;}
+    .two{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
+    @media (max-width:900px){ .two{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>IBIT Trader — Shock Odds Dashboard</h1>
+    <p class="sub">
+      Decision-support view for post-shock behavior. This is a probability board (not an execution bot).<br />
+      <strong>Not financial advice.</strong>
+    </p>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div class="row">
+          <span class="pill" id="metaRange">Range: —</span>
+          <span class="pill" id="metaRows">Rows: —</span>
+          <span class="pill" id="metaGenerated">Updated: —</span>
+        </div>
+        <button id="btnCopy" class="secondary">Copy summary</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 10px;">Shock odds panel</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="dataset">Dataset</label>
+          <select id="dataset">
+            <option value="stitched">Stitched (default)</option>
+            <option value="oos">OOS only (2024+)</option>
+            <option value="discovery">Discovery (2018-2023)</option>
+            <option value="ibit">IBIT only</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="direction">Shock direction</label>
+          <select id="direction">
+            <option value="down">Down shock (bounce odds)</option>
+            <option value="up">Up shock (retrace odds)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="shock">Shock size</label>
+          <select id="shock">
+            <option value="4">4%</option>
+            <option value="6">6%</option>
+            <option value="8">8%</option>
+            <option value="10">10%</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="target">Target move</label>
+          <select id="target">
+            <option value="1">1%</option>
+            <option value="2" selected>2%</option>
+            <option value="3">3%</option>
+            <option value="4">4%</option>
+            <option value="5">5%</option>
+            <option value="6">6%</option>
+            <option value="8">8%</option>
+            <option value="10">10%</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="horizon">Horizon</label>
+          <select id="horizon">
+            <option value="1">1 day</option>
+            <option value="2">2 days</option>
+            <option value="3">3 days</option>
+            <option value="5">5 days</option>
+            <option value="10" selected>10 days</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="within" selected>Within-H</option>
+            <option value="by_close">By-close@H</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="kpiWrap" id="oddsKpis"></div>
+      <p class="small" id="oddsExplain"></p>
+    </section>
+
+    <section class="card two">
+      <div>
+        <h2 style="margin:0 0 10px;">Path forecast panel</h2>
+        <p class="small">Signed distance from shock close (positive = mean-reversion direction).</p>
+        <div class="row" style="margin:10px 0;">
+          <label style="margin:0;">Threshold check:</label>
+          <input id="pathThreshold" type="number" step="0.1" min="0" value="2" style="width:100px;" />
+          <span class="small">% distance</span>
+        </div>
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr><th>Horizon</th><th>N</th><th>Mean</th><th>P10</th><th>P50</th><th>P90</th><th>P(distance ≥ threshold)</th></tr>
+            </thead>
+            <tbody id="pathTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <h2 style="margin:0 0 10px;">Confidence + guidance</h2>
+        <div class="warnBox" id="guidanceBox">Loading...</div>
+        <p class="small" style="margin-top:10px;">
+          Confidence tags are sample-size based: <strong>High</strong> (N≥60), <strong>Medium</strong> (20≤N&lt;60), <strong>Low</strong> (N&lt;20).
+        </p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 10px;">Standout combos (discovery-ranked, with OOS check)</h2>
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Combo</th><th>Discovery</th><th>OOS</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="standoutTable"></tbody>
+        </table>
+      </div>
+      <p class="small">Use these as watchlist priors, not guaranteed signals.</p>
+    </section>
+  </main>
+
+  <script>
+    const fmtPct = (x) => Number.isFinite(x) ? `${(x*100).toFixed(1)}%` : "—";
+
+    function confidenceFromN(n){
+      if (n >= 60) return {label:"High sample", cls:"ok"};
+      if (n >= 20) return {label:"Medium sample", cls:"warn"};
+      return {label:"Low sample", cls:"bad"};
+    }
+
+    function keyProb(r){
+      return [r.dataset,r.direction,r.shock,r.target,r.horizon,r.mode].join("|");
+    }
+    function keyPath(r){
+      return [r.dataset,r.direction,r.shock,r.horizon].join("|");
+    }
+
+    let DATA = null;
+    let probs = new Map();
+    let path = new Map();
+
+    const els = {
+      dataset: document.getElementById('dataset'),
+      direction: document.getElementById('direction'),
+      shock: document.getElementById('shock'),
+      target: document.getElementById('target'),
+      horizon: document.getElementById('horizon'),
+      mode: document.getElementById('mode'),
+      oddsKpis: document.getElementById('oddsKpis'),
+      oddsExplain: document.getElementById('oddsExplain'),
+      pathThreshold: document.getElementById('pathThreshold'),
+      pathTable: document.getElementById('pathTable'),
+      standoutTable: document.getElementById('standoutTable'),
+      guidanceBox: document.getElementById('guidanceBox'),
+      metaRange: document.getElementById('metaRange'),
+      metaRows: document.getElementById('metaRows'),
+      metaGenerated: document.getElementById('metaGenerated'),
+      btnCopy: document.getElementById('btnCopy'),
+    };
+
+    function getSelection(){
+      return {
+        dataset: els.dataset.value,
+        direction: els.direction.value,
+        shock: Number(els.shock.value),
+        target: Number(els.target.value),
+        horizon: Number(els.horizon.value),
+        mode: els.mode.value,
+      };
+    }
+
+    function renderOdds(){
+      const s = getSelection();
+      const row = probs.get([s.dataset,s.direction,s.shock,s.target,s.horizon,s.mode].join('|'));
+      els.oddsKpis.innerHTML = '';
+      if(!row){
+        els.oddsExplain.textContent = 'No data for this combo.';
+        return;
+      }
+
+      const conf = confidenceFromN(row.n);
+      const cards = [
+        ['Hit rate', fmtPct(row.rate)],
+        ['95% CI', `[${fmtPct(row.ciLo)}, ${fmtPct(row.ciHi)}]`],
+        ['Events (N)', String(row.n)],
+        ['Confidence', `<span class="flag ${conf.cls}">${conf.label}</span>`],
+      ];
+
+      for (const [label,val] of cards){
+        const d = document.createElement('div');
+        d.className='kpi';
+        d.innerHTML = `<div class="label">${label}</div><div class="val">${val}</div>`;
+        els.oddsKpis.appendChild(d);
+      }
+
+      const action = s.direction === 'down' ? 'bounce' : 'retrace';
+      const modeLabel = s.mode === 'within' ? `within ${s.horizon}d` : `by close at ${s.horizon}d`;
+      els.oddsExplain.textContent = `After a ${s.direction === 'down' ? '-' : '+'}${s.shock}% shock day, odds of a ${s.target}% ${action} ${modeLabel}: ${fmtPct(row.rate)} (${row.hits}/${row.n}).`;
+
+      let guide = '';
+      if(row.n < 20) guide = 'Exploratory only (low sample).';
+      else if (row.ciLo >= 0.6) guide = 'Stronger base-rate setup (CI floor above 60%).';
+      else if (row.ciLo >= 0.45) guide = 'Moderate setup; useful for context, not standalone signal.';
+      else guide = 'Weak/uncertain base-rate; avoid relying on this alone.';
+      els.guidanceBox.textContent = guide;
+    }
+
+    function renderPath(){
+      const s = getSelection();
+      const thr = Number(els.pathThreshold.value || 0) / 100;
+      els.pathTable.innerHTML = '';
+      for(const h of [1,2,3,5,10]){
+        const r = path.get([s.dataset,s.direction,s.shock,h].join('|'));
+        const tr = document.createElement('tr');
+        if(!r){
+          tr.innerHTML = `<td>${h}d</td><td colspan="6">—</td>`;
+          els.pathTable.appendChild(tr);
+          continue;
+        }
+        const pExceed = r.responses.length ? (r.responses.filter(v => v >= thr).length / r.responses.length) : NaN;
+        tr.innerHTML = `
+          <td>${h}d</td>
+          <td>${r.n}</td>
+          <td>${fmtPct(r.mean)}</td>
+          <td>${fmtPct(r.q10)}</td>
+          <td>${fmtPct(r.q50)}</td>
+          <td>${fmtPct(r.q90)}</td>
+          <td>${fmtPct(pExceed)}</td>
+        `;
+        els.pathTable.appendChild(tr);
+      }
+    }
+
+    function renderStandouts(){
+      els.standoutTable.innerHTML = '';
+      for (const r of (DATA.standouts || []).slice(0,12)){
+        const tr = document.createElement('tr');
+        const combo = `${r.direction === 'down' ? '-' : '+'}${r.shock}% → ${r.target}% @ ${r.horizon}d (${r.mode})`;
+        const disc = `${fmtPct(r.rate)} [${fmtPct(r.ciLo)}, ${fmtPct(r.ciHi)}], N=${r.n}`;
+        const oos = r.oos ? `${fmtPct(r.oos.rate)} [${fmtPct(r.oos.ciLo)}, ${fmtPct(r.oos.ciHi)}], N=${r.oos.n}` : '—';
+        let status = r.stable ? 'Stable-ish' : 'Watch';
+        if (r.oos && r.oos.n < 20) status = 'OOS low-N';
+        tr.innerHTML = `<td>${r.rank}</td><td>${combo}</td><td class="mono">${disc}</td><td class="mono">${oos}</td><td>${status}</td>`;
+        els.standoutTable.appendChild(tr);
+      }
+    }
+
+    function copySummary(){
+      const s = getSelection();
+      const row = probs.get([s.dataset,s.direction,s.shock,s.target,s.horizon,s.mode].join('|'));
+      if(!row) return;
+      const action = s.direction === 'down' ? 'bounce' : 'retrace';
+      const modeLabel = s.mode === 'within' ? `within ${s.horizon}d` : `by close at ${s.horizon}d`;
+      const txt = `IBIT shock odds (${s.dataset}): after ${s.direction==='down'?'-':'+'}${s.shock}% shock, odds of ${s.target}% ${action} ${modeLabel} = ${fmtPct(row.rate)} (95% CI ${fmtPct(row.ciLo)} to ${fmtPct(row.ciHi)}, N=${row.n}).`;
+      navigator.clipboard.writeText(txt).catch(()=>{});
+      els.btnCopy.textContent = 'Copied';
+      setTimeout(()=>els.btnCopy.textContent='Copy summary',1000);
+    }
+
+    function renderAll(){
+      renderOdds();
+      renderPath();
+    }
+
+    async function init(){
+      const res = await fetch('./data.json', {cache:'no-store'});
+      DATA = await res.json();
+
+      for(const r of DATA.probabilities || []) probs.set(keyProb(r), r);
+      for(const r of DATA.path || []) path.set(keyPath(r), r);
+
+      els.metaRange.textContent = `Range: ${DATA.meta.stitchedRange[0]} → ${DATA.meta.stitchedRange[1]}`;
+      els.metaRows.textContent = `Rows: ${DATA.meta.stitchedRows}`;
+      els.metaGenerated.textContent = `Updated: ${new Date(DATA.generatedAt).toLocaleString()}`;
+
+      renderStandouts();
+      renderAll();
+
+      [els.dataset,els.direction,els.shock,els.target,els.horizon,els.mode].forEach(el=>el.addEventListener('change', renderAll));
+      els.pathThreshold.addEventListener('input', renderPath);
+      els.btnCopy.addEventListener('click', copySummary);
+    }
+
+    init().catch((err)=>{
+      document.body.innerHTML = `<main style="max-width:900px;margin:30px auto;padding:0 16px;"><h2>Couldn\'t load dashboard data</h2><p>${err.message}</p></main>`;
+    });
+  </script>
+</body>
+</html>
