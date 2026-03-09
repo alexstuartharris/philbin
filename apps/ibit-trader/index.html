@@ -35,9 +35,10 @@
     main{max-width:1120px; margin:0 auto; padding:0 18px 56px; display:grid; gap:14px;}
     .card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);}
     .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
-    .grid{display:grid; gap:12px; grid-template-columns: repeat(6,minmax(0,1fr));}
+    .grid{display:grid; gap:12px; grid-template-columns:1fr;}
     .grid .field{min-width:140px;}
-    @media (max-width:1000px){ .grid{grid-template-columns: repeat(2,minmax(0,1fr));} }
+    @media (min-width:760px){ .grid{grid-template-columns: repeat(3,minmax(0,1fr));} }
+    @media (min-width:1060px){ .grid{grid-template-columns: repeat(6,minmax(0,1fr));} }
     label{display:block; font-weight:700; margin:0 0 6px;}
     select,input,button{font:inherit;}
     select,input{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:#fff;}
@@ -57,8 +58,14 @@
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
     .small{font-size:.92rem; color:var(--muted);}
     .warnBox{border-left:3px solid rgba(192,106,0,.55); padding:10px 12px; background:rgba(192,106,0,.08); border-radius:12px; color:#3a2411;}
-    .two{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
-    @media (max-width:900px){ .two{grid-template-columns:1fr;} }
+    .two{display:grid; gap:12px; grid-template-columns:1fr;}
+    @media (min-width:900px){ .two{grid-template-columns:1fr 1fr;} }
+    .signalCard{background:linear-gradient(135deg,#f4f7ff 0%,#fff 45%,#fff8ef 100%); border:1px solid var(--border); border-radius:16px; padding:14px;}
+    .signalTop{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:center;}
+    .signalMove{font-size:clamp(1.4rem,4vw,2rem); font-weight:900; letter-spacing:-.02em;}
+    .signalMove.up{color:var(--ok);} .signalMove.down{color:var(--bad);} .signalMove.flat{color:var(--muted);}
+    .signalList{margin:10px 0 0; padding-left:18px;}
+    .signalList li{margin:6px 0;}
   </style>
 </head>
 <body>
@@ -79,6 +86,21 @@
           <span class="pill" id="metaGenerated">Updated: —</span>
         </div>
         <button id="btnCopy" class="secondary">Copy summary</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 10px;">Live signal card</h2>
+      <div class="signalCard">
+        <div class="signalTop">
+          <div>
+            <div class="small" id="liveTitle">Latest IBIT move: —</div>
+            <div class="signalMove flat" id="liveMove">—</div>
+            <div class="small" id="liveTag">No notable shock yet.</div>
+          </div>
+          <div class="small" id="liveSource">Source: —</div>
+        </div>
+        <ol class="signalList" id="liveScenarios"></ol>
       </div>
     </section>
 
@@ -227,6 +249,11 @@
       metaRows: document.getElementById('metaRows'),
       metaGenerated: document.getElementById('metaGenerated'),
       btnCopy: document.getElementById('btnCopy'),
+      liveTitle: document.getElementById('liveTitle'),
+      liveMove: document.getElementById('liveMove'),
+      liveTag: document.getElementById('liveTag'),
+      liveSource: document.getElementById('liveSource'),
+      liveScenarios: document.getElementById('liveScenarios'),
     };
 
     function getSelection(){
@@ -238,6 +265,43 @@
         horizon: Number(els.horizon.value),
         mode: els.mode.value,
       };
+    }
+
+    function renderLiveSignal(){
+      const ls = DATA.liveSignal;
+      if(!ls || ls.status !== 'ok'){
+        els.liveTitle.textContent = 'Latest IBIT move unavailable';
+        els.liveMove.textContent = '—';
+        els.liveTag.textContent = 'Could not compute signal from latest data.';
+        els.liveSource.textContent = 'Source: —';
+        els.liveScenarios.innerHTML = '<li>No scenario data.</li>';
+        return;
+      }
+
+      const sign = ls.move1d > 0 ? '+' : '';
+      const moveTxt = `${sign}${(ls.move1d*100).toFixed(2)}%`;
+      els.liveTitle.textContent = `Latest IBIT move (${ls.prevDate} → ${ls.date})`;
+      els.liveMove.textContent = moveTxt;
+      els.liveMove.className = `signalMove ${ls.move1d > 0 ? 'up' : ls.move1d < 0 ? 'down' : 'flat'}`;
+      if(ls.notable){
+        const dirLabel = ls.direction === 'down' ? 'down-shock bounce' : 'up-shock retrace';
+        els.liveTag.textContent = `Notable move detected (>= ${ls.shockBucket}% bucket): showing top ${dirLabel} scenarios.`;
+      } else {
+        els.liveTag.textContent = `Move is below 4% shock threshold; showing closest ${ls.direction === 'down' ? 'down' : 'up'} 4% scenario priors.`;
+      }
+      els.liveSource.textContent = `Source dataset: ${ls.sourceDataset.toUpperCase()}`;
+
+      els.liveScenarios.innerHTML = '';
+      if(!ls.topScenarios || !ls.topScenarios.length){
+        els.liveScenarios.innerHTML = '<li>No scenarios available for this bucket.</li>';
+        return;
+      }
+      const action = ls.direction === 'down' ? 'bounce' : 'retrace';
+      for(const s of ls.topScenarios){
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${s.target}% ${action} within ${s.horizon}d</strong>: ${fmtPct(s.rate)} (95% CI ${fmtPct(s.ciLo)}–${fmtPct(s.ciHi)}, N=${s.n})`;
+        els.liveScenarios.appendChild(li);
+      }
     }
 
     function renderOdds(){
@@ -344,6 +408,7 @@
       els.metaRows.textContent = `Rows: ${DATA.meta.stitchedRows}`;
       els.metaGenerated.textContent = `Updated: ${new Date(DATA.generatedAt).toLocaleString()}`;
 
+      renderLiveSignal();
       renderStandouts();
       renderAll();
 
