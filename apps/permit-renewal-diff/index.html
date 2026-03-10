@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permit Renewal Diff Checker | Philbin</title>
+    <meta name="description" content="Compare old and new environmental permits to identify changes in limits, monitoring requirements, and compliance obligations. No sign-up required.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .upload-box {
+            background: #1a1a1a;
+            border: 2px dashed #333;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-box:hover {
+            border-color: #667eea;
+        }
+        
+        .upload-box h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        .upload-box.has-content {
+            border-color: #4caf50;
+            background: #1a2a1a;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            color: #e0e0e0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        label.file-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        label.file-label:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 20px auto;
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .results-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .results-section.show {
+            display: block;
+        }
+        
+        .change-item {
+            background: #0a0a0a;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .change-item.critical {
+            border-left-color: #f44336;
+        }
+        
+        .change-item.warning {
+            border-left-color: #ff9800;
+        }
+        
+        .change-item.info {
+            border-left-color: #2196f3;
+        }
+        
+        .change-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .change-type {
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            background: #333;
+            color: #e0e0e0;
+        }
+        
+        .change-type.critical {
+            background: #f44336;
+            color: white;
+        }
+        
+        .change-type.warning {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .change-type.info {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .change-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .old-value, .new-value {
+            padding: 12px;
+            background: #000;
+            border-radius: 6px;
+        }
+        
+        .old-value {
+            border-left: 3px solid #f44336;
+        }
+        
+        .new-value {
+            border-left: 3px solid #4caf50;
+        }
+        
+        .label {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        
+        .value {
+            font-size: 1rem;
+            color: #e0e0e0;
+            font-family: monospace;
+        }
+        
+        .no-changes {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        
+        .export-btn {
+            background: #4caf50;
+            margin-top: 20px;
+        }
+        
+        .export-btn:hover {
+            background: #45a049;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #666;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .summary-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-box {
+            flex: 1;
+            min-width: 150px;
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔄 Permit Renewal Diff Checker</h1>
+            <p class="subtitle">Compare environmental permits and identify operational changes</p>
+        </header>
+        
+        <div class="upload-section">
+            <div class="upload-box" id="oldPermitBox">
+                <h3>📄 Old Permit</h3>
+                <textarea id="oldPermit" placeholder="Paste old permit text, table, or limits here...
+
+Example:
+Parameter: Total Nitrogen
+Limit: 10 mg/L (monthly average)
+Monitoring Frequency: Weekly
+Reporting: Monthly DMR"></textarea>
+                <div class="file-input-wrapper">
+                    <input type="file" id="oldPermitFile" accept=".txt,.csv,.pdf">
+                    <label for="oldPermitFile" class="file-label">📁 Or Upload File</label>
+                </div>
+            </div>
+            
+            <div class="upload-box" id="newPermitBox">
+                <h3>📄 New Permit</h3>
+                <textarea id="newPermit" placeholder="Paste new permit text, table, or limits here...
+
+Example:
+Parameter: Total Nitrogen
+Limit: 8 mg/L (monthly average)
+Monitoring Frequency: Twice per week
+Reporting: Monthly DMR"></textarea>
+                <div class="file-input-wrapper">
+                    <input type="file" id="newPermitFile" accept=".txt,.csv,.pdf">
+                    <label for="newPermitFile" class="file-label">📁 Or Upload File</label>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="btn" id="compareBtn" disabled>🔍 Compare Permits</button>
+        </div>
+        
+        <div class="results-section" id="resultsSection">
+            <h2>📊 Comparison Results</h2>
+            
+            <div class="summary-stats" id="summaryStats"></div>
+            
+            <div id="changesList"></div>
+            
+            <button class="btn export-btn" id="exportBtn">📥 Export Report as PDF</button>
+        </div>
+        
+        <footer>
+            <p>Built with 💙 by <a href="https://alexstuartharris.github.io/philbin/" target="_blank">Philbin</a> | No sign-up • 100% client-side • Your data stays private</p>
+        </footer>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const oldPermitTextarea = document.getElementById('oldPermit');
+        const newPermitTextarea = document.getElementById('newPermit');
+        const oldPermitFile = document.getElementById('oldPermitFile');
+        const newPermitFile = document.getElementById('newPermitFile');
+        const compareBtn = document.getElementById('compareBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const summaryStats = document.getElementById('summaryStats');
+        const changesList = document.getElementById('changesList');
+        const exportBtn = document.getElementById('exportBtn');
+        const oldPermitBox = document.getElementById('oldPermitBox');
+        const newPermitBox = document.getElementById('newPermitBox');
+        
+        let comparisonResults = [];
+        
+        // Enable compare button when both permits have content
+        function checkEnableCompare() {
+            const oldHasContent = oldPermitTextarea.value.trim().length > 0;
+            const newHasContent = newPermitTextarea.value.trim().length > 0;
+            compareBtn.disabled = !(oldHasContent && newHasContent);
+            
+            oldPermitBox.classList.toggle('has-content', oldHasContent);
+            newPermitBox.classList.toggle('has-content', newHasContent);
+        }
+        
+        oldPermitTextarea.addEventListener('input', checkEnableCompare);
+        newPermitTextarea.addEventListener('input', checkEnableCompare);
+        
+        // File upload handlers
+        oldPermitFile.addEventListener('change', (e) => handleFileUpload(e, oldPermitTextarea));
+        newPermitFile.addEventListener('change', (e) => handleFileUpload(e, newPermitTextarea));
+        
+        function handleFileUpload(event, textarea) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                textarea.value = e.target.result;
+                checkEnableCompare();
+            };
+            reader.readAsText(file);
+        }
+        
+        // Parse permit text into structured data
+        function parsePermit(text) {
+            const parameters = [];
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            let currentParam = null;
+            
+            lines.forEach(line => {
+                line = line.trim();
+                
+                // Try to extract parameter names
+                if (line.toLowerCase().includes('parameter:') || line.match(/^[A-Z][a-zA-Z\s]+:/)) {
+                    if (currentParam) parameters.push(currentParam);
+                    currentParam = {
+                        name: line.split(':')[1]?.trim() || line.split(':')[0].trim(),
+                        limits: [],
+                        monitoring: '',
+                        reporting: '',
+                        raw: line
+                    };
+                } else if (currentParam) {
+                    // Extract limits
+                    if (line.toLowerCase().includes('limit')) {
+                        currentParam.limits.push(line);
+                    }
+                    // Extract monitoring
+                    if (line.toLowerCase().includes('monitoring') || line.toLowerCase().includes('frequency')) {
+                        currentParam.monitoring = line;
+                    }
+                    // Extract reporting
+                    if (line.toLowerCase().includes('reporting')) {
+                        currentParam.reporting = line;
+                    }
+                    currentParam.raw += '\n' + line;
+                }
+            });
+            
+            if (currentParam) parameters.push(currentParam);
+            
+            return { parameters, raw: text };
+        }
+        
+        // Compare two permits
+        function comparePermits(oldPermit, newPermit) {
+            const changes = [];
+            
+            // Compare each old parameter with new
+            oldPermit.parameters.forEach(oldParam => {
+                const newParam = newPermit.parameters.find(p => 
+                    p.name.toLowerCase() === oldParam.name.toLowerCase()
+                );
+                
+                if (!newParam) {
+                    changes.push({
+                        type: 'critical',
+                        category: 'Removed Parameter',
+                        parameter: oldParam.name,
+                        oldValue: oldParam.raw,
+                        newValue: 'REMOVED',
+                        description: `Parameter "${oldParam.name}" was removed from the new permit.`
+                    });
+                } else {
+                    // Compare limits
+                    if (oldParam.limits.join('') !== newParam.limits.join('')) {
+                        const severity = determineLimitSeverity(oldParam.limits, newParam.limits);
+                        changes.push({
+                            type: severity,
+                            category: 'Limit Change',
+                            parameter: newParam.name,
+                            oldValue: oldParam.limits.join('\n') || 'Not specified',
+                            newValue: newParam.limits.join('\n') || 'Not specified',
+                            description: `Discharge limits changed for "${newParam.name}".`
+                        });
+                    }
+                    
+                    // Compare monitoring
+                    if (oldParam.monitoring !== newParam.monitoring && (oldParam.monitoring || newParam.monitoring)) {
+                        changes.push({
+                            type: 'warning',
+                            category: 'Monitoring Change',
+                            parameter: newParam.name,
+                            oldValue: oldParam.monitoring || 'Not specified',
+                            newValue: newParam.monitoring || 'Not specified',
+                            description: `Monitoring frequency changed for "${newParam.name}".`
+                        });
+                    }
+                    
+                    // Compare reporting
+                    if (oldParam.reporting !== newParam.reporting && (oldParam.reporting || newParam.reporting)) {
+                        changes.push({
+                            type: 'info',
+                            category: 'Reporting Change',
+                            parameter: newParam.name,
+                            oldValue: oldParam.reporting || 'Not specified',
+                            newValue: newParam.reporting || 'Not specified',
+                            description: `Reporting requirements changed for "${newParam.name}".`
+                        });
+                    }
+                }
+            });
+            
+            // Check for new parameters
+            newPermit.parameters.forEach(newParam => {
+                const exists = oldPermit.parameters.find(p => 
+                    p.name.toLowerCase() === newParam.name.toLowerCase()
+                );
+                if (!exists) {
+                    changes.push({
+                        type: 'critical',
+                        category: 'New Parameter',
+                        parameter: newParam.name,
+                        oldValue: 'NOT PRESENT',
+                        newValue: newParam.raw,
+                        description: `New parameter "${newParam.name}" added to permit.`
+                    });
+                }
+            });
+            
+            return changes;
+        }
+        
+        function determineLimitSeverity(oldLimits, newLimits) {
+            // Try to extract numeric values and compare
+            const oldNums = oldLimits.join('').match(/[\d.]+/g) || [];
+            const newNums = newLimits.join('').match(/[\d.]+/g) || [];
+            
+            // If limits got stricter (lower), it's critical
+            if (newNums.length > 0 && oldNums.length > 0) {
+                const oldVal = parseFloat(oldNums[0]);
+                const newVal = parseFloat(newNums[0]);
+                if (newVal < oldVal) return 'critical';
+            }
+            
+            return 'warning';
+        }
+        
+        // Display results
+        function displayResults(changes) {
+            comparisonResults = changes;
+            
+            if (changes.length === 0) {
+                changesList.innerHTML = '<div class="no-changes">✅ No significant changes detected between permits</div>';
+                summaryStats.innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Total Changes</div>
+                    </div>
+                `;
+            } else {
+                const critical = changes.filter(c => c.type === 'critical').length;
+                const warnings = changes.filter(c => c.type === 'warning').length;
+                const info = changes.filter(c => c.type === 'info').length;
+                
+                summaryStats.innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-number">${changes.length}</div>
+                        <div class="stat-label">Total Changes</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" style="color: #f44336;">${critical}</div>
+                        <div class="stat-label">Critical</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" style="color: #ff9800;">${warnings}</div>
+                        <div class="stat-label">Warnings</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" style="color: #2196f3;">${info}</div>
+                        <div class="stat-label">Info</div>
+                    </div>
+                `;
+                
+                changesList.innerHTML = changes.map(change => `
+                    <div class="change-item ${change.type}">
+                        <div class="change-header">
+                            <h3>${change.parameter}</h3>
+                            <span class="change-type ${change.type}">${change.category}</span>
+                        </div>
+                        <p>${change.description}</p>
+                        <div class="change-details">
+                            <div class="old-value">
+                                <div class="label">Old Permit</div>
+                                <div class="value">${change.oldValue}</div>
+                            </div>
+                            <div class="new-value">
+                                <div class="label">New Permit</div>
+                                <div class="value">${change.newValue}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            resultsSection.classList.add('show');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Compare button handler
+        compareBtn.addEventListener('click', () => {
+            const oldText = oldPermitTextarea.value;
+            const newText = newPermitTextarea.value;
+            
+            const oldPermit = parsePermit(oldText);
+            const newPermit = parsePermit(newText);
+            
+            const changes = comparePermits(oldPermit, newPermit);
+            displayResults(changes);
+        });
+        
+        // Export to PDF
+        exportBtn.addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            let yPos = 20;
+            
+            // Title
+            doc.setFontSize(18);
+            doc.setTextColor(102, 126, 234);
+            doc.text('Permit Renewal Comparison Report', 20, yPos);
+            yPos += 10;
+            
+            // Date
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 20, yPos);
+            yPos += 15;
+            
+            // Summary
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Summary', 20, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            const critical = comparisonResults.filter(c => c.type === 'critical').length;
+            const warnings = comparisonResults.filter(c => c.type === 'warning').length;
+            const info = comparisonResults.filter(c => c.type === 'info').length;
+            
+            doc.text(`Total Changes: ${comparisonResults.length}`, 30, yPos);
+            yPos += 6;
+            doc.setTextColor(244, 67, 54);
+            doc.text(`Critical: ${critical}`, 30, yPos);
+            yPos += 6;
+            doc.setTextColor(255, 152, 0);
+            doc.text(`Warnings: ${warnings}`, 30, yPos);
+            yPos += 6;
+            doc.setTextColor(33, 150, 243);
+            doc.text(`Info: ${info}`, 30, yPos);
+            yPos += 15;
+            
+            // Changes
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Changes Detected', 20, yPos);
+            yPos += 10;
+            
+            comparisonResults.forEach((change, index) => {
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                
+                doc.setFontSize(11);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`${index + 1}. ${change.parameter} - ${change.category}`, 20, yPos);
+                yPos += 6;
+                
+                doc.setFontSize(9);
+                doc.setTextColor(80, 80, 80);
+                const descLines = doc.splitTextToSize(change.description, 170);
+                doc.text(descLines, 25, yPos);
+                yPos += descLines.length * 5 + 3;
+                
+                doc.text('Old: ' + change.oldValue.substring(0, 60), 25, yPos);
+                yPos += 5;
+                doc.text('New: ' + change.newValue.substring(0, 60), 25, yPos);
+                yPos += 10;
+            });
+            
+            // Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Generated by Philbin Permit Renewal Diff Checker | Page ${i} of ${pageCount}`, 20, 285);
+            }
+            
+            doc.save('permit-renewal-diff-report.pdf');
+        });
+    </script>
+</body>
+</html>
