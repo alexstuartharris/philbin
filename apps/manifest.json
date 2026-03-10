@@ -1,8 +1,12 @@
 {
-  "generatedAt": "2026-03-09T00:18:00.000Z",
+  "generatedAt": "2026-03-10T06:19:46.072Z",
   "apps": [
     {
       "name": "csv-to-geojson",
+      "hasIndex": true
+    },
+    {
+      "name": "dmr-preflight-qa",
       "hasIndex": true
     },
     {
@@ -35,6 +39,10 @@
     },
     {
       "name": "invoice-gen",
+      "hasIndex": true
+    },
+    {
+      "name": "permit-renewal-diff",
       "hasIndex": true
     },
     {
