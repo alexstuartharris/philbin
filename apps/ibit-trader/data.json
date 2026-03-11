@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-11T03:09:59.008947+00:00",
+  "generatedAt": "2026-03-11T03:35:43.798862+00:00",
   "meta": {
     "cutoff": "2018-12-01",
     "stitchedRange": [
@@ -13,7 +13,8 @@
       "Close-based probabilities only (not intraday high/low).",
       "Exploratory flag when N < 20.",
       "Stitched series uses BTC proxy pre-IBIT and IBIT live thereafter."
-    ]
+    ],
+    "tuningPath": "/home/alex-harris/clawd/ibit-contrarian/analysis/autoresearch-best.json"
   },
   "definitions": {
     "datasets": [
@@ -41487,26 +41488,6 @@
     {
       "rank": 4,
       "direction": "down",
-      "shock": 6,
-      "target": 1,
-      "horizon": 10,
-      "mode": "within",
-      "n": 62,
-      "rate": 0.8225806451612904,
-      "ciLo": 0.7095843311430364,
-      "ciHi": 0.8979356223399492,
-      "stable": false,
-      "oos": {
-        "n": 12,
-        "rate": 0.75,
-        "ciLo": 0.46769466506643426,
-        "ciHi": 0.9110583316059453,
-        "drift": null
-      }
-    },
-    {
-      "rank": 5,
-      "direction": "down",
       "shock": 4,
       "target": 1,
       "horizon": 5,
@@ -41525,7 +41506,7 @@
       }
     },
     {
-      "rank": 6,
+      "rank": 5,
       "direction": "up",
       "shock": 6,
       "target": 1,
@@ -41545,7 +41526,7 @@
       }
     },
     {
-      "rank": 7,
+      "rank": 6,
       "direction": "down",
       "shock": 4,
       "target": 3,
@@ -41562,6 +41543,26 @@
         "ciLo": 0.5033399787115652,
         "ciHi": 0.7978538117569468,
         "drift": 0.02864583333333337
+      }
+    },
+    {
+      "rank": 7,
+      "direction": "down",
+      "shock": 6,
+      "target": 1,
+      "horizon": 10,
+      "mode": "within",
+      "n": 62,
+      "rate": 0.8225806451612904,
+      "ciLo": 0.7095843311430364,
+      "ciHi": 0.8979356223399492,
+      "stable": false,
+      "oos": {
+        "n": 12,
+        "rate": 0.75,
+        "ciLo": 0.46769466506643426,
+        "ciHi": 0.9110583316059453,
+        "drift": null
       }
     },
     {
@@ -41606,66 +41607,6 @@
     },
     {
       "rank": 10,
-      "direction": "up",
-      "shock": 8,
-      "target": 1,
-      "horizon": 10,
-      "mode": "within",
-      "n": 52,
-      "rate": 0.75,
-      "ciLo": 0.6179354205740265,
-      "ciHi": 0.8476684613640423,
-      "stable": false,
-      "oos": {
-        "n": 7,
-        "rate": 0.5714285714285714,
-        "ciLo": 0.2504583645276572,
-        "ciHi": 0.8417801447485302,
-        "drift": null
-      }
-    },
-    {
-      "rank": 11,
-      "direction": "down",
-      "shock": 6,
-      "target": 2,
-      "horizon": 10,
-      "mode": "within",
-      "n": 62,
-      "rate": 0.7419354838709677,
-      "ciLo": 0.6211887265285199,
-      "ciHi": 0.8344512385837193,
-      "stable": false,
-      "oos": {
-        "n": 12,
-        "rate": 0.75,
-        "ciLo": 0.46769466506643426,
-        "ciHi": 0.9110583316059453,
-        "drift": null
-      }
-    },
-    {
-      "rank": 12,
-      "direction": "down",
-      "shock": 8,
-      "target": 1,
-      "horizon": 10,
-      "mode": "within",
-      "n": 34,
-      "rate": 0.7647058823529411,
-      "ciLo": 0.6000386207746361,
-      "ciHi": 0.8756301446736042,
-      "stable": false,
-      "oos": {
-        "n": 5,
-        "rate": 0.8,
-        "ciLo": 0.37553462976252533,
-        "ciHi": 0.9637758913675698,
-        "drift": null
-      }
-    },
-    {
-      "rank": 13,
       "direction": "down",
       "shock": 4,
       "target": 1,
@@ -41685,7 +41626,7 @@
       }
     },
     {
-      "rank": 14,
+      "rank": 11,
       "direction": "down",
       "shock": 4,
       "target": 2,
@@ -41705,7 +41646,7 @@
       }
     },
     {
-      "rank": 15,
+      "rank": 12,
       "direction": "down",
       "shock": 4,
       "target": 4,
@@ -41725,47 +41666,7 @@
       }
     },
     {
-      "rank": 16,
-      "direction": "down",
-      "shock": 6,
-      "target": 1,
-      "horizon": 5,
-      "mode": "within",
-      "n": 62,
-      "rate": 0.7258064516129032,
-      "ciLo": 0.6040746035801102,
-      "ciHi": 0.8211893638579796,
-      "stable": false,
-      "oos": {
-        "n": 12,
-        "rate": 0.6666666666666666,
-        "ciLo": 0.39062208887279953,
-        "ciHi": 0.8618799089087867,
-        "drift": null
-      }
-    },
-    {
-      "rank": 17,
-      "direction": "down",
-      "shock": 6,
-      "target": 3,
-      "horizon": 10,
-      "mode": "within",
-      "n": 62,
-      "rate": 0.7258064516129032,
-      "ciLo": 0.6040746035801102,
-      "ciHi": 0.8211893638579796,
-      "stable": false,
-      "oos": {
-        "n": 12,
-        "rate": 0.6666666666666666,
-        "ciLo": 0.39062208887279953,
-        "ciHi": 0.8618799089087867,
-        "drift": null
-      }
-    },
-    {
-      "rank": 18,
+      "rank": 13,
       "direction": "down",
       "shock": 4,
       "target": 5,
@@ -41785,7 +41686,7 @@
       }
     },
     {
-      "rank": 19,
+      "rank": 14,
       "direction": "up",
       "shock": 4,
       "target": 1,
@@ -41805,7 +41706,67 @@
       }
     },
     {
-      "rank": 20,
+      "rank": 15,
+      "direction": "up",
+      "shock": 8,
+      "target": 1,
+      "horizon": 10,
+      "mode": "within",
+      "n": 52,
+      "rate": 0.75,
+      "ciLo": 0.6179354205740265,
+      "ciHi": 0.8476684613640423,
+      "stable": false,
+      "oos": {
+        "n": 7,
+        "rate": 0.5714285714285714,
+        "ciLo": 0.2504583645276572,
+        "ciHi": 0.8417801447485302,
+        "drift": null
+      }
+    },
+    {
+      "rank": 16,
+      "direction": "down",
+      "shock": 8,
+      "target": 1,
+      "horizon": 10,
+      "mode": "within",
+      "n": 34,
+      "rate": 0.7647058823529411,
+      "ciLo": 0.6000386207746361,
+      "ciHi": 0.8756301446736042,
+      "stable": false,
+      "oos": {
+        "n": 5,
+        "rate": 0.8,
+        "ciLo": 0.37553462976252533,
+        "ciHi": 0.9637758913675698,
+        "drift": null
+      }
+    },
+    {
+      "rank": 17,
+      "direction": "down",
+      "shock": 6,
+      "target": 2,
+      "horizon": 10,
+      "mode": "within",
+      "n": 62,
+      "rate": 0.7419354838709677,
+      "ciLo": 0.6211887265285199,
+      "ciHi": 0.8344512385837193,
+      "stable": false,
+      "oos": {
+        "n": 12,
+        "rate": 0.75,
+        "ciLo": 0.46769466506643426,
+        "ciHi": 0.9110583316059453,
+        "drift": null
+      }
+    },
+    {
+      "rank": 18,
       "direction": "up",
       "shock": 6,
       "target": 1,
@@ -41822,6 +41783,46 @@
         "ciLo": 0.5004361928391441,
         "ciHi": 0.8618613704787788,
         "drift": 0.10559006211180122
+      }
+    },
+    {
+      "rank": 19,
+      "direction": "up",
+      "shock": 4,
+      "target": 3,
+      "horizon": 10,
+      "mode": "within",
+      "n": 162,
+      "rate": 0.5925925925925926,
+      "ciLo": 0.5156355909220356,
+      "ciHi": 0.6652600681811303,
+      "stable": true,
+      "oos": {
+        "n": 64,
+        "rate": 0.5625,
+        "ciLo": 0.4408620895699301,
+        "ciHi": 0.6770599029559693,
+        "drift": 0.03009259259259256
+      }
+    },
+    {
+      "rank": 20,
+      "direction": "down",
+      "shock": 6,
+      "target": 1,
+      "horizon": 5,
+      "mode": "within",
+      "n": 62,
+      "rate": 0.7258064516129032,
+      "ciLo": 0.6040746035801102,
+      "ciHi": 0.8211893638579796,
+      "stable": false,
+      "oos": {
+        "n": 12,
+        "rate": 0.6666666666666666,
+        "ciLo": 0.39062208887279953,
+        "ciHi": 0.8618799089087867,
+        "drift": null
       }
     }
   ],
