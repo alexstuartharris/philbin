@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T16:47:25.807140+00:00",
+  "generatedAt": "2026-03-12T21:00:09.305872+00:00",
   "meta": {
     "cutoff": "2018-12-01",
     "stitchedRange": [
@@ -41840,9 +41840,9 @@
     "status": "ok",
     "date": "2026-03-12",
     "prevDate": "2026-03-11",
-    "close": 39.775,
+    "close": 39.95,
     "prevClose": 40.07,
-    "move1d": -0.007362116296481203,
+    "move1d": -0.002994759171449868,
     "direction": "down",
     "notable": false,
     "shockBucket": 4,
