@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Field Evidence QA Packager | Philbin Tools</title>
+  <style>
+    :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--ok:#3fb950;--warn:#d29922}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    .wrap{max-width:1000px;margin:0 auto;padding:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+    h1{margin:0 0 6px;font-size:1.45rem}.muted{color:var(--muted)} label{display:block;margin:8px 0 4px;color:var(--muted);font-size:.9rem}
+    input,textarea,button,select{font:inherit} input,textarea,select{width:100%;padding:10px;background:#0f141b;border:1px solid var(--line);border-radius:8px;color:var(--text)}
+    textarea{min-height:80px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px} @media(max-width:760px){.row{grid-template-columns:1fr}}
+    button{padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:#21262d;color:var(--text);cursor:pointer}.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    .check{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#0f141b}
+    .check input{width:auto;transform:scale(1.2)} .status{font-size:.92rem;margin-top:8px}.ok{color:var(--ok)} .warn{color:var(--warn)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>📦 Field Evidence QA Packager</h1>
+    <div class="muted">Turn field notes + metadata into a clean, checklist-backed evidence summary (JSON export).</div>
+  </div>
+
+  <div class="row">
+    <section class="card">
+      <h2 style="margin-top:0;font-size:1.05rem;">1) Project + Site</h2>
+      <label>Project name</label><input id="project" placeholder="e.g., Squamish Creek bank stabilization" />
+      <label>Site ID</label><input id="site" placeholder="e.g., SQM-042" />
+      <label>Inspector</label><input id="inspector" placeholder="Name" />
+      <label>Inspection date</label><input id="date" type="date" />
+      <label>Weather/conditions</label><input id="weather" placeholder="Overcast, light rain" />
+      <label>Observations summary</label><textarea id="observations" placeholder="Short summary of what was observed."></textarea>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0;font-size:1.05rem;">2) QA Checklist</h2>
+      <div id="checklist"></div>
+      <label>Follow-up actions</label>
+      <textarea id="actions" placeholder="List corrective actions or monitoring follow-ups."></textarea>
+      <label>Photo index (one per line)</label>
+      <textarea id="photos" placeholder="IMG_001.jpg - upstream crossing\nIMG_002.jpg - bank erosion"></textarea>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="actions">
+      <button class="primary" id="scoreBtn">Calculate QA Score</button>
+      <button id="exportBtn">Export Evidence Pack (JSON)</button>
+      <button id="sampleBtn">Load Sample Data</button>
+    </div>
+    <div id="status" class="status muted">No QA score yet.</div>
+  </section>
+
+  <div class="muted" style="text-align:center;padding:8px 0 20px;">Part of <a href="../" style="color:var(--accent)">Philbin Tools</a> • no login • local-first</div>
+</div>
+
+<script>
+const checklistItems = [
+  'Site metadata complete (project/site/date/inspector)',
+  'GPS/location captured in field notes',
+  'At least one representative photo listed',
+  'Observations mention compliance risks or exceedances',
+  'Follow-up action defined or explicitly marked as none'
+];
+
+const checklistRoot = document.getElementById('checklist');
+const statusEl = document.getElementById('status');
+let lastPack = null;
+
+function renderChecklist(){
+  checklistRoot.innerHTML = checklistItems.map((item, i)=>
+    `<label class="check"><input type="checkbox" id="ck${i}" /> <span>${item}</span></label>`
+  ).join('');
+}
+
+function val(id){ return document.getElementById(id).value.trim(); }
+
+function buildPack(){
+  const checks = checklistItems.map((item,i)=>({ item, pass: document.getElementById(`ck${i}`).checked }));
+  const passed = checks.filter(c=>c.pass).length;
+  const score = Math.round((passed / checks.length) * 100);
+
+  const photos = val('photos').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const pack = {
+    createdAt: new Date().toISOString(),
+    project: val('project'),
+    site: val('site'),
+    inspector: val('inspector'),
+    inspectionDate: val('date'),
+    weather: val('weather'),
+    observations: val('observations'),
+    followUpActions: val('actions'),
+    photoIndex: photos,
+    qa: { score, passed, total: checks.length, checks },
+    readiness: score >= 80 ? 'READY_FOR_CLIENT_REVIEW' : 'NEEDS_INTERNAL_QA'
+  };
+
+  localStorage.setItem('field_evidence_qa_packager_last_v1', JSON.stringify(pack));
+  lastPack = pack;
+  statusEl.className = `status ${score >= 80 ? 'ok' : 'warn'}`;
+  statusEl.textContent = `QA Score: ${score}% (${passed}/${checks.length}) • ${pack.readiness}`;
+  return pack;
+}
+
+function exportPack(){
+  const pack = lastPack || buildPack();
+  const blob = new Blob([JSON.stringify(pack, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `field-evidence-pack-${(pack.site || 'site').replace(/\s+/g,'-')}-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function loadSample(){
+  document.getElementById('project').value = 'Mamquam River bank assessment';
+  document.getElementById('site').value = 'MR-012';
+  document.getElementById('inspector').value = 'A. Harris';
+  document.getElementById('date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('weather').value = 'Cloudy, light wind';
+  document.getElementById('observations').value = 'Minor bank sloughing at right bank, no active turbidity plume observed downstream.';
+  document.getElementById('actions').value = 'Install temporary erosion control matting before next rainfall event.';
+  document.getElementById('photos').value = 'IMG_2041.jpg - upstream context\nIMG_2044.jpg - erosion feature close-up';
+  checklistItems.forEach((_,i)=> document.getElementById(`ck${i}`).checked = i !== 1);
+  buildPack();
+}
+
+renderChecklist();
+document.getElementById('scoreBtn').addEventListener('click', buildPack);
+document.getElementById('exportBtn').addEventListener('click', exportPack);
+document.getElementById('sampleBtn').addEventListener('click', loadSample);
+</script>
+</body>
+</html>

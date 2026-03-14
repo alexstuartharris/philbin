@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NPDES/DMR Pre-Submission QA | Philbin Tools</title>
+  <style>
+    :root{--bg:#0d1117;--card:#161b22;--muted:#8b949e;--text:#e6edf3;--accent:#58a6ff;--ok:#3fb950;--warn:#d29922;--bad:#f85149;--line:#30363d}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+    h1{margin:0 0 6px;font-size:1.45rem}.muted{color:var(--muted)} textarea,input,button{font:inherit}
+    textarea,input{width:100%;background:#0f141b;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:10px}
+    textarea{min-height:120px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px} @media(max-width:800px){.row{grid-template-columns:1fr}}
+    button{background:#21262d;border:1px solid var(--line);color:var(--text);padding:9px 12px;border-radius:8px;cursor:pointer}
+    .primary{background:var(--accent);border-color:var(--accent);color:white}
+    table{width:100%;border-collapse:collapse;font-size:.92rem} th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+    .pill{display:inline-block;border-radius:999px;padding:2px 8px;font-size:.75rem}.ok{background:rgba(63,185,80,.18);color:var(--ok)} .warn{background:rgba(210,153,34,.2);color:var(--warn)} .bad{background:rgba(248,81,73,.2);color:var(--bad)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🧪 NPDES/DMR Pre-Submission QA</h1>
+      <div class="muted">Paste permit limits + monitoring rows (CSV) and run quick preflight checks before filing.</div>
+    </div>
+
+    <div class="row">
+      <section class="card">
+        <h2 style="margin-top:0;font-size:1.05rem;">1) Permit Limits CSV</h2>
+        <div class="muted" style="margin-bottom:8px;">Columns: parameter, minLimit, maxLimit, requiredFrequencyPerMonth</div>
+        <textarea id="limitsCsv">parameter,minLimit,maxLimit,requiredFrequencyPerMonth
+pH,6,9,4
+TSS,,30,4
+BOD,,25,4
+Ammonia,,2,2</textarea>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-top:0;font-size:1.05rem;">2) Monitoring Data CSV</h2>
+        <div class="muted" style="margin-bottom:8px;">Columns: date,parameter,value,unit,labId</div>
+        <textarea id="dataCsv">date,parameter,value,unit,labId
+2026-03-01,pH,7.4,su,LAB-331
+2026-03-03,pH,9.4,su,LAB-332
+2026-03-06,TSS,28,mg/L,LAB-333
+2026-03-12,TSS,41,mg/L,LAB-334
+2026-03-05,BOD,22,mg/L,LAB-335
+2026-03-19,Ammonia,2.7,mg/L,LAB-336</textarea>
+      </section>
+    </div>
+
+    <section class="card">
+      <div class="actions">
+        <button class="primary" id="runBtn">Run QA Checks</button>
+        <button id="exportBtn">Export QA Report (JSON)</button>
+      </div>
+      <div id="summary" class="muted" style="margin-top:10px;">No checks run yet.</div>
+      <div style="overflow:auto;margin-top:10px;">
+        <table id="resultsTable" style="display:none;">
+          <thead><tr><th>Severity</th><th>Rule</th><th>Parameter</th><th>Date</th><th>Detail</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="muted" style="text-align:center;padding:10px 0 20px;">Part of <a href="../" style="color:var(--accent)">Philbin Tools</a> • local-only • no login</div>
+  </div>
+
+<script>
+const limitsCsv = document.getElementById('limitsCsv');
+const dataCsv = document.getElementById('dataCsv');
+const runBtn = document.getElementById('runBtn');
+const exportBtn = document.getElementById('exportBtn');
+const summary = document.getElementById('summary');
+const table = document.getElementById('resultsTable');
+const tbody = table.querySelector('tbody');
+let lastReport = null;
+
+function parseCsv(text){
+  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  if(!lines.length) return [];
+  const headers = lines[0].split(',').map(h=>h.trim());
+  return lines.slice(1).map(line=>{
+    const cols = line.split(',');
+    const row = {};
+    headers.forEach((h,i)=>row[h]=(cols[i]||'').trim());
+    return row;
+  });
+}
+
+function severityPill(level){
+  const cls = level==='ERROR'?'bad':(level==='WARN'?'warn':'ok');
+  return `<span class="pill ${cls}">${level}</span>`;
+}
+
+function runChecks(){
+  const limits = parseCsv(limitsCsv.value);
+  const rows = parseCsv(dataCsv.value);
+  const findings = [];
+
+  const limitMap = new Map();
+  limits.forEach(l=>limitMap.set((l.parameter||'').toLowerCase(), l));
+
+  const countByParam = {};
+  rows.forEach(r=>{
+    const p = (r.parameter||'').toLowerCase();
+    countByParam[p] = (countByParam[p]||0)+1;
+
+    if(!r.date || Number.isNaN(Date.parse(r.date))){
+      findings.push({severity:'ERROR', rule:'Invalid date', parameter:r.parameter||'', date:r.date||'', detail:'Date missing or malformed.'});
+    }
+    const v = Number(r.value);
+    if(Number.isNaN(v)){
+      findings.push({severity:'ERROR', rule:'Non-numeric value', parameter:r.parameter||'', date:r.date||'', detail:`Value '${r.value}' is not numeric.`});
+      return;
+    }
+
+    const lim = limitMap.get(p);
+    if(!lim){
+      findings.push({severity:'WARN', rule:'Parameter missing in permit table', parameter:r.parameter||'', date:r.date||'', detail:'No matching permit row found.'});
+      return;
+    }
+    const min = lim.minLimit === '' ? null : Number(lim.minLimit);
+    const max = lim.maxLimit === '' ? null : Number(lim.maxLimit);
+    if(min !== null && v < min) findings.push({severity:'ERROR', rule:'Below minimum limit', parameter:r.parameter, date:r.date, detail:`${v} < min ${min}`});
+    if(max !== null && v > max) findings.push({severity:'ERROR', rule:'Above maximum limit', parameter:r.parameter, date:r.date, detail:`${v} > max ${max}`});
+  });
+
+  limits.forEach(l=>{
+    const p = (l.parameter||'').toLowerCase();
+    const req = Number(l.requiredFrequencyPerMonth || 0);
+    if(req > 0 && (countByParam[p]||0) < req){
+      findings.push({severity:'WARN', rule:'Sampling frequency shortfall', parameter:l.parameter, date:'', detail:`${countByParam[p]||0}/${req} samples in current data.`});
+    }
+  });
+
+  const errors = findings.filter(f=>f.severity==='ERROR').length;
+  const warns = findings.filter(f=>f.severity==='WARN').length;
+  const status = errors ? 'NOT READY' : (warns ? 'REVIEW NEEDED' : 'READY');
+
+  summary.innerHTML = `<strong>Result:</strong> ${status} • ${errors} errors • ${warns} warnings • ${rows.length} records checked.`;
+  tbody.innerHTML = findings.map(f=>`<tr><td>${severityPill(f.severity)}</td><td>${f.rule}</td><td>${f.parameter||'-'}</td><td>${f.date||'-'}</td><td>${f.detail}</td></tr>`).join('');
+  table.style.display = 'table';
+
+  lastReport = {
+    createdAt: new Date().toISOString(),
+    status,
+    counts: { errors, warnings: warns, checkedRecords: rows.length },
+    findings,
+    permitRows: limits.length
+  };
+  localStorage.setItem('npdes_dmr_qa_last_report_v1', JSON.stringify(lastReport));
+}
+
+function exportReport(){
+  if(!lastReport){ alert('Run QA checks first.'); return; }
+  const blob = new Blob([JSON.stringify(lastReport, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `npdes-dmr-qa-report-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+runBtn.addEventListener('click', runChecks);
+exportBtn.addEventListener('click', exportReport);
+</script>
+</body>
+</html>
