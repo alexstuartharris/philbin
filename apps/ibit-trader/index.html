@@ -66,6 +66,9 @@
     .signalMove.up{color:var(--ok);} .signalMove.down{color:var(--bad);} .signalMove.flat{color:var(--muted);}
     .signalList{margin:10px 0 0; padding-left:18px;}
     .signalList li{margin:6px 0;}
+    .signalBadges{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
+    .signalBadge{display:inline-flex; align-items:center; border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-size:12px; font-weight:800;}
+    .signalBadge.warn{color:#8a5200; background:rgba(192,106,0,.12); border-color:rgba(192,106,0,.35);}
   </style>
 </head>
 <body>
@@ -84,6 +87,7 @@
           <span class="pill" id="metaRange">Range: —</span>
           <span class="pill" id="metaRows">Rows: —</span>
           <span class="pill" id="metaGenerated">Updated: —</span>
+          <span class="pill" id="metaResearch">Research version: —</span>
         </div>
         <button id="btnCopy" class="secondary">Copy summary</button>
       </div>
@@ -97,8 +101,10 @@
             <div class="small" id="liveTitle">Latest IBIT move: —</div>
             <div class="signalMove flat" id="liveMove">—</div>
             <div class="small" id="liveTag">No notable shock yet.</div>
+            <div class="signalBadges" id="liveBadges"></div>
           </div>
           <div class="small" id="liveSource">Source: —</div>
+          <div class="small" id="liveWindows">Windows: —</div>
         </div>
         <ol class="signalList" id="liveScenarios"></ol>
       </div>
@@ -248,11 +254,14 @@
       metaRange: document.getElementById('metaRange'),
       metaRows: document.getElementById('metaRows'),
       metaGenerated: document.getElementById('metaGenerated'),
+      metaResearch: document.getElementById('metaResearch'),
       btnCopy: document.getElementById('btnCopy'),
       liveTitle: document.getElementById('liveTitle'),
       liveMove: document.getElementById('liveMove'),
       liveTag: document.getElementById('liveTag'),
+      liveBadges: document.getElementById('liveBadges'),
       liveSource: document.getElementById('liveSource'),
+      liveWindows: document.getElementById('liveWindows'),
       liveScenarios: document.getElementById('liveScenarios'),
     };
 
@@ -274,22 +283,46 @@
         els.liveMove.textContent = '—';
         els.liveTag.textContent = 'Could not compute signal from latest data.';
         els.liveSource.textContent = 'Source: —';
+        els.liveWindows.textContent = 'Windows: —';
+        els.liveBadges.innerHTML = '';
         els.liveScenarios.innerHTML = '<li>No scenario data.</li>';
         return;
       }
 
-      const sign = ls.move1d > 0 ? '+' : '';
-      const moveTxt = `${sign}${(ls.move1d*100).toFixed(2)}%`;
-      els.liveTitle.textContent = `Latest IBIT move (${ls.prevDate} → ${ls.date})`;
+      const move = Number.isFinite(ls.moveWindow) ? ls.moveWindow : ls.move1d;
+      const moveDays = ls.windowDays || 1;
+      const startDate = ls.windowStartDate || ls.prevDate;
+      const endDate = ls.windowEndDate || ls.date;
+      const sign = move > 0 ? '+' : '';
+      const moveTxt = `${sign}${(move*100).toFixed(2)}%`;
+      els.liveTitle.textContent = `Latest IBIT move (${moveDays}d: ${startDate} → ${endDate})`;
       els.liveMove.textContent = moveTxt;
-      els.liveMove.className = `signalMove ${ls.move1d > 0 ? 'up' : ls.move1d < 0 ? 'down' : 'flat'}`;
+      els.liveMove.className = `signalMove ${move > 0 ? 'up' : move < 0 ? 'down' : 'flat'}`;
       if(ls.notable){
         const dirLabel = ls.direction === 'down' ? 'down-shock bounce' : 'up-shock retrace';
-        els.liveTag.textContent = `Notable move detected (>= ${ls.shockBucket}% bucket): showing top ${dirLabel} scenarios.`;
+        els.liveTag.textContent = `Notable ${moveDays}d move detected (>= ${ls.shockBucket}% bucket): showing top ${dirLabel} scenarios.`;
       } else {
-        els.liveTag.textContent = `Move is below 4% shock threshold; showing closest ${ls.direction === 'down' ? 'down' : 'up'} 4% scenario priors.`;
+        els.liveTag.textContent = `No notable 1–3d shock yet (>= 4%); showing closest ${ls.direction === 'down' ? 'down' : 'up'} 4% scenario priors.`;
       }
       els.liveSource.textContent = `Source dataset: ${ls.sourceDataset.toUpperCase()}`;
+
+      const badges = [];
+      if(ls.threeDayShockDetected){
+        const m3 = Number.isFinite(ls.threeDayMove) ? `${ls.threeDayMove >= 0 ? '+' : ''}${(ls.threeDayMove*100).toFixed(2)}%` : 'n/a';
+        badges.push(`<span class="signalBadge warn">3-day shock detected (${m3})</span>`);
+      }
+      els.liveBadges.innerHTML = badges.join('');
+
+      const windows = Array.isArray(ls.windowMoves) ? ls.windowMoves : [];
+      if(windows.length){
+        const text = windows
+          .sort((a,b) => a.days - b.days)
+          .map(w => `${w.days}d ${(w.ret >= 0 ? '+' : '')}${(w.ret*100).toFixed(2)}%`)
+          .join(' · ');
+        els.liveWindows.textContent = `Windows: ${text}`;
+      } else {
+        els.liveWindows.textContent = 'Windows: 1d only';
+      }
 
       els.liveScenarios.innerHTML = '';
       if(!ls.topScenarios || !ls.topScenarios.length){
@@ -407,6 +440,7 @@
       els.metaRange.textContent = `Range: ${DATA.meta.stitchedRange[0]} → ${DATA.meta.stitchedRange[1]}`;
       els.metaRows.textContent = `Rows: ${DATA.meta.stitchedRows}`;
       els.metaGenerated.textContent = `Updated: ${new Date(DATA.generatedAt).toLocaleString()}`;
+      els.metaResearch.textContent = `Research version: ${DATA.meta.researchVersion || 'unknown'}`;
 
       renderLiveSignal();
       renderStandouts();
