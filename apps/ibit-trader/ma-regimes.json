@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-16T10:00:47.507879+00:00",
+  "generatedAt": "2026-03-16T21:00:20.635853+00:00",
   "notes": [
     "Additional regime families beyond BMSB.",
     "Regimes are BTC close vs weekly SMA100 or SMA200 (as-of prior completed week, no lookahead).",
@@ -116,9 +116,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 50,
-          "hits": 39,
-          "rate": 0.78
+          "n": 51,
+          "hits": 40,
+          "rate": 0.7843137254901961
         },
         {
           "direction": "up",
@@ -226,9 +226,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 50,
+          "n": 51,
           "hits": 33,
-          "rate": 0.66
+          "rate": 0.6470588235294118
         },
         {
           "direction": "up",
@@ -336,9 +336,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 50,
+          "n": 51,
           "hits": 32,
-          "rate": 0.64
+          "rate": 0.6274509803921569
         },
         {
           "direction": "up",
@@ -446,9 +446,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 50,
+          "n": 51,
           "hits": 29,
-          "rate": 0.58
+          "rate": 0.5686274509803921
         },
         {
           "direction": "up",
@@ -556,9 +556,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 50,
+          "n": 51,
           "hits": 25,
-          "rate": 0.5
+          "rate": 0.49019607843137253
         },
         {
           "direction": "up",
@@ -4777,7 +4777,7 @@
         "state": "below",
         "ma": 87393.61300000007,
         "weekEnd": "2026-03-15",
-        "btcClose": 73332.0
+        "btcClose": 74215.3
       }
     },
     "ma200w": {
@@ -4879,9 +4879,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 214,
-          "hits": 157,
-          "rate": 0.7336448598130841
+          "n": 215,
+          "hits": 158,
+          "rate": 0.7348837209302326
         },
         {
           "direction": "up",
@@ -4989,9 +4989,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 214,
+          "n": 215,
           "hits": 137,
-          "rate": 0.6401869158878505
+          "rate": 0.6372093023255814
         },
         {
           "direction": "up",
@@ -5099,9 +5099,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 214,
+          "n": 215,
           "hits": 126,
-          "rate": 0.5887850467289719
+          "rate": 0.586046511627907
         },
         {
           "direction": "up",
@@ -5209,9 +5209,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 214,
+          "n": 215,
           "hits": 107,
-          "rate": 0.5
+          "rate": 0.49767441860465117
         },
         {
           "direction": "up",
@@ -5319,9 +5319,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 214,
+          "n": 215,
           "hits": 91,
-          "rate": 0.4252336448598131
+          "rate": 0.4232558139534884
         },
         {
           "direction": "up",
@@ -9491,7 +9491,7 @@
         "state": "above",
         "ma": 58819.88250000003,
         "weekEnd": "2026-03-15",
-        "btcClose": 73332.0
+        "btcClose": 74215.3
       }
     }
   }
