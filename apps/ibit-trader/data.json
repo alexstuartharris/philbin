@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-16T21:00:11.575735+00:00",
+  "generatedAt": "2026-03-18T11:46:58.174224+00:00",
   "meta": {
     "cutoff": "2018-12-01",
     "stitchedRange": [
       "2018-12-03",
-      "2026-03-16"
+      "2026-03-17"
     ],
-    "stitchedRows": 1864,
+    "stitchedRows": 1865,
     "discoveryEnd": "2023-12-29",
     "oosStart": "2024-01-02",
     "researchVersion": "v2026.03.16-live-window-1to3d",
@@ -41848,46 +41848,46 @@
   ],
   "liveSignal": {
     "status": "ok",
-    "date": "2026-03-16",
-    "prevDate": "2026-03-13",
-    "close": 41.94,
-    "prevClose": 40.37,
-    "move1d": 0.038890265048303174,
-    "moveWindow": 0.049812265331664385,
-    "windowDays": 2,
+    "date": "2026-03-17",
+    "prevDate": "2026-03-16",
+    "close": 42.27,
+    "prevClose": 41.94,
+    "move1d": 0.007868383404864288,
+    "moveWindow": 0.05807259073842297,
+    "windowDays": 3,
     "windowStartDate": "2026-03-12",
-    "windowEndDate": "2026-03-16",
+    "windowEndDate": "2026-03-17",
     "windowMoves": [
       {
         "days": 1,
-        "startDate": "2026-03-13",
-        "endDate": "2026-03-16",
-        "ret": 0.038890265048303174,
+        "startDate": "2026-03-16",
+        "endDate": "2026-03-17",
+        "ret": 0.007868383404864288,
         "direction": "up",
         "notable": false,
         "shockBucket": null
       },
       {
         "days": 2,
-        "startDate": "2026-03-12",
-        "endDate": "2026-03-16",
-        "ret": 0.049812265331664385,
+        "startDate": "2026-03-13",
+        "endDate": "2026-03-17",
+        "ret": 0.04706465196928433,
         "direction": "up",
         "notable": true,
         "shockBucket": 4
       },
       {
         "days": 3,
-        "startDate": "2026-03-11",
-        "endDate": "2026-03-16",
-        "ret": 0.04666833042176188,
+        "startDate": "2026-03-12",
+        "endDate": "2026-03-17",
+        "ret": 0.05807259073842297,
         "direction": "up",
         "notable": true,
         "shockBucket": 4
       }
     ],
     "threeDayShockDetected": true,
-    "threeDayMove": 0.04666833042176188,
+    "threeDayMove": 0.05807259073842297,
     "threeDayDirection": "up",
     "direction": "up",
     "notable": true,
