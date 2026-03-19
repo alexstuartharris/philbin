@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T10:00:13.592390+00:00",
+  "generatedAt": "2026-03-19T21:00:21.324853+00:00",
   "notes": [
     "Additional regime families beyond BMSB.",
     "Regimes are BTC close vs weekly SMA100 or SMA200 (as-of prior completed week, no lookahead).",
@@ -2228,9 +2228,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 22,
-          "rate": 0.4230769230769231
+          "rate": 0.41509433962264153
         },
         {
           "direction": "down",
@@ -2338,9 +2338,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 19,
-          "rate": 0.36538461538461536
+          "rate": 0.3584905660377358
         },
         {
           "direction": "down",
@@ -2448,9 +2448,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 14,
-          "rate": 0.2692307692307692
+          "rate": 0.2641509433962264
         },
         {
           "direction": "down",
@@ -2558,9 +2558,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 10,
-          "rate": 0.19230769230769232
+          "rate": 0.18867924528301888
         },
         {
           "direction": "down",
@@ -2668,9 +2668,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 10,
-          "rate": 0.19230769230769232
+          "rate": 0.18867924528301888
         },
         {
           "direction": "down",
@@ -4777,7 +4777,7 @@
         "state": "below",
         "ma": 87393.61300000007,
         "weekEnd": "2026-03-15",
-        "btcClose": 70516.3
+        "btcClose": 70484.0
       }
     },
     "ma200w": {
@@ -6991,9 +6991,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 58,
-          "rate": 0.40559440559440557
+          "rate": 0.4027777777777778
         },
         {
           "direction": "down",
@@ -7101,9 +7101,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 47,
-          "rate": 0.32867132867132864
+          "rate": 0.3263888888888889
         },
         {
           "direction": "down",
@@ -7211,9 +7211,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 30,
-          "rate": 0.2097902097902098
+          "rate": 0.20833333333333334
         },
         {
           "direction": "down",
@@ -7321,9 +7321,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 26,
-          "rate": 0.18181818181818182
+          "rate": 0.18055555555555555
         },
         {
           "direction": "down",
@@ -7431,9 +7431,9 @@
           "horizon": 1,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 22,
-          "rate": 0.15384615384615385
+          "rate": 0.1527777777777778
         },
         {
           "direction": "down",
@@ -9215,12 +9215,12 @@
           "shock": 4,
           "target": 3,
           "horizon": 1,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.2097902097902098,
+          "pAbove": 0.20833333333333334,
           "pBelow": 0.3181818181818182,
-          "deltaAboveMinusBelow": -0.10839160839160839,
-          "score": 0.5084017082326094
+          "deltaAboveMinusBelow": -0.10984848484848483,
+          "score": 0.5152350645260585
         },
         {
           "direction": "down",
@@ -9263,12 +9263,12 @@
           "shock": 4,
           "target": 2,
           "horizon": 1,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.32867132867132864,
+          "pAbove": 0.3263888888888889,
           "pBelow": 0.4090909090909091,
-          "deltaAboveMinusBelow": -0.08041958041958047,
-          "score": 0.37720126739838794
+          "deltaAboveMinusBelow": -0.08270202020202022,
+          "score": 0.3879068589247913
         },
         {
           "direction": "down",
@@ -9357,6 +9357,18 @@
         {
           "direction": "down",
           "shock": 4,
+          "target": 5,
+          "horizon": 1,
+          "nAbove": 144,
+          "nBelow": 22,
+          "pAbove": 0.1527777777777778,
+          "pBelow": 0.18181818181818182,
+          "deltaAboveMinusBelow": -0.029040404040404033,
+          "score": 0.1362115687827511
+        },
+        {
+          "direction": "down",
+          "shock": 4,
           "target": 3,
           "horizon": 3,
           "nAbove": 143,
@@ -9364,18 +9376,6 @@
           "pAbove": 0.4825174825174825,
           "pBelow": 0.45454545454545453,
           "deltaAboveMinusBelow": 0.02797202797202797,
-          "score": 0.1312004408342218
-        },
-        {
-          "direction": "down",
-          "shock": 4,
-          "target": 5,
-          "horizon": 1,
-          "nAbove": 143,
-          "nBelow": 22,
-          "pAbove": 0.15384615384615385,
-          "pBelow": 0.18181818181818182,
-          "deltaAboveMinusBelow": -0.02797202797202797,
           "score": 0.1312004408342218
         },
         {
@@ -9467,31 +9467,31 @@
           "shock": 4,
           "target": 1,
           "horizon": 1,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.40559440559440557,
+          "pAbove": 0.4027777777777778,
           "pBelow": 0.4090909090909091,
-          "deltaAboveMinusBelow": -0.0034965034965035446,
-          "score": 0.01640005510427795
+          "deltaAboveMinusBelow": -0.006313131313131326,
+          "score": 0.029611210604945957
         },
         {
           "direction": "down",
           "shock": 4,
           "target": 4,
           "horizon": 1,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.18181818181818182,
+          "pAbove": 0.18055555555555555,
           "pBelow": 0.18181818181818182,
-          "deltaAboveMinusBelow": 0.0,
-          "score": 0.0
+          "deltaAboveMinusBelow": -0.0012626262626262708,
+          "score": 0.005922242120989217
         }
       ],
       "current": {
         "state": "above",
         "ma": 58819.88250000003,
         "weekEnd": "2026-03-15",
-        "btcClose": 70516.3
+        "btcClose": 70484.0
       }
     }
   }
