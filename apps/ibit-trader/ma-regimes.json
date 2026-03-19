@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T21:00:22.263521+00:00",
+  "generatedAt": "2026-03-19T10:00:13.592390+00:00",
   "notes": [
     "Additional regime families beyond BMSB.",
     "Regimes are BTC close vs weekly SMA100 or SMA200 (as-of prior completed week, no lookahead).",
@@ -4777,7 +4777,7 @@
         "state": "below",
         "ma": 87393.61300000007,
         "weekEnd": "2026-03-15",
-        "btcClose": 71196.6
+        "btcClose": 70516.3
       }
     },
     "ma200w": {
@@ -9491,7 +9491,7 @@
         "state": "above",
         "ma": 58819.88250000003,
         "weekEnd": "2026-03-15",
-        "btcClose": 71196.6
+        "btcClose": 70516.3
       }
     }
   }
