@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-20T10:00:30.308347+00:00",
+  "generatedAt": "2026-03-21T10:00:42.289709+00:00",
   "notes": [
     "Additional regime families beyond BMSB.",
     "Regimes are BTC close vs weekly SMA100 or SMA200 (as-of prior completed week, no lookahead).",
@@ -2250,9 +2250,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 30,
-          "rate": 0.5769230769230769
+          "rate": 0.5660377358490566
         },
         {
           "direction": "down",
@@ -2316,9 +2316,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 51,
-          "hits": 42,
-          "rate": 0.8235294117647058
+          "n": 52,
+          "hits": 43,
+          "rate": 0.8269230769230769
         },
         {
           "direction": "down",
@@ -2360,9 +2360,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 29,
-          "rate": 0.5576923076923077
+          "rate": 0.5471698113207547
         },
         {
           "direction": "down",
@@ -2426,9 +2426,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 51,
-          "hits": 37,
-          "rate": 0.7254901960784313
+          "n": 52,
+          "hits": 38,
+          "rate": 0.7307692307692307
         },
         {
           "direction": "down",
@@ -2470,9 +2470,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 25,
-          "rate": 0.4807692307692308
+          "rate": 0.4716981132075472
         },
         {
           "direction": "down",
@@ -2536,9 +2536,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 51,
-          "hits": 36,
-          "rate": 0.7058823529411765
+          "n": 52,
+          "hits": 37,
+          "rate": 0.7115384615384616
         },
         {
           "direction": "down",
@@ -2580,9 +2580,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 21,
-          "rate": 0.40384615384615385
+          "rate": 0.39622641509433965
         },
         {
           "direction": "down",
@@ -2646,9 +2646,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 51,
-          "hits": 35,
-          "rate": 0.6862745098039216
+          "n": 52,
+          "hits": 36,
+          "rate": 0.6923076923076923
         },
         {
           "direction": "down",
@@ -2690,9 +2690,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 19,
-          "rate": 0.36538461538461536
+          "rate": 0.3584905660377358
         },
         {
           "direction": "down",
@@ -2756,9 +2756,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "below",
-          "n": 51,
-          "hits": 34,
-          "rate": 0.6666666666666666
+          "n": 52,
+          "hits": 35,
+          "rate": 0.6730769230769231
         },
         {
           "direction": "down",
@@ -4605,18 +4605,6 @@
           "score": 0.8586884393543096
         },
         {
-          "direction": "down",
-          "shock": 4,
-          "target": 5,
-          "horizon": 2,
-          "nAbove": 113,
-          "nBelow": 52,
-          "pAbove": 0.24778761061946902,
-          "pBelow": 0.36538461538461536,
-          "deltaAboveMinusBelow": -0.11759700476514634,
-          "score": 0.8480040610434364
-        },
-        {
           "direction": "up",
           "shock": 6,
           "target": 4,
@@ -4667,14 +4655,14 @@
         {
           "direction": "down",
           "shock": 4,
-          "target": 4,
+          "target": 5,
           "horizon": 2,
           "nAbove": 113,
-          "nBelow": 52,
-          "pAbove": 0.2920353982300885,
-          "pBelow": 0.40384615384615385,
-          "deltaAboveMinusBelow": -0.11181075561606535,
-          "score": 0.8062788250441936
+          "nBelow": 53,
+          "pAbove": 0.24778761061946902,
+          "pBelow": 0.3584905660377358,
+          "deltaAboveMinusBelow": -0.1107029554182668,
+          "score": 0.8059296805131044
         },
         {
           "direction": "down",
@@ -4711,6 +4699,18 @@
           "pBelow": 0.2,
           "deltaAboveMinusBelow": -0.14047619047619048,
           "score": 0.7694197831620191
+        },
+        {
+          "direction": "down",
+          "shock": 4,
+          "target": 4,
+          "horizon": 2,
+          "nAbove": 113,
+          "nBelow": 53,
+          "pAbove": 0.2920353982300885,
+          "pBelow": 0.39622641509433965,
+          "deltaAboveMinusBelow": -0.10419101686425114,
+          "score": 0.7585220522476279
         },
         {
           "direction": "down",
@@ -4763,21 +4763,21 @@
         {
           "direction": "down",
           "shock": 4,
-          "target": 3,
-          "horizon": 2,
+          "target": 4,
+          "horizon": 10,
           "nAbove": 113,
           "nBelow": 52,
-          "pAbove": 0.3805309734513274,
-          "pBelow": 0.4807692307692308,
-          "deltaAboveMinusBelow": -0.10023825731790337,
-          "score": 0.722828353045708
+          "pAbove": 0.5929203539823009,
+          "pBelow": 0.6923076923076923,
+          "deltaAboveMinusBelow": -0.09938733832539137,
+          "score": 0.7166922889281717
         }
       ],
       "current": {
         "state": "below",
         "ma": 87393.61300000007,
         "weekEnd": "2026-03-15",
-        "btcClose": 70584.0
+        "btcClose": 70076.5
       }
     },
     "ma200w": {
@@ -7013,9 +7013,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 81,
-          "rate": 0.5664335664335665
+          "rate": 0.5625
         },
         {
           "direction": "down",
@@ -7079,9 +7079,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 142,
-          "hits": 112,
-          "rate": 0.7887323943661971
+          "n": 143,
+          "hits": 113,
+          "rate": 0.7902097902097902
         },
         {
           "direction": "down",
@@ -7123,9 +7123,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 72,
-          "rate": 0.5034965034965035
+          "rate": 0.5
         },
         {
           "direction": "down",
@@ -7189,9 +7189,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 142,
-          "hits": 105,
-          "rate": 0.7394366197183099
+          "n": 143,
+          "hits": 106,
+          "rate": 0.7412587412587412
         },
         {
           "direction": "down",
@@ -7233,9 +7233,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 58,
-          "rate": 0.40559440559440557
+          "rate": 0.4027777777777778
         },
         {
           "direction": "down",
@@ -7299,9 +7299,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 142,
-          "hits": 98,
-          "rate": 0.6901408450704225
+          "n": 143,
+          "hits": 99,
+          "rate": 0.6923076923076923
         },
         {
           "direction": "down",
@@ -7343,9 +7343,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 45,
-          "rate": 0.3146853146853147
+          "rate": 0.3125
         },
         {
           "direction": "down",
@@ -7409,9 +7409,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 142,
-          "hits": 88,
-          "rate": 0.6197183098591549
+          "n": 143,
+          "hits": 89,
+          "rate": 0.6223776223776224
         },
         {
           "direction": "down",
@@ -7453,9 +7453,9 @@
           "horizon": 2,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 39,
-          "rate": 0.2727272727272727
+          "rate": 0.2708333333333333
         },
         {
           "direction": "down",
@@ -7519,9 +7519,9 @@
           "horizon": 10,
           "mode": "within",
           "regime": "above",
-          "n": 142,
-          "hits": 87,
-          "rate": 0.6126760563380281
+          "n": 143,
+          "hits": 88,
+          "rate": 0.6153846153846154
         },
         {
           "direction": "down",
@@ -9191,12 +9191,12 @@
           "shock": 4,
           "target": 1,
           "horizon": 10,
-          "nAbove": 142,
+          "nAbove": 143,
           "nBelow": 22,
-          "pAbove": 0.7887323943661971,
+          "pAbove": 0.7902097902097902,
           "pBelow": 0.9090909090909091,
-          "deltaAboveMinusBelow": -0.12035851472471193,
-          "score": 0.5645314742937292
+          "deltaAboveMinusBelow": -0.11888111888111885,
+          "score": 0.5576018735454426
         },
         {
           "direction": "down",
@@ -9227,24 +9227,24 @@
           "shock": 4,
           "target": 4,
           "horizon": 2,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.3146853146853147,
+          "pAbove": 0.3125,
           "pBelow": 0.4090909090909091,
-          "deltaAboveMinusBelow": -0.09440559440559443,
-          "score": 0.4428014878154987
+          "deltaAboveMinusBelow": -0.09659090909090912,
+          "score": 0.4530515222556723
         },
         {
           "direction": "down",
           "shock": 4,
           "target": 5,
           "horizon": 2,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.2727272727272727,
+          "pAbove": 0.2708333333333333,
           "pBelow": 0.36363636363636365,
-          "deltaAboveMinusBelow": -0.09090909090909094,
-          "score": 0.42640143271122105
+          "deltaAboveMinusBelow": -0.09280303030303033,
+          "score": 0.4352847958927048
         },
         {
           "direction": "down",
@@ -9273,18 +9273,6 @@
         {
           "direction": "down",
           "shock": 4,
-          "target": 1,
-          "horizon": 2,
-          "nAbove": 143,
-          "nBelow": 22,
-          "pAbove": 0.5664335664335665,
-          "pBelow": 0.5,
-          "deltaAboveMinusBelow": 0.06643356643356646,
-          "score": 0.31160104698127694
-        },
-        {
-          "direction": "down",
-          "shock": 4,
           "target": 5,
           "horizon": 3,
           "nAbove": 143,
@@ -9309,6 +9297,18 @@
         {
           "direction": "down",
           "shock": 4,
+          "target": 1,
+          "horizon": 2,
+          "nAbove": 144,
+          "nBelow": 22,
+          "pAbove": 0.5625,
+          "pBelow": 0.5,
+          "deltaAboveMinusBelow": 0.0625,
+          "score": 0.29315098498896436
+        },
+        {
+          "direction": "down",
+          "shock": 4,
           "target": 2,
           "horizon": 5,
           "nAbove": 143,
@@ -9321,26 +9321,26 @@
         {
           "direction": "down",
           "shock": 4,
-          "target": 2,
+          "target": 3,
           "horizon": 2,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.5034965034965035,
+          "pAbove": 0.4027777777777778,
           "pBelow": 0.45454545454545453,
-          "deltaAboveMinusBelow": 0.048951048951049014,
-          "score": 0.22960077145988847
+          "deltaAboveMinusBelow": -0.05176767676767674,
+          "score": 0.2428119269605562
         },
         {
           "direction": "down",
           "shock": 4,
-          "target": 3,
+          "target": 2,
           "horizon": 2,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.40559440559440557,
+          "pAbove": 0.5,
           "pBelow": 0.45454545454545453,
-          "deltaAboveMinusBelow": -0.04895104895104896,
-          "score": 0.2296007714598882
+          "deltaAboveMinusBelow": 0.04545454545454547,
+          "score": 0.21320071635561053
         },
         {
           "direction": "down",
@@ -9395,12 +9395,12 @@
           "shock": 4,
           "target": 5,
           "horizon": 10,
-          "nAbove": 142,
+          "nAbove": 143,
           "nBelow": 22,
-          "pAbove": 0.6126760563380281,
+          "pAbove": 0.6153846153846154,
           "pBelow": 0.6363636363636364,
-          "deltaAboveMinusBelow": -0.023687580025608224,
-          "score": 0.11110459866419149
+          "deltaAboveMinusBelow": -0.020979020979020935,
+          "score": 0.09840033062566615
         },
         {
           "direction": "down",
@@ -9417,38 +9417,38 @@
         {
           "direction": "down",
           "shock": 4,
-          "target": 4,
+          "target": 2,
           "horizon": 10,
-          "nAbove": 142,
+          "nAbove": 143,
           "nBelow": 22,
-          "pAbove": 0.6197183098591549,
-          "pBelow": 0.6363636363636364,
-          "deltaAboveMinusBelow": -0.016645326504481472,
-          "score": 0.07807350176402654
+          "pAbove": 0.7412587412587412,
+          "pBelow": 0.7272727272727273,
+          "deltaAboveMinusBelow": 0.013986013986013957,
+          "score": 0.06560022041711076
         },
         {
           "direction": "down",
           "shock": 4,
-          "target": 2,
+          "target": 4,
           "horizon": 10,
-          "nAbove": 142,
+          "nAbove": 143,
           "nBelow": 22,
-          "pAbove": 0.7394366197183099,
-          "pBelow": 0.7272727272727273,
-          "deltaAboveMinusBelow": 0.01216389244558258,
-          "score": 0.057053712827557695
+          "pAbove": 0.6223776223776224,
+          "pBelow": 0.6363636363636364,
+          "deltaAboveMinusBelow": -0.013986013986013957,
+          "score": 0.06560022041711076
         },
         {
           "direction": "down",
           "shock": 4,
           "target": 3,
           "horizon": 10,
-          "nAbove": 142,
+          "nAbove": 143,
           "nBelow": 22,
-          "pAbove": 0.6901408450704225,
+          "pAbove": 0.6923076923076923,
           "pBelow": 0.6818181818181818,
-          "deltaAboveMinusBelow": 0.008322663252240736,
-          "score": 0.03903675088201327
+          "deltaAboveMinusBelow": 0.010489510489510523,
+          "score": 0.04920016531283333
         },
         {
           "direction": "down",
@@ -9491,7 +9491,7 @@
         "state": "above",
         "ma": 58819.88250000003,
         "weekEnd": "2026-03-15",
-        "btcClose": 70584.0
+        "btcClose": 70076.5
       }
     }
   }
