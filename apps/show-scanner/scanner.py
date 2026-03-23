@@ -1,0 +1,490 @@
+#!/usr/bin/env python3
+"""
+Show Scanner - Weekly music event digest for Alex
+
+Scans:
+- Songkick (Vancouver metro) - filtered by venue + genre
+- Trickster's Hideout (Squamish) - via Eventbrite
+- The Backyard (Squamish) - direct site
+- Brackendale Art Gallery - direct site
+
+Outputs markdown digest for Telegram delivery.
+"""
+
+import html
+import json
+import re
+import sys
+from datetime import datetime, timedelta
+from urllib.request import urlopen, Request
+from urllib.error import URLError
+
+
+# === Configuration ===
+
+VANCOUVER_VENUES = {
+    "red-gate": "Red Gate",
+    "green-auto": "Green Auto", 
+    "fox-cabaret": "Fox Cabaret",
+    "biltmore-cabaret": "Biltmore Cabaret",
+    "biltmore": "Biltmore",
+    "vogue-theatre": "Vogue Theatre",
+    "lido": "The Lido",
+    "commodore-ballroom": "Commodore Ballroom",
+    "guilt-co": "Guilt & Co",
+    "lanalous": "Lanalou's",
+    "cobalt": "The Cobalt",
+    "heatley": "The Heatley",
+    "orpheum-theatre": "Orpheum Theatre",
+    "orpheum": "Orpheum",
+    "rickshaw-theatre": "Rickshaw Theatre",
+}
+
+SQUAMISH_VENUES = {
+    "brackendale-art-gallery": "Brackendale Art Gallery",
+    "tricksters-hideout": "Trickster's Hideout",
+    "the-backyard": "The Backyard",
+}
+
+# Keywords to exclude (metal, rap, EDM, etc.)
+EXCLUDE_KEYWORDS = {
+    "metal", "death metal", "black metal", "thrash metal", "doom metal",
+    "hip hop", "hip-hop", "rap", "rapper", "trap",
+    "edm", "techno", "house", "dubstep", "dnb", "drum and bass", "trance",
+    "dj set", "club night"
+}
+
+# Specific artists/bands to exclude (metal, etc.)
+EXCLUDE_ARTISTS = {
+    "six feet under", "cattle decapitation", "iron kingdom", "jinjer", "kamelot",
+    "uada", "dungeon serpent", "castle"  # metal bands
+}
+
+WEEKS_AHEAD = 3
+
+
+# === Utilities ===
+
+def fetch_url(url, timeout=15):
+    """Fetch URL content with basic error handling."""
+    try:
+        req = Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        })
+        with urlopen(req, timeout=timeout) as response:
+            return response.read().decode("utf-8", errors="ignore")
+    except URLError as e:
+        print(f"[WARN] Failed to fetch {url}: {e}", file=sys.stderr)
+        return None
+
+
+def clean_artist_name(slug):
+    """Convert URL slug to proper artist name."""
+    # Remove 'at-venue' suffix
+    if '-at-' in slug:
+        slug = slug.split('-at-')[0]
+    # Convert hyphens to spaces and title case
+    name = slug.replace('-', ' ')
+    # Handle common patterns
+    name = re.sub(r'\band\b', '&', name, flags=re.IGNORECASE)
+    # Title case but preserve all-caps like "DJ"
+    words = name.split()
+    result = []
+    for word in words:
+        if word.upper() in ['DJ', 'MC', 'NYC', 'LA', 'UK', 'BC']:
+            result.append(word.upper())
+        else:
+            result.append(word.title())
+    return ' '.join(result)
+
+
+def should_exclude(text):
+    """Check if text contains exclusion keywords or is a known excluded artist."""
+    text_lower = text.lower().strip()
+    
+    # Check exact artist matches first
+    if text_lower in EXCLUDE_ARTISTS:
+        return True
+    
+    # Check keyword patterns
+    for kw in EXCLUDE_KEYWORDS:
+        if kw in text_lower:
+            return True
+    
+    return False
+
+
+def venue_matches(venue_slug):
+    """Check if venue slug matches our target venues."""
+    venue_lower = venue_slug.lower()
+    for slug in VANCOUVER_VENUES:
+        if slug in venue_lower:
+            return VANCOUVER_VENUES[slug]
+    for slug in SQUAMISH_VENUES:
+        if slug in venue_lower:
+            return SQUAMISH_VENUES[slug]
+    return None
+
+
+# === Scrapers ===
+
+def scrape_songkick():
+    """Scrape Songkick Vancouver metro for upcoming shows at target venues."""
+    events = []
+    base_url = "https://www.songkick.com/metro-areas/27398-canada-vancouver"
+    
+    for page in range(1, 5):  # First 4 pages
+        url = f"{base_url}?page={page}" if page > 1 else base_url
+        page_html = fetch_url(url)
+        if not page_html:
+            continue
+        
+        # Find all concert links: /concerts/43091620-marcus-king-at-orpheum-theatre
+        concert_pattern = r'/concerts/(\d+)-([a-z0-9-]+)-at-([a-z0-9-]+)'
+        matches = re.findall(concert_pattern, page_html.lower())
+        
+        # Track current date from HTML structure
+        current_date = None
+        
+        # Find date headers
+        date_pattern = r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(\d+)\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})'
+        
+        # Process HTML line by line to track dates
+        lines = page_html.split('\n')
+        for line in lines:
+            # Check for date header
+            date_match = re.search(date_pattern, line)
+            if date_match:
+                day_name, day, month, year = date_match.groups()
+                current_date = f"{month} {day}, {year}"
+            
+            # Check for concert links on this line
+            link_match = re.search(r'/concerts/(\d+)-([a-z0-9-]+)-at-([a-z0-9-]+)', line.lower())
+            if link_match and current_date:
+                concert_id, artist_slug, venue_slug = link_match.groups()
+                
+                # Check if venue matches our list
+                venue_name = venue_matches(venue_slug)
+                if venue_name:
+                    artist_name = clean_artist_name(artist_slug)
+                    
+                    # Skip if excluded genre/style
+                    if should_exclude(artist_name):
+                        continue
+                    
+                    events.append({
+                        "date": current_date,
+                        "artist": artist_name,
+                        "venue": venue_name,
+                        "link": f"https://www.songkick.com/concerts/{concert_id}",
+                        "source": "Songkick"
+                    })
+    
+    return events
+
+
+def scrape_eventbrite_tricksters():
+    """Scrape Trickster's Hideout events from Eventbrite."""
+    events = []
+    
+    # Try the organizer page
+    url = "https://www.eventbrite.ca/o/tricksters-hideout-74359195093"
+    page_html = fetch_url(url)
+    if not page_html:
+        return events
+    
+    # Eventbrite embeds event data - look for the structured data
+    # Pattern: data-event-id with nearby event title
+    # Also look for event cards with titles
+    
+    # Look for event links with titles - usually in format:
+    # <a href="/e/event-name-tickets-123456" ... >Event Name</a>
+    event_link_pattern = r'href="/e/([^"]+)"[^>]*>([^<]+)</a>'
+    matches = re.findall(event_link_pattern, page_html)
+    
+    for slug, title in matches:
+        clean_title = html.unescape(title.strip())
+        # Skip navigation links and organizer names
+        if clean_title.lower() in ["trickster's hideout", "tricksters hideout", "view details"]:
+            continue
+        if len(clean_title) < 3:
+            continue
+        if not should_exclude(clean_title):
+            # Try to extract date from the slug or nearby text
+            events.append({
+                "date": "TBD",
+                "artist": clean_title,
+                "venue": "Trickster's Hideout",
+                "source": "Eventbrite"
+            })
+    
+    # Also try JSON-LD if present
+    json_ld_pattern = r'<script type="application/ld\+json">([^<]+)</script>'
+    json_matches = re.findall(json_ld_pattern, page_html)
+    
+    for json_str in json_matches:
+        try:
+            data = json.loads(json_str)
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                if item.get("@type") == "Event":
+                    name = item.get("name", "")
+                    # Skip if it's just the venue name
+                    if name.lower() in ["trickster's hideout", "tricksters hideout"]:
+                        continue
+                    start = item.get("startDate", "")
+                    if start:
+                        try:
+                            dt = datetime.fromisoformat(start.replace('Z', '+00:00'))
+                            date_str = dt.strftime("%B %d, %Y")
+                        except:
+                            date_str = start[:10]
+                    else:
+                        date_str = "TBD"
+                    
+                    if name and not should_exclude(name):
+                        # Update existing TBD entry or add new
+                        found = False
+                        for e in events:
+                            if e['artist'].lower() == name.lower():
+                                e['date'] = date_str
+                                found = True
+                                break
+                        if not found:
+                            events.append({
+                                "date": date_str,
+                                "artist": html.unescape(name),
+                                "venue": "Trickster's Hideout",
+                                "source": "Eventbrite"
+                            })
+        except json.JSONDecodeError:
+            pass
+    
+    return events
+
+
+def scrape_backyard():
+    """Scrape The Backyard Squamish events."""
+    events = []
+    
+    # Try events calendar page
+    url = "https://www.backyardsquamish.com/c"
+    page_html = fetch_url(url)
+    if not page_html:
+        return events
+    
+    # Look for JSON-LD structured data
+    json_ld_pattern = r'<script type="application/ld\+json">([^<]+)</script>'
+    json_matches = re.findall(json_ld_pattern, page_html)
+    
+    for json_str in json_matches:
+        try:
+            data = json.loads(json_str)
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                if item.get("@type") == "Event":
+                    start = item.get("startDate", "")
+                    if start:
+                        try:
+                            dt = datetime.fromisoformat(start.replace('Z', '+00:00'))
+                            date_str = dt.strftime("%B %d, %Y")
+                        except:
+                            date_str = start[:10]
+                    else:
+                        date_str = "TBD"
+                    
+                    name = item.get("name", "Unknown Event")
+                    if not should_exclude(name):
+                        events.append({
+                            "date": date_str,
+                            "artist": html.unescape(name),
+                            "venue": "The Backyard",
+                            "source": "Backyard Squamish"
+                        })
+        except json.JSONDecodeError:
+            pass
+    
+    # Look for event titles in HTML - The Backyard likely has simple event cards
+    # Pattern: "Live at The Backyard" or event names in headers/titles
+    title_patterns = [
+        r'<h[1-4][^>]*>([^<]+(?:Live|Music|Concert)[^<]*)</h[1-4]>',
+        r'<div[^>]*class="[^"]*event[^"]*"[^>]*>.*?<[^>]+>([^<]+)</[^>]+>',
+    ]
+    
+    for pattern in title_patterns:
+        matches = re.findall(pattern, page_html, re.IGNORECASE | re.DOTALL)
+        for title in matches[:10]:
+            clean = html.unescape(title.strip())
+            # Skip generic text and metadata noise
+            if clean and len(clean) > 5 and len(clean) < 100:
+                if 'content=' not in clean and '/>' not in clean:
+                    if not should_exclude(clean):
+                        if not any(e['artist'].lower() == clean.lower() for e in events):
+                            events.append({
+                                "date": "TBD",
+                                "artist": clean,
+                                "venue": "The Backyard",
+                                "source": "Backyard Squamish"
+                            })
+    
+    return events
+
+
+def scrape_brackendale():
+    """Scrape Brackendale Art Gallery events."""
+    events = []
+    url = "https://brackendaleartgallery.com/whats-happening-at-the-bag/"
+    page_html = fetch_url(url)
+    if not page_html:
+        return events
+    
+    # Similar approach - look for event data
+    json_ld_pattern = r'<script type="application/ld\+json">([^<]+)</script>'
+    json_matches = re.findall(json_ld_pattern, page_html)
+    
+    for json_str in json_matches:
+        try:
+            data = json.loads(json_str)
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                if item.get("@type") == "Event":
+                    start = item.get("startDate", "")
+                    date_str = start[:10] if start else "TBD"
+                    name = item.get("name", "Unknown Event")
+                    if not should_exclude(name):
+                        events.append({
+                            "date": date_str,
+                            "artist": html.unescape(name),
+                            "venue": "Brackendale Art Gallery",
+                            "source": "BAG"
+                        })
+        except json.JSONDecodeError:
+            pass
+    
+    return events
+
+
+# === Main ===
+
+def collect_all_events():
+    """Collect events from all sources."""
+    all_events = []
+    
+    print("Scanning Songkick...", file=sys.stderr)
+    songkick = scrape_songkick()
+    print(f"  Found {len(songkick)} events", file=sys.stderr)
+    all_events.extend(songkick)
+    
+    print("Scanning Trickster's Hideout...", file=sys.stderr)
+    tricksters = scrape_eventbrite_tricksters()
+    print(f"  Found {len(tricksters)} events", file=sys.stderr)
+    all_events.extend(tricksters)
+    
+    print("Scanning The Backyard...", file=sys.stderr)
+    backyard = scrape_backyard()
+    print(f"  Found {len(backyard)} events", file=sys.stderr)
+    all_events.extend(backyard)
+    
+    print("Scanning Brackendale Art Gallery...", file=sys.stderr)
+    bag = scrape_brackendale()
+    print(f"  Found {len(bag)} events", file=sys.stderr)
+    all_events.extend(bag)
+    
+    return all_events
+
+
+def deduplicate_events(events):
+    """Remove duplicate events based on date + artist + venue."""
+    seen = set()
+    unique = []
+    for e in events:
+        # Normalize for comparison
+        artist_key = e.get("artist", "").lower().strip()
+        venue_key = e.get("venue", "").lower().strip()
+        date_key = e.get("date", "").lower().strip()
+        
+        key = (date_key, artist_key, venue_key)
+        if key not in seen:
+            seen.add(key)
+            unique.append(e)
+    return unique
+
+
+def parse_date_for_sort(date_str):
+    """Parse date string for sorting."""
+    formats = [
+        "%B %d, %Y",  # March 23, 2026
+        "%Y-%m-%d",   # 2026-03-23
+        "%b %d, %Y",  # Mar 23, 2026
+    ]
+    for fmt in formats:
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    return datetime.max  # Put unparseable dates at the end
+
+
+def format_digest(events):
+    """Format events as a Telegram-friendly markdown digest."""
+    if not events:
+        return "🎸 **Weekly Show Digest**\n\nNo shows found matching your criteria. Maybe check venue websites directly?"
+    
+    # Split into Vancouver and Squamish
+    squamish_keywords = ["trickster", "backyard", "brackendale"]
+    van_events = []
+    sqm_events = []
+    
+    for e in events:
+        venue_lower = e.get("venue", "").lower()
+        if any(kw in venue_lower for kw in squamish_keywords):
+            sqm_events.append(e)
+        else:
+            van_events.append(e)
+    
+    # Sort by date
+    van_events.sort(key=lambda x: parse_date_for_sort(x.get("date", "")))
+    sqm_events.sort(key=lambda x: parse_date_for_sort(x.get("date", "")))
+    
+    lines = ["🎸 **Weekly Show Digest**\n"]
+    
+    if van_events:
+        lines.append("**Vancouver**")
+        for e in van_events:
+            date = e.get('date', 'TBD')
+            artist = e.get('artist', 'TBD')
+            venue = e.get('venue', 'TBD')
+            lines.append(f"• {date} — **{artist}** @ {venue}")
+        lines.append("")
+    
+    if sqm_events:
+        lines.append("**Squamish**")
+        for e in sqm_events:
+            date = e.get('date', 'TBD')
+            artist = e.get('artist', 'TBD')
+            venue = e.get('venue', 'TBD')
+            lines.append(f"• {date} — **{artist}** @ {venue}")
+        lines.append("")
+    
+    lines.append(f"_Scanned {datetime.now().strftime('%Y-%m-%d %H:%M')}_")
+    
+    return "\n".join(lines)
+
+
+def main():
+    """Main entry point."""
+    print("Starting show scan...", file=sys.stderr)
+    
+    events = collect_all_events()
+    print(f"Found {len(events)} raw events", file=sys.stderr)
+    
+    events = deduplicate_events(events)
+    print(f"After dedup: {len(events)} events", file=sys.stderr)
+    
+    digest = format_digest(events)
+    print(digest)
+
+
+if __name__ == "__main__":
+    main()

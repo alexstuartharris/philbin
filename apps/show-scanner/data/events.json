@@ -1,0 +1,573 @@
+{
+  "generated": "2026-03-23T19:17:07.153038Z",
+  "count": 81,
+  "events": [
+    {
+      "date": "March 23, 2026",
+      "artist": "Calum Scott",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/42531225",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 23, 2026",
+      "artist": "West 22Nd",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43037021",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 23, 2026",
+      "artist": "Runo Plum",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/42842637",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 24, 2026",
+      "artist": "Ashnikko",
+      "venue": "Orpheum",
+      "link": "https://www.songkick.com/concerts/42790620",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 24, 2026",
+      "artist": "Pearly Drops",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/42765038",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 25, 2026",
+      "artist": "Alan Doyle",
+      "venue": "Orpheum",
+      "link": "https://www.songkick.com/concerts/42848212",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 25, 2026",
+      "artist": "Radium Dolls",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/42935466",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 26, 2026",
+      "artist": "Adam Mah",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43091503",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 27, 2026",
+      "artist": "High Valley",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42868074",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 27, 2026",
+      "artist": "Emo Night Brooklyn",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43054107",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 27, 2026",
+      "artist": "Avro",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/43062105",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Nimino",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42897364",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Barr Brothers",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42848920",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Marissa Nadler",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/42758303",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Kman & The 45S",
+      "venue": "Lanalou's",
+      "link": "https://www.songkick.com/concerts/43033881",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 29, 2026",
+      "artist": "Delicate Steve",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/42993638",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Evan Honer",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42815626",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Marcus King",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/43091620",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Chiodos",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43107905",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Melanie C",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43099116",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Dua Saleh",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43105251",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Smerz",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43090420",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Cassian",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43101622",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Lipphead",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43083586",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Supersuckers",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43099776",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Kes",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43083583",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Calva Louise",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43106722",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Greg Mendez",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43082550",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Mietze Conte",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43106699",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Redferrin",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43080635",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Royal Tusk",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43085572",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Harkirat Sangha",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43105205",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Yves Kr",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43098468",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Victor Jones",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43054557",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Drook",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/42994824",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 31, 2026",
+      "artist": "Skullcrusher",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/42834931",
+      "source": "Songkick"
+    },
+    {
+      "date": "March 31, 2026",
+      "artist": "Yuuf",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/42984401",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 01, 2026",
+      "artist": "Parlor Greens",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/42937162",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 02, 2026",
+      "artist": "Ruel",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/42936237",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 02, 2026",
+      "artist": "Cobrah",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43023453",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 02, 2026",
+      "artist": "Ultra Sunn",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/42914198",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 02, 2026",
+      "artist": "Junk Canada",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/42977855",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 02, 2026",
+      "artist": "King Falcon",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43074767",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 03, 2026",
+      "artist": "Goldford",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42797779",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 04, 2026",
+      "artist": "Health",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/42805167",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 04, 2026",
+      "artist": "Jeff Tweedy",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42897320",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 05, 2026",
+      "artist": "Che",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43075374",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 05, 2026",
+      "artist": "Prisoner",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43088424",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 06, 2026",
+      "artist": "Nick Lowe",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/42884059",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 06, 2026",
+      "artist": "Ratboys",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/42801327",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 07, 2026",
+      "artist": "Nettspend",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43075381",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 08, 2026",
+      "artist": "Spill Tab",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/42916635",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 08, 2026",
+      "artist": "Mark Winters",
+      "venue": "The Heatley",
+      "link": "https://www.songkick.com/concerts/42768505",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 09, 2026",
+      "artist": "Fcukers",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42984859",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 09, 2026",
+      "artist": "Habib Koite",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/42914197",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 10, 2026",
+      "artist": "Jacob Collier",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/42996252",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 10, 2026",
+      "artist": "Courtney Marie Andrews",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/42997484",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 10, 2026",
+      "artist": "Princess Superstar",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43026067",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 11, 2026",
+      "artist": "Felix Cartal",
+      "venue": "Brackendale Art Gallery",
+      "link": "https://www.songkick.com/concerts/43025977",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 11, 2026",
+      "artist": "Rukky",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43112308",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 12, 2026",
+      "artist": "Lily Dippers",
+      "venue": "Red Gate",
+      "link": "https://www.songkick.com/concerts/43104767",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 15, 2026",
+      "artist": "Bellaire",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43037393",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 15, 2026",
+      "artist": "Oskar Med K",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42958513",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 16, 2026",
+      "artist": "Sam Roberts Band",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42897330",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 16, 2026",
+      "artist": "Jae Stephens",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43063920",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 16, 2026",
+      "artist": "Pryvt",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43054689",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 17, 2026",
+      "artist": "Goldfinger",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42952363",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 17, 2026",
+      "artist": "Richard Thompson",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/42962511",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 17, 2026",
+      "artist": "Skiitour",
+      "venue": "Trickster's Hideout",
+      "link": "https://www.songkick.com/concerts/43006954",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 18, 2026",
+      "artist": "Afi",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42938811",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 18, 2026",
+      "artist": "Nobro",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/42887016",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 19, 2026",
+      "artist": "Wallflowers",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42938752",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 19, 2026",
+      "artist": "Aaron Lee Tasjan",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43084591",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 20, 2026",
+      "artist": "Royal Tusk",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43085572",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 21, 2026",
+      "artist": "Josiah Queen",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/42766672",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 22, 2026",
+      "artist": "Diana Krall",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/42873616",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 22, 2026",
+      "artist": "Shane Terry",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43102010",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 23, 2026",
+      "artist": "Strung Out",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43052069",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 23, 2026",
+      "artist": "Twen",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/42980829",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 24, 2026",
+      "artist": "Wednesday",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/42929357",
+      "source": "Songkick"
+    },
+    {
+      "date": "April 24, 2026",
+      "artist": "Le Youth",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42971986",
+      "source": "Songkick"
+    }
+  ]
+}
