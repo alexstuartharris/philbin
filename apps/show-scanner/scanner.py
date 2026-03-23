@@ -15,6 +15,7 @@ import html
 import json
 import re
 import sys
+import time
 from datetime import datetime, timedelta
 from urllib.request import urlopen, Request
 from urllib.error import URLError
@@ -129,20 +130,59 @@ def venue_matches(venue_slug):
 
 # === Scrapers ===
 
+def fetch_lineup(concert_url):
+    """Fetch full lineup from a Songkick concert page by parsing the page title."""
+    page_html = fetch_url(concert_url)
+    if not page_html:
+        return []
+    
+    # Songkick puts the full lineup in the page title
+    # Format: "Artist1 and Artist2 and Artist3 [Location] Tickets, Venue, Date – Songkick"
+    # OR: "Artist1, Artist2, and Artist3 [Location] Tickets..."
+    
+    title_match = re.search(r'<title>([^<]+?)\s+(?:Vancouver|Squamish|Coquitlam|BC)?\s*Tickets', page_html, re.IGNORECASE)
+    if not title_match:
+        return []
+    
+    title_artists = title_match.group(1).strip()
+    
+    # Split by common delimiters
+    # Try "and" first, then commas
+    if ' and ' in title_artists:
+        artists = re.split(r'\s+and\s+', title_artists)
+    elif ', ' in title_artists:
+        artists = title_artists.split(', ')
+    else:
+        # Single artist
+        artists = [title_artists]
+    
+    # Clean up each artist name
+    lineup = []
+    for artist in artists:
+        clean = html.unescape(artist.strip())
+        # Remove trailing "and" if present
+        clean = re.sub(r'\s+and$', '', clean, flags=re.IGNORECASE)
+        if clean and len(clean) > 1 and len(clean) < 60:
+            lineup.append(clean)
+    
+    return lineup[:8]  # Cap at 8
+
+
 def scrape_songkick():
     """Scrape Songkick Vancouver metro for upcoming shows at target venues."""
     events = []
     base_url = "https://www.songkick.com/metro-areas/27398-canada-vancouver"
     
-    for page in range(1, 5):  # First 4 pages
+    concert_links = []  # Collect concert links first
+    
+    # Limit to first page for faster testing (set to 5 for full scan)
+    max_pages = int(sys.argv[1]) if len(sys.argv) > 1 else 4
+    
+    for page in range(1, max_pages + 1):
         url = f"{base_url}?page={page}" if page > 1 else base_url
         page_html = fetch_url(url)
         if not page_html:
             continue
-        
-        # Find all concert links: /concerts/43091620-marcus-king-at-orpheum-theatre
-        concert_pattern = r'/concerts/(\d+)-([a-z0-9-]+)-at-([a-z0-9-]+)'
-        matches = re.findall(concert_pattern, page_html.lower())
         
         # Track current date from HTML structure
         current_date = None
@@ -173,13 +213,41 @@ def scrape_songkick():
                     if should_exclude(artist_name):
                         continue
                     
-                    events.append({
+                    concert_links.append({
+                        "id": concert_id,
                         "date": current_date,
-                        "artist": artist_name,
-                        "venue": venue_name,
-                        "link": f"https://www.songkick.com/concerts/{concert_id}",
-                        "source": "Songkick"
+                        "headliner": artist_name,
+                        "venue": venue_name
                     })
+    
+    # Now fetch lineup for each concert (with rate limiting)
+    print(f"  Fetching lineups for {len(concert_links)} concerts...", file=sys.stderr)
+    for i, concert in enumerate(concert_links):
+        concert_url = f"https://www.songkick.com/concerts/{concert['id']}"
+        lineup = fetch_lineup(concert_url)
+        
+        # Use full lineup if available, otherwise just headliner
+        if lineup:
+            # Filter out excluded artists from lineup
+            lineup = [a for a in lineup if not should_exclude(a)]
+            artist_display = " • ".join(lineup) if lineup else concert['headliner']
+        else:
+            artist_display = concert['headliner']
+        
+        events.append({
+            "date": concert['date'],
+            "artist": artist_display,
+            "venue": concert['venue'],
+            "link": concert_url,
+            "source": "Songkick"
+        })
+        
+        # Progress indicator every 20 shows
+        if (i + 1) % 20 == 0:
+            print(f"    {i + 1}/{len(concert_links)} complete", file=sys.stderr)
+        
+        # Rate limit: ~200ms between requests
+        time.sleep(0.2)
     
     return events
 
