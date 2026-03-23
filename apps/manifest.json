@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-14T06:17:21.509Z",
+  "generatedAt": "2026-03-23T19:20:00.000Z",
   "apps": [
     {
       "name": "csv-to-geojson",
@@ -59,6 +59,10 @@
     },
     {
       "name": "receipt-tracker",
+      "hasIndex": true
+    },
+    {
+      "name": "show-scanner",
       "hasIndex": true
     },
     {
