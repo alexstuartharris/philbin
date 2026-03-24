@@ -1,6 +1,6 @@
 {
-  "generated": "2026-03-24T20:04:35.442338Z",
-  "count": 274,
+  "generated": "2026-03-24T20:14:28.323729Z",
+  "count": 363,
   "events": [
     {
       "date": "March 24, 2026",
@@ -1012,13 +1012,6 @@
     },
     {
       "date": "May 08, 2026",
-      "artist": "IT'S MURPH and VNSSA",
-      "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/43026044",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 08, 2026",
       "artist": "Parabolus",
       "venue": "Rickshaw Theatre",
       "link": "https://www.songkick.com/concerts/42914193",
@@ -1473,13 +1466,6 @@
       "source": "Songkick"
     },
     {
-      "date": "June 08, 2026",
-      "artist": "By Storm",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43075712",
-      "source": "Songkick"
-    },
-    {
       "date": "June 11, 2026",
       "artist": "Seedhe Maut",
       "venue": "Commodore Ballroom",
@@ -1638,13 +1624,6 @@
       "artist": "CA7RIEL & Paco Amoroso",
       "venue": "Queen Elizabeth Theatre",
       "link": "https://www.songkick.com/concerts/43118613",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 08, 2026",
-      "artist": "CA7RIEL",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43120186",
       "source": "Songkick"
     },
     {
@@ -1919,6 +1898,742 @@
       "venue": "Hollywood Theatre",
       "link": "https://www.songkick.com/concerts/43065750",
       "source": "Songkick"
+    },
+    {
+      "date": "March 24, 2026",
+      "artist": "Doom Scroll, Beastie, ?NUMB?DAME?",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/3/24/doom-scroll-tj-felix-numb-dame-tickets",
+      "source": "Do604",
+      "_id": "16860093"
+    },
+    {
+      "date": "March 26, 2026",
+      "artist": "Alien Boys, Mean Bikini, Chairman, Cop Shuvit",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/3/26/alien-boys-mean-bikini-chairman-cop-shuvit-tickets",
+      "source": "Do604",
+      "_id": "16921188"
+    },
+    {
+      "date": "March 27, 2026",
+      "artist": "Bayonet Dismemberment, Luella, The Blonde Dies First, Josh",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/3/27/luella-the-blonde-dies-first-josh-tickets",
+      "source": "Do604",
+      "_id": "16860094"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Kids on Fire, Sun Diver, Pet Blessings, Contra Code",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/3/28/kids-on-fire-sun-diver-pet-blessings-contra-code-tickets",
+      "source": "Do604",
+      "_id": "16997900"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Haleluya Hailu, Chris Kitto, if/then, Drew Story",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/3/28/haleluya-hailu-chris-kitto-if-then-drew-story-tickets",
+      "source": "Do604",
+      "_id": "17043540"
+    },
+    {
+      "date": "March 29, 2026",
+      "artist": "Cora and the Moon, Lily Fawn Electric, Lotophage",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/3/29/cora-and-the-moon-lily-fawn-electric-lotophage-tickets",
+      "source": "Do604",
+      "_id": "17043541"
+    },
+    {
+      "date": "April 02, 2026",
+      "artist": "Ivan and the Tax Evaders, The Incident, Saving Grace, Hot Older Brother",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/2/ivan-and-the-tax-evaders-the-incident-saving-grace-hot-older-brother-tickets",
+      "source": "Do604",
+      "_id": "17079163"
+    },
+    {
+      "date": "April 03, 2026",
+      "artist": "Cherry Pick, Often Wrong, Gnawing, Jian & Kitten .Co",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/3/the-interrogation-chili-the-gutter-king-hawking-tickets",
+      "source": "Do604",
+      "_id": "16900731"
+    },
+    {
+      "date": "April 04, 2026",
+      "artist": "Avery Sloane, Dirty Aesthetic, King of Foxes",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/4/avery-sloane-dirty-aesthetic-king-of-foxes-tickets",
+      "source": "Do604",
+      "_id": "17055007"
+    },
+    {
+      "date": "April 09, 2026",
+      "artist": "D.L. Forrest, Wright, Jeremy Witten",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/9/d-l-forrest-wright-jeremy-witten-tickets",
+      "source": "Do604",
+      "_id": "17109031"
+    },
+    {
+      "date": "April 09, 2026",
+      "artist": "Woolworm, Prowl, Iron Crusaders, Every Effort Made",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/9/woolworm-prowl-iron-crusaders-every-effort-made-tickets",
+      "source": "Do604",
+      "_id": "17109032"
+    },
+    {
+      "date": "April 09, 2026",
+      "artist": "Juice, Self Arrest, Make It Right, Torena, Peace of Mind",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/9/juice-self-arrest-make-it-right-torena-peace-of-mind-tickets",
+      "source": "Do604",
+      "_id": "16921189"
+    },
+    {
+      "date": "April 10, 2026",
+      "artist": "Chase The Bear, Badmny, The Steadies",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/10/chase-the-bear-badmny-the-steadies-tickets",
+      "source": "Do604",
+      "_id": "17009527"
+    },
+    {
+      "date": "April 17, 2026",
+      "artist": "Chronic Fatigue, Often Wrong, Infidelity, Cascade",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/17/ghostly-hounds-spencer-jo-band-danny-boy-kell-jo-abbot-and-the-flying-j-s-tickets",
+      "source": "Do604",
+      "_id": "16997902"
+    },
+    {
+      "date": "April 18, 2026",
+      "artist": "The Zummers, Dirty Aesthetic, Nick Stone & the Germs",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/18/the-zummers-dirty-aesthetic-nick-stone-the-germs-tickets",
+      "source": "Do604",
+      "_id": "17109033"
+    },
+    {
+      "date": "April 18, 2026",
+      "artist": "Tiger Really, Passion Mango, Beach Bowen",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/18/tiger-really-passion-mango-beach-bowen-tickets",
+      "source": "Do604",
+      "_id": "17020815"
+    },
+    {
+      "date": "April 25, 2026",
+      "artist": "Joe Abbott, Practitioner, Never Plenty, Ian Badger",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/25/joe-abbott-practitioner-never-plenty-ian-badger-tickets",
+      "source": "Do604",
+      "_id": "16991071"
+    },
+    {
+      "date": "April 25, 2026",
+      "artist": "Revolution Above Disorder, Painted Vein, C.Diab",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/4/25/revolution-above-disorder-painted-vein-c-diab-tickets",
+      "source": "Do604",
+      "_id": "16932746"
+    },
+    {
+      "date": "May 08, 2026",
+      "artist": "Devours, 2girls1daw, Reveal Yourself, Haha Laughing",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/5/8/devours-2girls1daw-reveal-yourself-haha-laughing-tickets",
+      "source": "Do604",
+      "_id": "17109034"
+    },
+    {
+      "date": "March 26, 2026",
+      "artist": "Life of the Party",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/3/26/life-of-the-party-tickets",
+      "source": "Do604",
+      "_id": "17111755"
+    },
+    {
+      "date": "March 27, 2026",
+      "artist": "Sydnee Washington",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/3/27/sydnee-washington-tickets",
+      "source": "Do604",
+      "_id": "16958934"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Nico Carney",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/3/28/nico-carney-tickets",
+      "source": "Do604",
+      "_id": "16662701"
+    },
+    {
+      "date": "April 11, 2026",
+      "artist": "Bella White",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/4/11/bella-white-tickets",
+      "source": "Do604",
+      "_id": "16930049"
+    },
+    {
+      "date": "April 15, 2026",
+      "artist": "Jae Stephens",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/4/15/jae-stephens-tickets",
+      "source": "Do604",
+      "_id": "17086310"
+    },
+    {
+      "date": "April 18, 2026",
+      "artist": "Jordan Leung: back to work tour",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/4/18/jordan-leung-tickets",
+      "source": "Do604",
+      "_id": "16958935"
+    },
+    {
+      "date": "April 21, 2026",
+      "artist": "Fantastic Negrito",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/4/21/fantastic-negrito-tickets",
+      "source": "Do604",
+      "_id": "16694651"
+    },
+    {
+      "date": "April 24, 2026",
+      "artist": "Tep No",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/4/24/tep-no-tickets",
+      "source": "Do604",
+      "_id": "17040167"
+    },
+    {
+      "date": "April 25, 2026",
+      "artist": "Miina",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/4/25/miina-tickets",
+      "source": "Do604",
+      "_id": "16841575"
+    },
+    {
+      "date": "May 07, 2026",
+      "artist": "Pretty Gay Live!",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/5/7/pretty-gay-live-tickets",
+      "source": "Do604",
+      "_id": "17106667"
+    },
+    {
+      "date": "May 09, 2026",
+      "artist": "Crystal Marie Denha",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/5/9/crystal-marie-denha-tickets",
+      "source": "Do604",
+      "_id": "17040168"
+    },
+    {
+      "date": "May 13, 2026",
+      "artist": "Your Neighbors",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/5/13/your-neighbors-tickets",
+      "source": "Do604",
+      "_id": "16898103"
+    },
+    {
+      "date": "May 16, 2026",
+      "artist": "Joel Kim Booster",
+      "venue": "Biltmore Cabaret",
+      "link": "https://do604.com/events/2026/5/16/joel-kim-booster-tickets",
+      "source": "Do604",
+      "_id": "17105275"
+    },
+    {
+      "date": "March 25, 2026",
+      "artist": "Radium Dolls",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/3/25/radium-dolls-tickets-lema1x7",
+      "source": "Do604",
+      "_id": "17014951"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "The Music of Peter Green & Santana",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/3/28/the-music-of-peter-green-santana-tickets",
+      "source": "Do604",
+      "_id": "16861254"
+    },
+    {
+      "date": "March 31, 2026",
+      "artist": "Onslaught & Warlord with Powerm\u00f6nger",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/3/31/onslaught-warlord-tickets",
+      "source": "Do604",
+      "_id": "16872652"
+    },
+    {
+      "date": "April 01, 2026",
+      "artist": "Raven with Slackjaw, Tuff Duzt and Decadence",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/1/raven-with-slackjaw-tickets",
+      "source": "Do604",
+      "_id": "16833840"
+    },
+    {
+      "date": "April 03, 2026",
+      "artist": "Dark Tranquility & Soen with Persefone",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/3/dark-tranquility-soen-with-persefone-tickets",
+      "source": "Do604",
+      "_id": "16861255"
+    },
+    {
+      "date": "April 04, 2026",
+      "artist": "Blitz Fest - Benny Kemp Memorial Show",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/4/blitz-fest-benny-kemp-memorial-show-tickets",
+      "source": "Do604",
+      "_id": "17014958"
+    },
+    {
+      "date": "April 07, 2026",
+      "artist": "The Exploited with Bootlicker, Dayglo Abortions and Extensive Slaughter",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/7/the-exploited-western-canada-tour-2026-with-bootlicker-dayglo-abortions-and-extensive-slaughter-tickets",
+      "source": "Do604",
+      "_id": "16800260"
+    },
+    {
+      "date": "April 10, 2026",
+      "artist": "***CANCELLED*** Die Krupps with Ghostbells and Skull Cultist",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/10/die-krupps-tickets",
+      "source": "Do604",
+      "_id": "16724625"
+    },
+    {
+      "date": "April 17, 2026",
+      "artist": "Gimme Gimme Disco",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/17/gimme-gimme-disco-tickets",
+      "source": "Do604",
+      "_id": "17044535"
+    },
+    {
+      "date": "April 23, 2026",
+      "artist": "Twen",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/23/twen-tickets",
+      "source": "Do604",
+      "_id": "17014965"
+    },
+    {
+      "date": "April 24, 2026",
+      "artist": "Cattle Decapitation - 30 Years of Inhumanity",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/24/cattle-decapitation-30-years-of-inhumanity-tickets",
+      "source": "Do604",
+      "_id": "16952412"
+    },
+    {
+      "date": "April 25, 2026",
+      "artist": "Brass Camel with Chopping Spree and Bleako's Nuclear Disco - Album Release Party",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/4/25/brass-camel-with-chopping-spree-and-bleakos-nuclear-disco-album-release-party-tickets",
+      "source": "Do604",
+      "_id": "16850589"
+    },
+    {
+      "date": "May 08, 2026",
+      "artist": "Parabolus - Complete Tool Experience",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/5/8/parabolus-complete-tool-experience-tickets",
+      "source": "Do604",
+      "_id": "16650481"
+    },
+    {
+      "date": "May 10, 2026",
+      "artist": "Cornelia Murr",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/5/10/cornelia-murr-tickets-wromnwq",
+      "source": "Do604",
+      "_id": "17014973"
+    },
+    {
+      "date": "March 24, 2026",
+      "artist": "GLAM | KARAOKE NIGHT",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/weekly/tue/glam-karaoke-night-tickets",
+      "source": "Do604",
+      "_id": "16677166"
+    },
+    {
+      "date": "March 24, 2026",
+      "artist": "Karaoke Tuesdays at The Cobalt",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/weekly/tue/karaoke-tuesdays-at-the-cobalt-tickets",
+      "source": "Do604",
+      "_id": "17097166"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "The Lab In Bloom",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2026/3/28/the-lab-in-bloom-tickets",
+      "source": "Do604",
+      "_id": "17089031"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "ROCK & ROLL BINGO",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/weekly/mon/rock-roll-bingo-tickets",
+      "source": "Do604",
+      "_id": "16676737"
+    },
+    {
+      "date": "April 04, 2026",
+      "artist": "The Ticket Takers w/ guests",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2026/4/4/the-ticket-takers-w-guests-tickets",
+      "source": "Do604",
+      "_id": "17044413"
+    },
+    {
+      "date": "April 05, 2026",
+      "artist": "We Outside: Desert Era",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2026/4/5/we-outside-desert-era-tickets",
+      "source": "Do604",
+      "_id": "17066565"
+    },
+    {
+      "date": "April 12, 2026",
+      "artist": "RAGE Against The Pipeline!",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2026/4/12/rage-against-the-pipeline-tickets",
+      "source": "Do604",
+      "_id": "17097842"
+    },
+    {
+      "date": "April 15, 2026",
+      "artist": "CASTLE // DAGGER // MORTUARY CAVE",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2026/4/15/castle-dagger-mortuary-cave-tickets",
+      "source": "Do604",
+      "_id": "17119781"
+    },
+    {
+      "date": "April 16, 2026",
+      "artist": "BendreTheGiant w/ guests",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2026/4/16/bendrethegiant-w-guests-tickets",
+      "source": "Do604",
+      "_id": "16978476"
+    },
+    {
+      "date": "May 09, 2026",
+      "artist": "Unity Arts - Growing Pains - Dance Party",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2026/5/9/unity-arts-growing-pains-dance-party-tickets",
+      "source": "Do604",
+      "_id": "15908755"
+    },
+    {
+      "date": "January 05, 2027",
+      "artist": "Sacred Skin w. Wants & Decomme",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2027/1/5/sacred-skin-w-wants-decomme-tickets",
+      "source": "Do604",
+      "_id": "15875696"
+    },
+    {
+      "date": "October 07, 2049",
+      "artist": "Fat Lip    Club Nite",
+      "venue": "The Cobalt",
+      "link": "https://do604.com/events/2049/10/7/fat-lip-club-nite-tickets",
+      "source": "Do604",
+      "_id": "16509448"
+    },
+    {
+      "date": "March 26, 2026",
+      "artist": "Sarah Kinsley: Fleeting Tour 2026",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/3/26/sarah-kinsley-fleeting-tour-2026-tickets",
+      "source": "Do604",
+      "_id": "16686572"
+    },
+    {
+      "date": "March 27, 2026",
+      "artist": "Daft Disko",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/3/27/daft-disko-tickets",
+      "source": "Do604",
+      "_id": "16853258"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Golden Era Rave",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/3/28/golden-era-rave-tickets",
+      "source": "Do604",
+      "_id": "16925606"
+    },
+    {
+      "date": "March 29, 2026",
+      "artist": "Pitch Your Friend",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/3/29/pitch-your-friend-tickets",
+      "source": "Do604",
+      "_id": "17047439"
+    },
+    {
+      "date": "March 30, 2026",
+      "artist": "Ben Hur",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/3/30/ben-hur-tickets",
+      "source": "Do604",
+      "_id": "16954792"
+    },
+    {
+      "date": "March 31, 2026",
+      "artist": "Stand By Me: 25th Anniversary Screening",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/3/31/stand-by-me-25th-anniversary-screening-tickets",
+      "source": "Do604",
+      "_id": "17100373"
+    },
+    {
+      "date": "April 02, 2026",
+      "artist": "Kitsilano Comedy Classic(Produced By Jokers Canada)",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/2/kitsilano-comedy-classic-produced-by-jokers-canada-tickets",
+      "source": "Do604",
+      "_id": "16359512"
+    },
+    {
+      "date": "April 03, 2026",
+      "artist": "Home By Midnight Xl Spring Fling (80's Prom Night)",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/3/goldford-tickets",
+      "source": "Do604",
+      "_id": "16423625"
+    },
+    {
+      "date": "April 08, 2026",
+      "artist": "Stvw Punk Rave Tour 2026",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/8/stvw-punk-rave-tour-2026-tickets",
+      "source": "Do604",
+      "_id": "16723446"
+    },
+    {
+      "date": "April 11, 2026",
+      "artist": "Said The Whale : 20th Anniversary Tour",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/11/said-the-whale-20th-anniversary-tour-tickets",
+      "source": "Do604",
+      "_id": "16594581"
+    },
+    {
+      "date": "April 16, 2026",
+      "artist": "Leith Ross \u2013 I Can See the Future Tour",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/16/leith-ross-i-can-see-the-future-tour-tickets",
+      "source": "Do604",
+      "_id": "16511423"
+    },
+    {
+      "date": "April 18, 2026",
+      "artist": "Leith Ross \u2013 I Can See the Future Tour",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/18/leith-ross-i-can-see-the-future-tour-tickets",
+      "source": "Do604",
+      "_id": "16594582"
+    },
+    {
+      "date": "April 19, 2026",
+      "artist": "Leith Ross \u2013 I Can See the Future Tour",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/19/leith-ross-i-can-see-the-future-tour-tickets",
+      "source": "Do604",
+      "_id": "16594583"
+    },
+    {
+      "date": "April 24, 2026",
+      "artist": "Indie Sleaze Dance Party",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/24/indie-sleaze-dance-party-tickets",
+      "source": "Do604",
+      "_id": "17112104"
+    },
+    {
+      "date": "April 25, 2026",
+      "artist": "Maro   So Much Has Changed",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/25/maro-so-much-has-changed-tickets",
+      "source": "Do604",
+      "_id": "16501267"
+    },
+    {
+      "date": "April 25, 2026",
+      "artist": "CFNY \"The Spirit of Radio\" Documentary Screening + LIve Q&A with CFNY Legends",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/25/cfny-the-spirit-of-radio-documentary-screening-live-q-a-with-cfny-legends-tickets",
+      "source": "Do604",
+      "_id": "17070055"
+    },
+    {
+      "date": "April 26, 2026",
+      "artist": "Langhorne Slim: The Dreamin' Kind Tour",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/4/26/langhorne-slim-the-dreamin-kind-tour-tickets",
+      "source": "Do604",
+      "_id": "16664575"
+    },
+    {
+      "date": "May 01, 2026",
+      "artist": "Tyler Shaw - RUN TO YOU TOUR",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/5/1/tyler-shaw-run-to-you-tour-tickets",
+      "source": "Do604",
+      "_id": "16851081"
+    },
+    {
+      "date": "March 27, 2026",
+      "artist": "Club:Obsessed At Happy Ending Fridays",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/3/27/club-obsessed-at-happy-ending-fridays-tickets",
+      "source": "Do604",
+      "_id": "17048366"
+    },
+    {
+      "date": "March 28, 2026",
+      "artist": "Best Of 2010\u2019S",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/3/28/best-of-2010-s-tickets",
+      "source": "Do604",
+      "_id": "17048367"
+    },
+    {
+      "date": "March 31, 2026",
+      "artist": "Where In The World Is Gelli Haha Tour 2026",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/3/31/where-in-the-world-is-gelli-haha-tour-2026-tickets",
+      "source": "Do604",
+      "_id": "16854185"
+    },
+    {
+      "date": "April 02, 2026",
+      "artist": "Babes On Babes Long Weekend",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/2/babes-on-babes-long-weekend-tickets",
+      "source": "Do604",
+      "_id": "17083606"
+    },
+    {
+      "date": "April 03, 2026",
+      "artist": "Happy Ending Fridays Long Weekend",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/3/happy-ending-fridays-long-weekend-tickets",
+      "source": "Do604",
+      "_id": "17113778"
+    },
+    {
+      "date": "April 04, 2026",
+      "artist": "Club808 Long Weekend At Wya? Saturdays",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/4/club808-long-weekend-at-wya-saturdays-tickets",
+      "source": "Do604",
+      "_id": "17102433"
+    },
+    {
+      "date": "April 11, 2026",
+      "artist": "Take Me Back To 2016",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/11/take-me-back-to-2016-tickets",
+      "source": "Do604",
+      "_id": "17113779"
+    },
+    {
+      "date": "April 15, 2026",
+      "artist": "Oskar Med K",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/15/oskar-med-k-tickets",
+      "source": "Do604",
+      "_id": "16717786"
+    },
+    {
+      "date": "April 17, 2026",
+      "artist": "Bo Henrik - Debut Album Release Show",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/17/bo-henrik-debut-album-release-show-tickets",
+      "source": "Do604",
+      "_id": "17093012"
+    },
+    {
+      "date": "April 18, 2026",
+      "artist": "Onyx",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/18/onyx-tickets",
+      "source": "Do604",
+      "_id": "17036171"
+    },
+    {
+      "date": "April 23, 2026",
+      "artist": "Aura After Hours",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/23/aura-after-hours-tickets",
+      "source": "Do604",
+      "_id": "17036172"
+    },
+    {
+      "date": "April 27, 2026",
+      "artist": "Horse Vision",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/4/27/horse-vision-tickets",
+      "source": "Do604",
+      "_id": "16884190"
+    },
+    {
+      "date": "May 01, 2026",
+      "artist": "Distant Matter Vivid Nostalgia Tour (Vancouver)",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/5/1/distant-matter-vivid-nostalgia-tour-vancouver-tickets",
+      "source": "Do604",
+      "_id": "16909464"
+    },
+    {
+      "date": "May 07, 2026",
+      "artist": "Propagate Pres. Mechatok",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/5/7/propagate-pres-mechatok-tickets",
+      "source": "Do604",
+      "_id": "17020511"
+    },
+    {
+      "date": "May 15, 2026",
+      "artist": "Elias R\u00f8nnenfelt & Evanora Unlimited",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/5/15/elias-ronnenfelt-evanora-unlimited-tickets",
+      "source": "Do604",
+      "_id": "17004845"
+    },
+    {
+      "date": "May 25, 2026",
+      "artist": "INJI: this tour is superlame.",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/5/25/inji-this-tour-is-superlame-tickets",
+      "source": "Do604",
+      "_id": "16633840"
     }
   ]
 }

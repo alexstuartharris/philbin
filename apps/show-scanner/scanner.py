@@ -275,6 +275,66 @@ def scrape_songkick():
     return unique_events
 
 
+# Do604 venue slugs to scrape
+DO604_VENUES = {
+    "green-auto": "Green Auto",
+    "fox-cabaret": "Fox Cabaret",
+    "biltmore-cabaret": "Biltmore Cabaret",
+    "rickshaw-theatre": "Rickshaw Theatre",
+    "the-cobalt": "The Cobalt",
+    "lanalous": "Lanalou's",
+    "hollywood-theatre": "Hollywood Theatre",
+    "fortune-sound-club": "Fortune Sound Club",
+    "the-pearl-on-granville": "The Pearl",
+}
+
+
+def scrape_do604():
+    """Scrape Do604 venue pages for local shows."""
+    events = []
+    
+    for venue_slug, venue_name in DO604_VENUES.items():
+        url = f"https://do604.com/venues/{venue_slug}.json"
+        json_str = fetch_url(url)
+        if not json_str:
+            continue
+        
+        try:
+            data = json.loads(json_str)
+            event_groups = data.get("event_groups", [])
+            
+            for group in event_groups:
+                date_str = group.get("date", "")
+                
+                for event in group.get("events", []):
+                    title = event.get("title", "")
+                    if not title or should_exclude(title):
+                        continue
+                    
+                    # Parse date to consistent format
+                    try:
+                        dt = datetime.strptime(date_str, "%Y-%m-%d")
+                        formatted_date = dt.strftime("%B %d, %Y")
+                    except ValueError:
+                        formatted_date = date_str
+                    
+                    event_id = event.get("id", "")
+                    permalink = event.get("permalink", "")
+                    
+                    events.append({
+                        "date": formatted_date,
+                        "artist": html.unescape(title),
+                        "venue": venue_name,
+                        "link": f"https://do604.com{permalink}" if permalink else "",
+                        "source": "Do604",
+                        "_id": str(event_id)  # For internal dedup
+                    })
+        except json.JSONDecodeError:
+            continue
+    
+    return events
+
+
 def scrape_eventbrite_tricksters():
     """Scrape Trickster's Hideout events from Eventbrite."""
     events = []
@@ -467,6 +527,11 @@ def collect_all_events():
     print(f"  Found {len(songkick)} events", file=sys.stderr)
     all_events.extend(songkick)
     
+    print("Scanning Do604...", file=sys.stderr)
+    do604 = scrape_do604()
+    print(f"  Found {len(do604)} events", file=sys.stderr)
+    all_events.extend(do604)
+    
     print("Scanning Trickster's Hideout...", file=sys.stderr)
     tricksters = scrape_eventbrite_tricksters()
     print(f"  Found {len(tricksters)} events", file=sys.stderr)
@@ -485,20 +550,72 @@ def collect_all_events():
     return all_events
 
 
+def extract_artists(artist_str):
+    """Extract all artist names from a lineup string, normalized."""
+    artist_str = artist_str.strip().lower()
+    
+    # Replace various separators with comma
+    for sep in [" and ", " & ", " with ", " + ", " / ", " x "]:
+        artist_str = artist_str.replace(sep, ", ")
+    
+    # Split and clean
+    artists = [a.strip() for a in artist_str.split(",") if a.strip()]
+    
+    # Further normalize: remove parentheticals like "(BC)", common prefixes
+    normalized = []
+    for a in artists:
+        # Remove parentheticals
+        a = re.sub(r'\s*\([^)]*\)', '', a).strip()
+        # Remove "the " prefix for matching
+        if a.startswith("the "):
+            a = a[4:]
+        if a:
+            normalized.append(a)
+    
+    return set(normalized)
+
+
+def events_are_same_show(e1, e2):
+    """Check if two events are the same show (same date, venue, overlapping artists)."""
+    # Must be same date
+    if e1.get("date", "").lower() != e2.get("date", "").lower():
+        return False
+    
+    # Must be same venue (normalized)
+    v1 = e1.get("venue", "").lower().replace("the ", "").replace("'", "").strip()
+    v2 = e2.get("venue", "").lower().replace("the ", "").replace("'", "").strip()
+    if v1 != v2:
+        return False
+    
+    # Check for overlapping artists (at least 1 in common = same show)
+    artists1 = extract_artists(e1.get("artist", ""))
+    artists2 = extract_artists(e2.get("artist", ""))
+    
+    return bool(artists1 & artists2)
+
+
 def deduplicate_events(events):
-    """Remove duplicate events based on date + artist + venue."""
-    seen = set()
+    """Remove duplicate events using artist overlap detection.
+    
+    Two events are duplicates if they share date, venue, and at least
+    one artist in common. Prefers Songkick entries over Do604.
+    """
+    # Sort by source priority first
+    source_priority = {"Songkick": 0, "Do604": 1, "Eventbrite": 2, "Backyard Squamish": 3, "BAG": 4}
+    events_sorted = sorted(events, key=lambda x: source_priority.get(x.get("source", ""), 99))
+    
     unique = []
-    for e in events:
-        # Normalize for comparison
-        artist_key = e.get("artist", "").lower().strip()
-        venue_key = e.get("venue", "").lower().strip()
-        date_key = e.get("date", "").lower().strip()
+    for e in events_sorted:
+        # Check if this event is a duplicate of any already-added event
+        is_dupe = False
+        for existing in unique:
+            if events_are_same_show(e, existing):
+                is_dupe = True
+                break
         
-        key = (date_key, artist_key, venue_key)
-        if key not in seen:
-            seen.add(key)
+        if not is_dupe:
             unique.append(e)
+    
     return unique
 
 
