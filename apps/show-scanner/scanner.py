@@ -38,6 +38,11 @@ VANCOUVER_VENUES = {
     "orpheum-theatre": "Orpheum Theatre",
     "orpheum": "Orpheum",
     "rickshaw-theatre": "Rickshaw Theatre",
+    "malkin-bowl": "Malkin Bowl",
+    "hollywood-theatre": "Hollywood Theatre",
+    "fortune-sound-club": "Fortune Sound Club",
+    "the-pearl": "The Pearl",
+    "queen-elizabeth-theatre": "Queen Elizabeth Theatre",
 }
 
 SQUAMISH_VENUES = {
@@ -134,7 +139,7 @@ def scrape_songkick():
     events = []
     base_url = "https://www.songkick.com/metro-areas/27398-canada-vancouver"
     
-    for page in range(1, 5):  # First 4 pages
+    for page in range(1, 15):  # First 14 pages (covers ~9 months)
         url = f"{base_url}?page={page}" if page > 1 else base_url
         page_html = fetch_url(url)
         if not page_html:
