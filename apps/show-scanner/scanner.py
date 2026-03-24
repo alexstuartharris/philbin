@@ -149,15 +149,26 @@ def scrape_songkick():
         # Build a map of concert IDs to their full lineup from multiple sources
         artist_map = {}
         
-        # Source 1: alt attributes on artist images (most reliable for full lineup)
+        # Source 1: alt attributes on artist images (most reliable for full lineup + date)
         # Pattern: alt="Chiodos, sace6, and 156/Silence at Commodore Ballroom (07 Aug 26)"
         alt_pattern = r'alt="([^"]+)\s+at\s+([^"(]+)\s*\((\d+)\s+(\w+)\s+(\d+)\)"'
+        
+        # Month abbreviation to full name mapping
+        month_map = {
+            "jan": "January", "feb": "February", "mar": "March", "apr": "April",
+            "may": "May", "jun": "June", "jul": "July", "aug": "August",
+            "sep": "September", "oct": "October", "nov": "November", "dec": "December"
+        }
+        
         for match in re.finditer(alt_pattern, page_html):
             lineup = html.unescape(match.group(1).strip())
             venue_raw = match.group(2).strip()
             day = match.group(3)
             month_abbr = match.group(4)
             year = match.group(5)
+            
+            # Convert month abbreviation to full name
+            month_full = month_map.get(month_abbr.lower()[:3], month_abbr)
             
             # Convert venue name to slug for matching
             venue_slug = venue_raw.lower().replace(' ', '-').replace("'", "")
@@ -176,7 +187,7 @@ def scrape_songkick():
                 artist_map[key] = {
                     "lineup": lineup,
                     "venue": venue_name,
-                    "date_hint": f"{month_abbr} {day}, 20{year}"
+                    "date_hint": f"{month_full} {day}, 20{year}"
                 }
         
         # Source 2: <strong> tags in event links (fallback)
@@ -213,18 +224,22 @@ def scrape_songkick():
                 venue_name = venue_matches(venue_slug)
                 if venue_name:
                     artist_name = None
+                    event_date = current_date  # Default to section date
                     
                     # Try concert_map first (from <strong> tags)
                     if concert_id in concert_map:
                         artist_name = concert_map[concert_id]["lineup"]
                     
-                    # Check if we have a better lineup from alt attributes
+                    # Check if we have a better lineup AND date from alt attributes
                     # Match by checking if artist_slug is in any alt-derived lineup
                     headliner_clean = clean_artist_name(artist_slug).lower()
                     for key, data in artist_map.items():
                         lineup_lower, venue_lower = key
                         if headliner_clean in lineup_lower and venue_name.lower() == venue_lower:
                             artist_name = data["lineup"]
+                            # Use the date from alt attribute (more accurate)
+                            if data.get("date_hint"):
+                                event_date = data["date_hint"]
                             break
                     
                     # Fallback to URL slug
@@ -236,7 +251,7 @@ def scrape_songkick():
                         continue
                     
                     events.append({
-                        "date": current_date,
+                        "date": event_date,
                         "artist": artist_name,
                         "venue": venue_name,
                         "link": f"https://www.songkick.com/concerts/{concert_id}",
