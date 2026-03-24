@@ -146,16 +146,49 @@ def scrape_songkick():
         # Find date headers
         date_pattern = r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(\d+)\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})'
         
-        # Build a map of concert IDs to their full artist names from <strong> tags
+        # Build a map of concert IDs to their full lineup from multiple sources
+        artist_map = {}
+        
+        # Source 1: alt attributes on artist images (most reliable for full lineup)
+        # Pattern: alt="Chiodos, sace6, and 156/Silence at Commodore Ballroom (07 Aug 26)"
+        alt_pattern = r'alt="([^"]+)\s+at\s+([^"(]+)\s*\((\d+)\s+(\w+)\s+(\d+)\)"'
+        for match in re.finditer(alt_pattern, page_html):
+            lineup = html.unescape(match.group(1).strip())
+            venue_raw = match.group(2).strip()
+            day = match.group(3)
+            month_abbr = match.group(4)
+            year = match.group(5)
+            
+            # Convert venue name to slug for matching
+            venue_slug = venue_raw.lower().replace(' ', '-').replace("'", "")
+            venue_name = venue_matches(venue_slug)
+            
+            # Also try direct name matching
+            if not venue_name:
+                for slug, name in {**VANCOUVER_VENUES, **SQUAMISH_VENUES}.items():
+                    if name.lower() in venue_raw.lower() or venue_raw.lower() in name.lower():
+                        venue_name = name
+                        break
+            
+            if venue_name and not should_exclude(lineup):
+                # Build a key based on lineup + venue for later matching
+                key = (lineup.lower(), venue_name.lower())
+                artist_map[key] = {
+                    "lineup": lineup,
+                    "venue": venue_name,
+                    "date_hint": f"{month_abbr} {day}, 20{year}"
+                }
+        
+        # Source 2: <strong> tags in event links (fallback)
         # Pattern: <a class="event-link" href="/concerts/43062105-avro-at-green-auto">
         #            <span><strong>Avro, DIELECTRIC, EARS (BC), and Wack</strong></span>
-        artist_map = {}
+        concert_map = {}
         event_link_pattern = r'<a[^>]*href="/concerts/(\d+)-[^"]+at-([^"]+)"[^>]*>\s*(?:<span>)?\s*<strong>([^<]+)</strong>'
         for match in re.finditer(event_link_pattern, page_html, re.IGNORECASE | re.DOTALL):
             concert_id = match.group(1)
             venue_slug = match.group(2).lower()
             full_lineup = html.unescape(match.group(3).strip())
-            artist_map[concert_id] = {
+            concert_map[concert_id] = {
                 "lineup": full_lineup,
                 "venue_slug": venue_slug
             }
@@ -170,24 +203,33 @@ def scrape_songkick():
                 current_date = f"{month} {day}, {year}"
             
             # Check for concert links on this line
-            link_match = re.search(r'/concerts/(\d+)-[a-z0-9-]+-at-([a-z0-9-]+)', line.lower())
+            link_match = re.search(r'/concerts/(\d+)-([a-z0-9-]+)-at-([a-z0-9-]+)', line.lower())
             if link_match and current_date:
                 concert_id = link_match.group(1)
-                venue_slug = link_match.group(2)
+                artist_slug = link_match.group(2)
+                venue_slug = link_match.group(3)
                 
                 # Check if venue matches our list
                 venue_name = venue_matches(venue_slug)
                 if venue_name:
-                    # Get full lineup from artist_map, fallback to URL slug
-                    if concert_id in artist_map:
-                        artist_name = artist_map[concert_id]["lineup"]
-                    else:
-                        # Fallback: extract from URL slug
-                        slug_match = re.search(r'/concerts/\d+-(.+?)-at-', line.lower())
-                        if slug_match:
-                            artist_name = clean_artist_name(slug_match.group(1))
-                        else:
-                            continue
+                    artist_name = None
+                    
+                    # Try concert_map first (from <strong> tags)
+                    if concert_id in concert_map:
+                        artist_name = concert_map[concert_id]["lineup"]
+                    
+                    # Check if we have a better lineup from alt attributes
+                    # Match by checking if artist_slug is in any alt-derived lineup
+                    headliner_clean = clean_artist_name(artist_slug).lower()
+                    for key, data in artist_map.items():
+                        lineup_lower, venue_lower = key
+                        if headliner_clean in lineup_lower and venue_name.lower() == venue_lower:
+                            artist_name = data["lineup"]
+                            break
+                    
+                    # Fallback to URL slug
+                    if not artist_name:
+                        artist_name = clean_artist_name(artist_slug)
                     
                     # Skip if excluded genre/style
                     if should_exclude(artist_name):
