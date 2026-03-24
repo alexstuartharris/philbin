@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-24T20:14:28.323729Z",
+  "generated": "2026-03-24T20:18:44.048475Z",
   "count": 363,
   "events": [
     {
@@ -151,10 +151,11 @@
     },
     {
       "date": "March 30, 2026",
-      "artist": "Drook",
+      "artist": "Drook, Still Depths, Hope Slide, Slingjaw, Stich",
       "venue": "Green Auto",
-      "link": "https://www.songkick.com/concerts/42994824",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/3/30/drook-tickets",
+      "source": "Do604",
+      "_id": "16860095"
     },
     {
       "date": "March 31, 2026",
@@ -704,10 +705,11 @@
     },
     {
       "date": "April 23, 2026",
-      "artist": "TWEN",
+      "artist": "Twen with Monsoon and bloom effect",
       "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/42980829",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/4/23/twen-with-monsoon-tickets",
+      "source": "Do604",
+      "_id": "16833842"
     },
     {
       "date": "April 23, 2026",
@@ -865,10 +867,11 @@
     },
     {
       "date": "May 02, 2026",
-      "artist": "Dead Meadow",
+      "artist": "Dead Meadow with Temptress and Space Queen",
       "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43110176",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/5/2/temptress-tickets",
+      "source": "Do604",
+      "_id": "16861258"
     },
     {
       "date": "May 02, 2026",
@@ -928,10 +931,11 @@
     },
     {
       "date": "May 05, 2026",
-      "artist": "Ambar Lucid",
+      "artist": "ambar lucid & maye",
       "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43012355",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/5/5/ambar-lucid-maye-tickets",
+      "source": "Do604",
+      "_id": "16884191"
     },
     {
       "date": "May 05, 2026",
@@ -956,10 +960,11 @@
     },
     {
       "date": "May 07, 2026",
-      "artist": "Electric Six",
+      "artist": "Electric Six with guests Tragedy",
       "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/42979663",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/5/7/electric-six-with-guests-tragedy-tickets",
+      "source": "Do604",
+      "_id": "16804176"
     },
     {
       "date": "May 07, 2026",
@@ -1005,9 +1010,9 @@
     },
     {
       "date": "May 08, 2026",
-      "artist": "IT'S MURPH",
+      "artist": "IT'S MURPH and VNSSA",
       "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/43023487",
+      "link": "https://www.songkick.com/concerts/43026044",
       "source": "Songkick"
     },
     {
@@ -1054,10 +1059,11 @@
     },
     {
       "date": "May 09, 2026",
-      "artist": "MASTER BOOT RECORD",
+      "artist": "MASTER BOOT RECORD with Sleeper Ship",
       "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/42958627",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/5/9/master-boot-record-tickets",
+      "source": "Do604",
+      "_id": "16748528"
     },
     {
       "date": "May 10, 2026",
@@ -1236,10 +1242,11 @@
     },
     {
       "date": "May 21, 2026",
-      "artist": "B\u00e9ton Arm\u00e9",
+      "artist": "B\u00e9ton Arm\u00e9 with First Attack, Toy Tiger and Code 22",
       "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43031960",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/5/21/beton-arme-tickets",
+      "source": "Do604",
+      "_id": "16922353"
     },
     {
       "date": "May 22, 2026",

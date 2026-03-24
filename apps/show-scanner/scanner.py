@@ -594,27 +594,51 @@ def events_are_same_show(e1, e2):
     return bool(artists1 & artists2)
 
 
+def count_artists(artist_str):
+    """Count the number of artists in a lineup string."""
+    return len(extract_artists(artist_str))
+
+
 def deduplicate_events(events):
     """Remove duplicate events using artist overlap detection.
     
     Two events are duplicates if they share date, venue, and at least
-    one artist in common. Prefers Songkick entries over Do604.
+    one artist in common. Prefers the entry with MORE artists listed
+    (more complete lineup). If tied, prefers Songkick over Do604.
     """
-    # Sort by source priority first
+    # Group duplicates together first
+    groups = []
+    used = set()
+    
+    for i, e in enumerate(events):
+        if i in used:
+            continue
+        
+        group = [e]
+        used.add(i)
+        
+        # Find all duplicates of this event
+        for j, other in enumerate(events):
+            if j in used:
+                continue
+            if events_are_same_show(e, other):
+                group.append(other)
+                used.add(j)
+        
+        groups.append(group)
+    
+    # Pick best entry from each group
+    # Priority: most artists listed, then source priority as tiebreaker
     source_priority = {"Songkick": 0, "Do604": 1, "Eventbrite": 2, "Backyard Squamish": 3, "BAG": 4}
-    events_sorted = sorted(events, key=lambda x: source_priority.get(x.get("source", ""), 99))
     
     unique = []
-    for e in events_sorted:
-        # Check if this event is a duplicate of any already-added event
-        is_dupe = False
-        for existing in unique:
-            if events_are_same_show(e, existing):
-                is_dupe = True
-                break
-        
-        if not is_dupe:
-            unique.append(e)
+    for group in groups:
+        # Sort by: 1) artist count (descending), 2) source priority (ascending)
+        group.sort(key=lambda x: (
+            -count_artists(x.get("artist", "")),  # More artists = better (negative for descending)
+            source_priority.get(x.get("source", ""), 99)
+        ))
+        unique.append(group[0])
     
     return unique
 
