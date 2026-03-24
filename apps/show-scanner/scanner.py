@@ -15,7 +15,6 @@ import html
 import json
 import re
 import sys
-import time
 from datetime import datetime, timedelta
 from urllib.request import urlopen, Request
 from urllib.error import URLError
@@ -130,55 +129,12 @@ def venue_matches(venue_slug):
 
 # === Scrapers ===
 
-def fetch_lineup(concert_url):
-    """Fetch full lineup from a Songkick concert page by parsing the page title."""
-    page_html = fetch_url(concert_url)
-    if not page_html:
-        return []
-    
-    # Songkick puts the full lineup in the page title
-    # Format: "Artist1 and Artist2 and Artist3 [Location] Tickets, Venue, Date – Songkick"
-    # OR: "Artist1, Artist2, and Artist3 [Location] Tickets..."
-    
-    title_match = re.search(r'<title>([^<]+?)\s+(?:Vancouver|Squamish|Coquitlam|BC)?\s*Tickets', page_html, re.IGNORECASE)
-    if not title_match:
-        return []
-    
-    title_artists = title_match.group(1).strip()
-    
-    # Split by common delimiters
-    # Try "and" first, then commas
-    if ' and ' in title_artists:
-        artists = re.split(r'\s+and\s+', title_artists)
-    elif ', ' in title_artists:
-        artists = title_artists.split(', ')
-    else:
-        # Single artist
-        artists = [title_artists]
-    
-    # Clean up each artist name
-    lineup = []
-    for artist in artists:
-        clean = html.unescape(artist.strip())
-        # Remove trailing "and" if present
-        clean = re.sub(r'\s+and$', '', clean, flags=re.IGNORECASE)
-        if clean and len(clean) > 1 and len(clean) < 60:
-            lineup.append(clean)
-    
-    return lineup[:8]  # Cap at 8
-
-
 def scrape_songkick():
     """Scrape Songkick Vancouver metro for upcoming shows at target venues."""
     events = []
     base_url = "https://www.songkick.com/metro-areas/27398-canada-vancouver"
     
-    concert_links = []  # Collect concert links first
-    
-    # Limit to first page for faster testing (set to 5 for full scan)
-    max_pages = int(sys.argv[1]) if len(sys.argv) > 1 else 4
-    
-    for page in range(1, max_pages + 1):
+    for page in range(1, 5):  # First 4 pages
         url = f"{base_url}?page={page}" if page > 1 else base_url
         page_html = fetch_url(url)
         if not page_html:
@@ -190,7 +146,21 @@ def scrape_songkick():
         # Find date headers
         date_pattern = r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(\d+)\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})'
         
-        # Process HTML line by line to track dates
+        # Build a map of concert IDs to their full artist names from <strong> tags
+        # Pattern: <a class="event-link" href="/concerts/43062105-avro-at-green-auto">
+        #            <span><strong>Avro, DIELECTRIC, EARS (BC), and Wack</strong></span>
+        artist_map = {}
+        event_link_pattern = r'<a[^>]*href="/concerts/(\d+)-[^"]+at-([^"]+)"[^>]*>\s*(?:<span>)?\s*<strong>([^<]+)</strong>'
+        for match in re.finditer(event_link_pattern, page_html, re.IGNORECASE | re.DOTALL):
+            concert_id = match.group(1)
+            venue_slug = match.group(2).lower()
+            full_lineup = html.unescape(match.group(3).strip())
+            artist_map[concert_id] = {
+                "lineup": full_lineup,
+                "venue_slug": venue_slug
+            }
+        
+        # Process HTML line by line to track dates and match events
         lines = page_html.split('\n')
         for line in lines:
             # Check for date header
@@ -200,56 +170,47 @@ def scrape_songkick():
                 current_date = f"{month} {day}, {year}"
             
             # Check for concert links on this line
-            link_match = re.search(r'/concerts/(\d+)-([a-z0-9-]+)-at-([a-z0-9-]+)', line.lower())
+            link_match = re.search(r'/concerts/(\d+)-[a-z0-9-]+-at-([a-z0-9-]+)', line.lower())
             if link_match and current_date:
-                concert_id, artist_slug, venue_slug = link_match.groups()
+                concert_id = link_match.group(1)
+                venue_slug = link_match.group(2)
                 
                 # Check if venue matches our list
                 venue_name = venue_matches(venue_slug)
                 if venue_name:
-                    artist_name = clean_artist_name(artist_slug)
+                    # Get full lineup from artist_map, fallback to URL slug
+                    if concert_id in artist_map:
+                        artist_name = artist_map[concert_id]["lineup"]
+                    else:
+                        # Fallback: extract from URL slug
+                        slug_match = re.search(r'/concerts/\d+-(.+?)-at-', line.lower())
+                        if slug_match:
+                            artist_name = clean_artist_name(slug_match.group(1))
+                        else:
+                            continue
                     
                     # Skip if excluded genre/style
                     if should_exclude(artist_name):
                         continue
                     
-                    concert_links.append({
-                        "id": concert_id,
+                    events.append({
                         "date": current_date,
-                        "headliner": artist_name,
-                        "venue": venue_name
+                        "artist": artist_name,
+                        "venue": venue_name,
+                        "link": f"https://www.songkick.com/concerts/{concert_id}",
+                        "source": "Songkick"
                     })
     
-    # Now fetch lineup for each concert (with rate limiting)
-    print(f"  Fetching lineups for {len(concert_links)} concerts...", file=sys.stderr)
-    for i, concert in enumerate(concert_links):
-        concert_url = f"https://www.songkick.com/concerts/{concert['id']}"
-        lineup = fetch_lineup(concert_url)
-        
-        # Use full lineup if available, otherwise just headliner
-        if lineup:
-            # Filter out excluded artists from lineup
-            lineup = [a for a in lineup if not should_exclude(a)]
-            artist_display = " • ".join(lineup) if lineup else concert['headliner']
-        else:
-            artist_display = concert['headliner']
-        
-        events.append({
-            "date": concert['date'],
-            "artist": artist_display,
-            "venue": concert['venue'],
-            "link": concert_url,
-            "source": "Songkick"
-        })
-        
-        # Progress indicator every 20 shows
-        if (i + 1) % 20 == 0:
-            print(f"    {i + 1}/{len(concert_links)} complete", file=sys.stderr)
-        
-        # Rate limit: ~200ms between requests
-        time.sleep(0.2)
+    # Dedupe within Songkick (same concert ID can appear multiple times)
+    seen_ids = set()
+    unique_events = []
+    for e in events:
+        concert_id = e["link"].split("/")[-1]
+        if concert_id not in seen_ids:
+            seen_ids.add(concert_id)
+            unique_events.append(e)
     
-    return events
+    return unique_events
 
 
 def scrape_eventbrite_tricksters():
