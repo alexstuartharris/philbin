@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-25T10:00:46.475926+00:00",
+  "generatedAt": "2026-03-25T21:00:19.590582+00:00",
   "notes": [
     "Additional regime families beyond BMSB.",
     "Regimes are BTC close vs weekly SMA100 or SMA200 (as-of prior completed week, no lookahead).",
@@ -2294,9 +2294,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 38,
-          "rate": 0.7307692307692307
+          "rate": 0.7169811320754716
         },
         {
           "direction": "down",
@@ -2404,9 +2404,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 35,
-          "rate": 0.6730769230769231
+          "rate": 0.660377358490566
         },
         {
           "direction": "down",
@@ -2514,9 +2514,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 33,
-          "rate": 0.6346153846153846
+          "rate": 0.6226415094339622
         },
         {
           "direction": "down",
@@ -2624,9 +2624,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 30,
-          "rate": 0.5769230769230769
+          "rate": 0.5660377358490566
         },
         {
           "direction": "down",
@@ -2734,9 +2734,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "below",
-          "n": 52,
+          "n": 53,
           "hits": 29,
-          "rate": 0.5576923076923077
+          "rate": 0.5471698113207547
         },
         {
           "direction": "down",
@@ -4557,30 +4557,6 @@
           "score": 0.9362706042954925
         },
         {
-          "direction": "down",
-          "shock": 4,
-          "target": 4,
-          "horizon": 5,
-          "nAbove": 113,
-          "nBelow": 52,
-          "pAbove": 0.45132743362831856,
-          "pBelow": 0.5769230769230769,
-          "deltaAboveMinusBelow": -0.1255956432947583,
-          "score": 0.905683063748272
-        },
-        {
-          "direction": "down",
-          "shock": 4,
-          "target": 5,
-          "horizon": 5,
-          "nAbove": 113,
-          "nBelow": 52,
-          "pAbove": 0.4336283185840708,
-          "pBelow": 0.5576923076923077,
-          "deltaAboveMinusBelow": -0.1240639891082369,
-          "score": 0.8946381483367081
-        },
-        {
           "direction": "up",
           "shock": 4,
           "target": 4,
@@ -4629,6 +4605,18 @@
           "score": 0.8414519925789491
         },
         {
+          "direction": "down",
+          "shock": 4,
+          "target": 4,
+          "horizon": 5,
+          "nAbove": 113,
+          "nBelow": 53,
+          "pAbove": 0.45132743362831856,
+          "pBelow": 0.5660377358490566,
+          "deltaAboveMinusBelow": -0.11471030222073803,
+          "score": 0.8351036055995519
+        },
+        {
           "direction": "up",
           "shock": 6,
           "target": 5,
@@ -4639,6 +4627,18 @@
           "pBelow": 0.2,
           "deltaAboveMinusBelow": -0.1523809523809524,
           "score": 0.8346248495316818
+        },
+        {
+          "direction": "down",
+          "shock": 4,
+          "target": 5,
+          "horizon": 5,
+          "nAbove": 113,
+          "nBelow": 53,
+          "pAbove": 0.4336283185840708,
+          "pBelow": 0.5471698113207547,
+          "deltaAboveMinusBelow": -0.1135414927366839,
+          "score": 0.8265945441160046
         },
         {
           "direction": "down",
@@ -4777,7 +4777,7 @@
         "state": "below",
         "ma": 87451.73800000007,
         "weekEnd": "2026-03-22",
-        "btcClose": 71341.4
+        "btcClose": 70994.4
       }
     },
     "ma200w": {
@@ -7057,9 +7057,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 103,
-          "rate": 0.7202797202797203
+          "rate": 0.7152777777777778
         },
         {
           "direction": "down",
@@ -7167,9 +7167,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 92,
-          "rate": 0.6433566433566433
+          "rate": 0.6388888888888888
         },
         {
           "direction": "down",
@@ -7277,9 +7277,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 81,
-          "rate": 0.5664335664335665
+          "rate": 0.5625
         },
         {
           "direction": "down",
@@ -7387,9 +7387,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 69,
-          "rate": 0.4825174825174825
+          "rate": 0.4791666666666667
         },
         {
           "direction": "down",
@@ -7497,9 +7497,9 @@
           "horizon": 5,
           "mode": "within",
           "regime": "above",
-          "n": 143,
+          "n": 144,
           "hits": 66,
-          "rate": 0.46153846153846156
+          "rate": 0.4583333333333333
         },
         {
           "direction": "down",
@@ -9251,12 +9251,12 @@
           "shock": 4,
           "target": 5,
           "horizon": 5,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.46153846153846156,
+          "pAbove": 0.4583333333333333,
           "pBelow": 0.5454545454545454,
-          "deltaAboveMinusBelow": -0.08391608391608385,
-          "score": 0.3936013225026651
+          "deltaAboveMinusBelow": -0.0871212121212121,
+          "score": 0.4086347063482532
         },
         {
           "direction": "down",
@@ -9287,12 +9287,12 @@
           "shock": 4,
           "target": 4,
           "horizon": 5,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.4825174825174825,
+          "pAbove": 0.4791666666666667,
           "pBelow": 0.5454545454545454,
-          "deltaAboveMinusBelow": -0.06293706293706292,
-          "score": 0.295200991876999
+          "deltaAboveMinusBelow": -0.06628787878787873,
+          "score": 0.31091771135193164
         },
         {
           "direction": "down",
@@ -9309,18 +9309,6 @@
         {
           "direction": "down",
           "shock": 4,
-          "target": 2,
-          "horizon": 5,
-          "nAbove": 143,
-          "nBelow": 22,
-          "pAbove": 0.6433566433566433,
-          "pBelow": 0.5909090909090909,
-          "deltaAboveMinusBelow": 0.05244755244755239,
-          "score": 0.24600082656416564
-        },
-        {
-          "direction": "down",
-          "shock": 4,
           "target": 3,
           "horizon": 2,
           "nAbove": 144,
@@ -9329,6 +9317,18 @@
           "pBelow": 0.45454545454545453,
           "deltaAboveMinusBelow": -0.05176767676767674,
           "score": 0.2428119269605562
+        },
+        {
+          "direction": "down",
+          "shock": 4,
+          "target": 2,
+          "horizon": 5,
+          "nAbove": 144,
+          "nBelow": 22,
+          "pAbove": 0.6388888888888888,
+          "pBelow": 0.5909090909090909,
+          "deltaAboveMinusBelow": 0.0479797979797979,
+          "score": 0.22504520059758842
         },
         {
           "direction": "down",
@@ -9347,12 +9347,12 @@
           "shock": 4,
           "target": 1,
           "horizon": 5,
-          "nAbove": 143,
+          "nAbove": 144,
           "nBelow": 22,
-          "pAbove": 0.7202797202797203,
+          "pAbove": 0.7152777777777778,
           "pBelow": 0.6818181818181818,
-          "deltaAboveMinusBelow": 0.03846153846153855,
-          "score": 0.1804006061470554
+          "deltaAboveMinusBelow": 0.03345959595959602,
+          "score": 0.15693941620621354
         },
         {
           "direction": "down",
@@ -9370,6 +9370,18 @@
           "direction": "down",
           "shock": 4,
           "target": 3,
+          "horizon": 5,
+          "nAbove": 144,
+          "nBelow": 22,
+          "pAbove": 0.5625,
+          "pBelow": 0.5909090909090909,
+          "deltaAboveMinusBelow": -0.02840909090909094,
+          "score": 0.13325044772225667
+        },
+        {
+          "direction": "down",
+          "shock": 4,
+          "target": 3,
           "horizon": 3,
           "nAbove": 144,
           "nBelow": 22,
@@ -9377,18 +9389,6 @@
           "pBelow": 0.45454545454545453,
           "deltaAboveMinusBelow": 0.024621212121212155,
           "score": 0.11548372135928915
-        },
-        {
-          "direction": "down",
-          "shock": 4,
-          "target": 3,
-          "horizon": 5,
-          "nAbove": 143,
-          "nBelow": 22,
-          "pAbove": 0.5664335664335665,
-          "pBelow": 0.5909090909090909,
-          "deltaAboveMinusBelow": -0.02447552447552448,
-          "score": 0.1148003857299441
         },
         {
           "direction": "down",
@@ -9491,7 +9491,7 @@
         "state": "above",
         "ma": 59023.878000000026,
         "weekEnd": "2026-03-22",
-        "btcClose": 71341.4
+        "btcClose": 70994.4
       }
     }
   }
