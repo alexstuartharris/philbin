@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-25T21:00:16.838404+00:00",
+  "generatedAt": "2026-03-26T10:00:20.089660+00:00",
   "notes": [
     "Event pattern analysis on stitched BTC->IBIT close series.",
     "Monte Carlo uses block bootstrap of historical daily returns (null model).",
