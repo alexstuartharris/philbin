@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-26T10:00:10.843124+00:00",
+  "generatedAt": "2026-03-28T10:00:11.698414+00:00",
   "meta": {
     "cutoff": "2018-12-01",
     "stitchedRange": [
       "2018-12-03",
-      "2026-03-25"
+      "2026-03-27"
     ],
-    "stitchedRows": 1871,
+    "stitchedRows": 1873,
     "discoveryEnd": "2023-12-29",
     "oosStart": "2024-01-02",
     "researchVersion": "v2026.03.16-live-window-1to3d",
@@ -41862,75 +41862,75 @@
   ],
   "liveSignal": {
     "status": "ok",
-    "date": "2026-03-25",
-    "prevDate": "2026-03-24",
-    "close": 40.17,
-    "prevClose": 39.28,
-    "move1d": 0.0226578411405296,
-    "moveWindow": 0.0226578411405296,
-    "windowDays": 1,
-    "windowStartDate": "2026-03-24",
-    "windowEndDate": "2026-03-25",
+    "date": "2026-03-27",
+    "prevDate": "2026-03-26",
+    "close": 37.4,
+    "prevClose": 38.82,
+    "move1d": -0.03657908294693457,
+    "moveWindow": -0.06895693303460304,
+    "windowDays": 2,
+    "windowStartDate": "2026-03-25",
+    "windowEndDate": "2026-03-27",
     "windowMoves": [
       {
         "days": 1,
-        "startDate": "2026-03-24",
-        "endDate": "2026-03-25",
-        "ret": 0.0226578411405296,
-        "direction": "up",
+        "startDate": "2026-03-26",
+        "endDate": "2026-03-27",
+        "ret": -0.03657908294693457,
+        "direction": "down",
         "notable": false,
         "shockBucket": null
       },
       {
         "days": 2,
-        "startDate": "2026-03-23",
-        "endDate": "2026-03-25",
-        "ret": 0.002996254681647992,
-        "direction": "up",
-        "notable": false,
-        "shockBucket": null
+        "startDate": "2026-03-25",
+        "endDate": "2026-03-27",
+        "ret": -0.06895693303460304,
+        "direction": "down",
+        "notable": true,
+        "shockBucket": 6
       },
       {
         "days": 3,
-        "startDate": "2026-03-20",
-        "endDate": "2026-03-25",
-        "ret": 0.01005783253708814,
-        "direction": "up",
-        "notable": false,
-        "shockBucket": null
+        "startDate": "2026-03-24",
+        "endDate": "2026-03-27",
+        "ret": -0.04786150712830961,
+        "direction": "down",
+        "notable": true,
+        "shockBucket": 4
       }
     ],
-    "threeDayShockDetected": false,
-    "threeDayMove": 0.01005783253708814,
-    "threeDayDirection": "up",
-    "direction": "up",
-    "notable": false,
-    "shockBucket": 4,
-    "sourceDataset": "oos",
+    "threeDayShockDetected": true,
+    "threeDayMove": -0.04786150712830961,
+    "threeDayDirection": "down",
+    "direction": "down",
+    "notable": true,
+    "shockBucket": 6,
+    "sourceDataset": "stitched",
     "topScenarios": [
       {
         "target": 1,
         "horizon": 10,
-        "rate": 0.746268656716418,
-        "ciLo": 0.6307080546049991,
-        "ciHi": 0.8351208618142104,
-        "n": 67
+        "rate": 0.8108108108108109,
+        "ciLo": 0.7071244273939165,
+        "ciHi": 0.8838203043326546,
+        "n": 74
       },
       {
-        "target": 1,
-        "horizon": 5,
-        "rate": 0.7014925373134329,
-        "ciLo": 0.5834478625635624,
-        "ciHi": 0.7976848872339728,
-        "n": 67
+        "target": 2,
+        "horizon": 10,
+        "rate": 0.7432432432432432,
+        "ciLo": 0.6334555586947143,
+        "ciHi": 0.8290229270043411,
+        "n": 74
       },
       {
-        "target": 1,
-        "horizon": 3,
-        "rate": 0.6268656716417911,
-        "ciLo": 0.5071540719064641,
-        "ciHi": 0.7328184001882802,
-        "n": 67
+        "target": 3,
+        "horizon": 10,
+        "rate": 0.7162162162162162,
+        "ciLo": 0.6048274583682747,
+        "ciHi": 0.8062645289197747,
+        "n": 74
       }
     ]
   }
