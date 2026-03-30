@@ -277,6 +277,7 @@
 
   <script>
     const SOURCE_URL = "https://www.tide-forecast.com/locations/Squamish-British-Columbia/tides/latest";
+    const LOCAL_DATA_URL = "data/tides.json";
     const TIME_ZONE = "America/Vancouver";
     const WEEKDAY_AFTER_MINUTES = 17 * 60 + 30;
     const RANGE_OPTIONS = [7, 14, 30];
@@ -512,31 +513,15 @@
       const status = document.getElementById("status");
       status.textContent = "Loading Squamish tide windows…";
       try {
-        const response = await fetch(SOURCE_URL, { cache: "no-store" });
-        if (!response.ok) throw new Error(`Failed to fetch tide data (${response.status})`);
-        const html = await response.text();
-        const { tides, timeZoneAbbr } = parseHighTides(html);
-        if (!tides.length) throw new Error("No high tide entries parsed from source.");
-        const now = new Date();
-        payload = {
-          source: SOURCE_URL,
-          timeZone: TIME_ZONE,
-          timeZoneAbbr,
-          fetchedAt: now.toISOString(),
-          nowLocalDate: formatLocalDate(now),
-          windows: buildWindows(tides),
-          notes: [
-            "Tide data is scraped from tide-forecast.com HTML and may change without notice.",
-            "Windows are computed as +/- 1 hour around high tide; verify timing before planning a trip.",
-            "Availability is marked as weekends or weekdays after 5:30 PM.",
-          ],
-        };
+        const response = await fetch(LOCAL_DATA_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Failed to fetch local tide data (${response.status})`);
+        payload = await response.json();
         renderMeta(payload);
-        renderNotes(payload.notes);
+        renderNotes(payload.notes || []);
         renderWindows();
       } catch (error) {
         console.error(error);
-        status.textContent = "Unable to load tide data. The source may be blocking browser fetches or may have changed format.";
+        status.textContent = "Unable to load local tide data. Try refreshing in a minute or check the GitHub repo.";
       }
     }
 
