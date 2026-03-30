@@ -46,6 +46,30 @@ def parse_ampm_time(raw: str):
     return hour, minute
 
 
+def pretty_local(dt: datetime):
+    month = dt.strftime("%b")
+    weekday = dt.strftime("%a")
+    day = dt.day
+    hour = dt.strftime("%I").lstrip("0") or "0"
+    minute = dt.strftime("%M")
+    ampm = dt.strftime("%p")
+    return f"{weekday}, {month} {day}, {hour}:{minute} {ampm}"
+
+
+def pretty_clock(hour: int, minute: int):
+    suffix = "AM"
+    display_hour = hour
+    if hour == 0:
+        display_hour = 12
+    elif hour == 12:
+        suffix = "PM"
+        display_hour = 12
+    elif hour > 12:
+        suffix = "PM"
+        display_hour = hour - 12
+    return f"{display_hour}:{minute:02d} {suffix}"
+
+
 def parse_high_tides(html: str):
     timezone_match = re.search(r"Time\s*\(([^)]+)\)", html, re.I)
     tz_abbr = timezone_match.group(1) if timezone_match else ""
@@ -58,12 +82,16 @@ def parse_high_tides(html: str):
     tides = []
     daylight = {}
 
+    row_pattern = re.compile(
+        r"<tr[^>]*>.*?<td>\s*(High Tide|Low Tide)\s*</td>.*?<td><b>\s*([0-9]{1,2}:[0-9]{2})\s*(AM|PM)\s*</b>.*?<td[^>]*>.*?<b[^>]*>([^<]+)</b>\s*<span[^>]*>\(([^)]+)\)</span>",
+        re.I | re.S,
+    )
+
     for i, match in enumerate(matches):
         start = match.start()
         end = matches[i + 1].start() if i + 1 < len(matches) else len(html)
         block = html[start:end]
 
-        weekday_name = match.group(1)
         day = int(match.group(2))
         month_name = match.group(3)
         year = int(match.group(4))
@@ -73,13 +101,11 @@ def parse_high_tides(html: str):
 
         date_key = f"{year:04d}-{month:02d}-{day:02d}"
 
-        tide_rows = re.finditer(r"<tr[^>]*>.*?<td>\s*(High Tide|Low Tide)\s*</td>.*?<td><b>\s*([0-9]{1,2}:[0-9]{2})\s*(AM|PM)\s*</b>", block, re.I | re.S)
-        for row in tide_rows:
+        for row in row_pattern.finditer(block):
             kind = row.group(1).lower()
             if "high" not in kind:
                 continue
-            raw_time = f"{row.group(2)}{row.group(3)}"
-            parsed = parse_ampm_time(raw_time)
+            parsed = parse_ampm_time(f"{row.group(2)}{row.group(3)}")
             if not parsed:
                 continue
             hour, raw_minute = parsed
@@ -89,29 +115,18 @@ def parse_high_tides(html: str):
                 "day": day,
                 "hour": hour,
                 "minute": raw_minute,
+                "heightMetric": row.group(4).strip(),
+                "heightImperial": row.group(5).strip(),
             })
 
         sunrise_match = re.search(r"Sunrise is at\s*([0-9: ]+[APMapm]{2})", block, re.I)
         sunset_match = re.search(r"sunset is at\s*([0-9: ]+[APMapm]{2})", block, re.I)
-        sunrise = parse_ampm_time(sunrise_match.group(1)) if sunrise_match else None
-        sunset = parse_ampm_time(sunset_match.group(1)) if sunset_match else None
         daylight[date_key] = {
-            "weekdayName": weekday_name,
-            "sunrise": sunrise,
-            "sunset": sunset,
+            "sunrise": parse_ampm_time(sunrise_match.group(1)) if sunrise_match else None,
+            "sunset": parse_ampm_time(sunset_match.group(1)) if sunset_match else None,
         }
 
     return tides, tz_abbr, daylight
-
-
-def pretty_local(dt: datetime):
-    month = dt.strftime("%b")
-    weekday = dt.strftime("%a")
-    day = dt.day
-    hour = dt.strftime("%I").lstrip("0") or "0"
-    minute = dt.strftime("%M")
-    ampm = dt.strftime("%p")
-    return f"{weekday}, {month} {day}, {hour}:{minute} {ampm}"
 
 
 def build_windows(tides, tz_abbr, daylight):
@@ -138,29 +153,34 @@ def build_windows(tides, tz_abbr, daylight):
             fishable_end_minutes = sunset[0] * 60 + sunset[1]
             window_start_minutes = window_start_local.hour * 60 + window_start_local.minute
             window_end_minutes = window_end_local.hour * 60 + window_end_local.minute
-            overlap_start = max(window_start_minutes, fishable_start_minutes)
-            overlap_end = min(window_end_minutes, fishable_end_minutes)
-            available = overlap_end > overlap_start
-            if not available:
-                if window_end_minutes <= fishable_start_minutes:
-                    availability_note = "Before fishable hours"
-                elif window_start_minutes >= fishable_end_minutes:
-                    availability_note = "After sunset"
-                else:
-                    availability_note = "Outside daylight window"
-            else:
+
+            available = window_start_minutes >= fishable_start_minutes and window_end_minutes <= fishable_end_minutes
+
+            if available:
                 if is_weekend:
-                    availability_note = f"Daylight window ({pretty_clock(*sunrise)}–{pretty_clock(*sunset)})"
+                    availability_note = f"Within daylight window ({pretty_clock(*sunrise)}–{pretty_clock(*sunset)})"
                 else:
-                    availability_note = f"After work before sunset (5:30 PM–{pretty_clock(*sunset)})"
+                    availability_note = f"After work and before sunset (5:30 PM–{pretty_clock(*sunset)})"
+            else:
+                if window_end_minutes > fishable_end_minutes:
+                    availability_note = "Runs past sunset"
+                elif window_start_minutes < fishable_start_minutes:
+                    availability_note = "Starts before fishable hours"
+                else:
+                    availability_note = "Outside fishable daylight window"
         else:
             start_minutes = window_start_local.hour * 60 + window_start_local.minute
-            available = (is_weekend and 6 * 60 <= start_minutes <= 20 * 60) or (not is_weekend and WEEKDAY_AFTER_MINUTES <= start_minutes <= 20 * 60)
+            end_minutes = window_end_local.hour * 60 + window_end_local.minute
+            fallback_start = 6 * 60 if is_weekend else WEEKDAY_AFTER_MINUTES
+            fallback_end = 20 * 60
+            available = start_minutes >= fallback_start and end_minutes <= fallback_end
             availability_note = "Fallback daylight estimate"
 
         windows.append({
             "dateLocal": window_start_local.strftime("%Y-%m-%d"),
             "highTideLocal": pretty_local(tide_local),
+            "highTideHeightMetric": tide["heightMetric"],
+            "highTideHeightImperial": tide["heightImperial"],
             "windowStartLocal": pretty_local(window_start_local),
             "windowEndLocal": pretty_local(window_end_local),
             "windowStartUtc": window_start_utc.isoformat().replace("+00:00", "Z"),
@@ -181,23 +201,10 @@ def build_windows(tides, tz_abbr, daylight):
         "notes": [
             "Tide data is scraped from tide-forecast.com HTML and may change without notice.",
             "Windows are computed as +/- 1 hour around high tide; verify timing before planning a trip.",
-            "Available windows are limited to daylight, and on weekdays they must also overlap 5:30 PM to sunset.",
+            "Available means the full 2-hour window stays inside daylight, and on weekdays also after 5:30 PM.",
+            "High-tide heights are shown in metres with feet in parentheses.",
         ],
     }
-
-
-def pretty_clock(hour: int, minute: int):
-    suffix = "AM"
-    display_hour = hour
-    if hour == 0:
-        display_hour = 12
-    elif hour == 12:
-        suffix = "PM"
-        display_hour = 12
-    elif hour > 12:
-        suffix = "PM"
-        display_hour = hour - 12
-    return f"{display_hour}:{minute:02d} {suffix}"
 
 
 def main():
