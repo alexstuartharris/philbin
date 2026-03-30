@@ -2,7 +2,7 @@
   "source": "https://www.tide-forecast.com/locations/Squamish-British-Columbia/tides/latest",
   "timeZone": "America/Vancouver",
   "timeZoneAbbr": "PDT",
-  "fetchedAt": "2026-03-30T04:08:49.017554Z",
+  "fetchedAt": "2026-03-30T04:12:27.625251Z",
   "nowLocalDate": "2026-03-29",
   "windows": [
     {
@@ -15,7 +15,7 @@
       "windowStartUtc": "2026-03-30T11:09:00Z",
       "windowEndUtc": "2026-03-30T13:09:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-03-30",
@@ -27,7 +27,7 @@
       "windowStartUtc": "2026-03-30T22:39:00Z",
       "windowEndUtc": "2026-03-31T00:39:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-03-31",
@@ -39,7 +39,7 @@
       "windowStartUtc": "2026-03-31T11:34:00Z",
       "windowEndUtc": "2026-03-31T13:34:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-03-31",
@@ -51,7 +51,7 @@
       "windowStartUtc": "2026-03-31T23:39:00Z",
       "windowEndUtc": "2026-04-01T01:39:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-01",
@@ -63,7 +63,7 @@
       "windowStartUtc": "2026-04-01T11:58:00Z",
       "windowEndUtc": "2026-04-01T13:58:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-01",
@@ -87,7 +87,7 @@
       "windowStartUtc": "2026-04-02T12:21:00Z",
       "windowEndUtc": "2026-04-02T14:21:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-02",
@@ -99,7 +99,7 @@
       "windowStartUtc": "2026-04-03T01:23:00Z",
       "windowEndUtc": "2026-04-03T03:23:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-03",
@@ -111,7 +111,7 @@
       "windowStartUtc": "2026-04-03T12:45:00Z",
       "windowEndUtc": "2026-04-03T14:45:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-03",
@@ -123,7 +123,7 @@
       "windowStartUtc": "2026-04-04T02:11:00Z",
       "windowEndUtc": "2026-04-04T04:11:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-04",
@@ -147,7 +147,7 @@
       "windowStartUtc": "2026-04-05T02:59:00Z",
       "windowEndUtc": "2026-04-05T04:59:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-05",
@@ -171,7 +171,7 @@
       "windowStartUtc": "2026-04-06T03:48:00Z",
       "windowEndUtc": "2026-04-06T05:48:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-06",
@@ -183,7 +183,7 @@
       "windowStartUtc": "2026-04-06T13:55:00Z",
       "windowEndUtc": "2026-04-06T15:55:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-06",
@@ -195,7 +195,7 @@
       "windowStartUtc": "2026-04-07T04:40:00Z",
       "windowEndUtc": "2026-04-07T06:40:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-07",
@@ -207,7 +207,7 @@
       "windowStartUtc": "2026-04-07T14:18:00Z",
       "windowEndUtc": "2026-04-07T16:18:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-07",
@@ -218,8 +218,8 @@
       "windowEndLocal": "Wed, Apr 8, 12:39 AM",
       "windowStartUtc": "2026-04-08T05:39:00Z",
       "windowEndUtc": "2026-04-08T07:39:00Z",
-      "available": true,
-      "availabilityNote": "Fallback daylight estimate"
+      "available": false,
+      "availabilityNote": "Runs into night"
     },
     {
       "dateLocal": "2026-04-08",
@@ -231,7 +231,7 @@
       "windowStartUtc": "2026-04-08T14:42:00Z",
       "windowEndUtc": "2026-04-08T16:42:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-08",
@@ -242,8 +242,8 @@
       "windowEndLocal": "Thu, Apr 9, 1:45 AM",
       "windowStartUtc": "2026-04-09T06:45:00Z",
       "windowEndUtc": "2026-04-09T08:45:00Z",
-      "available": true,
-      "availabilityNote": "Fallback daylight estimate"
+      "available": false,
+      "availabilityNote": "Runs into night"
     },
     {
       "dateLocal": "2026-04-09",
@@ -255,7 +255,7 @@
       "windowStartUtc": "2026-04-09T15:14:00Z",
       "windowEndUtc": "2026-04-09T17:14:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-10",
@@ -267,7 +267,7 @@
       "windowStartUtc": "2026-04-10T07:51:00Z",
       "windowEndUtc": "2026-04-10T09:51:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-10",
@@ -279,7 +279,7 @@
       "windowStartUtc": "2026-04-10T16:28:00Z",
       "windowEndUtc": "2026-04-10T18:28:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-11",
@@ -291,7 +291,7 @@
       "windowStartUtc": "2026-04-11T08:45:00Z",
       "windowEndUtc": "2026-04-11T10:45:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-11",
@@ -315,7 +315,7 @@
       "windowStartUtc": "2026-04-12T09:24:00Z",
       "windowEndUtc": "2026-04-12T11:24:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-12",
@@ -339,7 +339,7 @@
       "windowStartUtc": "2026-04-13T09:53:00Z",
       "windowEndUtc": "2026-04-13T11:53:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-13",
@@ -351,7 +351,7 @@
       "windowStartUtc": "2026-04-13T21:15:00Z",
       "windowEndUtc": "2026-04-13T23:15:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-14",
@@ -363,7 +363,7 @@
       "windowStartUtc": "2026-04-14T10:18:00Z",
       "windowEndUtc": "2026-04-14T12:18:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-14",
@@ -375,7 +375,7 @@
       "windowStartUtc": "2026-04-14T22:20:00Z",
       "windowEndUtc": "2026-04-15T00:20:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-15",
@@ -387,7 +387,7 @@
       "windowStartUtc": "2026-04-15T10:43:00Z",
       "windowEndUtc": "2026-04-15T12:43:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-15",
@@ -399,7 +399,7 @@
       "windowStartUtc": "2026-04-15T23:20:00Z",
       "windowEndUtc": "2026-04-16T01:20:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-16",
@@ -411,7 +411,7 @@
       "windowStartUtc": "2026-04-16T11:08:00Z",
       "windowEndUtc": "2026-04-16T13:08:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-16",
@@ -423,7 +423,7 @@
       "windowStartUtc": "2026-04-17T00:16:00Z",
       "windowEndUtc": "2026-04-17T02:16:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-17",
@@ -435,7 +435,7 @@
       "windowStartUtc": "2026-04-17T11:34:00Z",
       "windowEndUtc": "2026-04-17T13:34:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-17",
@@ -447,7 +447,7 @@
       "windowStartUtc": "2026-04-18T01:12:00Z",
       "windowEndUtc": "2026-04-18T03:12:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-18",
@@ -459,7 +459,7 @@
       "windowStartUtc": "2026-04-18T12:02:00Z",
       "windowEndUtc": "2026-04-18T14:02:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-18",
@@ -471,7 +471,7 @@
       "windowStartUtc": "2026-04-19T02:08:00Z",
       "windowEndUtc": "2026-04-19T04:08:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-19",
@@ -483,7 +483,7 @@
       "windowStartUtc": "2026-04-19T12:33:00Z",
       "windowEndUtc": "2026-04-19T14:33:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-19",
@@ -495,7 +495,7 @@
       "windowStartUtc": "2026-04-20T03:05:00Z",
       "windowEndUtc": "2026-04-20T05:05:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-20",
@@ -507,7 +507,7 @@
       "windowStartUtc": "2026-04-20T13:07:00Z",
       "windowEndUtc": "2026-04-20T15:07:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-20",
@@ -519,7 +519,7 @@
       "windowStartUtc": "2026-04-21T04:05:00Z",
       "windowEndUtc": "2026-04-21T06:05:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Runs past fallback daylight cutoff"
     },
     {
       "dateLocal": "2026-04-21",
@@ -531,7 +531,7 @@
       "windowStartUtc": "2026-04-21T13:45:00Z",
       "windowEndUtc": "2026-04-21T15:45:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-21",
@@ -542,8 +542,8 @@
       "windowEndLocal": "Wed, Apr 22, 12:08 AM",
       "windowStartUtc": "2026-04-22T05:08:00Z",
       "windowEndUtc": "2026-04-22T07:08:00Z",
-      "available": true,
-      "availabilityNote": "Fallback daylight estimate"
+      "available": false,
+      "availabilityNote": "Runs into night"
     },
     {
       "dateLocal": "2026-04-22",
@@ -555,7 +555,7 @@
       "windowStartUtc": "2026-04-22T14:29:00Z",
       "windowEndUtc": "2026-04-22T16:29:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-22",
@@ -566,8 +566,8 @@
       "windowEndLocal": "Thu, Apr 23, 1:15 AM",
       "windowStartUtc": "2026-04-23T06:15:00Z",
       "windowEndUtc": "2026-04-23T08:15:00Z",
-      "available": true,
-      "availabilityNote": "Fallback daylight estimate"
+      "available": false,
+      "availabilityNote": "Runs into night"
     },
     {
       "dateLocal": "2026-04-23",
@@ -579,7 +579,7 @@
       "windowStartUtc": "2026-04-23T15:28:00Z",
       "windowEndUtc": "2026-04-23T17:28:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-24",
@@ -591,7 +591,7 @@
       "windowStartUtc": "2026-04-24T07:19:00Z",
       "windowEndUtc": "2026-04-24T09:19:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-24",
@@ -603,7 +603,7 @@
       "windowStartUtc": "2026-04-24T16:55:00Z",
       "windowEndUtc": "2026-04-24T18:55:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-25",
@@ -615,7 +615,7 @@
       "windowStartUtc": "2026-04-25T08:14:00Z",
       "windowEndUtc": "2026-04-25T10:14:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-25",
@@ -639,7 +639,7 @@
       "windowStartUtc": "2026-04-26T08:58:00Z",
       "windowEndUtc": "2026-04-26T10:58:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-26",
@@ -663,7 +663,7 @@
       "windowStartUtc": "2026-04-27T09:34:00Z",
       "windowEndUtc": "2026-04-27T11:34:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     },
     {
       "dateLocal": "2026-04-27",
@@ -675,7 +675,7 @@
       "windowStartUtc": "2026-04-27T21:56:00Z",
       "windowEndUtc": "2026-04-27T23:56:00Z",
       "available": false,
-      "availabilityNote": "Fallback daylight estimate"
+      "availabilityNote": "Starts before fallback fishable hours"
     }
   ],
   "notes": [

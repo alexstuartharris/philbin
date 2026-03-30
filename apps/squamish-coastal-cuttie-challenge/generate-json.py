@@ -148,13 +148,19 @@ def build_windows(tides, tz_abbr, daylight):
         sunset = day_info.get("sunset")
         is_weekend = window_start_local.weekday() >= 5
 
+        window_start_minutes = window_start_local.hour * 60 + window_start_local.minute
+        window_end_minutes = window_end_local.hour * 60 + window_end_local.minute
+        crosses_midnight = window_end_local.date() != window_start_local.date()
+
         if sunrise and sunset:
             fishable_start_minutes = sunrise[0] * 60 + sunrise[1] if is_weekend else WEEKDAY_AFTER_MINUTES
             fishable_end_minutes = sunset[0] * 60 + sunset[1]
-            window_start_minutes = window_start_local.hour * 60 + window_start_local.minute
-            window_end_minutes = window_end_local.hour * 60 + window_end_local.minute
 
-            available = window_start_minutes >= fishable_start_minutes and window_end_minutes <= fishable_end_minutes
+            available = (
+                not crosses_midnight
+                and window_start_minutes >= fishable_start_minutes
+                and window_end_minutes <= fishable_end_minutes
+            )
 
             if available:
                 if is_weekend:
@@ -162,19 +168,30 @@ def build_windows(tides, tz_abbr, daylight):
                 else:
                     availability_note = f"After work and before sunset (5:30 PM–{pretty_clock(*sunset)})"
             else:
-                if window_end_minutes > fishable_end_minutes:
+                if crosses_midnight:
+                    availability_note = "Runs into night"
+                elif window_end_minutes > fishable_end_minutes:
                     availability_note = "Runs past sunset"
                 elif window_start_minutes < fishable_start_minutes:
                     availability_note = "Starts before fishable hours"
                 else:
                     availability_note = "Outside fishable daylight window"
         else:
-            start_minutes = window_start_local.hour * 60 + window_start_local.minute
-            end_minutes = window_end_local.hour * 60 + window_end_local.minute
             fallback_start = 6 * 60 if is_weekend else WEEKDAY_AFTER_MINUTES
             fallback_end = 20 * 60
-            available = start_minutes >= fallback_start and end_minutes <= fallback_end
-            availability_note = "Fallback daylight estimate"
+            available = (
+                not crosses_midnight
+                and window_start_minutes >= fallback_start
+                and window_end_minutes <= fallback_end
+            )
+            if crosses_midnight:
+                availability_note = "Runs into night"
+            elif window_end_minutes > fallback_end:
+                availability_note = "Runs past fallback daylight cutoff"
+            elif window_start_minutes < fallback_start:
+                availability_note = "Starts before fallback fishable hours"
+            else:
+                availability_note = "Fallback daylight estimate"
 
         windows.append({
             "dateLocal": window_start_local.strftime("%Y-%m-%d"),
