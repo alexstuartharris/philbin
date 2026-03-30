@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Squamish Coastal Cuttie Challenge</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07131a;
+      --bg-soft: #0d1f29;
+      --panel: rgba(11, 33, 44, 0.92);
+      --panel-2: rgba(18, 49, 64, 0.92);
+      --border: rgba(129, 194, 218, 0.18);
+      --text: #ebf8ff;
+      --muted: #9bbbc8;
+      --accent: #72e6ff;
+      --accent-2: #52c7ff;
+      --good: #86efac;
+      --warn: #fde68a;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(82,199,255,0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(114,230,255,0.16), transparent 28%),
+        linear-gradient(180deg, #08141a 0%, #061018 100%);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 72px;
+    }
+
+    .hero,
+    .panel,
+    .window-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(12,31,42,0.96), rgba(8,24,33,0.96));
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.3rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .sub {
+      margin: 14px 0 0;
+      max-width: 60ch;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 1rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: rgba(114, 230, 255, 0.08);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .chip:hover { transform: translateY(-1px); }
+    .chip.active {
+      background: linear-gradient(180deg, rgba(114,230,255,0.24), rgba(82,199,255,0.16));
+      border-color: rgba(114,230,255,0.5);
+      color: white;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      padding: 18px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .meta-block small,
+    .note-title {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 6px;
+    }
+
+    .meta-block strong {
+      display: block;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .status {
+      padding: 16px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--muted);
+    }
+
+    .day {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(10, 30, 40, 0.9);
+    }
+
+    .day-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(114,230,255,0.06);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .day-head h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .day-head span {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .day-body {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .window-card {
+      background: var(--panel-2);
+      padding: 14px;
+    }
+
+    .window-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .window-time {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .pill.good {
+      background: rgba(134, 239, 172, 0.12);
+      color: var(--good);
+      border-color: rgba(134, 239, 172, 0.35);
+    }
+
+    .pill.warn {
+      background: rgba(253, 230, 138, 0.12);
+      color: var(--warn);
+      border-color: rgba(253, 230, 138, 0.35);
+    }
+
+    .detail {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    ul.notes {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .window-row, .day-head { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Squamish · BC · Tides</p>
+      <h1>Squamish Coastal Cuttie Challenge</h1>
+      <p class="sub">
+        Quick high-tide windows for Squamish. This pulls tide data from tide-forecast.com, then marks
+        likely fishable windows as one hour before to one hour after high tide.
+      </p>
+      <div class="toolbar" id="range-buttons">
+        <button class="chip" data-range="7">7 days</button>
+        <button class="chip active" data-range="14">14 days</button>
+        <button class="chip" data-range="30">30 days</button>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="meta" id="meta"></div>
+      </section>
+
+      <div id="status" class="status">Loading Squamish tide windows…</div>
+      <div id="days" class="grid"></div>
+
+      <section class="panel">
+        <span class="note-title">Reliability notes</span>
+        <ul class="notes" id="notes"></ul>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const SOURCE_URL = "https://www.tide-forecast.com/locations/Squamish-British-Columbia/tides/latest";
+    const TIME_ZONE = "America/Vancouver";
+    const WEEKDAY_AFTER_MINUTES = 17 * 60 + 30;
+    const RANGE_OPTIONS = [7, 14, 30];
+    let selectedRange = 14;
+    let payload = null;
+
+    const monthIndex = {
+      January: 1, February: 2, March: 3, April: 4, May: 5, June: 6,
+      July: 7, August: 8, September: 9, October: 10, November: 11, December: 12,
+    };
+
+    const localPartsFormatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: TIME_ZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      weekday: "short",
+      hourCycle: "h23",
+    });
+
+    const localDisplayFormatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: TIME_ZONE,
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+
+    const localDateFormatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: TIME_ZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+
+    function getLocalParts(date) {
+      const parts = localPartsFormatter.formatToParts(date);
+      const lookup = {};
+      for (const part of parts) {
+        if (part.type !== "literal") lookup[part.type] = part.value;
+      }
+      return {
+        year: Number(lookup.year),
+        month: Number(lookup.month),
+        day: Number(lookup.day),
+        hour: Number(lookup.hour),
+        minute: Number(lookup.minute),
+        weekday: lookup.weekday,
+      };
+    }
+
+    function formatLocalDate(date) {
+      return localDateFormatter.format(date);
+    }
+
+    function formatLocalDateTime(date) {
+      return localDisplayFormatter.format(date);
+    }
+
+    function zonedTimeToUtc(event) {
+      const utcGuess = new Date(Date.UTC(event.year, event.month - 1, event.day, event.hour, event.minute));
+      const localParts = getLocalParts(utcGuess);
+      const localAsUtc = Date.UTC(localParts.year, localParts.month - 1, localParts.day, localParts.hour, localParts.minute);
+      const desiredAsUtc = Date.UTC(event.year, event.month - 1, event.day, event.hour, event.minute);
+      const diffMs = localAsUtc - desiredAsUtc;
+      return new Date(utcGuess.getTime() - diffMs);
+    }
+
+    function parseHighTides(html) {
+      const timezoneMatch = html.match(/Time\s*\(([^)]+)\)/i);
+      const timeZoneAbbr = timezoneMatch?.[1] ?? "";
+      const headerRegex = /####\s+Tide Times for Squamish:\s+([A-Za-z]+)\s+(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/g;
+      const matches = Array.from(html.matchAll(headerRegex));
+      const tides = [];
+
+      for (let i = 0; i < matches.length; i += 1) {
+        const match = matches[i];
+        const start = match.index ?? 0;
+        const end = matches[i + 1]?.index ?? html.length;
+        const block = html.slice(start, end);
+
+        const day = Number(match[2]);
+        const monthName = match[3];
+        const year = Number(match[4]);
+        const month = monthIndex[monthName];
+        if (!month) continue;
+
+        const highTideRegex = /High Tide\s+(\d{1,2}:\d{2})\s*(AM|PM)/g;
+        const highMatches = Array.from(block.matchAll(highTideRegex));
+
+        for (const high of highMatches) {
+          const time = high[1];
+          const ampm = high[2];
+          const [rawHour, rawMinute] = time.split(":").map(Number);
+          let hour = rawHour;
+          if (ampm === "PM" && hour < 12) hour += 12;
+          if (ampm === "AM" && hour === 12) hour = 0;
+          tides.push({ year, month, day, hour, minute: rawMinute });
+        }
+      }
+
+      return { tides, timeZoneAbbr };
+    }
+
+    function buildWindows(tides) {
+      return tides.map((tide) => {
+        const tideUtc = zonedTimeToUtc(tide);
+        const windowStartUtc = new Date(tideUtc.getTime() - 60 * 60 * 1000);
+        const windowEndUtc = new Date(tideUtc.getTime() + 60 * 60 * 1000);
+        const startParts = getLocalParts(windowStartUtc);
+        const isWeekend = startParts.weekday === "Sat" || startParts.weekday === "Sun";
+        const startMinutes = startParts.hour * 60 + startParts.minute;
+        const available = isWeekend || startMinutes >= WEEKDAY_AFTER_MINUTES;
+        const availabilityNote = isWeekend
+          ? "Weekend availability"
+          : available
+            ? "Weekday after 5:30 PM"
+            : "Weekday before 5:30 PM";
+
+        return {
+          dateLocal: formatLocalDate(windowStartUtc),
+          highTideLocal: formatLocalDateTime(tideUtc),
+          windowStartLocal: formatLocalDateTime(windowStartUtc),
+          windowEndLocal: formatLocalDateTime(windowEndUtc),
+          windowStartUtc: windowStartUtc.toISOString(),
+          windowEndUtc: windowEndUtc.toISOString(),
+          available,
+          availabilityNote,
+        };
+      }).sort((a, b) => a.windowStartUtc.localeCompare(b.windowStartUtc));
+    }
+
+    function addDays(dateString, days) {
+      const [year, month, day] = dateString.split("-").map(Number);
+      const date = new Date(Date.UTC(year, month - 1, day));
+      date.setUTCDate(date.getUTCDate() + days);
+      const yyyy = date.getUTCFullYear();
+      const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+      const dd = String(date.getUTCDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function formatDateLabel(dateString, timeZone) {
+      const [year, month, day] = dateString.split("-").map(Number);
+      const anchor = new Date(Date.UTC(year, month - 1, day, 12));
+      return new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      }).format(anchor);
+    }
+
+    function renderMeta(data) {
+      const meta = document.getElementById("meta");
+      meta.innerHTML = `
+        <div class="meta-block">
+          <small>Source</small>
+          <strong><a href="${data.source}" target="_blank" rel="noopener">tide-forecast.com</a></strong>
+        </div>
+        <div class="meta-block">
+          <small>Timezone</small>
+          <strong>${data.timeZone}${data.timeZoneAbbr ? ` (${data.timeZoneAbbr})` : ""}</strong>
+        </div>
+        <div class="meta-block">
+          <small>Updated</small>
+          <strong>${new Date(data.fetchedAt).toLocaleString()}</strong>
+        </div>
+        <div class="meta-block">
+          <small>Method</small>
+          <strong>±1 hour around high tide</strong>
+        </div>
+      `;
+    }
+
+    function renderNotes(notes) {
+      const el = document.getElementById("notes");
+      el.innerHTML = notes.map((note) => `<li>${note}</li>`).join("");
+    }
+
+    function renderWindows() {
+      if (!payload) return;
+      const cutoff = addDays(payload.nowLocalDate, selectedRange);
+      const filtered = payload.windows.filter((window) => window.dateLocal >= payload.nowLocalDate && window.dateLocal <= cutoff);
+      const grouped = new Map();
+      for (const window of filtered) {
+        const list = grouped.get(window.dateLocal) || [];
+        list.push(window);
+        grouped.set(window.dateLocal, list);
+      }
+
+      const days = document.getElementById("days");
+      const status = document.getElementById("status");
+
+      if (!filtered.length) {
+        days.innerHTML = "";
+        status.textContent = "No tide windows found for the selected range.";
+        return;
+      }
+
+      status.textContent = `${filtered.length} tide windows loaded for the next ${selectedRange} days.`;
+      const sections = Array.from(grouped.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([date, windows]) => `
+          <section class="day">
+            <div class="day-head">
+              <h2>${formatDateLabel(date, payload.timeZone)}</h2>
+              <span>${date}</span>
+            </div>
+            <div class="day-body">
+              ${windows.map((window) => `
+                <article class="window-card">
+                  <div class="window-row">
+                    <div class="window-time">${window.windowStartLocal} → ${window.windowEndLocal}</div>
+                    <span class="pill ${window.available ? "good" : "warn"}">${window.available ? "Available" : "Unavailable"}</span>
+                  </div>
+                  <div class="detail">High tide: ${window.highTideLocal}</div>
+                  <div class="detail">${window.availabilityNote}</div>
+                </article>
+              `).join("")}
+            </div>
+          </section>
+        `)
+        .join("");
+
+      days.innerHTML = sections;
+    }
+
+    async function loadTides() {
+      const status = document.getElementById("status");
+      status.textContent = "Loading Squamish tide windows…";
+      try {
+        const response = await fetch(SOURCE_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Failed to fetch tide data (${response.status})`);
+        const html = await response.text();
+        const { tides, timeZoneAbbr } = parseHighTides(html);
+        if (!tides.length) throw new Error("No high tide entries parsed from source.");
+        const now = new Date();
+        payload = {
+          source: SOURCE_URL,
+          timeZone: TIME_ZONE,
+          timeZoneAbbr,
+          fetchedAt: now.toISOString(),
+          nowLocalDate: formatLocalDate(now),
+          windows: buildWindows(tides),
+          notes: [
+            "Tide data is scraped from tide-forecast.com HTML and may change without notice.",
+            "Windows are computed as +/- 1 hour around high tide; verify timing before planning a trip.",
+            "Availability is marked as weekends or weekdays after 5:30 PM.",
+          ],
+        };
+        renderMeta(payload);
+        renderNotes(payload.notes);
+        renderWindows();
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Unable to load tide data. The source may be blocking browser fetches or may have changed format.";
+      }
+    }
+
+    document.getElementById("range-buttons").addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-range]");
+      if (!button) return;
+      selectedRange = Number(button.dataset.range);
+      document.querySelectorAll("#range-buttons .chip").forEach((chip) => chip.classList.remove("active"));
+      button.classList.add("active");
+      renderWindows();
+    });
+
+    loadTides();
+  </script>
+</body>
+</html>
