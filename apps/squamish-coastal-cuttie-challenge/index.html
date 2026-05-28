@@ -434,6 +434,14 @@
       }).format(anchor);
     }
 
+    function dayDiff(startDateString, endDateString) {
+      const [startYear, startMonth, startDay] = startDateString.split("-").map(Number);
+      const [endYear, endMonth, endDay] = endDateString.split("-").map(Number);
+      const startUtc = Date.UTC(startYear, startMonth - 1, startDay);
+      const endUtc = Date.UTC(endYear, endMonth - 1, endDay);
+      return Math.round((endUtc - startUtc) / (24 * 60 * 60 * 1000));
+    }
+
     function renderMeta(data) {
       const meta = document.getElementById("meta");
       meta.innerHTML = `
@@ -481,7 +489,11 @@
         return;
       }
 
-      status.textContent = `${filtered.length} tide windows loaded for the next ${selectedRange} days.`;
+      const snapshotAgeDays = dayDiff(payload.nowLocalDate, formatLocalDate(new Date()));
+      const staleSuffix = snapshotAgeDays > 2
+        ? ` Snapshot is ${snapshotAgeDays} days old.`
+        : "";
+      status.textContent = `${filtered.length} tide windows loaded for the next ${selectedRange} days.${staleSuffix}`;
       const sections = Array.from(grouped.entries())
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([date, windows]) => `
