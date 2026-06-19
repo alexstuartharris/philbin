@@ -1,0 +1,607 @@
+{
+  "generated": "2026-06-19T22:33:49.614458Z",
+  "count": 51,
+  "spotify_profile_loaded": true,
+  "spotify_related_loaded": true,
+  "events": [
+    {
+      "date": "June 19, 2026",
+      "artist": "Cassian",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43101622",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 19, 2026",
+      "artist": "Ska-boom",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43187203",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 20, 2026",
+      "artist": "The Sifters",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43179894",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 21, 2026",
+      "artist": "HONNE",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43040133",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 21, 2026",
+      "artist": "KOKOROKO",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43069191",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 23, 2026",
+      "artist": "Jack Botts",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43225506",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 24, 2026",
+      "artist": "Searows",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/42983111",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 24, 2026",
+      "artist": "The Black Seeds",
+      "venue": "Trickster's Hideout",
+      "link": "https://www.songkick.com/concerts/43058394",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 24, 2026",
+      "artist": "Jody Glenham, Apacalda, and WACK (CAN)",
+      "venue": "Red Gate",
+      "link": "https://www.songkick.com/concerts/43265942",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 25, 2026",
+      "artist": "Holly Humberstone and Leyla Ebrahimi",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43037387",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 25, 2026",
+      "artist": "Pink Martini",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/42919014",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 25, 2026",
+      "artist": "Novulent",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43139447",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 25, 2026",
+      "artist": "Panic Shack",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43149465",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "The Black Seeds",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43040106",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "The Tea Party",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43146197",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Ryan Beatty",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43270180",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Militarie Gun",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43264214",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Plini",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43251647",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Margaret Glaspy",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43255786",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Wheeler Walker Jr",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43261968",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Revocation",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43257851",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Tommy Newport",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43251658",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Kevin Atwater",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43261982",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Jigitz",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43251592",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Mind Enterprises",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43251619",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Sawyer Hill",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43261408",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Author & Punisher",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43263209",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Darcys",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43250581",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Dutch Interior",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43251661",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Beverly Glenncopeland",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43277256",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Silly Goose",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43251671",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Ethan Regan",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43251675",
+      "source": "Songkick",
+      "interest_score": 38,
+      "matched_artists": [
+        "Ethan Regan"
+      ],
+      "interest_reason": "Related to your Spotify history via Richy Mitch & The Coal Miners",
+      "score_breakdown": [
+        {
+          "type": "related_artist",
+          "points": 37.82,
+          "artist": "Ethan Regan",
+          "seed_artist": "Richy Mitch & The Coal Miners",
+          "rank": 11,
+          "detail": "Ethan Regan is similar to Richy Mitch & The Coal Miners (rank 11 on cached similar-artists list)"
+        }
+      ]
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Paris Jackson",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43262025",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Sienna Spiro",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43264125",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "High Fade",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43154763",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 27, 2026",
+      "artist": "B\u00f4a (UK)",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43146251",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 28, 2026",
+      "artist": "cootie catcher",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/43168563",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 30, 2026",
+      "artist": "Redferrin and Alli Walker",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43080635",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "June 30, 2026",
+      "artist": "The Psycodelics",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43158878",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 01, 2026",
+      "artist": "Kurt Vile",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43145143",
+      "source": "Songkick",
+      "interest_score": 61,
+      "matched_artists": [
+        "Kurt Vile"
+      ],
+      "interest_reason": "Matches your Spotify history: Kurt Vile",
+      "score_breakdown": [
+        {
+          "type": "direct_history_match",
+          "points": 61.0,
+          "artist": "Kurt Vile",
+          "detail": "Direct match from your Spotify history (Kurt Vile)"
+        }
+      ]
+    },
+    {
+      "date": "July 02, 2026",
+      "artist": "Nora en Pure",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43262008",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 02, 2026",
+      "artist": "Emma Alves",
+      "venue": "Red Gate",
+      "link": "https://www.songkick.com/concerts/43246578",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 03, 2026",
+      "artist": "Modest Mouse",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/43089850",
+      "source": "Songkick",
+      "interest_score": 63,
+      "matched_artists": [
+        "Modest Mouse"
+      ],
+      "interest_reason": "Matches your Spotify history: Modest Mouse",
+      "score_breakdown": [
+        {
+          "type": "direct_history_match",
+          "points": 62.52,
+          "artist": "Modest Mouse",
+          "detail": "Direct match from your Spotify history (Modest Mouse)"
+        }
+      ]
+    },
+    {
+      "date": "July 03, 2026",
+      "artist": "Black Wizard",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43141163",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 04, 2026",
+      "artist": "Wolfmother and Love Gang",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/42871077",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 04, 2026",
+      "artist": "SK\u00c1LD",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43206712",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 04, 2026",
+      "artist": "Waylon Wyatt",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/42982117",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 04, 2026",
+      "artist": "Kade Hoffman",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43131350",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 08, 2026",
+      "artist": "The Head and the Heart",
+      "venue": "Orpheum",
+      "link": "https://www.songkick.com/concerts/43090607",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 10, 2026",
+      "artist": "Racoma",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/43217498",
+      "source": "Songkick",
+      "interest_score": 61,
+      "matched_artists": [
+        "Racoma"
+      ],
+      "interest_reason": "Matches your Spotify history: Racoma",
+      "score_breakdown": [
+        {
+          "type": "direct_history_match",
+          "points": 60.93,
+          "artist": "Racoma",
+          "detail": "Direct match from your Spotify history (Racoma)"
+        }
+      ]
+    },
+    {
+      "date": "July 10, 2026",
+      "artist": "Mean Bikini, Middle-Aged Queers, and BERZERK",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/43272895",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    }
+  ]
+}

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vancouver & Squamish Shows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #333;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #2a2a2a;
+            border-color: #555;
+        }
+
+        .filter-btn.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #fff;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            background: #2563eb;
+            color: #fff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-interest {
+            background: #16a34a;
+        }
+
+        .interest-note {
+            margin-top: 0.45rem;
+            color: #79e2a0;
+            font-size: 0.85rem;
+        }
+
+        .score-breakdown {
+            margin-top: 0.6rem;
+            border-top: 1px solid #2e4236;
+            padding-top: 0.55rem;
+        }
+
+        .score-breakdown summary {
+            cursor: pointer;
+            color: #9cdab2;
+            font-size: 0.82rem;
+            list-style: none;
+        }
+
+        .score-breakdown summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .score-breakdown-list {
+            margin-top: 0.45rem;
+            padding-left: 1rem;
+            color: #b8c7be;
+            font-size: 0.82rem;
+        }
+
+        .score-breakdown-list li {
+            margin-bottom: 0.25rem;
+        }
+
+        .event {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .event:hover {
+            background: #222;
+            border-color: #555;
+        }
+
+        .event-date {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 0.3rem;
+        }
+
+        .event-artist {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+
+        .event-venue {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .filters {
+                gap: 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎸 Live Music</h1>
+            <div class="subtitle">Vancouver & Squamish • Rock, Folk, Indie, Country, Punk</div>
+        </header>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="vancouver">Vancouver</button>
+            <button class="filter-btn" data-filter="squamish">Squamish</button>
+        </div>
+
+        <div id="content">
+            <div class="loading">Loading shows...</div>
+        </div>
+
+        <div class="last-updated" id="last-updated"></div>
+    </div>
+
+    <script>
+        const SQUAMISH_KEYWORDS = ['trickster', 'backyard', 'brackendale'];
+        const WEEKS_AHEAD = 3;
+        const LIKELY_SHOW_THRESHOLD = 35;
+        let allEvents = [];
+        let currentFilter = 'all';
+
+        async function loadEvents() {
+            try {
+                const response = await fetch('data/events.json');
+                const data = await response.json();
+                allEvents = data.events || [];
+                
+                // Update last updated timestamp
+                if (data.generated) {
+                    document.getElementById('last-updated').textContent = 
+                        `Last updated: ${new Date(data.generated).toLocaleString()}`;
+                }
+                
+                renderEvents();
+            } catch (error) {
+                document.getElementById('content').innerHTML = 
+                    '<div class="empty-state">Failed to load events. Try refreshing.</div>';
+            }
+        }
+
+        function filterEvents(events) {
+            if (currentFilter === 'all') return events;
+            
+            const isSquamish = (event) => 
+                SQUAMISH_KEYWORDS.some(kw => event.venue.toLowerCase().includes(kw));
+            
+            if (currentFilter === 'squamish') {
+                return events.filter(isSquamish);
+            } else if (currentFilter === 'vancouver') {
+                return events.filter(e => !isSquamish(e));
+            }
+            
+            return events;
+        }
+
+        function groupByLocation(events) {
+            const vancouver = [];
+            const squamish = [];
+            
+            events.forEach(event => {
+                const isSquamish = SQUAMISH_KEYWORDS.some(kw => 
+                    event.venue.toLowerCase().includes(kw)
+                );
+                if (isSquamish) {
+                    squamish.push(event);
+                } else {
+                    vancouver.push(event);
+                }
+            });
+            
+            return { vancouver, squamish };
+        }
+
+        function parseDate(dateStr) {
+            // Handle various formats
+            const formats = [
+                /(\w+)\s+(\d+),\s+(\d{4})/,  // March 23, 2026
+                /(\d{4})-(\d{2})-(\d{2})/      // 2026-03-23
+            ];
+            
+            for (const fmt of formats) {
+                const match = dateStr.match(fmt);
+                if (match) {
+                    try {
+                        return new Date(dateStr);
+                    } catch (e) {
+                        continue;
+                    }
+                }
+            }
+            
+            return new Date('9999-12-31'); // TBD goes to end
+        }
+
+        function isWithinDateWindow(event) {
+            const parsed = parseDate(event.date);
+            if (Number.isNaN(parsed.getTime()) || parsed.getFullYear() === 9999) {
+                return true;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const windowEnd = new Date(today);
+            windowEnd.setDate(windowEnd.getDate() + (WEEKS_AHEAD * 7));
+
+            return parsed >= today && parsed <= windowEnd;
+        }
+
+        function renderEvents() {
+            const filtered = filterEvents(allEvents).filter(isWithinDateWindow);
+            const likely = filtered
+                .filter(event => (event.interest_score || 0) >= LIKELY_SHOW_THRESHOLD)
+                .sort((a, b) => (b.interest_score || 0) - (a.interest_score || 0) || (parseDate(a.date) - parseDate(b.date)));
+            const { vancouver, squamish } = groupByLocation(filtered);
+            
+            // Sort by date
+            const sortByDate = (a, b) => parseDate(a.date) - parseDate(b.date);
+            vancouver.sort(sortByDate);
+            squamish.sort(sortByDate);
+            
+            let html = '';
+
+            if (currentFilter === 'all' && likely.length > 0) {
+                html += `
+                    <div class="section">
+                        <div class="section-title">
+                            Likely For You
+                            <span class="badge badge-interest">${likely.length}</span>
+                        </div>
+                        ${likely.slice(0, 8).map(renderEvent).join('')}
+                    </div>
+                `;
+            }
+            
+            if (vancouver.length > 0 && (currentFilter === 'all' || currentFilter === 'vancouver')) {
+                html += `
+                    <div class="section">
+                        <div class="section-title">
+                            Vancouver
+                            <span class="badge">${vancouver.length}</span>
+                        </div>
+                        ${vancouver.map(renderEvent).join('')}
+                    </div>
+                `;
+            }
+            
+            if (squamish.length > 0 && (currentFilter === 'all' || currentFilter === 'squamish')) {
+                html += `
+                    <div class="section">
+                        <div class="section-title">
+                            Squamish
+                            <span class="badge">${squamish.length}</span>
+                        </div>
+                        ${squamish.map(renderEvent).join('')}
+                    </div>
+                `;
+            }
+            
+            if (html === '') {
+                html = '<div class="empty-state">No shows found matching your filters.</div>';
+            }
+            
+            document.getElementById('content').innerHTML = html;
+        }
+
+        function renderEvent(event) {
+            const link = event.link ? 
+                `<a href="${event.link}" target="_blank" style="color: inherit; text-decoration: none;">` : '';
+            const linkClose = event.link ? '</a>' : '';
+            const interestScore = Math.round(event.interest_score || 0);
+            const interestBadge = interestScore >= LIKELY_SHOW_THRESHOLD
+                ? `<span class="badge badge-interest">Likely • ${interestScore}</span>`
+                : '';
+            const interestNote = event.interest_reason
+                ? `<div class="interest-note">${event.interest_reason}</div>`
+                : '';
+            const breakdown = Array.isArray(event.score_breakdown) ? event.score_breakdown : [];
+            const breakdownHtml = breakdown.length
+                ? `
+                    <details class="score-breakdown">
+                        <summary>Why this score?</summary>
+                        <ul class="score-breakdown-list">
+                            ${breakdown.map(item => `<li><strong>${Math.round(item.points || 0)}</strong> pts — ${item.detail}</li>`).join('')}
+                        </ul>
+                    </details>
+                `
+                : '';
+            
+            return `
+                <div class="event">
+                    ${link}
+                    <div class="event-date">${event.date}</div>
+                    <div class="event-artist">${event.artist} ${interestBadge}</div>
+                    <div class="event-venue">${event.venue}</div>
+                    ${interestNote}
+                    ${breakdownHtml}
+                    ${linkClose}
+                </div>
+            `;
+        }
+
+        // Filter button handlers
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderEvents();
+            });
+        });
+
+        // Load on page load
+        loadEvents();
+    </script>
+</body>
+</html>
