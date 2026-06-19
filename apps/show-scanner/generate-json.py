@@ -7,7 +7,7 @@ Reads from scanner.py's output and generates events.json
 import json
 import sys
 from datetime import datetime
-from scanner import collect_all_events, deduplicate_events, filter_events_to_window
+from scanner import collect_all_events, deduplicate_events, filter_events_to_window, SPOTIFY_PROFILE_PATH, SPOTIFY_RELATED_PATH
 
 
 def main():
@@ -25,6 +25,8 @@ def main():
     output = {
         "generated": datetime.utcnow().isoformat() + "Z",
         "count": len(events),
+        "spotify_profile_loaded": SPOTIFY_PROFILE_PATH.exists(),
+        "spotify_related_loaded": SPOTIFY_RELATED_PATH.exists(),
         "events": events
     }
     

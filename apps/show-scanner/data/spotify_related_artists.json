@@ -1,0 +1,5777 @@
+{
+  "generated": "2026-06-19T22:31:06.818151Z",
+  "source_profile": "/home/alex-harris/clawd/apps/show-scanner/data/spotify_profile.json",
+  "seed_count": 35,
+  "similar_limit": 12,
+  "related_artist_count": 340,
+  "seeds": [
+    {
+      "seed_artist": "Phish",
+      "seed_artist_normalized": "phish",
+      "seed_weight": 93.16,
+      "source_url": "https://www.last.fm/music/Phish/+similar",
+      "similar_artists": [
+        {
+          "artist": "Trey Anastasio",
+          "artist_normalized": "trey anastasio",
+          "rank": 1
+        },
+        {
+          "artist": "Grateful Dead",
+          "artist_normalized": "grateful dead",
+          "rank": 2
+        },
+        {
+          "artist": "Rob Derhak",
+          "artist_normalized": "rob derhak",
+          "rank": 3
+        },
+        {
+          "artist": "Al Schnier",
+          "artist_normalized": "al schnier",
+          "rank": 4
+        },
+        {
+          "artist": "Chuck Garvey",
+          "artist_normalized": "chuck garvey",
+          "rank": 5
+        },
+        {
+          "artist": "Vinnie Amico",
+          "artist_normalized": "vinnie amico",
+          "rank": 6
+        },
+        {
+          "artist": "Jim Loughlin",
+          "artist_normalized": "jim loughlin",
+          "rank": 7
+        },
+        {
+          "artist": "Widespread Panic",
+          "artist_normalized": "widespread panic",
+          "rank": 8
+        },
+        {
+          "artist": "John Bell",
+          "artist_normalized": "john bell",
+          "rank": 9
+        },
+        {
+          "artist": "Michael Houser",
+          "artist_normalized": "michael houser",
+          "rank": 10
+        },
+        {
+          "artist": "Jerry Garcia Band",
+          "artist_normalized": "jerry garcia band",
+          "rank": 11
+        },
+        {
+          "artist": "Jerry Garcia",
+          "artist_normalized": "jerry garcia",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Grateful Dead",
+      "seed_artist_normalized": "grateful dead",
+      "seed_weight": 85.07,
+      "source_url": "https://www.last.fm/music/Grateful+Dead/+similar",
+      "similar_artists": [
+        {
+          "artist": "Jerry Garcia Band",
+          "artist_normalized": "jerry garcia band",
+          "rank": 1
+        },
+        {
+          "artist": "Jerry Garcia",
+          "artist_normalized": "jerry garcia",
+          "rank": 2
+        },
+        {
+          "artist": "Phish",
+          "artist_normalized": "phish",
+          "rank": 3
+        },
+        {
+          "artist": "Trey Anastasio",
+          "artist_normalized": "trey anastasio",
+          "rank": 4
+        },
+        {
+          "artist": "Page McConnell",
+          "artist_normalized": "page mcconnell",
+          "rank": 5
+        },
+        {
+          "artist": "Mike Gordon",
+          "artist_normalized": "mike gordon",
+          "rank": 6
+        },
+        {
+          "artist": "Jon Fishman",
+          "artist_normalized": "jon fishman",
+          "rank": 7
+        },
+        {
+          "artist": "Bob Weir",
+          "artist_normalized": "bob weir",
+          "rank": 8
+        },
+        {
+          "artist": "Dead &amp; Company",
+          "artist_normalized": "dead and amp company",
+          "rank": 9
+        },
+        {
+          "artist": "New Riders Of The Purple Sage",
+          "artist_normalized": "new riders of the purple sage",
+          "rank": 10
+        },
+        {
+          "artist": "David Nelson",
+          "artist_normalized": "david nelson",
+          "rank": 11
+        },
+        {
+          "artist": "John Dawson",
+          "artist_normalized": "john dawson",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Big Thief",
+      "seed_artist_normalized": "big thief",
+      "seed_weight": 41.03,
+      "source_url": "https://www.last.fm/music/Big+Thief/+similar",
+      "similar_artists": [
+        {
+          "artist": "Adrianne Lenker",
+          "artist_normalized": "adrianne lenker",
+          "rank": 1
+        },
+        {
+          "artist": "Buck Meek",
+          "artist_normalized": "buck meek",
+          "rank": 2
+        },
+        {
+          "artist": "Haley Heynderickx",
+          "artist_normalized": "haley heynderickx",
+          "rank": 3
+        },
+        {
+          "artist": "Cameron Winter",
+          "artist_normalized": "cameron winter",
+          "rank": 4
+        },
+        {
+          "artist": "Geese",
+          "artist_normalized": "geese",
+          "rank": 5
+        },
+        {
+          "artist": "boygenius",
+          "artist_normalized": "boygenius",
+          "rank": 6
+        },
+        {
+          "artist": "Julien Baker",
+          "artist_normalized": "julien baker",
+          "rank": 7
+        },
+        {
+          "artist": "Phoebe Bridgers",
+          "artist_normalized": "phoebe bridgers",
+          "rank": 8
+        },
+        {
+          "artist": "Lucy Dacus",
+          "artist_normalized": "lucy dacus",
+          "rank": 9
+        },
+        {
+          "artist": "boygenius/boygenius",
+          "artist_normalized": "boygenius boygenius",
+          "rank": 10
+        },
+        {
+          "artist": "boygenius/boygenius (demos)",
+          "artist_normalized": "boygenius boygenius demos",
+          "rank": 11
+        },
+        {
+          "artist": "Julia Jacklin",
+          "artist_normalized": "julia jacklin",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Atta Boy",
+      "seed_artist_normalized": "atta boy",
+      "seed_weight": 36.62,
+      "source_url": "https://www.last.fm/music/Atta+Boy/+similar",
+      "similar_artists": [
+        {
+          "artist": "Ritt Momney",
+          "artist_normalized": "ritt momney",
+          "rank": 1
+        },
+        {
+          "artist": "Duncan Fellows",
+          "artist_normalized": "duncan fellows",
+          "rank": 2
+        },
+        {
+          "artist": "The Brook &amp; The Bluff",
+          "artist_normalized": "the brook and amp the bluff",
+          "rank": 3
+        },
+        {
+          "artist": "The Wild Reeds",
+          "artist_normalized": "the wild reeds",
+          "rank": 4
+        },
+        {
+          "artist": "Lunar Vacation",
+          "artist_normalized": "lunar vacation",
+          "rank": 5
+        },
+        {
+          "artist": "The Greeting Committee",
+          "artist_normalized": "the greeting committee",
+          "rank": 6
+        },
+        {
+          "artist": "French Cassettes",
+          "artist_normalized": "french cassettes",
+          "rank": 7
+        },
+        {
+          "artist": "Dr. Dog",
+          "artist_normalized": "dr dog",
+          "rank": 8
+        },
+        {
+          "artist": "The Brazen Youth",
+          "artist_normalized": "the brazen youth",
+          "rank": 9
+        },
+        {
+          "artist": "Slaughter Beach, Dog",
+          "artist_normalized": "slaughter beach dog",
+          "rank": 10
+        },
+        {
+          "artist": "free-music-downloads",
+          "artist_normalized": "free music downloads",
+          "rank": 11
+        }
+      ]
+    },
+    {
+      "seed_artist": "The Strokes",
+      "seed_artist_normalized": "the strokes",
+      "seed_weight": 32.23,
+      "source_url": "https://www.last.fm/music/The+Strokes/+similar",
+      "similar_artists": [
+        {
+          "artist": "The Voidz",
+          "artist_normalized": "the voidz",
+          "rank": 1
+        },
+        {
+          "artist": "Julian Casablancas",
+          "artist_normalized": "julian casablancas",
+          "rank": 2
+        },
+        {
+          "artist": "Albert Hammond, Jr.",
+          "artist_normalized": "albert hammond jr",
+          "rank": 3
+        },
+        {
+          "artist": "Albert Hammond",
+          "artist_normalized": "albert hammond",
+          "rank": 4
+        },
+        {
+          "artist": "Arctic Monkeys",
+          "artist_normalized": "arctic monkeys",
+          "rank": 5
+        },
+        {
+          "artist": "Alex Turner",
+          "artist_normalized": "alex turner",
+          "rank": 6
+        },
+        {
+          "artist": "Jamie Cook",
+          "artist_normalized": "jamie cook",
+          "rank": 7
+        },
+        {
+          "artist": "Nick O'Malley",
+          "artist_normalized": "nick o malley",
+          "rank": 8
+        },
+        {
+          "artist": "Matt Helders",
+          "artist_normalized": "matt helders",
+          "rank": 9
+        },
+        {
+          "artist": "Benches",
+          "artist_normalized": "benches",
+          "rank": 10
+        },
+        {
+          "artist": "The Symposium",
+          "artist_normalized": "the symposium",
+          "rank": 11
+        },
+        {
+          "artist": "Interpol",
+          "artist_normalized": "interpol",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Wilco",
+      "seed_artist_normalized": "wilco",
+      "seed_weight": 58.52,
+      "source_url": "https://www.last.fm/music/Wilco/+similar",
+      "similar_artists": [
+        {
+          "artist": "Billy Bragg &amp; Wilco",
+          "artist_normalized": "billy bragg and amp wilco",
+          "rank": 1
+        },
+        {
+          "artist": "Billy Bragg",
+          "artist_normalized": "billy bragg",
+          "rank": 2
+        },
+        {
+          "artist": "Woody Guthrie",
+          "artist_normalized": "woody guthrie",
+          "rank": 3
+        },
+        {
+          "artist": "billy bragg & wilco/Mermaid Avenue",
+          "artist_normalized": "billy bragg and wilco mermaid avenue",
+          "rank": 4
+        },
+        {
+          "artist": "Jeff Tweedy",
+          "artist_normalized": "jeff tweedy",
+          "rank": 5
+        },
+        {
+          "artist": "The Plebes",
+          "artist_normalized": "the plebes",
+          "rank": 6
+        },
+        {
+          "artist": "Jay Farrar",
+          "artist_normalized": "jay farrar",
+          "rank": 7
+        },
+        {
+          "artist": "Uncle Tupelo",
+          "artist_normalized": "uncle tupelo",
+          "rank": 8
+        },
+        {
+          "artist": "Mike Heidorn",
+          "artist_normalized": "mike heidorn",
+          "rank": 9
+        },
+        {
+          "artist": "Loose Fur",
+          "artist_normalized": "loose fur",
+          "rank": 10
+        },
+        {
+          "artist": "Glenn Kotche",
+          "artist_normalized": "glenn kotche",
+          "rank": 11
+        },
+        {
+          "artist": "Jim O'Rourke",
+          "artist_normalized": "jim o rourke",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "HOMESHAKE",
+      "seed_artist_normalized": "homeshake",
+      "seed_weight": 26.42,
+      "source_url": "https://www.last.fm/music/HOMESHAKE/+similar",
+      "similar_artists": [
+        {
+          "artist": "Mild High Club",
+          "artist_normalized": "mild high club",
+          "rank": 1
+        },
+        {
+          "artist": "Good Morning",
+          "artist_normalized": "good morning",
+          "rank": 2
+        },
+        {
+          "artist": "infinite bisous",
+          "artist_normalized": "infinite bisous",
+          "rank": 3
+        },
+        {
+          "artist": "Yellow Days",
+          "artist_normalized": "yellow days",
+          "rank": 4
+        },
+        {
+          "artist": "Triathalon",
+          "artist_normalized": "triathalon",
+          "rank": 5
+        },
+        {
+          "artist": "Connan Mockasin",
+          "artist_normalized": "connan mockasin",
+          "rank": 6
+        },
+        {
+          "artist": "jerkcurb",
+          "artist_normalized": "jerkcurb",
+          "rank": 7
+        },
+        {
+          "artist": "Horsey",
+          "artist_normalized": "horsey",
+          "rank": 8
+        },
+        {
+          "artist": "Toro y Moi",
+          "artist_normalized": "toro y moi",
+          "rank": 9
+        },
+        {
+          "artist": "Brad stank",
+          "artist_normalized": "brad stank",
+          "rank": 10
+        },
+        {
+          "artist": "Cosmo Pyke",
+          "artist_normalized": "cosmo pyke",
+          "rank": 11
+        },
+        {
+          "artist": "free-music-downloads",
+          "artist_normalized": "free music downloads",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Pavement",
+      "seed_artist_normalized": "pavement",
+      "seed_weight": 19.76,
+      "source_url": "https://www.last.fm/music/Pavement/+similar",
+      "similar_artists": [
+        {
+          "artist": "Stephen Malkmus",
+          "artist_normalized": "stephen malkmus",
+          "rank": 1
+        },
+        {
+          "artist": "Silver Jews",
+          "artist_normalized": "silver jews",
+          "rank": 2
+        },
+        {
+          "artist": "The Crust Brothers",
+          "artist_normalized": "the crust brothers",
+          "rank": 3
+        },
+        {
+          "artist": "Stephen Malkmus and the Jicks",
+          "artist_normalized": "stephen malkmus and the jicks",
+          "rank": 4
+        },
+        {
+          "artist": "Ectoslavia",
+          "artist_normalized": "ectoslavia",
+          "rank": 5
+        },
+        {
+          "artist": "David Berman",
+          "artist_normalized": "david berman",
+          "rank": 6
+        },
+        {
+          "artist": "Built to Spill",
+          "artist_normalized": "built to spill",
+          "rank": 7
+        },
+        {
+          "artist": "Doug Martsch",
+          "artist_normalized": "doug martsch",
+          "rank": 8
+        },
+        {
+          "artist": "Treepeople",
+          "artist_normalized": "treepeople",
+          "rank": 9
+        },
+        {
+          "artist": "Guided by Voices",
+          "artist_normalized": "guided by voices",
+          "rank": 10
+        },
+        {
+          "artist": "Robert Pollard",
+          "artist_normalized": "robert pollard",
+          "rank": 11
+        },
+        {
+          "artist": "Sebadoh",
+          "artist_normalized": "sebadoh",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Dr. Dog",
+      "seed_artist_normalized": "dr dog",
+      "seed_weight": 18.75,
+      "source_url": "https://www.last.fm/music/Dr.+Dog/+similar",
+      "similar_artists": [
+        {
+          "artist": "Fruit Bats",
+          "artist_normalized": "fruit bats",
+          "rank": 1
+        },
+        {
+          "artist": "Eric D. Johnson",
+          "artist_normalized": "eric d johnson",
+          "rank": 2
+        },
+        {
+          "artist": "Generationals",
+          "artist_normalized": "generationals",
+          "rank": 3
+        },
+        {
+          "artist": "Delta Spirit",
+          "artist_normalized": "delta spirit",
+          "rank": 4
+        },
+        {
+          "artist": "My Morning Jacket",
+          "artist_normalized": "my morning jacket",
+          "rank": 5
+        },
+        {
+          "artist": "Voxtrot",
+          "artist_normalized": "voxtrot",
+          "rank": 6
+        },
+        {
+          "artist": "Voxtrot/Raised by Wolves EP",
+          "artist_normalized": "voxtrot raised by wolves ep",
+          "rank": 7
+        },
+        {
+          "artist": "Islands",
+          "artist_normalized": "islands",
+          "rank": 8
+        },
+        {
+          "artist": "The Unicorns",
+          "artist_normalized": "the unicorns",
+          "rank": 9
+        },
+        {
+          "artist": "Nick Thorburn",
+          "artist_normalized": "nick thorburn",
+          "rank": 10
+        },
+        {
+          "artist": "Whitney",
+          "artist_normalized": "whitney",
+          "rank": 11
+        },
+        {
+          "artist": "Smith Westerns",
+          "artist_normalized": "smith westerns",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Car Seat Headrest",
+      "seed_artist_normalized": "car seat headrest",
+      "seed_weight": 18.6,
+      "source_url": "https://www.last.fm/music/Car+Seat+Headrest/+similar",
+      "similar_artists": [
+        {
+          "artist": "WillyRodriguezWasTaken",
+          "artist_normalized": "willyrodriguezwastaken",
+          "rank": 1
+        },
+        {
+          "artist": "Midwestern Roadkill",
+          "artist_normalized": "midwestern roadkill",
+          "rank": 2
+        },
+        {
+          "artist": "Squee",
+          "artist_normalized": "squee",
+          "rank": 3
+        },
+        {
+          "artist": "Drug Bug",
+          "artist_normalized": "drug bug",
+          "rank": 4
+        },
+        {
+          "artist": "Neutral Milk Hotel",
+          "artist_normalized": "neutral milk hotel",
+          "rank": 5
+        },
+        {
+          "artist": "Jeff Mangum",
+          "artist_normalized": "jeff mangum",
+          "rank": 6
+        },
+        {
+          "artist": "Jeremy Barnes",
+          "artist_normalized": "jeremy barnes",
+          "rank": 7
+        },
+        {
+          "artist": "Scott Spillane",
+          "artist_normalized": "scott spillane",
+          "rank": 8
+        },
+        {
+          "artist": "Julian Koster",
+          "artist_normalized": "julian koster",
+          "rank": 9
+        },
+        {
+          "artist": "Weatherday",
+          "artist_normalized": "weatherday",
+          "rank": 10
+        },
+        {
+          "artist": "Lola's Pocket PC",
+          "artist_normalized": "lola s pocket pc",
+          "rank": 11
+        },
+        {
+          "artist": "Five Pebbles",
+          "artist_normalized": "five pebbles",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Anderson .Paak",
+      "seed_artist_normalized": "anderson paak",
+      "seed_weight": 20.1,
+      "source_url": "https://www.last.fm/music/Anderson+.Paak/+similar",
+      "similar_artists": [
+        {
+          "artist": "NxWorries",
+          "artist_normalized": "nxworries",
+          "rank": 1
+        },
+        {
+          "artist": "Knxwledge",
+          "artist_normalized": "knxwledge",
+          "rank": 2
+        },
+        {
+          "artist": "Free Nationals",
+          "artist_normalized": "free nationals",
+          "rank": 3
+        },
+        {
+          "artist": "Smino",
+          "artist_normalized": "smino",
+          "rank": 4
+        },
+        {
+          "artist": "Isaiah Rashad",
+          "artist_normalized": "isaiah rashad",
+          "rank": 5
+        },
+        {
+          "artist": "BJ The Chicago Kid",
+          "artist_normalized": "bj the chicago kid",
+          "rank": 6
+        },
+        {
+          "artist": "KAYTRANADA",
+          "artist_normalized": "kaytranada",
+          "rank": 7
+        },
+        {
+          "artist": "Bruno Mars, Anderson .Paak &amp; Silk Sonic",
+          "artist_normalized": "bruno mars anderson paak and amp silk sonic",
+          "rank": 8
+        },
+        {
+          "artist": "Chance the Rapper",
+          "artist_normalized": "chance the rapper",
+          "rank": 9
+        },
+        {
+          "artist": "The Internet",
+          "artist_normalized": "the internet",
+          "rank": 10
+        },
+        {
+          "artist": "OFWGKTA",
+          "artist_normalized": "ofwgkta",
+          "rank": 11
+        },
+        {
+          "artist": "Steve Lacy",
+          "artist_normalized": "steve lacy",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Khruangbin",
+      "seed_artist_normalized": "khruangbin",
+      "seed_weight": 14.33,
+      "source_url": "https://www.last.fm/music/Khruangbin/+similar",
+      "similar_artists": [
+        {
+          "artist": "Arc De Soleil",
+          "artist_normalized": "arc de soleil",
+          "rank": 1
+        },
+        {
+          "artist": "BALTHVS",
+          "artist_normalized": "balthvs",
+          "rank": 2
+        },
+        {
+          "artist": "Glass Beams",
+          "artist_normalized": "glass beams",
+          "rank": 3
+        },
+        {
+          "artist": "Menahan Street Band",
+          "artist_normalized": "menahan street band",
+          "rank": 4
+        },
+        {
+          "artist": "Sharon Jones and the Dap-Kings",
+          "artist_normalized": "sharon jones and the dap kings",
+          "rank": 5
+        },
+        {
+          "artist": "El Michels Affair",
+          "artist_normalized": "el michels affair",
+          "rank": 6
+        },
+        {
+          "artist": "Antibalas",
+          "artist_normalized": "antibalas",
+          "rank": 7
+        },
+        {
+          "artist": "The Budos Band",
+          "artist_normalized": "the budos band",
+          "rank": 8
+        },
+        {
+          "artist": "Surprise Chef",
+          "artist_normalized": "surprise chef",
+          "rank": 9
+        },
+        {
+          "artist": "Yin Yin",
+          "artist_normalized": "yin yin",
+          "rank": 10
+        },
+        {
+          "artist": "Mildlife",
+          "artist_normalized": "mildlife",
+          "rank": 11
+        },
+        {
+          "artist": "Allah-Las",
+          "artist_normalized": "allah las",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Land of Talk",
+      "seed_artist_normalized": "land of talk",
+      "seed_weight": 18.18,
+      "source_url": "https://www.last.fm/music/Land+of+Talk/+similar",
+      "similar_artists": [
+        {
+          "artist": "Now, Now",
+          "artist_normalized": "now now",
+          "rank": 1
+        },
+        {
+          "artist": "Hop Along",
+          "artist_normalized": "hop along",
+          "rank": 2
+        },
+        {
+          "artist": "Hop Along, Queen Ansleis",
+          "artist_normalized": "hop along queen ansleis",
+          "rank": 3
+        },
+        {
+          "artist": "Hop Along, Queen Ansleis/Freshman Year",
+          "artist_normalized": "hop along queen ansleis freshman year",
+          "rank": 4
+        },
+        {
+          "artist": "Chastity Belt",
+          "artist_normalized": "chastity belt",
+          "rank": 5
+        },
+        {
+          "artist": "Julia Shapiro",
+          "artist_normalized": "julia shapiro",
+          "rank": 6
+        },
+        {
+          "artist": "Broken Social Scene",
+          "artist_normalized": "broken social scene",
+          "rank": 7
+        },
+        {
+          "artist": "Kevin Drew",
+          "artist_normalized": "kevin drew",
+          "rank": 8
+        },
+        {
+          "artist": "Brendan Canning",
+          "artist_normalized": "brendan canning",
+          "rank": 9
+        },
+        {
+          "artist": "Broken Social Scene/Feel Good Lost",
+          "artist_normalized": "broken social scene feel good lost",
+          "rank": 10
+        },
+        {
+          "artist": "Emily Haines &amp; The Soft Skeleton",
+          "artist_normalized": "emily haines and amp the soft skeleton",
+          "rank": 11
+        },
+        {
+          "artist": "Emily Haines",
+          "artist_normalized": "emily haines",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Clairo",
+      "seed_artist_normalized": "clairo",
+      "seed_weight": 42.87,
+      "source_url": "https://www.last.fm/music/Clairo/+similar",
+      "similar_artists": [
+        {
+          "artist": "Shelly",
+          "artist_normalized": "shelly",
+          "rank": 1
+        },
+        {
+          "artist": "Claud",
+          "artist_normalized": "claud",
+          "rank": 2
+        },
+        {
+          "artist": "Opick",
+          "artist_normalized": "opick",
+          "rank": 3
+        },
+        {
+          "artist": "beabadoobee",
+          "artist_normalized": "beabadoobee",
+          "rank": 4
+        },
+        {
+          "artist": "Faye Webster",
+          "artist_normalized": "faye webster",
+          "rank": 5
+        },
+        {
+          "artist": "The Mar\u00edas",
+          "artist_normalized": "the mar as",
+          "rank": 6
+        },
+        {
+          "artist": "Phoebe Bridgers",
+          "artist_normalized": "phoebe bridgers",
+          "rank": 7
+        },
+        {
+          "artist": "Men I Trust",
+          "artist_normalized": "men i trust",
+          "rank": 8
+        },
+        {
+          "artist": "Not For Radio",
+          "artist_normalized": "not for radio",
+          "rank": 9
+        },
+        {
+          "artist": "Alice Phoebe Lou",
+          "artist_normalized": "alice phoebe lou",
+          "rank": 10
+        },
+        {
+          "artist": "Lizzy McAlpine",
+          "artist_normalized": "lizzy mcalpine",
+          "rank": 11
+        },
+        {
+          "artist": "Lunar Vacation",
+          "artist_normalized": "lunar vacation",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "The Weather Station",
+      "seed_artist_normalized": "the weather station",
+      "seed_weight": 14.72,
+      "source_url": "https://www.last.fm/music/The+Weather+Station/+similar",
+      "similar_artists": [
+        {
+          "artist": "Cassandra Jenkins",
+          "artist_normalized": "cassandra jenkins",
+          "rank": 1
+        },
+        {
+          "artist": "Sharon Van Etten",
+          "artist_normalized": "sharon van etten",
+          "rank": 2
+        },
+        {
+          "artist": "Sharon Van Etten/Much More Than That",
+          "artist_normalized": "sharon van etten much more than that",
+          "rank": 3
+        },
+        {
+          "artist": "Sharon Van Etten/Are We There",
+          "artist_normalized": "sharon van etten are we there",
+          "rank": 4
+        },
+        {
+          "artist": "Laura Marling",
+          "artist_normalized": "laura marling",
+          "rank": 5
+        },
+        {
+          "artist": "Neil Young",
+          "artist_normalized": "neil young",
+          "rank": 6
+        },
+        {
+          "artist": "Julie Byrne",
+          "artist_normalized": "julie byrne",
+          "rank": 7
+        },
+        {
+          "artist": "Anna B Savage",
+          "artist_normalized": "anna b savage",
+          "rank": 8
+        },
+        {
+          "artist": "jasmine.4.t",
+          "artist_normalized": "jasmine 4 t",
+          "rank": 9
+        },
+        {
+          "artist": "Hurray For The Riff Raff",
+          "artist_normalized": "hurray for the riff raff",
+          "rank": 10
+        },
+        {
+          "artist": "Nadia Reid",
+          "artist_normalized": "nadia reid",
+          "rank": 11
+        },
+        {
+          "artist": "Nil\u00fcfer Yanya",
+          "artist_normalized": "nil fer yanya",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Wednesday",
+      "seed_artist_normalized": "wednesday",
+      "seed_weight": 40.02,
+      "source_url": "https://www.last.fm/music/Wednesday/+similar",
+      "similar_artists": [
+        {
+          "artist": "MJ Lenderman",
+          "artist_normalized": "mj lenderman",
+          "rank": 1
+        },
+        {
+          "artist": "Water From Your Eyes",
+          "artist_normalized": "water from your eyes",
+          "rank": 2
+        },
+        {
+          "artist": "Thanks for Coming",
+          "artist_normalized": "thanks for coming",
+          "rank": 3
+        },
+        {
+          "artist": "This is Lorelei",
+          "artist_normalized": "this is lorelei",
+          "rank": 4
+        },
+        {
+          "artist": "Greg Freeman",
+          "artist_normalized": "greg freeman",
+          "rank": 5
+        },
+        {
+          "artist": "Greg Freeman/I Looked Out",
+          "artist_normalized": "greg freeman i looked out",
+          "rank": 6
+        },
+        {
+          "artist": "feeble little horse",
+          "artist_normalized": "feeble little horse",
+          "rank": 7
+        },
+        {
+          "artist": "Snocaps",
+          "artist_normalized": "snocaps",
+          "rank": 8
+        },
+        {
+          "artist": "Geese",
+          "artist_normalized": "geese",
+          "rank": 9
+        },
+        {
+          "artist": "Ratboy",
+          "artist_normalized": "ratboy",
+          "rank": 10
+        },
+        {
+          "artist": "Florry",
+          "artist_normalized": "florry",
+          "rank": 11
+        },
+        {
+          "artist": "Will Henriksen",
+          "artist_normalized": "will henriksen",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Cotton Jones",
+      "seed_artist_normalized": "cotton jones",
+      "seed_weight": 13.26,
+      "source_url": "https://www.last.fm/music/Cotton+Jones/+similar",
+      "similar_artists": [
+        {
+          "artist": "Michael Nau",
+          "artist_normalized": "michael nau",
+          "rank": 1
+        },
+        {
+          "artist": "Reverend Baron",
+          "artist_normalized": "reverend baron",
+          "rank": 2
+        },
+        {
+          "artist": "Fruit Bats",
+          "artist_normalized": "fruit bats",
+          "rank": 3
+        },
+        {
+          "artist": "Eric D. Johnson",
+          "artist_normalized": "eric d johnson",
+          "rank": 4
+        },
+        {
+          "artist": "Tim Hill",
+          "artist_normalized": "tim hill",
+          "rank": 5
+        },
+        {
+          "artist": "Dick Stusso",
+          "artist_normalized": "dick stusso",
+          "rank": 6
+        },
+        {
+          "artist": "Drug Cabin",
+          "artist_normalized": "drug cabin",
+          "rank": 7
+        },
+        {
+          "artist": "Dope Lemon",
+          "artist_normalized": "dope lemon",
+          "rank": 8
+        },
+        {
+          "artist": "Kevin Morby",
+          "artist_normalized": "kevin morby",
+          "rank": 9
+        },
+        {
+          "artist": "Woods",
+          "artist_normalized": "woods",
+          "rank": 10
+        },
+        {
+          "artist": "The Babies",
+          "artist_normalized": "the babies",
+          "rank": 11
+        },
+        {
+          "artist": "Timber Timbre",
+          "artist_normalized": "timber timbre",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Twin Peaks",
+      "seed_artist_normalized": "twin peaks",
+      "seed_weight": 12.58,
+      "source_url": "https://www.last.fm/music/Twin+Peaks/+similar",
+      "similar_artists": [
+        {
+          "artist": "The Babies",
+          "artist_normalized": "the babies",
+          "rank": 1
+        },
+        {
+          "artist": "Cassie Ramone",
+          "artist_normalized": "cassie ramone",
+          "rank": 2
+        },
+        {
+          "artist": "Vivian Girls",
+          "artist_normalized": "vivian girls",
+          "rank": 3
+        },
+        {
+          "artist": "Kevin Morby",
+          "artist_normalized": "kevin morby",
+          "rank": 4
+        },
+        {
+          "artist": "Woods",
+          "artist_normalized": "woods",
+          "rank": 5
+        },
+        {
+          "artist": "Bent Outta Shape",
+          "artist_normalized": "bent outta shape",
+          "rank": 6
+        },
+        {
+          "artist": "Ringers",
+          "artist_normalized": "ringers",
+          "rank": 7
+        },
+        {
+          "artist": "Whitney",
+          "artist_normalized": "whitney",
+          "rank": 8
+        },
+        {
+          "artist": "Smith Westerns",
+          "artist_normalized": "smith westerns",
+          "rank": 9
+        },
+        {
+          "artist": "Touching Voids",
+          "artist_normalized": "touching voids",
+          "rank": 10
+        },
+        {
+          "artist": "together PANGEA",
+          "artist_normalized": "together pangea",
+          "rank": 11
+        },
+        {
+          "artist": "Dehd",
+          "artist_normalized": "dehd",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Crumb",
+      "seed_artist_normalized": "crumb",
+      "seed_weight": 13.67,
+      "source_url": "https://www.last.fm/music/Crumb/+similar",
+      "similar_artists": [
+        {
+          "artist": "Men I Trust",
+          "artist_normalized": "men i trust",
+          "rank": 1
+        },
+        {
+          "artist": "Mild High Club",
+          "artist_normalized": "mild high club",
+          "rank": 2
+        },
+        {
+          "artist": "No Vacation",
+          "artist_normalized": "no vacation",
+          "rank": 3
+        },
+        {
+          "artist": "Inner Wave",
+          "artist_normalized": "inner wave",
+          "rank": 4
+        },
+        {
+          "artist": "LOVING",
+          "artist_normalized": "loving",
+          "rank": 5
+        },
+        {
+          "artist": "Melody's Echo Chamber",
+          "artist_normalized": "melody s echo chamber",
+          "rank": 6
+        },
+        {
+          "artist": "Melody Prochet",
+          "artist_normalized": "melody prochet",
+          "rank": 7
+        },
+        {
+          "artist": "The Narcoleptic Dancers",
+          "artist_normalized": "the narcoleptic dancers",
+          "rank": 8
+        },
+        {
+          "artist": "My Bee's Garden",
+          "artist_normalized": "my bee s garden",
+          "rank": 9
+        },
+        {
+          "artist": "Tame Impala",
+          "artist_normalized": "tame impala",
+          "rank": 10
+        },
+        {
+          "artist": "Kevin Parker",
+          "artist_normalized": "kevin parker",
+          "rank": 11
+        },
+        {
+          "artist": "Sugar Candy Mountain",
+          "artist_normalized": "sugar candy mountain",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Steely Dan",
+      "seed_artist_normalized": "steely dan",
+      "seed_weight": 23.55,
+      "source_url": "https://www.last.fm/music/Steely+Dan/+similar",
+      "similar_artists": [
+        {
+          "artist": "Donald Fagen",
+          "artist_normalized": "donald fagen",
+          "rank": 1
+        },
+        {
+          "artist": "Walter Becker",
+          "artist_normalized": "walter becker",
+          "rank": 2
+        },
+        {
+          "artist": "The Doobie Brothers",
+          "artist_normalized": "the doobie brothers",
+          "rank": 3
+        },
+        {
+          "artist": "Boz Scaggs",
+          "artist_normalized": "boz scaggs",
+          "rank": 4
+        },
+        {
+          "artist": "Todd Rundgren",
+          "artist_normalized": "todd rundgren",
+          "rank": 5
+        },
+        {
+          "artist": "Utopia",
+          "artist_normalized": "utopia",
+          "rank": 6
+        },
+        {
+          "artist": "Nazz",
+          "artist_normalized": "nazz",
+          "rank": 7
+        },
+        {
+          "artist": "Todd Rundgren/ /I Saw the Light",
+          "artist_normalized": "todd rundgren i saw the light",
+          "rank": 8
+        },
+        {
+          "artist": "America",
+          "artist_normalized": "america",
+          "rank": 9
+        },
+        {
+          "artist": "Ambrosia",
+          "artist_normalized": "ambrosia",
+          "rank": 10
+        },
+        {
+          "artist": "Seals &amp; Crofts",
+          "artist_normalized": "seals and amp crofts",
+          "rank": 11
+        },
+        {
+          "artist": "Hall &amp; Oates",
+          "artist_normalized": "hall and amp oates",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Parquet Courts",
+      "seed_artist_normalized": "parquet courts",
+      "seed_weight": 12.18,
+      "source_url": "https://www.last.fm/music/Parquet+Courts/+similar",
+      "similar_artists": [
+        {
+          "artist": "Ought",
+          "artist_normalized": "ought",
+          "rank": 1
+        },
+        {
+          "artist": "Protomartyr",
+          "artist_normalized": "protomartyr",
+          "rank": 2
+        },
+        {
+          "artist": "Cola",
+          "artist_normalized": "cola",
+          "rank": 3
+        },
+        {
+          "artist": "Thee Oh Sees",
+          "artist_normalized": "thee oh sees",
+          "rank": 4
+        },
+        {
+          "artist": "Osees",
+          "artist_normalized": "osees",
+          "rank": 5
+        },
+        {
+          "artist": "Oh Sees",
+          "artist_normalized": "oh sees",
+          "rank": 6
+        },
+        {
+          "artist": "Preoccupations",
+          "artist_normalized": "preoccupations",
+          "rank": 7
+        },
+        {
+          "artist": "Viet Cong",
+          "artist_normalized": "viet cong",
+          "rank": 8
+        },
+        {
+          "artist": "Women",
+          "artist_normalized": "women",
+          "rank": 9
+        },
+        {
+          "artist": "Viagra Boys",
+          "artist_normalized": "viagra boys",
+          "rank": 10
+        },
+        {
+          "artist": "Ty Segall",
+          "artist_normalized": "ty segall",
+          "rank": 11
+        },
+        {
+          "artist": "Squid",
+          "artist_normalized": "squid",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Haley Heynderickx",
+      "seed_artist_normalized": "haley heynderickx",
+      "seed_weight": 15.99,
+      "source_url": "https://www.last.fm/music/Haley+Heynderickx/+similar",
+      "similar_artists": [
+        {
+          "artist": "Julia Jacklin",
+          "artist_normalized": "julia jacklin",
+          "rank": 1
+        },
+        {
+          "artist": "Lomelda",
+          "artist_normalized": "lomelda",
+          "rank": 2
+        },
+        {
+          "artist": "Adrianne Lenker",
+          "artist_normalized": "adrianne lenker",
+          "rank": 3
+        },
+        {
+          "artist": "Big Thief",
+          "artist_normalized": "big thief",
+          "rank": 4
+        },
+        {
+          "artist": "Odie Leigh",
+          "artist_normalized": "odie leigh",
+          "rank": 5
+        },
+        {
+          "artist": "Tomberlin",
+          "artist_normalized": "tomberlin",
+          "rank": 6
+        },
+        {
+          "artist": "Indigo De Souza",
+          "artist_normalized": "indigo de souza",
+          "rank": 7
+        },
+        {
+          "artist": "Buck Meek",
+          "artist_normalized": "buck meek",
+          "rank": 8
+        },
+        {
+          "artist": "James Krivchenia",
+          "artist_normalized": "james krivchenia",
+          "rank": 9
+        },
+        {
+          "artist": "Florist",
+          "artist_normalized": "florist",
+          "rank": 10
+        },
+        {
+          "artist": "Emily Sprague",
+          "artist_normalized": "emily sprague",
+          "rank": 11
+        },
+        {
+          "artist": "Told Slant",
+          "artist_normalized": "told slant",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Elder Island",
+      "seed_artist_normalized": "elder island",
+      "seed_weight": 18.01,
+      "source_url": "https://www.last.fm/music/Elder+Island/+similar",
+      "similar_artists": [
+        {
+          "artist": "Otzeki",
+          "artist_normalized": "otzeki",
+          "rank": 1
+        },
+        {
+          "artist": "Maribou State",
+          "artist_normalized": "maribou state",
+          "rank": 2
+        },
+        {
+          "artist": "Marbert Rocel",
+          "artist_normalized": "marbert rocel",
+          "rank": 3
+        },
+        {
+          "artist": "Marbert Rocel/Small Hours",
+          "artist_normalized": "marbert rocel small hours",
+          "rank": 4
+        },
+        {
+          "artist": "Leifur James",
+          "artist_normalized": "leifur james",
+          "rank": 5
+        },
+        {
+          "artist": "Kazy Lambist",
+          "artist_normalized": "kazy lambist",
+          "rank": 6
+        },
+        {
+          "artist": "Two Another",
+          "artist_normalized": "two another",
+          "rank": 7
+        },
+        {
+          "artist": "Rhye",
+          "artist_normalized": "rhye",
+          "rank": 8
+        },
+        {
+          "artist": "Milosh",
+          "artist_normalized": "milosh",
+          "rank": 9
+        },
+        {
+          "artist": "Robin Hannibal",
+          "artist_normalized": "robin hannibal",
+          "rank": 10
+        },
+        {
+          "artist": "Quadron",
+          "artist_normalized": "quadron",
+          "rank": 11
+        },
+        {
+          "artist": "Neil Frances",
+          "artist_normalized": "neil frances",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "The Velvet Underground",
+      "seed_artist_normalized": "the velvet underground",
+      "seed_weight": 9.24,
+      "source_url": "https://www.last.fm/music/The+Velvet+Underground/+similar",
+      "similar_artists": [
+        {
+          "artist": "Lou Reed",
+          "artist_normalized": "lou reed",
+          "rank": 1
+        },
+        {
+          "artist": "John Cale",
+          "artist_normalized": "john cale",
+          "rank": 2
+        },
+        {
+          "artist": "The Stooges",
+          "artist_normalized": "the stooges",
+          "rank": 3
+        },
+        {
+          "artist": "Television",
+          "artist_normalized": "television",
+          "rank": 4
+        },
+        {
+          "artist": "Tom Verlaine",
+          "artist_normalized": "tom verlaine",
+          "rank": 5
+        },
+        {
+          "artist": "Richard Lloyd",
+          "artist_normalized": "richard lloyd",
+          "rank": 6
+        },
+        {
+          "artist": "Bob Dylan",
+          "artist_normalized": "bob dylan",
+          "rank": 7
+        },
+        {
+          "artist": "The Kinks",
+          "artist_normalized": "the kinks",
+          "rank": 8
+        },
+        {
+          "artist": "The Doors",
+          "artist_normalized": "the doors",
+          "rank": 9
+        },
+        {
+          "artist": "The Beatles",
+          "artist_normalized": "the beatles",
+          "rank": 10
+        },
+        {
+          "artist": "John Lennon",
+          "artist_normalized": "john lennon",
+          "rank": 11
+        },
+        {
+          "artist": "Paul McCartney",
+          "artist_normalized": "paul mccartney",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Washed Out",
+      "seed_artist_normalized": "washed out",
+      "seed_weight": 12.35,
+      "source_url": "https://www.last.fm/music/Washed+Out/+similar",
+      "similar_artists": [
+        {
+          "artist": "Small Black",
+          "artist_normalized": "small black",
+          "rank": 1
+        },
+        {
+          "artist": "Neon Indian",
+          "artist_normalized": "neon indian",
+          "rank": 2
+        },
+        {
+          "artist": "Alan Palomo",
+          "artist_normalized": "alan palomo",
+          "rank": 3
+        },
+        {
+          "artist": "Ghosthustler",
+          "artist_normalized": "ghosthustler",
+          "rank": 4
+        },
+        {
+          "artist": "VEGA",
+          "artist_normalized": "vega",
+          "rank": 5
+        },
+        {
+          "artist": "Brothertiger",
+          "artist_normalized": "brothertiger",
+          "rank": 6
+        },
+        {
+          "artist": "Monoteque",
+          "artist_normalized": "monoteque",
+          "rank": 7
+        },
+        {
+          "artist": "Brian Eno",
+          "artist_normalized": "brian eno",
+          "rank": 8
+        },
+        {
+          "artist": "MillionYoung",
+          "artist_normalized": "millionyoung",
+          "rank": 9
+        },
+        {
+          "artist": "Blackbird Blackbird",
+          "artist_normalized": "blackbird blackbird",
+          "rank": 10
+        },
+        {
+          "artist": "Toro y Moi",
+          "artist_normalized": "toro y moi",
+          "rank": 11
+        },
+        {
+          "artist": "Teen Daze",
+          "artist_normalized": "teen daze",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Faith Healer",
+      "seed_artist_normalized": "faith healer",
+      "seed_weight": 9.86,
+      "source_url": "https://www.last.fm/music/Faith+Healer/+similar",
+      "similar_artists": [
+        {
+          "artist": "EZTV",
+          "artist_normalized": "eztv",
+          "rank": 1
+        },
+        {
+          "artist": "Mauno",
+          "artist_normalized": "mauno",
+          "rank": 2
+        },
+        {
+          "artist": "Mac McCaughan",
+          "artist_normalized": "mac mccaughan",
+          "rank": 3
+        },
+        {
+          "artist": "Versing",
+          "artist_normalized": "versing",
+          "rank": 4
+        },
+        {
+          "artist": "Bent Shapes",
+          "artist_normalized": "bent shapes",
+          "rank": 5
+        },
+        {
+          "artist": "Strawberry Runners",
+          "artist_normalized": "strawberry runners",
+          "rank": 6
+        },
+        {
+          "artist": "Ohmme",
+          "artist_normalized": "ohmme",
+          "rank": 7
+        },
+        {
+          "artist": "Finom",
+          "artist_normalized": "finom",
+          "rank": 8
+        },
+        {
+          "artist": "Tim Darcy",
+          "artist_normalized": "tim darcy",
+          "rank": 9
+        },
+        {
+          "artist": "Mass Gothic",
+          "artist_normalized": "mass gothic",
+          "rank": 10
+        },
+        {
+          "artist": "Menace Beach",
+          "artist_normalized": "menace beach",
+          "rank": 11
+        },
+        {
+          "artist": "free-music-downloads",
+          "artist_normalized": "free music downloads",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "T. Rex",
+      "seed_artist_normalized": "t rex",
+      "seed_weight": 27.72,
+      "source_url": "https://www.last.fm/music/T.+Rex/+similar",
+      "similar_artists": [
+        {
+          "artist": "Marc Bolan",
+          "artist_normalized": "marc bolan",
+          "rank": 1
+        },
+        {
+          "artist": "Mott the Hoople",
+          "artist_normalized": "mott the hoople",
+          "rank": 2
+        },
+        {
+          "artist": "Sweet",
+          "artist_normalized": "sweet",
+          "rank": 3
+        },
+        {
+          "artist": "Roxy Music",
+          "artist_normalized": "roxy music",
+          "rank": 4
+        },
+        {
+          "artist": "Bryan Ferry",
+          "artist_normalized": "bryan ferry",
+          "rank": 5
+        },
+        {
+          "artist": "The Kinks",
+          "artist_normalized": "the kinks",
+          "rank": 6
+        },
+        {
+          "artist": "David Bowie",
+          "artist_normalized": "david bowie",
+          "rank": 7
+        },
+        {
+          "artist": "Slade",
+          "artist_normalized": "slade",
+          "rank": 8
+        },
+        {
+          "artist": "New York Dolls",
+          "artist_normalized": "new york dolls",
+          "rank": 9
+        },
+        {
+          "artist": "Ramones",
+          "artist_normalized": "ramones",
+          "rank": 10
+        },
+        {
+          "artist": "Lou Reed",
+          "artist_normalized": "lou reed",
+          "rank": 11
+        },
+        {
+          "artist": "the Velvet Underground",
+          "artist_normalized": "the velvet underground",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Mild High Club",
+      "seed_artist_normalized": "mild high club",
+      "seed_weight": 9.03,
+      "source_url": "https://www.last.fm/music/Mild+High+Club/+similar",
+      "similar_artists": [
+        {
+          "artist": "HOMESHAKE",
+          "artist_normalized": "homeshake",
+          "rank": 1
+        },
+        {
+          "artist": "Crumb",
+          "artist_normalized": "crumb",
+          "rank": 2
+        },
+        {
+          "artist": "The Holydrug Couple",
+          "artist_normalized": "the holydrug couple",
+          "rank": 3
+        },
+        {
+          "artist": "LOVING",
+          "artist_normalized": "loving",
+          "rank": 4
+        },
+        {
+          "artist": "Dumbo Gets Mad",
+          "artist_normalized": "dumbo gets mad",
+          "rank": 5
+        },
+        {
+          "artist": "Pond",
+          "artist_normalized": "pond",
+          "rank": 6
+        },
+        {
+          "artist": "Pipe-Eye",
+          "artist_normalized": "pipe eye",
+          "rank": 7
+        },
+        {
+          "artist": "Babe Rainbow",
+          "artist_normalized": "babe rainbow",
+          "rank": 8
+        },
+        {
+          "artist": "Moses Gunn Collective",
+          "artist_normalized": "moses gunn collective",
+          "rank": 9
+        },
+        {
+          "artist": "Unknown Mortal Orchestra",
+          "artist_normalized": "unknown mortal orchestra",
+          "rank": 10
+        },
+        {
+          "artist": "free-music-downloads",
+          "artist_normalized": "free music downloads",
+          "rank": 11
+        }
+      ]
+    },
+    {
+      "seed_artist": "The Tragically Hip",
+      "seed_artist_normalized": "the tragically hip",
+      "seed_weight": 21.04,
+      "source_url": "https://www.last.fm/music/The+Tragically+Hip/+similar",
+      "similar_artists": []
+    },
+    {
+      "seed_artist": "Fog Lake",
+      "seed_artist_normalized": "fog lake",
+      "seed_weight": 11.08,
+      "source_url": "https://www.last.fm/music/Fog+Lake/+similar",
+      "similar_artists": []
+    },
+    {
+      "seed_artist": "Beirut",
+      "seed_artist_normalized": "beirut",
+      "seed_weight": 7.91,
+      "source_url": "https://www.last.fm/music/Beirut/+similar",
+      "similar_artists": []
+    },
+    {
+      "seed_artist": "Peach Pit",
+      "seed_artist_normalized": "peach pit",
+      "seed_weight": 9.28,
+      "source_url": "https://www.last.fm/music/Peach+Pit/+similar",
+      "similar_artists": []
+    },
+    {
+      "seed_artist": "Tennis",
+      "seed_artist_normalized": "tennis",
+      "seed_weight": 9.34,
+      "source_url": "https://www.last.fm/music/Tennis/+similar",
+      "similar_artists": [
+        {
+          "artist": "TOPS",
+          "artist_normalized": "tops",
+          "rank": 1
+        },
+        {
+          "artist": "strongboi",
+          "artist_normalized": "strongboi",
+          "rank": 2
+        },
+        {
+          "artist": "Alice Phoebe Lou",
+          "artist_normalized": "alice phoebe lou",
+          "rank": 3
+        },
+        {
+          "artist": "Ziv Yamin",
+          "artist_normalized": "ziv yamin",
+          "rank": 4
+        },
+        {
+          "artist": "Japanese Breakfast",
+          "artist_normalized": "japanese breakfast",
+          "rank": 5
+        },
+        {
+          "artist": "Michelle Zauner",
+          "artist_normalized": "michelle zauner",
+          "rank": 6
+        },
+        {
+          "artist": "Little Girl, Big Spoon",
+          "artist_normalized": "little girl big spoon",
+          "rank": 7
+        },
+        {
+          "artist": "Post Post",
+          "artist_normalized": "post post",
+          "rank": 8
+        },
+        {
+          "artist": "Little Big League",
+          "artist_normalized": "little big league",
+          "rank": 9
+        },
+        {
+          "artist": "Japanese Breakfast/June",
+          "artist_normalized": "japanese breakfast june",
+          "rank": 10
+        },
+        {
+          "artist": "Men I Trust",
+          "artist_normalized": "men i trust",
+          "rank": 11
+        },
+        {
+          "artist": "Barrie",
+          "artist_normalized": "barrie",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "SALES",
+      "seed_artist_normalized": "sales",
+      "seed_weight": 8.24,
+      "source_url": "https://www.last.fm/music/SALES/+similar",
+      "similar_artists": [
+        {
+          "artist": "No Vacation",
+          "artist_normalized": "no vacation",
+          "rank": 1
+        },
+        {
+          "artist": "Bedroom",
+          "artist_normalized": "bedroom",
+          "rank": 2
+        },
+        {
+          "artist": "Yot Club",
+          "artist_normalized": "yot club",
+          "rank": 3
+        },
+        {
+          "artist": "Amateur Observer",
+          "artist_normalized": "amateur observer",
+          "rank": 4
+        },
+        {
+          "artist": "Vansire",
+          "artist_normalized": "vansire",
+          "rank": 5
+        },
+        {
+          "artist": "RICEWINE",
+          "artist_normalized": "ricewine",
+          "rank": 6
+        },
+        {
+          "artist": "mellow fellow",
+          "artist_normalized": "mellow fellow",
+          "rank": 7
+        },
+        {
+          "artist": "Current Joys",
+          "artist_normalized": "current joys",
+          "rank": 8
+        },
+        {
+          "artist": "Harmless",
+          "artist_normalized": "harmless",
+          "rank": 9
+        },
+        {
+          "artist": "Castlebeat",
+          "artist_normalized": "castlebeat",
+          "rank": 10
+        },
+        {
+          "artist": "Good Morning",
+          "artist_normalized": "good morning",
+          "rank": 11
+        },
+        {
+          "artist": "free-music-downloads",
+          "artist_normalized": "free music downloads",
+          "rank": 12
+        }
+      ]
+    },
+    {
+      "seed_artist": "Richy Mitch & The Coal Miners",
+      "seed_artist_normalized": "richy mitch and the coal miners",
+      "seed_weight": 18.8,
+      "source_url": "https://www.last.fm/music/Richy+Mitch+%26+The+Coal+Miners/+similar",
+      "similar_artists": [
+        {
+          "artist": "Richy Mitch &amp; The Coal Miners",
+          "artist_normalized": "richy mitch and amp the coal miners",
+          "rank": 1
+        },
+        {
+          "artist": "John Vincent III",
+          "artist_normalized": "john vincent iii",
+          "rank": 2
+        },
+        {
+          "artist": "Chance Pe\u00f1a",
+          "artist_normalized": "chance pe a",
+          "rank": 3
+        },
+        {
+          "artist": "Caamp",
+          "artist_normalized": "caamp",
+          "rank": 4
+        },
+        {
+          "artist": "Mt. Joy",
+          "artist_normalized": "mt joy",
+          "rank": 5
+        },
+        {
+          "artist": "Gregory Alan Isakov",
+          "artist_normalized": "gregory alan isakov",
+          "rank": 6
+        },
+        {
+          "artist": "Gregory Alan Isakov/Rust Colored Stones",
+          "artist_normalized": "gregory alan isakov rust colored stones",
+          "rank": 7
+        },
+        {
+          "artist": "Hans Williams",
+          "artist_normalized": "hans williams",
+          "rank": 8
+        },
+        {
+          "artist": "Oliver Hazard",
+          "artist_normalized": "oliver hazard",
+          "rank": 9
+        },
+        {
+          "artist": "Hazlett",
+          "artist_normalized": "hazlett",
+          "rank": 10
+        },
+        {
+          "artist": "Ethan Regan",
+          "artist_normalized": "ethan regan",
+          "rank": 11
+        },
+        {
+          "artist": "River Whyless",
+          "artist_normalized": "river whyless",
+          "rank": 12
+        }
+      ]
+    }
+  ],
+  "related_index": {
+    "trey anastasio": [
+      {
+        "artist": "Trey Anastasio",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 1,
+        "related_score": 68.97,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Trey Anastasio",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 4,
+        "related_score": 61.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "grateful dead": [
+      {
+        "artist": "Grateful Dead",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 2,
+        "related_score": 66.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "rob derhak": [
+      {
+        "artist": "Rob Derhak",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 3,
+        "related_score": 64.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "al schnier": [
+      {
+        "artist": "Al Schnier",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 4,
+        "related_score": 62.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "chuck garvey": [
+      {
+        "artist": "Chuck Garvey",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 5,
+        "related_score": 60.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "vinnie amico": [
+      {
+        "artist": "Vinnie Amico",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 6,
+        "related_score": 58.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jim loughlin": [
+      {
+        "artist": "Jim Loughlin",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 7,
+        "related_score": 56.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "widespread panic": [
+      {
+        "artist": "Widespread Panic",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 8,
+        "related_score": 54.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "john bell": [
+      {
+        "artist": "John Bell",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 9,
+        "related_score": 52.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "michael houser": [
+      {
+        "artist": "Michael Houser",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 10,
+        "related_score": 50.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jerry garcia band": [
+      {
+        "artist": "Jerry Garcia Band",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 1,
+        "related_score": 67.76,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Jerry Garcia Band",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 11,
+        "related_score": 48.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jerry garcia": [
+      {
+        "artist": "Jerry Garcia",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 2,
+        "related_score": 65.76,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Jerry Garcia",
+        "seed_artist": "Phish",
+        "seed_weight": 93.16,
+        "rank": 12,
+        "related_score": 46.97,
+        "source": "lastfm_similar"
+      }
+    ],
+    "phish": [
+      {
+        "artist": "Phish",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 3,
+        "related_score": 63.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "page mcconnell": [
+      {
+        "artist": "Page McConnell",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 5,
+        "related_score": 59.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mike gordon": [
+      {
+        "artist": "Mike Gordon",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 6,
+        "related_score": 57.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jon fishman": [
+      {
+        "artist": "Jon Fishman",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 7,
+        "related_score": 55.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "bob weir": [
+      {
+        "artist": "Bob Weir",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 8,
+        "related_score": 53.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "dead and amp company": [
+      {
+        "artist": "Dead &amp; Company",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 9,
+        "related_score": 51.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "new riders of the purple sage": [
+      {
+        "artist": "New Riders Of The Purple Sage",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 10,
+        "related_score": 49.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "david nelson": [
+      {
+        "artist": "David Nelson",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 11,
+        "related_score": 47.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "john dawson": [
+      {
+        "artist": "John Dawson",
+        "seed_artist": "Grateful Dead",
+        "seed_weight": 85.07,
+        "rank": 12,
+        "related_score": 45.76,
+        "source": "lastfm_similar"
+      }
+    ],
+    "adrianne lenker": [
+      {
+        "artist": "Adrianne Lenker",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 1,
+        "related_score": 61.15,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Adrianne Lenker",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 3,
+        "related_score": 53.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "buck meek": [
+      {
+        "artist": "Buck Meek",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 2,
+        "related_score": 59.15,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Buck Meek",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 8,
+        "related_score": 43.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "haley heynderickx": [
+      {
+        "artist": "Haley Heynderickx",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 3,
+        "related_score": 57.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "cameron winter": [
+      {
+        "artist": "Cameron Winter",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 4,
+        "related_score": 55.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "geese": [
+      {
+        "artist": "Geese",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 5,
+        "related_score": 53.15,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Geese",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 9,
+        "related_score": 45.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "boygenius": [
+      {
+        "artist": "boygenius",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 6,
+        "related_score": 51.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "julien baker": [
+      {
+        "artist": "Julien Baker",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 7,
+        "related_score": 49.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "phoebe bridgers": [
+      {
+        "artist": "Phoebe Bridgers",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 7,
+        "related_score": 49.43,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Phoebe Bridgers",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 8,
+        "related_score": 47.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "lucy dacus": [
+      {
+        "artist": "Lucy Dacus",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 9,
+        "related_score": 45.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "boygenius boygenius": [
+      {
+        "artist": "boygenius/boygenius",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 10,
+        "related_score": 43.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "boygenius boygenius demos": [
+      {
+        "artist": "boygenius/boygenius (demos)",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 11,
+        "related_score": 41.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "julia jacklin": [
+      {
+        "artist": "Julia Jacklin",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 1,
+        "related_score": 57.4,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Julia Jacklin",
+        "seed_artist": "Big Thief",
+        "seed_weight": 41.03,
+        "rank": 12,
+        "related_score": 39.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ritt momney": [
+      {
+        "artist": "Ritt Momney",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 1,
+        "related_score": 60.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "duncan fellows": [
+      {
+        "artist": "Duncan Fellows",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 2,
+        "related_score": 58.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the brook and amp the bluff": [
+      {
+        "artist": "The Brook &amp; The Bluff",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 3,
+        "related_score": 56.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the wild reeds": [
+      {
+        "artist": "The Wild Reeds",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 4,
+        "related_score": 54.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "lunar vacation": [
+      {
+        "artist": "Lunar Vacation",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 5,
+        "related_score": 52.49,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Lunar Vacation",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 12,
+        "related_score": 39.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the greeting committee": [
+      {
+        "artist": "The Greeting Committee",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 6,
+        "related_score": 50.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "french cassettes": [
+      {
+        "artist": "French Cassettes",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 7,
+        "related_score": 48.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "dr dog": [
+      {
+        "artist": "Dr. Dog",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 8,
+        "related_score": 46.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the brazen youth": [
+      {
+        "artist": "The Brazen Youth",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 9,
+        "related_score": 44.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "slaughter beach dog": [
+      {
+        "artist": "Slaughter Beach, Dog",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 10,
+        "related_score": 42.49,
+        "source": "lastfm_similar"
+      }
+    ],
+    "free music downloads": [
+      {
+        "artist": "free-music-downloads",
+        "seed_artist": "Atta Boy",
+        "seed_weight": 36.62,
+        "rank": 11,
+        "related_score": 40.49,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "free-music-downloads",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 12,
+        "related_score": 36.96,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "free-music-downloads",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 11,
+        "related_score": 36.35,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "free-music-downloads",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 12,
+        "related_score": 34.48,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "free-music-downloads",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 12,
+        "related_score": 34.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the voidz": [
+      {
+        "artist": "The Voidz",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 1,
+        "related_score": 59.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "julian casablancas": [
+      {
+        "artist": "Julian Casablancas",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 2,
+        "related_score": 57.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "albert hammond jr": [
+      {
+        "artist": "Albert Hammond, Jr.",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 3,
+        "related_score": 55.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "albert hammond": [
+      {
+        "artist": "Albert Hammond",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 4,
+        "related_score": 53.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "arctic monkeys": [
+      {
+        "artist": "Arctic Monkeys",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 5,
+        "related_score": 51.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "alex turner": [
+      {
+        "artist": "Alex Turner",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 6,
+        "related_score": 49.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jamie cook": [
+      {
+        "artist": "Jamie Cook",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 7,
+        "related_score": 47.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "nick o malley": [
+      {
+        "artist": "Nick O'Malley",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 8,
+        "related_score": 45.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "matt helders": [
+      {
+        "artist": "Matt Helders",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 9,
+        "related_score": 43.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "benches": [
+      {
+        "artist": "Benches",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 10,
+        "related_score": 41.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the symposium": [
+      {
+        "artist": "The Symposium",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 11,
+        "related_score": 39.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "interpol": [
+      {
+        "artist": "Interpol",
+        "seed_artist": "The Strokes",
+        "seed_weight": 32.23,
+        "rank": 12,
+        "related_score": 37.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "billy bragg and amp wilco": [
+      {
+        "artist": "Billy Bragg &amp; Wilco",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 1,
+        "related_score": 63.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "billy bragg": [
+      {
+        "artist": "Billy Bragg",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 2,
+        "related_score": 61.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "woody guthrie": [
+      {
+        "artist": "Woody Guthrie",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 3,
+        "related_score": 59.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "billy bragg and wilco mermaid avenue": [
+      {
+        "artist": "billy bragg & wilco/Mermaid Avenue",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 4,
+        "related_score": 57.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jeff tweedy": [
+      {
+        "artist": "Jeff Tweedy",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 5,
+        "related_score": 55.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the plebes": [
+      {
+        "artist": "The Plebes",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 6,
+        "related_score": 53.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jay farrar": [
+      {
+        "artist": "Jay Farrar",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 7,
+        "related_score": 51.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "uncle tupelo": [
+      {
+        "artist": "Uncle Tupelo",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 8,
+        "related_score": 49.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mike heidorn": [
+      {
+        "artist": "Mike Heidorn",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 9,
+        "related_score": 47.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "loose fur": [
+      {
+        "artist": "Loose Fur",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 10,
+        "related_score": 45.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "glenn kotche": [
+      {
+        "artist": "Glenn Kotche",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 11,
+        "related_score": 43.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jim o rourke": [
+      {
+        "artist": "Jim O'Rourke",
+        "seed_artist": "Wilco",
+        "seed_weight": 58.52,
+        "rank": 12,
+        "related_score": 41.78,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mild high club": [
+      {
+        "artist": "Mild High Club",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 1,
+        "related_score": 58.96,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Mild High Club",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 2,
+        "related_score": 55.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "good morning": [
+      {
+        "artist": "Good Morning",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 2,
+        "related_score": 56.96,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Good Morning",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 11,
+        "related_score": 36.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "infinite bisous": [
+      {
+        "artist": "infinite bisous",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 3,
+        "related_score": 54.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "yellow days": [
+      {
+        "artist": "Yellow Days",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 4,
+        "related_score": 52.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "triathalon": [
+      {
+        "artist": "Triathalon",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 5,
+        "related_score": 50.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "connan mockasin": [
+      {
+        "artist": "Connan Mockasin",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 6,
+        "related_score": 48.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jerkcurb": [
+      {
+        "artist": "jerkcurb",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 7,
+        "related_score": 46.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "horsey": [
+      {
+        "artist": "Horsey",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 8,
+        "related_score": 44.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "toro y moi": [
+      {
+        "artist": "Toro y Moi",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 9,
+        "related_score": 42.96,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Toro y Moi",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 11,
+        "related_score": 36.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "brad stank": [
+      {
+        "artist": "Brad stank",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 10,
+        "related_score": 40.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "cosmo pyke": [
+      {
+        "artist": "Cosmo Pyke",
+        "seed_artist": "HOMESHAKE",
+        "seed_weight": 26.42,
+        "rank": 11,
+        "related_score": 38.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "stephen malkmus": [
+      {
+        "artist": "Stephen Malkmus",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 1,
+        "related_score": 57.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "silver jews": [
+      {
+        "artist": "Silver Jews",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 2,
+        "related_score": 55.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the crust brothers": [
+      {
+        "artist": "The Crust Brothers",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 3,
+        "related_score": 53.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "stephen malkmus and the jicks": [
+      {
+        "artist": "Stephen Malkmus and the Jicks",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 4,
+        "related_score": 51.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ectoslavia": [
+      {
+        "artist": "Ectoslavia",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 5,
+        "related_score": 49.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "david berman": [
+      {
+        "artist": "David Berman",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 6,
+        "related_score": 47.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "built to spill": [
+      {
+        "artist": "Built to Spill",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 7,
+        "related_score": 45.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "doug martsch": [
+      {
+        "artist": "Doug Martsch",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 8,
+        "related_score": 43.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "treepeople": [
+      {
+        "artist": "Treepeople",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 9,
+        "related_score": 41.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "guided by voices": [
+      {
+        "artist": "Guided by Voices",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 10,
+        "related_score": 39.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "robert pollard": [
+      {
+        "artist": "Robert Pollard",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 11,
+        "related_score": 37.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "sebadoh": [
+      {
+        "artist": "Sebadoh",
+        "seed_artist": "Pavement",
+        "seed_weight": 19.76,
+        "rank": 12,
+        "related_score": 35.96,
+        "source": "lastfm_similar"
+      }
+    ],
+    "fruit bats": [
+      {
+        "artist": "Fruit Bats",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 1,
+        "related_score": 57.81,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Fruit Bats",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 3,
+        "related_score": 52.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "eric d johnson": [
+      {
+        "artist": "Eric D. Johnson",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 2,
+        "related_score": 55.81,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Eric D. Johnson",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 4,
+        "related_score": 50.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "generationals": [
+      {
+        "artist": "Generationals",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 3,
+        "related_score": 53.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "delta spirit": [
+      {
+        "artist": "Delta Spirit",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 4,
+        "related_score": 51.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "my morning jacket": [
+      {
+        "artist": "My Morning Jacket",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 5,
+        "related_score": 49.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "voxtrot": [
+      {
+        "artist": "Voxtrot",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 6,
+        "related_score": 47.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "voxtrot raised by wolves ep": [
+      {
+        "artist": "Voxtrot/Raised by Wolves EP",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 7,
+        "related_score": 45.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "islands": [
+      {
+        "artist": "Islands",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 8,
+        "related_score": 43.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the unicorns": [
+      {
+        "artist": "The Unicorns",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 9,
+        "related_score": 41.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "nick thorburn": [
+      {
+        "artist": "Nick Thorburn",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 10,
+        "related_score": 39.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "whitney": [
+      {
+        "artist": "Whitney",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 8,
+        "related_score": 42.89,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Whitney",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 11,
+        "related_score": 37.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "smith westerns": [
+      {
+        "artist": "Smith Westerns",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 9,
+        "related_score": 40.89,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Smith Westerns",
+        "seed_artist": "Dr. Dog",
+        "seed_weight": 18.75,
+        "rank": 12,
+        "related_score": 35.81,
+        "source": "lastfm_similar"
+      }
+    ],
+    "willyrodriguezwastaken": [
+      {
+        "artist": "WillyRodriguezWasTaken",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 1,
+        "related_score": 57.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "midwestern roadkill": [
+      {
+        "artist": "Midwestern Roadkill",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 2,
+        "related_score": 55.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "squee": [
+      {
+        "artist": "Squee",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 3,
+        "related_score": 53.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "drug bug": [
+      {
+        "artist": "Drug Bug",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 4,
+        "related_score": 51.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "neutral milk hotel": [
+      {
+        "artist": "Neutral Milk Hotel",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 5,
+        "related_score": 49.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jeff mangum": [
+      {
+        "artist": "Jeff Mangum",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 6,
+        "related_score": 47.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jeremy barnes": [
+      {
+        "artist": "Jeremy Barnes",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 7,
+        "related_score": 45.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "scott spillane": [
+      {
+        "artist": "Scott Spillane",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 8,
+        "related_score": 43.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "julian koster": [
+      {
+        "artist": "Julian Koster",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 9,
+        "related_score": 41.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "weatherday": [
+      {
+        "artist": "Weatherday",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 10,
+        "related_score": 39.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "lola s pocket pc": [
+      {
+        "artist": "Lola's Pocket PC",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 11,
+        "related_score": 37.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "five pebbles": [
+      {
+        "artist": "Five Pebbles",
+        "seed_artist": "Car Seat Headrest",
+        "seed_weight": 18.6,
+        "rank": 12,
+        "related_score": 35.79,
+        "source": "lastfm_similar"
+      }
+    ],
+    "nxworries": [
+      {
+        "artist": "NxWorries",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 1,
+        "related_score": 58.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "knxwledge": [
+      {
+        "artist": "Knxwledge",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 2,
+        "related_score": 56.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "free nationals": [
+      {
+        "artist": "Free Nationals",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 3,
+        "related_score": 54.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "smino": [
+      {
+        "artist": "Smino",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 4,
+        "related_score": 52.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "isaiah rashad": [
+      {
+        "artist": "Isaiah Rashad",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 5,
+        "related_score": 50.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "bj the chicago kid": [
+      {
+        "artist": "BJ The Chicago Kid",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 6,
+        "related_score": 48.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "kaytranada": [
+      {
+        "artist": "KAYTRANADA",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 7,
+        "related_score": 46.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "bruno mars anderson paak and amp silk sonic": [
+      {
+        "artist": "Bruno Mars, Anderson .Paak &amp; Silk Sonic",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 8,
+        "related_score": 44.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "chance the rapper": [
+      {
+        "artist": "Chance the Rapper",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 9,
+        "related_score": 42.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the internet": [
+      {
+        "artist": "The Internet",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 10,
+        "related_score": 40.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ofwgkta": [
+      {
+        "artist": "OFWGKTA",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 11,
+        "related_score": 38.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "steve lacy": [
+      {
+        "artist": "Steve Lacy",
+        "seed_artist": "Anderson .Paak",
+        "seed_weight": 20.1,
+        "rank": 12,
+        "related_score": 36.02,
+        "source": "lastfm_similar"
+      }
+    ],
+    "arc de soleil": [
+      {
+        "artist": "Arc De Soleil",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 1,
+        "related_score": 57.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "balthvs": [
+      {
+        "artist": "BALTHVS",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 2,
+        "related_score": 55.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "glass beams": [
+      {
+        "artist": "Glass Beams",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 3,
+        "related_score": 53.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "menahan street band": [
+      {
+        "artist": "Menahan Street Band",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 4,
+        "related_score": 51.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "sharon jones and the dap kings": [
+      {
+        "artist": "Sharon Jones and the Dap-Kings",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 5,
+        "related_score": 49.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "el michels affair": [
+      {
+        "artist": "El Michels Affair",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 6,
+        "related_score": 47.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "antibalas": [
+      {
+        "artist": "Antibalas",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 7,
+        "related_score": 45.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the budos band": [
+      {
+        "artist": "The Budos Band",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 8,
+        "related_score": 43.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "surprise chef": [
+      {
+        "artist": "Surprise Chef",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 9,
+        "related_score": 41.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "yin yin": [
+      {
+        "artist": "Yin Yin",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 10,
+        "related_score": 39.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mildlife": [
+      {
+        "artist": "Mildlife",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 11,
+        "related_score": 37.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "allah las": [
+      {
+        "artist": "Allah-Las",
+        "seed_artist": "Khruangbin",
+        "seed_weight": 14.33,
+        "rank": 12,
+        "related_score": 35.15,
+        "source": "lastfm_similar"
+      }
+    ],
+    "now now": [
+      {
+        "artist": "Now, Now",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 1,
+        "related_score": 57.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "hop along": [
+      {
+        "artist": "Hop Along",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 2,
+        "related_score": 55.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "hop along queen ansleis": [
+      {
+        "artist": "Hop Along, Queen Ansleis",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 3,
+        "related_score": 53.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "hop along queen ansleis freshman year": [
+      {
+        "artist": "Hop Along, Queen Ansleis/Freshman Year",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 4,
+        "related_score": 51.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "chastity belt": [
+      {
+        "artist": "Chastity Belt",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 5,
+        "related_score": 49.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "julia shapiro": [
+      {
+        "artist": "Julia Shapiro",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 6,
+        "related_score": 47.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "broken social scene": [
+      {
+        "artist": "Broken Social Scene",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 7,
+        "related_score": 45.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "kevin drew": [
+      {
+        "artist": "Kevin Drew",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 8,
+        "related_score": 43.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "brendan canning": [
+      {
+        "artist": "Brendan Canning",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 9,
+        "related_score": 41.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "broken social scene feel good lost": [
+      {
+        "artist": "Broken Social Scene/Feel Good Lost",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 10,
+        "related_score": 39.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "emily haines and amp the soft skeleton": [
+      {
+        "artist": "Emily Haines &amp; The Soft Skeleton",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 11,
+        "related_score": 37.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "emily haines": [
+      {
+        "artist": "Emily Haines",
+        "seed_artist": "Land of Talk",
+        "seed_weight": 18.18,
+        "rank": 12,
+        "related_score": 35.73,
+        "source": "lastfm_similar"
+      }
+    ],
+    "shelly": [
+      {
+        "artist": "Shelly",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 1,
+        "related_score": 61.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "claud": [
+      {
+        "artist": "Claud",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 2,
+        "related_score": 59.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "opick": [
+      {
+        "artist": "Opick",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 3,
+        "related_score": 57.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "beabadoobee": [
+      {
+        "artist": "beabadoobee",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 4,
+        "related_score": 55.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "faye webster": [
+      {
+        "artist": "Faye Webster",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 5,
+        "related_score": 53.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the mar as": [
+      {
+        "artist": "The Mar\u00edas",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 6,
+        "related_score": 51.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "men i trust": [
+      {
+        "artist": "Men I Trust",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 1,
+        "related_score": 57.05,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Men I Trust",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 8,
+        "related_score": 47.43,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Men I Trust",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 11,
+        "related_score": 36.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "not for radio": [
+      {
+        "artist": "Not For Radio",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 9,
+        "related_score": 45.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "alice phoebe lou": [
+      {
+        "artist": "Alice Phoebe Lou",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 3,
+        "related_score": 52.4,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Alice Phoebe Lou",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 10,
+        "related_score": 43.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "lizzy mcalpine": [
+      {
+        "artist": "Lizzy McAlpine",
+        "seed_artist": "Clairo",
+        "seed_weight": 42.87,
+        "rank": 11,
+        "related_score": 41.43,
+        "source": "lastfm_similar"
+      }
+    ],
+    "cassandra jenkins": [
+      {
+        "artist": "Cassandra Jenkins",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 1,
+        "related_score": 57.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "sharon van etten": [
+      {
+        "artist": "Sharon Van Etten",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 2,
+        "related_score": 55.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "sharon van etten much more than that": [
+      {
+        "artist": "Sharon Van Etten/Much More Than That",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 3,
+        "related_score": 53.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "sharon van etten are we there": [
+      {
+        "artist": "Sharon Van Etten/Are We There",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 4,
+        "related_score": 51.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "laura marling": [
+      {
+        "artist": "Laura Marling",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 5,
+        "related_score": 49.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "neil young": [
+      {
+        "artist": "Neil Young",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 6,
+        "related_score": 47.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "julie byrne": [
+      {
+        "artist": "Julie Byrne",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 7,
+        "related_score": 45.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "anna b savage": [
+      {
+        "artist": "Anna B Savage",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 8,
+        "related_score": 43.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "jasmine 4 t": [
+      {
+        "artist": "jasmine.4.t",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 9,
+        "related_score": 41.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "hurray for the riff raff": [
+      {
+        "artist": "Hurray For The Riff Raff",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 10,
+        "related_score": 39.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "nadia reid": [
+      {
+        "artist": "Nadia Reid",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 11,
+        "related_score": 37.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "nil fer yanya": [
+      {
+        "artist": "Nil\u00fcfer Yanya",
+        "seed_artist": "The Weather Station",
+        "seed_weight": 14.72,
+        "rank": 12,
+        "related_score": 35.21,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mj lenderman": [
+      {
+        "artist": "MJ Lenderman",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 1,
+        "related_score": 61.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "water from your eyes": [
+      {
+        "artist": "Water From Your Eyes",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 2,
+        "related_score": 59.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "thanks for coming": [
+      {
+        "artist": "Thanks for Coming",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 3,
+        "related_score": 57.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "this is lorelei": [
+      {
+        "artist": "This is Lorelei",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 4,
+        "related_score": 55.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "greg freeman": [
+      {
+        "artist": "Greg Freeman",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 5,
+        "related_score": 53.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "greg freeman i looked out": [
+      {
+        "artist": "Greg Freeman/I Looked Out",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 6,
+        "related_score": 51.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "feeble little horse": [
+      {
+        "artist": "feeble little horse",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 7,
+        "related_score": 49.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "snocaps": [
+      {
+        "artist": "Snocaps",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 8,
+        "related_score": 47.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ratboy": [
+      {
+        "artist": "Ratboy",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 10,
+        "related_score": 43.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "florry": [
+      {
+        "artist": "Florry",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 11,
+        "related_score": 41.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "will henriksen": [
+      {
+        "artist": "Will Henriksen",
+        "seed_artist": "Wednesday",
+        "seed_weight": 40.02,
+        "rank": 12,
+        "related_score": 39.0,
+        "source": "lastfm_similar"
+      }
+    ],
+    "michael nau": [
+      {
+        "artist": "Michael Nau",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 1,
+        "related_score": 56.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "reverend baron": [
+      {
+        "artist": "Reverend Baron",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 2,
+        "related_score": 54.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "tim hill": [
+      {
+        "artist": "Tim Hill",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 5,
+        "related_score": 48.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "dick stusso": [
+      {
+        "artist": "Dick Stusso",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 6,
+        "related_score": 46.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "drug cabin": [
+      {
+        "artist": "Drug Cabin",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 7,
+        "related_score": 44.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "dope lemon": [
+      {
+        "artist": "Dope Lemon",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 8,
+        "related_score": 42.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "kevin morby": [
+      {
+        "artist": "Kevin Morby",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 4,
+        "related_score": 50.89,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Kevin Morby",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 9,
+        "related_score": 40.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "woods": [
+      {
+        "artist": "Woods",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 5,
+        "related_score": 48.89,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Woods",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 10,
+        "related_score": 38.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the babies": [
+      {
+        "artist": "The Babies",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 1,
+        "related_score": 56.89,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "The Babies",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 11,
+        "related_score": 36.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "timber timbre": [
+      {
+        "artist": "Timber Timbre",
+        "seed_artist": "Cotton Jones",
+        "seed_weight": 13.26,
+        "rank": 12,
+        "related_score": 34.99,
+        "source": "lastfm_similar"
+      }
+    ],
+    "cassie ramone": [
+      {
+        "artist": "Cassie Ramone",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 2,
+        "related_score": 54.89,
+        "source": "lastfm_similar"
+      }
+    ],
+    "vivian girls": [
+      {
+        "artist": "Vivian Girls",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 3,
+        "related_score": 52.89,
+        "source": "lastfm_similar"
+      }
+    ],
+    "bent outta shape": [
+      {
+        "artist": "Bent Outta Shape",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 6,
+        "related_score": 46.89,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ringers": [
+      {
+        "artist": "Ringers",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 7,
+        "related_score": 44.89,
+        "source": "lastfm_similar"
+      }
+    ],
+    "touching voids": [
+      {
+        "artist": "Touching Voids",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 10,
+        "related_score": 38.89,
+        "source": "lastfm_similar"
+      }
+    ],
+    "together pangea": [
+      {
+        "artist": "together PANGEA",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 11,
+        "related_score": 36.89,
+        "source": "lastfm_similar"
+      }
+    ],
+    "dehd": [
+      {
+        "artist": "Dehd",
+        "seed_artist": "Twin Peaks",
+        "seed_weight": 12.58,
+        "rank": 12,
+        "related_score": 34.89,
+        "source": "lastfm_similar"
+      }
+    ],
+    "no vacation": [
+      {
+        "artist": "No Vacation",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 1,
+        "related_score": 56.24,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "No Vacation",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 3,
+        "related_score": 53.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "inner wave": [
+      {
+        "artist": "Inner Wave",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 4,
+        "related_score": 51.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "loving": [
+      {
+        "artist": "LOVING",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 4,
+        "related_score": 50.35,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "LOVING",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 5,
+        "related_score": 49.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "melody s echo chamber": [
+      {
+        "artist": "Melody's Echo Chamber",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 6,
+        "related_score": 47.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "melody prochet": [
+      {
+        "artist": "Melody Prochet",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 7,
+        "related_score": 45.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the narcoleptic dancers": [
+      {
+        "artist": "The Narcoleptic Dancers",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 8,
+        "related_score": 43.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "my bee s garden": [
+      {
+        "artist": "My Bee's Garden",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 9,
+        "related_score": 41.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "tame impala": [
+      {
+        "artist": "Tame Impala",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 10,
+        "related_score": 39.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "kevin parker": [
+      {
+        "artist": "Kevin Parker",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 11,
+        "related_score": 37.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "sugar candy mountain": [
+      {
+        "artist": "Sugar Candy Mountain",
+        "seed_artist": "Crumb",
+        "seed_weight": 13.67,
+        "rank": 12,
+        "related_score": 35.05,
+        "source": "lastfm_similar"
+      }
+    ],
+    "donald fagen": [
+      {
+        "artist": "Donald Fagen",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 1,
+        "related_score": 58.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "walter becker": [
+      {
+        "artist": "Walter Becker",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 2,
+        "related_score": 56.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the doobie brothers": [
+      {
+        "artist": "The Doobie Brothers",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 3,
+        "related_score": 54.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "boz scaggs": [
+      {
+        "artist": "Boz Scaggs",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 4,
+        "related_score": 52.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "todd rundgren": [
+      {
+        "artist": "Todd Rundgren",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 5,
+        "related_score": 50.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "utopia": [
+      {
+        "artist": "Utopia",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 6,
+        "related_score": 48.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "nazz": [
+      {
+        "artist": "Nazz",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 7,
+        "related_score": 46.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "todd rundgren i saw the light": [
+      {
+        "artist": "Todd Rundgren/ /I Saw the Light",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 8,
+        "related_score": 44.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "america": [
+      {
+        "artist": "America",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 9,
+        "related_score": 42.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ambrosia": [
+      {
+        "artist": "Ambrosia",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 10,
+        "related_score": 40.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "seals and amp crofts": [
+      {
+        "artist": "Seals &amp; Crofts",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 11,
+        "related_score": 38.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "hall and amp oates": [
+      {
+        "artist": "Hall &amp; Oates",
+        "seed_artist": "Steely Dan",
+        "seed_weight": 23.55,
+        "rank": 12,
+        "related_score": 36.53,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ought": [
+      {
+        "artist": "Ought",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 1,
+        "related_score": 56.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "protomartyr": [
+      {
+        "artist": "Protomartyr",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 2,
+        "related_score": 54.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "cola": [
+      {
+        "artist": "Cola",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 3,
+        "related_score": 52.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "thee oh sees": [
+      {
+        "artist": "Thee Oh Sees",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 4,
+        "related_score": 50.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "osees": [
+      {
+        "artist": "Osees",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 5,
+        "related_score": 48.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "oh sees": [
+      {
+        "artist": "Oh Sees",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 6,
+        "related_score": 46.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "preoccupations": [
+      {
+        "artist": "Preoccupations",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 7,
+        "related_score": 44.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "viet cong": [
+      {
+        "artist": "Viet Cong",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 8,
+        "related_score": 42.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "women": [
+      {
+        "artist": "Women",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 9,
+        "related_score": 40.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "viagra boys": [
+      {
+        "artist": "Viagra Boys",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 10,
+        "related_score": 38.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ty segall": [
+      {
+        "artist": "Ty Segall",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 11,
+        "related_score": 36.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "squid": [
+      {
+        "artist": "Squid",
+        "seed_artist": "Parquet Courts",
+        "seed_weight": 12.18,
+        "rank": 12,
+        "related_score": 34.83,
+        "source": "lastfm_similar"
+      }
+    ],
+    "lomelda": [
+      {
+        "artist": "Lomelda",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 2,
+        "related_score": 55.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "big thief": [
+      {
+        "artist": "Big Thief",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 4,
+        "related_score": 51.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "odie leigh": [
+      {
+        "artist": "Odie Leigh",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 5,
+        "related_score": 49.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "tomberlin": [
+      {
+        "artist": "Tomberlin",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 6,
+        "related_score": 47.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "indigo de souza": [
+      {
+        "artist": "Indigo De Souza",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 7,
+        "related_score": 45.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "james krivchenia": [
+      {
+        "artist": "James Krivchenia",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 9,
+        "related_score": 41.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "florist": [
+      {
+        "artist": "Florist",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 10,
+        "related_score": 39.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "emily sprague": [
+      {
+        "artist": "Emily Sprague",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 11,
+        "related_score": 37.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "told slant": [
+      {
+        "artist": "Told Slant",
+        "seed_artist": "Haley Heynderickx",
+        "seed_weight": 15.99,
+        "rank": 12,
+        "related_score": 35.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "otzeki": [
+      {
+        "artist": "Otzeki",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 1,
+        "related_score": 57.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "maribou state": [
+      {
+        "artist": "Maribou State",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 2,
+        "related_score": 55.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "marbert rocel": [
+      {
+        "artist": "Marbert Rocel",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 3,
+        "related_score": 53.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "marbert rocel small hours": [
+      {
+        "artist": "Marbert Rocel/Small Hours",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 4,
+        "related_score": 51.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "leifur james": [
+      {
+        "artist": "Leifur James",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 5,
+        "related_score": 49.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "kazy lambist": [
+      {
+        "artist": "Kazy Lambist",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 6,
+        "related_score": 47.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "two another": [
+      {
+        "artist": "Two Another",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 7,
+        "related_score": 45.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "rhye": [
+      {
+        "artist": "Rhye",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 8,
+        "related_score": 43.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "milosh": [
+      {
+        "artist": "Milosh",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 9,
+        "related_score": 41.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "robin hannibal": [
+      {
+        "artist": "Robin Hannibal",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 10,
+        "related_score": 39.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "quadron": [
+      {
+        "artist": "Quadron",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 11,
+        "related_score": 37.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "neil frances": [
+      {
+        "artist": "Neil Frances",
+        "seed_artist": "Elder Island",
+        "seed_weight": 18.01,
+        "rank": 12,
+        "related_score": 35.7,
+        "source": "lastfm_similar"
+      }
+    ],
+    "lou reed": [
+      {
+        "artist": "Lou Reed",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 1,
+        "related_score": 56.39,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "Lou Reed",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 11,
+        "related_score": 39.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "john cale": [
+      {
+        "artist": "John Cale",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 2,
+        "related_score": 54.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the stooges": [
+      {
+        "artist": "The Stooges",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 3,
+        "related_score": 52.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "television": [
+      {
+        "artist": "Television",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 4,
+        "related_score": 50.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "tom verlaine": [
+      {
+        "artist": "Tom Verlaine",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 5,
+        "related_score": 48.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "richard lloyd": [
+      {
+        "artist": "Richard Lloyd",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 6,
+        "related_score": 46.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "bob dylan": [
+      {
+        "artist": "Bob Dylan",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 7,
+        "related_score": 44.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the kinks": [
+      {
+        "artist": "The Kinks",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 6,
+        "related_score": 49.16,
+        "source": "lastfm_similar"
+      },
+      {
+        "artist": "The Kinks",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 8,
+        "related_score": 42.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the doors": [
+      {
+        "artist": "The Doors",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 9,
+        "related_score": 40.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the beatles": [
+      {
+        "artist": "The Beatles",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 10,
+        "related_score": 38.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "john lennon": [
+      {
+        "artist": "John Lennon",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 11,
+        "related_score": 36.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "paul mccartney": [
+      {
+        "artist": "Paul McCartney",
+        "seed_artist": "The Velvet Underground",
+        "seed_weight": 9.24,
+        "rank": 12,
+        "related_score": 34.39,
+        "source": "lastfm_similar"
+      }
+    ],
+    "small black": [
+      {
+        "artist": "Small Black",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 1,
+        "related_score": 56.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "neon indian": [
+      {
+        "artist": "Neon Indian",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 2,
+        "related_score": 54.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "alan palomo": [
+      {
+        "artist": "Alan Palomo",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 3,
+        "related_score": 52.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ghosthustler": [
+      {
+        "artist": "Ghosthustler",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 4,
+        "related_score": 50.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "vega": [
+      {
+        "artist": "VEGA",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 5,
+        "related_score": 48.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "brothertiger": [
+      {
+        "artist": "Brothertiger",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 6,
+        "related_score": 46.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "monoteque": [
+      {
+        "artist": "Monoteque",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 7,
+        "related_score": 44.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "brian eno": [
+      {
+        "artist": "Brian Eno",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 8,
+        "related_score": 42.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "millionyoung": [
+      {
+        "artist": "MillionYoung",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 9,
+        "related_score": 40.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "blackbird blackbird": [
+      {
+        "artist": "Blackbird Blackbird",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 10,
+        "related_score": 38.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "teen daze": [
+      {
+        "artist": "Teen Daze",
+        "seed_artist": "Washed Out",
+        "seed_weight": 12.35,
+        "rank": 12,
+        "related_score": 34.85,
+        "source": "lastfm_similar"
+      }
+    ],
+    "eztv": [
+      {
+        "artist": "EZTV",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 1,
+        "related_score": 56.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mauno": [
+      {
+        "artist": "Mauno",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 2,
+        "related_score": 54.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mac mccaughan": [
+      {
+        "artist": "Mac McCaughan",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 3,
+        "related_score": 52.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "versing": [
+      {
+        "artist": "Versing",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 4,
+        "related_score": 50.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "bent shapes": [
+      {
+        "artist": "Bent Shapes",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 5,
+        "related_score": 48.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "strawberry runners": [
+      {
+        "artist": "Strawberry Runners",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 6,
+        "related_score": 46.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ohmme": [
+      {
+        "artist": "Ohmme",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 7,
+        "related_score": 44.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "finom": [
+      {
+        "artist": "Finom",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 8,
+        "related_score": 42.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "tim darcy": [
+      {
+        "artist": "Tim Darcy",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 9,
+        "related_score": 40.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mass gothic": [
+      {
+        "artist": "Mass Gothic",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 10,
+        "related_score": 38.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "menace beach": [
+      {
+        "artist": "Menace Beach",
+        "seed_artist": "Faith Healer",
+        "seed_weight": 9.86,
+        "rank": 11,
+        "related_score": 36.48,
+        "source": "lastfm_similar"
+      }
+    ],
+    "marc bolan": [
+      {
+        "artist": "Marc Bolan",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 1,
+        "related_score": 59.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mott the hoople": [
+      {
+        "artist": "Mott the Hoople",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 2,
+        "related_score": 57.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "sweet": [
+      {
+        "artist": "Sweet",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 3,
+        "related_score": 55.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "roxy music": [
+      {
+        "artist": "Roxy Music",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 4,
+        "related_score": 53.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "bryan ferry": [
+      {
+        "artist": "Bryan Ferry",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 5,
+        "related_score": 51.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "david bowie": [
+      {
+        "artist": "David Bowie",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 7,
+        "related_score": 47.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "slade": [
+      {
+        "artist": "Slade",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 8,
+        "related_score": 45.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "new york dolls": [
+      {
+        "artist": "New York Dolls",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 9,
+        "related_score": 43.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ramones": [
+      {
+        "artist": "Ramones",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 10,
+        "related_score": 41.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the velvet underground": [
+      {
+        "artist": "the Velvet Underground",
+        "seed_artist": "T. Rex",
+        "seed_weight": 27.72,
+        "rank": 12,
+        "related_score": 37.16,
+        "source": "lastfm_similar"
+      }
+    ],
+    "homeshake": [
+      {
+        "artist": "HOMESHAKE",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 1,
+        "related_score": 56.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "crumb": [
+      {
+        "artist": "Crumb",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 2,
+        "related_score": 54.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "the holydrug couple": [
+      {
+        "artist": "The Holydrug Couple",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 3,
+        "related_score": 52.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "dumbo gets mad": [
+      {
+        "artist": "Dumbo Gets Mad",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 5,
+        "related_score": 48.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "pond": [
+      {
+        "artist": "Pond",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 6,
+        "related_score": 46.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "pipe eye": [
+      {
+        "artist": "Pipe-Eye",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 7,
+        "related_score": 44.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "babe rainbow": [
+      {
+        "artist": "Babe Rainbow",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 8,
+        "related_score": 42.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "moses gunn collective": [
+      {
+        "artist": "Moses Gunn Collective",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 9,
+        "related_score": 40.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "unknown mortal orchestra": [
+      {
+        "artist": "Unknown Mortal Orchestra",
+        "seed_artist": "Mild High Club",
+        "seed_weight": 9.03,
+        "rank": 10,
+        "related_score": 38.35,
+        "source": "lastfm_similar"
+      }
+    ],
+    "tops": [
+      {
+        "artist": "TOPS",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 1,
+        "related_score": 56.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "strongboi": [
+      {
+        "artist": "strongboi",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 2,
+        "related_score": 54.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ziv yamin": [
+      {
+        "artist": "Ziv Yamin",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 4,
+        "related_score": 50.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "japanese breakfast": [
+      {
+        "artist": "Japanese Breakfast",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 5,
+        "related_score": 48.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "michelle zauner": [
+      {
+        "artist": "Michelle Zauner",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 6,
+        "related_score": 46.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "little girl big spoon": [
+      {
+        "artist": "Little Girl, Big Spoon",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 7,
+        "related_score": 44.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "post post": [
+      {
+        "artist": "Post Post",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 8,
+        "related_score": 42.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "little big league": [
+      {
+        "artist": "Little Big League",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 9,
+        "related_score": 40.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "japanese breakfast june": [
+      {
+        "artist": "Japanese Breakfast/June",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 10,
+        "related_score": 38.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "barrie": [
+      {
+        "artist": "Barrie",
+        "seed_artist": "Tennis",
+        "seed_weight": 9.34,
+        "rank": 12,
+        "related_score": 34.4,
+        "source": "lastfm_similar"
+      }
+    ],
+    "bedroom": [
+      {
+        "artist": "Bedroom",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 2,
+        "related_score": 54.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "yot club": [
+      {
+        "artist": "Yot Club",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 3,
+        "related_score": 52.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "amateur observer": [
+      {
+        "artist": "Amateur Observer",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 4,
+        "related_score": 50.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "vansire": [
+      {
+        "artist": "Vansire",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 5,
+        "related_score": 48.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ricewine": [
+      {
+        "artist": "RICEWINE",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 6,
+        "related_score": 46.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mellow fellow": [
+      {
+        "artist": "mellow fellow",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 7,
+        "related_score": 44.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "current joys": [
+      {
+        "artist": "Current Joys",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 8,
+        "related_score": 42.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "harmless": [
+      {
+        "artist": "Harmless",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 9,
+        "related_score": 40.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "castlebeat": [
+      {
+        "artist": "Castlebeat",
+        "seed_artist": "SALES",
+        "seed_weight": 8.24,
+        "rank": 10,
+        "related_score": 38.24,
+        "source": "lastfm_similar"
+      }
+    ],
+    "richy mitch and amp the coal miners": [
+      {
+        "artist": "Richy Mitch &amp; The Coal Miners",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 1,
+        "related_score": 57.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "john vincent iii": [
+      {
+        "artist": "John Vincent III",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 2,
+        "related_score": 55.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "chance pe a": [
+      {
+        "artist": "Chance Pe\u00f1a",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 3,
+        "related_score": 53.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "caamp": [
+      {
+        "artist": "Caamp",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 4,
+        "related_score": 51.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "mt joy": [
+      {
+        "artist": "Mt. Joy",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 5,
+        "related_score": 49.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "gregory alan isakov": [
+      {
+        "artist": "Gregory Alan Isakov",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 6,
+        "related_score": 47.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "gregory alan isakov rust colored stones": [
+      {
+        "artist": "Gregory Alan Isakov/Rust Colored Stones",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 7,
+        "related_score": 45.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "hans williams": [
+      {
+        "artist": "Hans Williams",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 8,
+        "related_score": 43.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "oliver hazard": [
+      {
+        "artist": "Oliver Hazard",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 9,
+        "related_score": 41.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "hazlett": [
+      {
+        "artist": "Hazlett",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 10,
+        "related_score": 39.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "ethan regan": [
+      {
+        "artist": "Ethan Regan",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 11,
+        "related_score": 37.82,
+        "source": "lastfm_similar"
+      }
+    ],
+    "river whyless": [
+      {
+        "artist": "River Whyless",
+        "seed_artist": "Richy Mitch & The Coal Miners",
+        "seed_weight": 18.8,
+        "rank": 12,
+        "related_score": 35.82,
+        "source": "lastfm_similar"
+      }
+    ]
+  }
+}

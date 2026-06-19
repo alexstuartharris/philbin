@@ -1,0 +1,2272 @@
+{
+  "generated": "2026-06-19T22:13:52.964951Z",
+  "source": "/home/alex-harris/clawd/tmp/spotify-export-2026-06-19/Spotify Extended Streaming History",
+  "recent_year_cutoff": 2024,
+  "rows_analyzed": 35785,
+  "years_loaded": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "artist_count": 250,
+  "artists": [
+    {
+      "artist": "Phish",
+      "artist_normalized": "phish",
+      "overall_plays": 1123,
+      "overall_hours": 113.55,
+      "recent_plays": 199,
+      "recent_hours": 23.8,
+      "weight": 93.16
+    },
+    {
+      "artist": "Grateful Dead",
+      "artist_normalized": "grateful dead",
+      "overall_plays": 1056,
+      "overall_hours": 90.85,
+      "recent_plays": 216,
+      "recent_hours": 17.53,
+      "weight": 85.07
+    },
+    {
+      "artist": "Big Thief",
+      "artist_normalized": "big thief",
+      "overall_plays": 824,
+      "overall_hours": 38.1,
+      "recent_plays": 26,
+      "recent_hours": 0.96,
+      "weight": 41.03
+    },
+    {
+      "artist": "Atta Boy",
+      "artist_normalized": "atta boy",
+      "overall_plays": 696,
+      "overall_hours": 36.17,
+      "recent_plays": 33,
+      "recent_hours": 1.49,
+      "weight": 36.62
+    },
+    {
+      "artist": "The Strokes",
+      "artist_normalized": "the strokes",
+      "overall_plays": 607,
+      "overall_hours": 26.77,
+      "recent_plays": 37,
+      "recent_hours": 1.58,
+      "weight": 32.23
+    },
+    {
+      "artist": "Wilco",
+      "artist_normalized": "wilco",
+      "overall_plays": 550,
+      "overall_hours": 27.23,
+      "recent_plays": 274,
+      "recent_hours": 12.51,
+      "weight": 58.52
+    },
+    {
+      "artist": "HOMESHAKE",
+      "artist_normalized": "homeshake",
+      "overall_plays": 515,
+      "overall_hours": 21.06,
+      "recent_plays": 26,
+      "recent_hours": 1.0,
+      "weight": 26.42
+    },
+    {
+      "artist": "Pavement",
+      "artist_normalized": "pavement",
+      "overall_plays": 404,
+      "overall_hours": 16.95,
+      "recent_plays": 11,
+      "recent_hours": 0.53,
+      "weight": 19.76
+    },
+    {
+      "artist": "Dr. Dog",
+      "artist_normalized": "dr dog",
+      "overall_plays": 356,
+      "overall_hours": 18.4,
+      "recent_plays": 18,
+      "recent_hours": 0.65,
+      "weight": 18.75
+    },
+    {
+      "artist": "Car Seat Headrest",
+      "artist_normalized": "car seat headrest",
+      "overall_plays": 339,
+      "overall_hours": 22.62,
+      "recent_plays": 16,
+      "recent_hours": 0.91,
+      "weight": 18.6
+    },
+    {
+      "artist": "Anderson .Paak",
+      "artist_normalized": "anderson paak",
+      "overall_plays": 319,
+      "overall_hours": 15.39,
+      "recent_plays": 42,
+      "recent_hours": 2.3,
+      "weight": 20.1
+    },
+    {
+      "artist": "Khruangbin",
+      "artist_normalized": "khruangbin",
+      "overall_plays": 297,
+      "overall_hours": 14.3,
+      "recent_plays": 5,
+      "recent_hours": 0.13,
+      "weight": 14.33
+    },
+    {
+      "artist": "Land of Talk",
+      "artist_normalized": "land of talk",
+      "overall_plays": 289,
+      "overall_hours": 17.02,
+      "recent_plays": 34,
+      "recent_hours": 1.98,
+      "weight": 18.18
+    },
+    {
+      "artist": "Clairo",
+      "artist_normalized": "clairo",
+      "overall_plays": 275,
+      "overall_hours": 10.96,
+      "recent_plays": 262,
+      "recent_hours": 10.3,
+      "weight": 42.87
+    },
+    {
+      "artist": "The Weather Station",
+      "artist_normalized": "the weather station",
+      "overall_plays": 258,
+      "overall_hours": 11.33,
+      "recent_plays": 25,
+      "recent_hours": 0.96,
+      "weight": 14.72
+    },
+    {
+      "artist": "Wednesday",
+      "artist_normalized": "wednesday",
+      "overall_plays": 251,
+      "overall_hours": 11.88,
+      "recent_plays": 234,
+      "recent_hours": 11.18,
+      "weight": 40.02
+    },
+    {
+      "artist": "Cotton Jones",
+      "artist_normalized": "cotton jones",
+      "overall_plays": 244,
+      "overall_hours": 13.19,
+      "recent_plays": 14,
+      "recent_hours": 0.73,
+      "weight": 13.26
+    },
+    {
+      "artist": "Twin Peaks",
+      "artist_normalized": "twin peaks",
+      "overall_plays": 237,
+      "overall_hours": 10.86,
+      "recent_plays": 14,
+      "recent_hours": 0.59,
+      "weight": 12.58
+    },
+    {
+      "artist": "Crumb",
+      "artist_normalized": "crumb",
+      "overall_plays": 229,
+      "overall_hours": 10.95,
+      "recent_plays": 27,
+      "recent_hours": 0.93,
+      "weight": 13.67
+    },
+    {
+      "artist": "Steely Dan",
+      "artist_normalized": "steely dan",
+      "overall_plays": 227,
+      "overall_hours": 12.83,
+      "recent_plays": 99,
+      "recent_hours": 5.91,
+      "weight": 23.55
+    },
+    {
+      "artist": "Parquet Courts",
+      "artist_normalized": "parquet courts",
+      "overall_plays": 216,
+      "overall_hours": 9.47,
+      "recent_plays": 19,
+      "recent_hours": 0.86,
+      "weight": 12.18
+    },
+    {
+      "artist": "Haley Heynderickx",
+      "artist_normalized": "haley heynderickx",
+      "overall_plays": 189,
+      "overall_hours": 8.66,
+      "recent_plays": 60,
+      "recent_hours": 2.85,
+      "weight": 15.99
+    },
+    {
+      "artist": "Elder Island",
+      "artist_normalized": "elder island",
+      "overall_plays": 188,
+      "overall_hours": 10.78,
+      "recent_plays": 71,
+      "recent_hours": 4.09,
+      "weight": 18.01
+    },
+    {
+      "artist": "The Velvet Underground",
+      "artist_normalized": "the velvet underground",
+      "overall_plays": 185,
+      "overall_hours": 11.39,
+      "recent_plays": 3,
+      "recent_hours": 0.07,
+      "weight": 9.24
+    },
+    {
+      "artist": "Washed Out",
+      "artist_normalized": "washed out",
+      "overall_plays": 184,
+      "overall_hours": 9.83,
+      "recent_plays": 33,
+      "recent_hours": 1.05,
+      "weight": 12.35
+    },
+    {
+      "artist": "Faith Healer",
+      "artist_normalized": "faith healer",
+      "overall_plays": 183,
+      "overall_hours": 9.16,
+      "recent_plays": 11,
+      "recent_hours": 0.5,
+      "weight": 9.86
+    },
+    {
+      "artist": "T. Rex",
+      "artist_normalized": "t rex",
+      "overall_plays": 182,
+      "overall_hours": 9.42,
+      "recent_plays": 156,
+      "recent_hours": 7.86,
+      "weight": 27.72
+    },
+    {
+      "artist": "Mild High Club",
+      "artist_normalized": "mild high club",
+      "overall_plays": 181,
+      "overall_hours": 7.18,
+      "recent_plays": 7,
+      "recent_hours": 0.3,
+      "weight": 9.03
+    },
+    {
+      "artist": "The Tragically Hip",
+      "artist_normalized": "the tragically hip",
+      "overall_plays": 173,
+      "overall_hours": 9.17,
+      "recent_plays": 104,
+      "recent_hours": 5.4,
+      "weight": 21.04
+    },
+    {
+      "artist": "Fog Lake",
+      "artist_normalized": "fog lake",
+      "overall_plays": 171,
+      "overall_hours": 6.71,
+      "recent_plays": 29,
+      "recent_hours": 1.11,
+      "weight": 11.08
+    },
+    {
+      "artist": "Beirut",
+      "artist_normalized": "beirut",
+      "overall_plays": 169,
+      "overall_hours": 8.6,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 7.91
+    },
+    {
+      "artist": "Peach Pit",
+      "artist_normalized": "peach pit",
+      "overall_plays": 169,
+      "overall_hours": 10.43,
+      "recent_plays": 8,
+      "recent_hours": 0.63,
+      "weight": 9.28
+    },
+    {
+      "artist": "Tennis",
+      "artist_normalized": "tennis",
+      "overall_plays": 167,
+      "overall_hours": 7.62,
+      "recent_plays": 13,
+      "recent_hours": 0.73,
+      "weight": 9.34
+    },
+    {
+      "artist": "SALES",
+      "artist_normalized": "sales",
+      "overall_plays": 162,
+      "overall_hours": 6.08,
+      "recent_plays": 9,
+      "recent_hours": 0.19,
+      "weight": 8.24
+    },
+    {
+      "artist": "Richy Mitch & The Coal Miners",
+      "artist_normalized": "richy mitch and the coal miners",
+      "overall_plays": 162,
+      "overall_hours": 7.68,
+      "recent_plays": 93,
+      "recent_hours": 4.46,
+      "weight": 18.8
+    },
+    {
+      "artist": "Lucy Dacus",
+      "artist_normalized": "lucy dacus",
+      "overall_plays": 157,
+      "overall_hours": 8.66,
+      "recent_plays": 10,
+      "recent_hours": 0.51,
+      "weight": 8.67
+    },
+    {
+      "artist": "Surf Curse",
+      "artist_normalized": "surf curse",
+      "overall_plays": 153,
+      "overall_hours": 5.96,
+      "recent_plays": 8,
+      "recent_hours": 0.24,
+      "weight": 7.8
+    },
+    {
+      "artist": "Michael Nau",
+      "artist_normalized": "michael nau",
+      "overall_plays": 152,
+      "overall_hours": 8.98,
+      "recent_plays": 21,
+      "recent_hours": 1.53,
+      "weight": 10.15
+    },
+    {
+      "artist": "Cousins",
+      "artist_normalized": "cousins",
+      "overall_plays": 151,
+      "overall_hours": 7.44,
+      "recent_plays": 26,
+      "recent_hours": 1.31,
+      "weight": 10.23
+    },
+    {
+      "artist": "One Hundred Dollars",
+      "artist_normalized": "one hundred dollars",
+      "overall_plays": 149,
+      "overall_hours": 9.08,
+      "recent_plays": 149,
+      "recent_hours": 9.08,
+      "weight": 26.49
+    },
+    {
+      "artist": "Alvvays",
+      "artist_normalized": "alvvays",
+      "overall_plays": 136,
+      "overall_hours": 5.66,
+      "recent_plays": 21,
+      "recent_hours": 0.91,
+      "weight": 8.69
+    },
+    {
+      "artist": "Tony Rice Unit",
+      "artist_normalized": "tony rice unit",
+      "overall_plays": 133,
+      "overall_hours": 5.76,
+      "recent_plays": 123,
+      "recent_hours": 5.28,
+      "weight": 20.64
+    },
+    {
+      "artist": "Sly & The Family Stone",
+      "artist_normalized": "sly and the family stone",
+      "overall_plays": 132,
+      "overall_hours": 8.37,
+      "recent_plays": 6,
+      "recent_hours": 0.48,
+      "weight": 7.24
+    },
+    {
+      "artist": "Mothers",
+      "artist_normalized": "mothers",
+      "overall_plays": 131,
+      "overall_hours": 8.04,
+      "recent_plays": 3,
+      "recent_hours": 0.13,
+      "weight": 6.67
+    },
+    {
+      "artist": "Natalia Lafourcade",
+      "artist_normalized": "natalia lafourcade",
+      "overall_plays": 127,
+      "overall_hours": 7.88,
+      "recent_plays": 127,
+      "recent_hours": 7.88,
+      "weight": 22.69
+    },
+    {
+      "artist": "Courtney Barnett",
+      "artist_normalized": "courtney barnett",
+      "overall_plays": 119,
+      "overall_hours": 5.56,
+      "recent_plays": 16,
+      "recent_hours": 0.8,
+      "weight": 7.47
+    },
+    {
+      "artist": "Flesh Panthers",
+      "artist_normalized": "flesh panthers",
+      "overall_plays": 119,
+      "overall_hours": 4.65,
+      "recent_plays": 5,
+      "recent_hours": 0.11,
+      "weight": 5.91
+    },
+    {
+      "artist": "George Harrison",
+      "artist_normalized": "george harrison",
+      "overall_plays": 119,
+      "overall_hours": 6.53,
+      "recent_plays": 20,
+      "recent_hours": 1.32,
+      "weight": 8.29
+    },
+    {
+      "artist": "Bonny Doon",
+      "artist_normalized": "bonny doon",
+      "overall_plays": 119,
+      "overall_hours": 6.7,
+      "recent_plays": 8,
+      "recent_hours": 0.39,
+      "weight": 6.63
+    },
+    {
+      "artist": "Nonarchy",
+      "artist_normalized": "nonarchy",
+      "overall_plays": 119,
+      "overall_hours": 4.01,
+      "recent_plays": 81,
+      "recent_hours": 2.83,
+      "weight": 14.47
+    },
+    {
+      "artist": "MF DOOM",
+      "artist_normalized": "mf doom",
+      "overall_plays": 117,
+      "overall_hours": 3.91,
+      "recent_plays": 20,
+      "recent_hours": 0.66,
+      "weight": 7.44
+    },
+    {
+      "artist": "Cola",
+      "artist_normalized": "cola",
+      "overall_plays": 117,
+      "overall_hours": 6.5,
+      "recent_plays": 113,
+      "recent_hours": 6.26,
+      "weight": 19.8
+    },
+    {
+      "artist": "Mauno",
+      "artist_normalized": "mauno",
+      "overall_plays": 115,
+      "overall_hours": 3.27,
+      "recent_plays": 6,
+      "recent_hours": 0.18,
+      "weight": 5.7
+    },
+    {
+      "artist": "Katy Kirby",
+      "artist_normalized": "katy kirby",
+      "overall_plays": 114,
+      "overall_hours": 3.82,
+      "recent_plays": 4,
+      "recent_hours": 0.13,
+      "weight": 5.52
+    },
+    {
+      "artist": "Paul McCartney",
+      "artist_normalized": "paul mccartney",
+      "overall_plays": 110,
+      "overall_hours": 5.26,
+      "recent_plays": 98,
+      "recent_hours": 4.66,
+      "weight": 16.98
+    },
+    {
+      "artist": "Japanese Breakfast",
+      "artist_normalized": "japanese breakfast",
+      "overall_plays": 110,
+      "overall_hours": 5.6,
+      "recent_plays": 17,
+      "recent_hours": 0.71,
+      "weight": 7.14
+    },
+    {
+      "artist": "Julia Jacklin",
+      "artist_normalized": "julia jacklin",
+      "overall_plays": 110,
+      "overall_hours": 3.98,
+      "recent_plays": 25,
+      "recent_hours": 0.52,
+      "weight": 7.54
+    },
+    {
+      "artist": "Johnny Cash",
+      "artist_normalized": "johnny cash",
+      "overall_plays": 107,
+      "overall_hours": 2.78,
+      "recent_plays": 8,
+      "recent_hours": 0.31,
+      "weight": 5.58
+    },
+    {
+      "artist": "Tom Waits",
+      "artist_normalized": "tom waits",
+      "overall_plays": 106,
+      "overall_hours": 4.79,
+      "recent_plays": 3,
+      "recent_hours": 0.18,
+      "weight": 5.27
+    },
+    {
+      "artist": "Two Knees",
+      "artist_normalized": "two knees",
+      "overall_plays": 106,
+      "overall_hours": 5.84,
+      "recent_plays": 83,
+      "recent_hours": 4.78,
+      "weight": 15.61
+    },
+    {
+      "artist": "Palehound",
+      "artist_normalized": "palehound",
+      "overall_plays": 99,
+      "overall_hours": 3.95,
+      "recent_plays": 8,
+      "recent_hours": 0.45,
+      "weight": 5.5
+    },
+    {
+      "artist": "Jon McKiel",
+      "artist_normalized": "jon mckiel",
+      "overall_plays": 98,
+      "overall_hours": 4.69,
+      "recent_plays": 6,
+      "recent_hours": 0.3,
+      "weight": 5.29
+    },
+    {
+      "artist": "Kate Bollinger",
+      "artist_normalized": "kate bollinger",
+      "overall_plays": 98,
+      "overall_hours": 3.82,
+      "recent_plays": 8,
+      "recent_hours": 0.34,
+      "weight": 5.38
+    },
+    {
+      "artist": "Angel Olsen",
+      "artist_normalized": "angel olsen",
+      "overall_plays": 96,
+      "overall_hours": 4.47,
+      "recent_plays": 4,
+      "recent_hours": 0.1,
+      "weight": 4.87
+    },
+    {
+      "artist": "Nora Brown",
+      "artist_normalized": "nora brown",
+      "overall_plays": 96,
+      "overall_hours": 3.12,
+      "recent_plays": 1,
+      "recent_hours": 0.07,
+      "weight": 4.4
+    },
+    {
+      "artist": "Canned Heat",
+      "artist_normalized": "canned heat",
+      "overall_plays": 95,
+      "overall_hours": 4.76,
+      "recent_plays": 7,
+      "recent_hours": 0.39,
+      "weight": 5.32
+    },
+    {
+      "artist": "G. Love & Special Sauce",
+      "artist_normalized": "g love and special sauce",
+      "overall_plays": 95,
+      "overall_hours": 5.31,
+      "recent_plays": 26,
+      "recent_hours": 1.38,
+      "weight": 7.75
+    },
+    {
+      "artist": "Adrianne Lenker",
+      "artist_normalized": "adrianne lenker",
+      "overall_plays": 93,
+      "overall_hours": 3.97,
+      "recent_plays": 5,
+      "recent_hours": 0.19,
+      "weight": 4.83
+    },
+    {
+      "artist": "Bob Dylan",
+      "artist_normalized": "bob dylan",
+      "overall_plays": 92,
+      "overall_hours": 6.43,
+      "recent_plays": 3,
+      "recent_hours": 0.16,
+      "weight": 4.91
+    },
+    {
+      "artist": "Faces",
+      "artist_normalized": "faces",
+      "overall_plays": 91,
+      "overall_hours": 4.8,
+      "recent_plays": 15,
+      "recent_hours": 0.9,
+      "weight": 6.22
+    },
+    {
+      "artist": "Sylvan Esso",
+      "artist_normalized": "sylvan esso",
+      "overall_plays": 90,
+      "overall_hours": 4.91,
+      "recent_plays": 80,
+      "recent_hours": 4.41,
+      "weight": 14.33
+    },
+    {
+      "artist": "Merce Lemon",
+      "artist_normalized": "merce lemon",
+      "overall_plays": 87,
+      "overall_hours": 2.05,
+      "recent_plays": 6,
+      "recent_hours": 0.13,
+      "weight": 4.38
+    },
+    {
+      "artist": "Still Woozy",
+      "artist_normalized": "still woozy",
+      "overall_plays": 86,
+      "overall_hours": 3.49,
+      "recent_plays": 44,
+      "recent_hours": 1.81,
+      "weight": 9.06
+    },
+    {
+      "artist": "Hurray For The Riff Raff",
+      "artist_normalized": "hurray for the riff raff",
+      "overall_plays": 85,
+      "overall_hours": 4.11,
+      "recent_plays": 78,
+      "recent_hours": 3.82,
+      "weight": 13.47
+    },
+    {
+      "artist": "Mac DeMarco",
+      "artist_normalized": "mac demarco",
+      "overall_plays": 84,
+      "overall_hours": 3.6,
+      "recent_plays": 7,
+      "recent_hours": 0.25,
+      "weight": 4.64
+    },
+    {
+      "artist": "The Highest Order",
+      "artist_normalized": "the highest order",
+      "overall_plays": 81,
+      "overall_hours": 3.81,
+      "recent_plays": 41,
+      "recent_hours": 2.03,
+      "weight": 8.77
+    },
+    {
+      "artist": "Talking Heads",
+      "artist_normalized": "talking heads",
+      "overall_plays": 81,
+      "overall_hours": 5.51,
+      "recent_plays": 11,
+      "recent_hours": 0.44,
+      "weight": 5.26
+    },
+    {
+      "artist": "Chastity Belt",
+      "artist_normalized": "chastity belt",
+      "overall_plays": 81,
+      "overall_hours": 3.62,
+      "recent_plays": 9,
+      "recent_hours": 0.11,
+      "weight": 4.62
+    },
+    {
+      "artist": "Chance the Rapper",
+      "artist_normalized": "chance the rapper",
+      "overall_plays": 80,
+      "overall_hours": 3.11,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 3.62
+    },
+    {
+      "artist": "Thievery Corporation",
+      "artist_normalized": "thievery corporation",
+      "overall_plays": 80,
+      "overall_hours": 3.8,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 3.71
+    },
+    {
+      "artist": "Frankie Cosmos",
+      "artist_normalized": "frankie cosmos",
+      "overall_plays": 79,
+      "overall_hours": 2.25,
+      "recent_plays": 1,
+      "recent_hours": 0.03,
+      "weight": 3.58
+    },
+    {
+      "artist": "No Vacation",
+      "artist_normalized": "no vacation",
+      "overall_plays": 79,
+      "overall_hours": 2.66,
+      "recent_plays": 9,
+      "recent_hours": 0.35,
+      "weight": 4.56
+    },
+    {
+      "artist": "Arctic Monkeys",
+      "artist_normalized": "arctic monkeys",
+      "overall_plays": 79,
+      "overall_hours": 3.88,
+      "recent_plays": 66,
+      "recent_hours": 3.18,
+      "weight": 11.71
+    },
+    {
+      "artist": "Lana Del Rey",
+      "artist_normalized": "lana del rey",
+      "overall_plays": 79,
+      "overall_hours": 4.04,
+      "recent_plays": 11,
+      "recent_hours": 0.07,
+      "weight": 4.75
+    },
+    {
+      "artist": ".clouds",
+      "artist_normalized": "clouds",
+      "overall_plays": 78,
+      "overall_hours": 2.06,
+      "recent_plays": 8,
+      "recent_hours": 0.23,
+      "weight": 4.27
+    },
+    {
+      "artist": "Sleepy Gonzales",
+      "artist_normalized": "sleepy gonzales",
+      "overall_plays": 78,
+      "overall_hours": 4.32,
+      "recent_plays": 7,
+      "recent_hours": 0.13,
+      "weight": 4.42
+    },
+    {
+      "artist": "Molly Burch",
+      "artist_normalized": "molly burch",
+      "overall_plays": 75,
+      "overall_hours": 3.85,
+      "recent_plays": 3,
+      "recent_hours": 0.06,
+      "weight": 3.83
+    },
+    {
+      "artist": "Amanaz",
+      "artist_normalized": "amanaz",
+      "overall_plays": 75,
+      "overall_hours": 3.93,
+      "recent_plays": 6,
+      "recent_hours": 0.23,
+      "weight": 4.22
+    },
+    {
+      "artist": "Black Lips",
+      "artist_normalized": "black lips",
+      "overall_plays": 74,
+      "overall_hours": 3.51,
+      "recent_plays": 4,
+      "recent_hours": 0.15,
+      "weight": 3.89
+    },
+    {
+      "artist": "J.J. Cale",
+      "artist_normalized": "j j cale",
+      "overall_plays": 73,
+      "overall_hours": 2.83,
+      "recent_plays": 29,
+      "recent_hours": 1.36,
+      "weight": 6.8
+    },
+    {
+      "artist": "Funkadelic",
+      "artist_normalized": "funkadelic",
+      "overall_plays": 73,
+      "overall_hours": 3.66,
+      "recent_plays": 12,
+      "recent_hours": 0.47,
+      "weight": 4.8
+    },
+    {
+      "artist": "Weyes Blood",
+      "artist_normalized": "weyes blood",
+      "overall_plays": 72,
+      "overall_hours": 3.54,
+      "recent_plays": 5,
+      "recent_hours": 0.16,
+      "weight": 3.91
+    },
+    {
+      "artist": "Elton John",
+      "artist_normalized": "elton john",
+      "overall_plays": 71,
+      "overall_hours": 4.25,
+      "recent_plays": 18,
+      "recent_hours": 1.0,
+      "weight": 5.68
+    },
+    {
+      "artist": "Aldous Harding",
+      "artist_normalized": "aldous harding",
+      "overall_plays": 71,
+      "overall_hours": 4.47,
+      "recent_plays": 5,
+      "recent_hours": 0.33,
+      "weight": 4.1
+    },
+    {
+      "artist": "Fujitsu",
+      "artist_normalized": "fujitsu",
+      "overall_plays": 71,
+      "overall_hours": 2.01,
+      "recent_plays": 6,
+      "recent_hours": 0.13,
+      "weight": 3.74
+    },
+    {
+      "artist": "Sticky Fingers",
+      "artist_normalized": "sticky fingers",
+      "overall_plays": 70,
+      "overall_hours": 3.32,
+      "recent_plays": 1,
+      "recent_hours": 0.03,
+      "weight": 3.35
+    },
+    {
+      "artist": "Snail Mail",
+      "artist_normalized": "snail mail",
+      "overall_plays": 70,
+      "overall_hours": 3.5,
+      "recent_plays": 10,
+      "recent_hours": 0.37,
+      "weight": 4.41
+    },
+    {
+      "artist": "Julie Doiron",
+      "artist_normalized": "julie doiron",
+      "overall_plays": 70,
+      "overall_hours": 2.94,
+      "recent_plays": 9,
+      "recent_hours": 0.34,
+      "weight": 4.23
+    },
+    {
+      "artist": "Frank Zappa",
+      "artist_normalized": "frank zappa",
+      "overall_plays": 70,
+      "overall_hours": 3.09,
+      "recent_plays": 9,
+      "recent_hours": 0.3,
+      "weight": 4.22
+    },
+    {
+      "artist": "B.B. King",
+      "artist_normalized": "b b king",
+      "overall_plays": 69,
+      "overall_hours": 4.71,
+      "recent_plays": 65,
+      "recent_hours": 4.41,
+      "weight": 12.09
+    },
+    {
+      "artist": "Tune-Yards",
+      "artist_normalized": "tune yards",
+      "overall_plays": 68,
+      "overall_hours": 3.74,
+      "recent_plays": 4,
+      "recent_hours": 0.09,
+      "weight": 3.64
+    },
+    {
+      "artist": "Jay Som",
+      "artist_normalized": "jay som",
+      "overall_plays": 66,
+      "overall_hours": 3.14,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 3.06
+    },
+    {
+      "artist": "Language Arts",
+      "artist_normalized": "language arts",
+      "overall_plays": 66,
+      "overall_hours": 3.69,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 3.13
+    },
+    {
+      "artist": "Nap Eyes",
+      "artist_normalized": "nap eyes",
+      "overall_plays": 62,
+      "overall_hours": 3.34,
+      "recent_plays": 2,
+      "recent_hours": 0.07,
+      "weight": 3.15
+    },
+    {
+      "artist": "Rage Against The Machine",
+      "artist_normalized": "rage against the machine",
+      "overall_plays": 61,
+      "overall_hours": 2.87,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.82
+    },
+    {
+      "artist": "Sugar Candy Mountain",
+      "artist_normalized": "sugar candy mountain",
+      "overall_plays": 60,
+      "overall_hours": 2.9,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.79
+    },
+    {
+      "artist": "Parliament",
+      "artist_normalized": "parliament",
+      "overall_plays": 59,
+      "overall_hours": 3.36,
+      "recent_plays": 5,
+      "recent_hours": 0.31,
+      "weight": 3.46
+    },
+    {
+      "artist": "The Beatles",
+      "artist_normalized": "the beatles",
+      "overall_plays": 59,
+      "overall_hours": 2.19,
+      "recent_plays": 12,
+      "recent_hours": 0.37,
+      "weight": 3.98
+    },
+    {
+      "artist": "Stephen Malkmus & The Jicks",
+      "artist_normalized": "stephen malkmus and the jicks",
+      "overall_plays": 58,
+      "overall_hours": 2.84,
+      "recent_plays": 4,
+      "recent_hours": 0.16,
+      "weight": 3.16
+    },
+    {
+      "artist": "Born Ruffians",
+      "artist_normalized": "born ruffians",
+      "overall_plays": 58,
+      "overall_hours": 2.57,
+      "recent_plays": 11,
+      "recent_hours": 0.59,
+      "weight": 4.04
+    },
+    {
+      "artist": "King Gizzard & The Lizard Wizard",
+      "artist_normalized": "king gizzard and the lizard wizard",
+      "overall_plays": 58,
+      "overall_hours": 3.72,
+      "recent_plays": 1,
+      "recent_hours": 0.05,
+      "weight": 2.94
+    },
+    {
+      "artist": "The Rolling Stones",
+      "artist_normalized": "the rolling stones",
+      "overall_plays": 58,
+      "overall_hours": 3.8,
+      "recent_plays": 10,
+      "recent_hours": 0.6,
+      "weight": 4.12
+    },
+    {
+      "artist": "The Zombies",
+      "artist_normalized": "the zombies",
+      "overall_plays": 58,
+      "overall_hours": 1.82,
+      "recent_plays": 11,
+      "recent_hours": 0.31,
+      "weight": 3.76
+    },
+    {
+      "artist": "The Growlers",
+      "artist_normalized": "the growlers",
+      "overall_plays": 56,
+      "overall_hours": 2.29,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.55
+    },
+    {
+      "artist": "Brightblack Morning Light",
+      "artist_normalized": "brightblack morning light",
+      "overall_plays": 56,
+      "overall_hours": 3.11,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.65
+    },
+    {
+      "artist": "Madison Cunningham",
+      "artist_normalized": "madison cunningham",
+      "overall_plays": 56,
+      "overall_hours": 3.18,
+      "recent_plays": 2,
+      "recent_hours": 0.07,
+      "weight": 2.89
+    },
+    {
+      "artist": "Soccer Mommy",
+      "artist_normalized": "soccer mommy",
+      "overall_plays": 55,
+      "overall_hours": 1.95,
+      "recent_plays": 5,
+      "recent_hours": 0.06,
+      "weight": 2.96
+    },
+    {
+      "artist": "Bonus Points",
+      "artist_normalized": "bonus points",
+      "overall_plays": 55,
+      "overall_hours": 2.58,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.54
+    },
+    {
+      "artist": "Hiatus Kaiyote",
+      "artist_normalized": "hiatus kaiyote",
+      "overall_plays": 54,
+      "overall_hours": 1.82,
+      "recent_plays": 2,
+      "recent_hours": 0.01,
+      "weight": 2.59
+    },
+    {
+      "artist": "Deerhunter",
+      "artist_normalized": "deerhunter",
+      "overall_plays": 54,
+      "overall_hours": 3.4,
+      "recent_plays": 3,
+      "recent_hours": 0.07,
+      "weight": 2.93
+    },
+    {
+      "artist": "Good Morning",
+      "artist_normalized": "good morning",
+      "overall_plays": 54,
+      "overall_hours": 2.08,
+      "recent_plays": 6,
+      "recent_hours": 0.23,
+      "weight": 3.13
+    },
+    {
+      "artist": "Anna Ash",
+      "artist_normalized": "anna ash",
+      "overall_plays": 54,
+      "overall_hours": 1.9,
+      "recent_plays": 45,
+      "recent_hours": 1.53,
+      "weight": 7.49
+    },
+    {
+      "artist": "Mac Miller",
+      "artist_normalized": "mac miller",
+      "overall_plays": 53,
+      "overall_hours": 3.65,
+      "recent_plays": 5,
+      "recent_hours": 0.42,
+      "weight": 3.33
+    },
+    {
+      "artist": "Kevin Morby",
+      "artist_normalized": "kevin morby",
+      "overall_plays": 53,
+      "overall_hours": 2.78,
+      "recent_plays": 26,
+      "recent_hours": 1.31,
+      "weight": 5.69
+    },
+    {
+      "artist": "Widowspeak",
+      "artist_normalized": "widowspeak",
+      "overall_plays": 53,
+      "overall_hours": 2.51,
+      "recent_plays": 7,
+      "recent_hours": 0.39,
+      "weight": 3.34
+    },
+    {
+      "artist": "mellow fox",
+      "artist_normalized": "mellow fox",
+      "overall_plays": 53,
+      "overall_hours": 1.17,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.28
+    },
+    {
+      "artist": "Sun Kil Moon",
+      "artist_normalized": "sun kil moon",
+      "overall_plays": 52,
+      "overall_hours": 3.95,
+      "recent_plays": 52,
+      "recent_hours": 3.95,
+      "weight": 9.84
+    },
+    {
+      "artist": "Bokant\u00e9",
+      "artist_normalized": "bokant",
+      "overall_plays": 51,
+      "overall_hours": 3.29,
+      "recent_plays": 4,
+      "recent_hours": 0.12,
+      "weight": 2.92
+    },
+    {
+      "artist": "STRFKR",
+      "artist_normalized": "strfkr",
+      "overall_plays": 51,
+      "overall_hours": 2.77,
+      "recent_plays": 10,
+      "recent_hours": 0.43,
+      "weight": 3.59
+    },
+    {
+      "artist": "Fake Shape",
+      "artist_normalized": "fake shape",
+      "overall_plays": 51,
+      "overall_hours": 1.83,
+      "recent_plays": 4,
+      "recent_hours": 0.15,
+      "weight": 2.74
+    },
+    {
+      "artist": "Real Estate",
+      "artist_normalized": "real estate",
+      "overall_plays": 50,
+      "overall_hours": 2.96,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.39
+    },
+    {
+      "artist": "Television",
+      "artist_normalized": "television",
+      "overall_plays": 50,
+      "overall_hours": 3.42,
+      "recent_plays": 10,
+      "recent_hours": 0.55,
+      "weight": 3.72
+    },
+    {
+      "artist": "Fleetwood Mac",
+      "artist_normalized": "fleetwood mac",
+      "overall_plays": 50,
+      "overall_hours": 2.49,
+      "recent_plays": 11,
+      "recent_hours": 0.68,
+      "weight": 3.76
+    },
+    {
+      "artist": "imugi \uc774\ubb34\uae30",
+      "artist_normalized": "imugi",
+      "overall_plays": 49,
+      "overall_hours": 2.76,
+      "recent_plays": 18,
+      "recent_hours": 1.18,
+      "weight": 4.72
+    },
+    {
+      "artist": "Wild Child",
+      "artist_normalized": "wild child",
+      "overall_plays": 49,
+      "overall_hours": 2.84,
+      "recent_plays": 7,
+      "recent_hours": 0.36,
+      "weight": 3.21
+    },
+    {
+      "artist": "Cat Clyde",
+      "artist_normalized": "cat clyde",
+      "overall_plays": 48,
+      "overall_hours": 2.09,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.2
+    },
+    {
+      "artist": "Bahamas",
+      "artist_normalized": "bahamas",
+      "overall_plays": 48,
+      "overall_hours": 2.6,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.27
+    },
+    {
+      "artist": "Phoebe Bridgers",
+      "artist_normalized": "phoebe bridgers",
+      "overall_plays": 48,
+      "overall_hours": 2.62,
+      "recent_plays": 4,
+      "recent_hours": 0.19,
+      "weight": 2.76
+    },
+    {
+      "artist": "Jake Xerxes Fussell",
+      "artist_normalized": "jake xerxes fussell",
+      "overall_plays": 48,
+      "overall_hours": 3.05,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.33
+    },
+    {
+      "artist": "Bakar",
+      "artist_normalized": "bakar",
+      "overall_plays": 48,
+      "overall_hours": 2.29,
+      "recent_plays": 3,
+      "recent_hours": 0.12,
+      "weight": 2.58
+    },
+    {
+      "artist": "Brian Crain",
+      "artist_normalized": "brian crain",
+      "overall_plays": 48,
+      "overall_hours": 3.16,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.34
+    },
+    {
+      "artist": "Boy Golden",
+      "artist_normalized": "boy golden",
+      "overall_plays": 48,
+      "overall_hours": 2.52,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.26
+    },
+    {
+      "artist": "Weaves",
+      "artist_normalized": "weaves",
+      "overall_plays": 47,
+      "overall_hours": 1.82,
+      "recent_plays": 4,
+      "recent_hours": 0.24,
+      "weight": 2.64
+    },
+    {
+      "artist": "Men I Trust",
+      "artist_normalized": "men i trust",
+      "overall_plays": 47,
+      "overall_hours": 2.15,
+      "recent_plays": 31,
+      "recent_hours": 1.63,
+      "weight": 6.02
+    },
+    {
+      "artist": "Fiona Apple",
+      "artist_normalized": "fiona apple",
+      "overall_plays": 46,
+      "overall_hours": 2.71,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.2
+    },
+    {
+      "artist": "Julianna Zachariou",
+      "artist_normalized": "julianna zachariou",
+      "overall_plays": 46,
+      "overall_hours": 2.34,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.15
+    },
+    {
+      "artist": "Real Ponchos",
+      "artist_normalized": "real ponchos",
+      "overall_plays": 46,
+      "overall_hours": 2.44,
+      "recent_plays": 18,
+      "recent_hours": 0.76,
+      "weight": 4.29
+    },
+    {
+      "artist": "Waxahatchee",
+      "artist_normalized": "waxahatchee",
+      "overall_plays": 45,
+      "overall_hours": 1.7,
+      "recent_plays": 10,
+      "recent_hours": 0.29,
+      "weight": 3.12
+    },
+    {
+      "artist": "Ratboys",
+      "artist_normalized": "ratboys",
+      "overall_plays": 45,
+      "overall_hours": 2.51,
+      "recent_plays": 28,
+      "recent_hours": 1.61,
+      "weight": 5.7
+    },
+    {
+      "artist": "Unknown Mortal Orchestra",
+      "artist_normalized": "unknown mortal orchestra",
+      "overall_plays": 44,
+      "overall_hours": 2.47,
+      "recent_plays": 8,
+      "recent_hours": 0.45,
+      "weight": 3.1
+    },
+    {
+      "artist": "Faye Webster",
+      "artist_normalized": "faye webster",
+      "overall_plays": 44,
+      "overall_hours": 1.96,
+      "recent_plays": 5,
+      "recent_hours": 0.12,
+      "weight": 2.55
+    },
+    {
+      "artist": "Arcy Drive",
+      "artist_normalized": "arcy drive",
+      "overall_plays": 44,
+      "overall_hours": 1.69,
+      "recent_plays": 44,
+      "recent_hours": 1.69,
+      "weight": 7.07
+    },
+    {
+      "artist": "The Band",
+      "artist_normalized": "the band",
+      "overall_plays": 43,
+      "overall_hours": 2.44,
+      "recent_plays": 13,
+      "recent_hours": 0.83,
+      "weight": 3.76
+    },
+    {
+      "artist": "Traffic",
+      "artist_normalized": "traffic",
+      "overall_plays": 43,
+      "overall_hours": 1.84,
+      "recent_plays": 9,
+      "recent_hours": 0.43,
+      "weight": 3.06
+    },
+    {
+      "artist": "Pretenders",
+      "artist_normalized": "pretenders",
+      "overall_plays": 43,
+      "overall_hours": 3.15,
+      "recent_plays": 12,
+      "recent_hours": 0.97,
+      "weight": 3.84
+    },
+    {
+      "artist": "Modest Mouse",
+      "artist_normalized": "modest mouse",
+      "overall_plays": 42,
+      "overall_hours": 1.47,
+      "recent_plays": 39,
+      "recent_hours": 1.37,
+      "weight": 6.3
+    },
+    {
+      "artist": "Foxygen",
+      "artist_normalized": "foxygen",
+      "overall_plays": 41,
+      "overall_hours": 2.61,
+      "recent_plays": 1,
+      "recent_hours": 0.03,
+      "weight": 2.1
+    },
+    {
+      "artist": "David Bowie",
+      "artist_normalized": "david bowie",
+      "overall_plays": 41,
+      "overall_hours": 2.61,
+      "recent_plays": 5,
+      "recent_hours": 0.21,
+      "weight": 2.57
+    },
+    {
+      "artist": "Cold Blood",
+      "artist_normalized": "cold blood",
+      "overall_plays": 41,
+      "overall_hours": 2.55,
+      "recent_plays": 11,
+      "recent_hours": 0.66,
+      "weight": 3.4
+    },
+    {
+      "artist": "Yung Heazy",
+      "artist_normalized": "yung heazy",
+      "overall_plays": 41,
+      "overall_hours": 2.09,
+      "recent_plays": 1,
+      "recent_hours": 0.06,
+      "weight": 2.05
+    },
+    {
+      "artist": "Nahko And Medicine For The People",
+      "artist_normalized": "nahko and medicine for the people",
+      "overall_plays": 40,
+      "overall_hours": 3.43,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 2.06
+    },
+    {
+      "artist": "Coffee House Instrumental Jazz Playlist",
+      "artist_normalized": "coffee house instrumental jazz playlist",
+      "overall_plays": 40,
+      "overall_hours": 1.67,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.82
+    },
+    {
+      "artist": "Sierra Ferrell",
+      "artist_normalized": "sierra ferrell",
+      "overall_plays": 40,
+      "overall_hours": 1.58,
+      "recent_plays": 27,
+      "recent_hours": 1.1,
+      "weight": 4.97
+    },
+    {
+      "artist": "Andy Shauf",
+      "artist_normalized": "andy shauf",
+      "overall_plays": 39,
+      "overall_hours": 2.06,
+      "recent_plays": 1,
+      "recent_hours": 0.05,
+      "weight": 1.95
+    },
+    {
+      "artist": "Drugdealer",
+      "artist_normalized": "drugdealer",
+      "overall_plays": 38,
+      "overall_hours": 1.49,
+      "recent_plays": 4,
+      "recent_hours": 0.24,
+      "weight": 2.24
+    },
+    {
+      "artist": "Vansire",
+      "artist_normalized": "vansire",
+      "overall_plays": 38,
+      "overall_hours": 1.01,
+      "recent_plays": 33,
+      "recent_hours": 0.86,
+      "weight": 5.21
+    },
+    {
+      "artist": "Billy Preston",
+      "artist_normalized": "billy preston",
+      "overall_plays": 38,
+      "overall_hours": 1.11,
+      "recent_plays": 9,
+      "recent_hours": 0.26,
+      "weight": 2.66
+    },
+    {
+      "artist": "Jamania",
+      "artist_normalized": "jamania",
+      "overall_plays": 38,
+      "overall_hours": 0.91,
+      "recent_plays": 38,
+      "recent_hours": 0.91,
+      "weight": 5.69
+    },
+    {
+      "artist": "The Weakerthans",
+      "artist_normalized": "the weakerthans",
+      "overall_plays": 37,
+      "overall_hours": 1.2,
+      "recent_plays": 17,
+      "recent_hours": 0.76,
+      "weight": 3.67
+    },
+    {
+      "artist": "Florist",
+      "artist_normalized": "florist",
+      "overall_plays": 37,
+      "overall_hours": 1.51,
+      "recent_plays": 4,
+      "recent_hours": 0.15,
+      "weight": 2.14
+    },
+    {
+      "artist": "Lila Downs",
+      "artist_normalized": "lila downs",
+      "overall_plays": 37,
+      "overall_hours": 2.45,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.81
+    },
+    {
+      "artist": "Bluebird",
+      "artist_normalized": "bluebird",
+      "overall_plays": 37,
+      "overall_hours": 1.53,
+      "recent_plays": 3,
+      "recent_hours": 0.15,
+      "weight": 2.06
+    },
+    {
+      "artist": "Pedro The Lion",
+      "artist_normalized": "pedro the lion",
+      "overall_plays": 37,
+      "overall_hours": 2.04,
+      "recent_plays": 3,
+      "recent_hours": 0.13,
+      "weight": 2.11
+    },
+    {
+      "artist": "Mamalarky",
+      "artist_normalized": "mamalarky",
+      "overall_plays": 37,
+      "overall_hours": 1.47,
+      "recent_plays": 34,
+      "recent_hours": 1.42,
+      "weight": 5.67
+    },
+    {
+      "artist": "Drive-By Truckers",
+      "artist_normalized": "drive by truckers",
+      "overall_plays": 37,
+      "overall_hours": 2.57,
+      "recent_plays": 37,
+      "recent_hours": 2.57,
+      "weight": 6.82
+    },
+    {
+      "artist": "Charles Mingus",
+      "artist_normalized": "charles mingus",
+      "overall_plays": 36,
+      "overall_hours": 2.6,
+      "recent_plays": 5,
+      "recent_hours": 0.23,
+      "weight": 2.39
+    },
+    {
+      "artist": "Alex G",
+      "artist_normalized": "alex g",
+      "overall_plays": 36,
+      "overall_hours": 1.9,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.69
+    },
+    {
+      "artist": "The Brian Jonestown Massacre",
+      "artist_normalized": "the brian jonestown massacre",
+      "overall_plays": 36,
+      "overall_hours": 2.6,
+      "recent_plays": 3,
+      "recent_hours": 0.2,
+      "weight": 2.18
+    },
+    {
+      "artist": "Jaeden Camstra",
+      "artist_normalized": "jaeden camstra",
+      "overall_plays": 36,
+      "overall_hours": 0.77,
+      "recent_plays": 3,
+      "recent_hours": 0.06,
+      "weight": 1.85
+    },
+    {
+      "artist": "Fiver",
+      "artist_normalized": "fiver",
+      "overall_plays": 36,
+      "overall_hours": 1.79,
+      "recent_plays": 36,
+      "recent_hours": 1.79,
+      "weight": 6.09
+    },
+    {
+      "artist": "Screaming Females",
+      "artist_normalized": "screaming females",
+      "overall_plays": 35,
+      "overall_hours": 1.91,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.66
+    },
+    {
+      "artist": "U.S. Girls",
+      "artist_normalized": "u s girls",
+      "overall_plays": 35,
+      "overall_hours": 0.77,
+      "recent_plays": 5,
+      "recent_hours": 0.07,
+      "weight": 2.0
+    },
+    {
+      "artist": "Caribou",
+      "artist_normalized": "caribou",
+      "overall_plays": 35,
+      "overall_hours": 1.7,
+      "recent_plays": 10,
+      "recent_hours": 0.48,
+      "weight": 2.84
+    },
+    {
+      "artist": "Palm Springs",
+      "artist_normalized": "palm springs",
+      "overall_plays": 35,
+      "overall_hours": 1.87,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.65
+    },
+    {
+      "artist": "knoodle",
+      "artist_normalized": "knoodle",
+      "overall_plays": 34,
+      "overall_hours": 0.81,
+      "recent_plays": 34,
+      "recent_hours": 0.81,
+      "weight": 5.09
+    },
+    {
+      "artist": "Ultimate Painting",
+      "artist_normalized": "ultimate painting",
+      "overall_plays": 33,
+      "overall_hours": 1.38,
+      "recent_plays": 2,
+      "recent_hours": 0.06,
+      "weight": 1.73
+    },
+    {
+      "artist": "Boards of Canada",
+      "artist_normalized": "boards of canada",
+      "overall_plays": 33,
+      "overall_hours": 1.69,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.55
+    },
+    {
+      "artist": "Angie McMahon",
+      "artist_normalized": "angie mcmahon",
+      "overall_plays": 33,
+      "overall_hours": 1.9,
+      "recent_plays": 3,
+      "recent_hours": 0.08,
+      "weight": 1.9
+    },
+    {
+      "artist": "Amen Dunes",
+      "artist_normalized": "amen dunes",
+      "overall_plays": 33,
+      "overall_hours": 1.68,
+      "recent_plays": 27,
+      "recent_hours": 1.35,
+      "weight": 4.86
+    },
+    {
+      "artist": "Sun Seeker",
+      "artist_normalized": "sun seeker",
+      "overall_plays": 33,
+      "overall_hours": 1.62,
+      "recent_plays": 2,
+      "recent_hours": 0.1,
+      "weight": 1.78
+    },
+    {
+      "artist": "Jeff Tweedy",
+      "artist_normalized": "jeff tweedy",
+      "overall_plays": 33,
+      "overall_hours": 1.89,
+      "recent_plays": 32,
+      "recent_hours": 1.8,
+      "weight": 5.63
+    },
+    {
+      "artist": "Quicksilver Messenger Service",
+      "artist_normalized": "quicksilver messenger service",
+      "overall_plays": 33,
+      "overall_hours": 1.9,
+      "recent_plays": 2,
+      "recent_hours": 0.09,
+      "weight": 1.81
+    },
+    {
+      "artist": "Ancient Shapes",
+      "artist_normalized": "ancient shapes",
+      "overall_plays": 32,
+      "overall_hours": 0.94,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.41
+    },
+    {
+      "artist": "Celeste",
+      "artist_normalized": "celeste",
+      "overall_plays": 32,
+      "overall_hours": 1.44,
+      "recent_plays": 1,
+      "recent_hours": 0.0,
+      "weight": 1.56
+    },
+    {
+      "artist": "T. Hardy Morris",
+      "artist_normalized": "t hardy morris",
+      "overall_plays": 32,
+      "overall_hours": 1.5,
+      "recent_plays": 1,
+      "recent_hours": 0.0,
+      "weight": 1.57
+    },
+    {
+      "artist": "James Brown",
+      "artist_normalized": "james brown",
+      "overall_plays": 31,
+      "overall_hours": 2.01,
+      "recent_plays": 4,
+      "recent_hours": 0.11,
+      "weight": 1.94
+    },
+    {
+      "artist": "Winter & Triptides",
+      "artist_normalized": "winter and triptides",
+      "overall_plays": 31,
+      "overall_hours": 0.77,
+      "recent_plays": 1,
+      "recent_hours": 0.0,
+      "weight": 1.44
+    },
+    {
+      "artist": "Mr Twin Sister",
+      "artist_normalized": "mr twin sister",
+      "overall_plays": 31,
+      "overall_hours": 1.51,
+      "recent_plays": 4,
+      "recent_hours": 0.15,
+      "weight": 1.9
+    },
+    {
+      "artist": "River Whyless",
+      "artist_normalized": "river whyless",
+      "overall_plays": 31,
+      "overall_hours": 1.15,
+      "recent_plays": 8,
+      "recent_hours": 0.38,
+      "weight": 2.36
+    },
+    {
+      "artist": "Eric Godlow",
+      "artist_normalized": "eric godlow",
+      "overall_plays": 31,
+      "overall_hours": 1.31,
+      "recent_plays": 5,
+      "recent_hours": 0.23,
+      "weight": 2.02
+    },
+    {
+      "artist": "Ghost Funk Orchestra",
+      "artist_normalized": "ghost funk orchestra",
+      "overall_plays": 31,
+      "overall_hours": 1.22,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.4
+    },
+    {
+      "artist": "The Soft Pack",
+      "artist_normalized": "the soft pack",
+      "overall_plays": 31,
+      "overall_hours": 1.36,
+      "recent_plays": 31,
+      "recent_hours": 1.36,
+      "weight": 5.11
+    },
+    {
+      "artist": "Ariel Pink",
+      "artist_normalized": "ariel pink",
+      "overall_plays": 30,
+      "overall_hours": 1.8,
+      "recent_plays": 3,
+      "recent_hours": 0.17,
+      "weight": 1.82
+    },
+    {
+      "artist": "Trolle Siebenhaar",
+      "artist_normalized": "trolle siebenhaar",
+      "overall_plays": 30,
+      "overall_hours": 1.59,
+      "recent_plays": 2,
+      "recent_hours": 0.12,
+      "weight": 1.67
+    },
+    {
+      "artist": "The Yardbirds",
+      "artist_normalized": "the yardbirds",
+      "overall_plays": 30,
+      "overall_hours": 1.0,
+      "recent_plays": 4,
+      "recent_hours": 0.09,
+      "weight": 1.76
+    },
+    {
+      "artist": "NOVA ONE",
+      "artist_normalized": "nova one",
+      "overall_plays": 30,
+      "overall_hours": 1.05,
+      "recent_plays": 4,
+      "recent_hours": 0.15,
+      "weight": 1.8
+    },
+    {
+      "artist": "Daniel Norgren",
+      "artist_normalized": "daniel norgren",
+      "overall_plays": 29,
+      "overall_hours": 3.11,
+      "recent_plays": 2,
+      "recent_hours": 0.0,
+      "weight": 1.76
+    },
+    {
+      "artist": "Dumb",
+      "artist_normalized": "dumb",
+      "overall_plays": 29,
+      "overall_hours": 1.26,
+      "recent_plays": 7,
+      "recent_hours": 0.2,
+      "weight": 2.09
+    },
+    {
+      "artist": "Madvillain",
+      "artist_normalized": "madvillain",
+      "overall_plays": 29,
+      "overall_hours": 0.82,
+      "recent_plays": 28,
+      "recent_hours": 0.79,
+      "weight": 4.32
+    },
+    {
+      "artist": "Arcade Fire",
+      "artist_normalized": "arcade fire",
+      "overall_plays": 28,
+      "overall_hours": 1.49,
+      "recent_plays": 2,
+      "recent_hours": 0.06,
+      "weight": 1.54
+    },
+    {
+      "artist": "ODESZA",
+      "artist_normalized": "odesza",
+      "overall_plays": 28,
+      "overall_hours": 1.64,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.34
+    },
+    {
+      "artist": "Allah-Las",
+      "artist_normalized": "allah las",
+      "overall_plays": 28,
+      "overall_hours": 1.41,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.31
+    },
+    {
+      "artist": "Shuggie Otis",
+      "artist_normalized": "shuggie otis",
+      "overall_plays": 28,
+      "overall_hours": 1.61,
+      "recent_plays": 4,
+      "recent_hours": 0.14,
+      "weight": 1.79
+    },
+    {
+      "artist": "The Who",
+      "artist_normalized": "the who",
+      "overall_plays": 28,
+      "overall_hours": 2.22,
+      "recent_plays": 10,
+      "recent_hours": 0.76,
+      "weight": 2.8
+    },
+    {
+      "artist": "Apollo Ghosts",
+      "artist_normalized": "apollo ghosts",
+      "overall_plays": 28,
+      "overall_hours": 0.84,
+      "recent_plays": 12,
+      "recent_hours": 0.38,
+      "weight": 2.57
+    },
+    {
+      "artist": "Legion of Mary",
+      "artist_normalized": "legion of mary",
+      "overall_plays": 28,
+      "overall_hours": 4.58,
+      "recent_plays": 28,
+      "recent_hours": 4.58,
+      "weight": 7.17
+    },
+    {
+      "artist": "Lou Reed",
+      "artist_normalized": "lou reed",
+      "overall_plays": 27,
+      "overall_hours": 1.16,
+      "recent_plays": 2,
+      "recent_hours": 0.11,
+      "weight": 1.48
+    },
+    {
+      "artist": "Casper Skulls",
+      "artist_normalized": "casper skulls",
+      "overall_plays": 27,
+      "overall_hours": 1.3,
+      "recent_plays": 1,
+      "recent_hours": 0.0,
+      "weight": 1.35
+    },
+    {
+      "artist": "Kurt Vile",
+      "artist_normalized": "kurt vile",
+      "overall_plays": 27,
+      "overall_hours": 3.6,
+      "recent_plays": 5,
+      "recent_hours": 0.79,
+      "weight": 2.51
+    },
+    {
+      "artist": "Georgia Harmer",
+      "artist_normalized": "georgia harmer",
+      "overall_plays": 27,
+      "overall_hours": 1.51,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.28
+    },
+    {
+      "artist": "MJ Lenderman",
+      "artist_normalized": "mj lenderman",
+      "overall_plays": 27,
+      "overall_hours": 0.82,
+      "recent_plays": 26,
+      "recent_hours": 0.78,
+      "weight": 4.06
+    },
+    {
+      "artist": "Ball Park Music",
+      "artist_normalized": "ball park music",
+      "overall_plays": 27,
+      "overall_hours": 1.53,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.28
+    },
+    {
+      "artist": "loonight",
+      "artist_normalized": "loonight",
+      "overall_plays": 27,
+      "overall_hours": 0.64,
+      "recent_plays": 27,
+      "recent_hours": 0.64,
+      "weight": 4.03
+    },
+    {
+      "artist": "Niningashi",
+      "artist_normalized": "niningashi",
+      "overall_plays": 27,
+      "overall_hours": 1.61,
+      "recent_plays": 27,
+      "recent_hours": 1.61,
+      "weight": 4.77
+    },
+    {
+      "artist": "Bruce Peninsula",
+      "artist_normalized": "bruce peninsula",
+      "overall_plays": 26,
+      "overall_hours": 1.5,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.24
+    },
+    {
+      "artist": "Glass Animals",
+      "artist_normalized": "glass animals",
+      "overall_plays": 26,
+      "overall_hours": 1.46,
+      "recent_plays": 18,
+      "recent_hours": 0.98,
+      "weight": 3.49
+    },
+    {
+      "artist": "Fleet Foxes",
+      "artist_normalized": "fleet foxes",
+      "overall_plays": 26,
+      "overall_hours": 1.12,
+      "recent_plays": 1,
+      "recent_hours": 0.04,
+      "weight": 1.31
+    },
+    {
+      "artist": "Palace",
+      "artist_normalized": "palace",
+      "overall_plays": 26,
+      "overall_hours": 1.45,
+      "recent_plays": 13,
+      "recent_hours": 0.76,
+      "weight": 2.9
+    },
+    {
+      "artist": "Ora Cogan",
+      "artist_normalized": "ora cogan",
+      "overall_plays": 26,
+      "overall_hours": 1.04,
+      "recent_plays": 13,
+      "recent_hours": 0.53,
+      "weight": 2.7
+    },
+    {
+      "artist": "Duke Ellington",
+      "artist_normalized": "duke ellington",
+      "overall_plays": 26,
+      "overall_hours": 1.66,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.26
+    },
+    {
+      "artist": "Death Cab for Cutie",
+      "artist_normalized": "death cab for cutie",
+      "overall_plays": 26,
+      "overall_hours": 1.13,
+      "recent_plays": 26,
+      "recent_hours": 1.13,
+      "weight": 4.28
+    },
+    {
+      "artist": "Cass McCombs",
+      "artist_normalized": "cass mccombs",
+      "overall_plays": 25,
+      "overall_hours": 1.14,
+      "recent_plays": 3,
+      "recent_hours": 0.07,
+      "weight": 1.47
+    },
+    {
+      "artist": "Yo La Tengo",
+      "artist_normalized": "yo la tengo",
+      "overall_plays": 25,
+      "overall_hours": 1.58,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.21
+    },
+    {
+      "artist": "EDDYEVVY",
+      "artist_normalized": "eddyevvy",
+      "overall_plays": 25,
+      "overall_hours": 1.25,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.17
+    },
+    {
+      "artist": "Little Sprout",
+      "artist_normalized": "little sprout",
+      "overall_plays": 25,
+      "overall_hours": 0.6,
+      "recent_plays": 3,
+      "recent_hours": 0.07,
+      "weight": 1.4
+    },
+    {
+      "artist": "Club Sofa",
+      "artist_normalized": "club sofa",
+      "overall_plays": 25,
+      "overall_hours": 1.15,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.15
+    },
+    {
+      "artist": "Quincy Jones",
+      "artist_normalized": "quincy jones",
+      "overall_plays": 25,
+      "overall_hours": 1.52,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.2
+    },
+    {
+      "artist": "Mdou Moctar",
+      "artist_normalized": "mdou moctar",
+      "overall_plays": 25,
+      "overall_hours": 2.23,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.3
+    },
+    {
+      "artist": "Jerry Garcia & Merl Saunders",
+      "artist_normalized": "jerry garcia and merl saunders",
+      "overall_plays": 25,
+      "overall_hours": 3.14,
+      "recent_plays": 4,
+      "recent_hours": 0.44,
+      "weight": 2.06
+    },
+    {
+      "artist": "Emma Russack",
+      "artist_normalized": "emma russack",
+      "overall_plays": 25,
+      "overall_hours": 1.05,
+      "recent_plays": 2,
+      "recent_hours": 0.09,
+      "weight": 1.38
+    },
+    {
+      "artist": "The King Chameleon",
+      "artist_normalized": "the king chameleon",
+      "overall_plays": 25,
+      "overall_hours": 0.93,
+      "recent_plays": 4,
+      "recent_hours": 0.18,
+      "weight": 1.6
+    },
+    {
+      "artist": "King Harvest",
+      "artist_normalized": "king harvest",
+      "overall_plays": 25,
+      "overall_hours": 0.94,
+      "recent_plays": 11,
+      "recent_hours": 0.36,
+      "weight": 2.35
+    },
+    {
+      "artist": "Racoma",
+      "artist_normalized": "racoma",
+      "overall_plays": 25,
+      "overall_hours": 1.0,
+      "recent_plays": 10,
+      "recent_hours": 0.44,
+      "weight": 2.32
+    },
+    {
+      "artist": "Shay Hazan",
+      "artist_normalized": "shay hazan",
+      "overall_plays": 25,
+      "overall_hours": 1.16,
+      "recent_plays": 7,
+      "recent_hours": 0.29,
+      "weight": 1.98
+    },
+    {
+      "artist": "Tiger Really",
+      "artist_normalized": "tiger really",
+      "overall_plays": 25,
+      "overall_hours": 1.35,
+      "recent_plays": 25,
+      "recent_hours": 1.35,
+      "weight": 4.31
+    },
+    {
+      "artist": "Dire Straits",
+      "artist_normalized": "dire straits",
+      "overall_plays": 25,
+      "overall_hours": 1.24,
+      "recent_plays": 25,
+      "recent_hours": 1.24,
+      "weight": 4.23
+    },
+    {
+      "artist": "Hop Along",
+      "artist_normalized": "hop along",
+      "overall_plays": 24,
+      "overall_hours": 0.91,
+      "recent_plays": 2,
+      "recent_hours": 0.0,
+      "weight": 1.27
+    },
+    {
+      "artist": "Steve Lacy",
+      "artist_normalized": "steve lacy",
+      "overall_plays": 24,
+      "overall_hours": 0.69,
+      "recent_plays": 7,
+      "recent_hours": 0.21,
+      "weight": 1.82
+    },
+    {
+      "artist": "beabadoobee",
+      "artist_normalized": "beabadoobee",
+      "overall_plays": 24,
+      "overall_hours": 0.67,
+      "recent_plays": 20,
+      "recent_hours": 0.49,
+      "weight": 3.18
+    },
+    {
+      "artist": "The Groovy Nobody",
+      "artist_normalized": "the groovy nobody",
+      "overall_plays": 24,
+      "overall_hours": 1.62,
+      "recent_plays": 0,
+      "recent_hours": 0.0,
+      "weight": 1.18
+    }
+  ]
+}

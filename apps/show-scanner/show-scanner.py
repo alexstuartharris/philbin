@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Show Scanner - Weekly music event digest for Alex
+Show Scanner - Weekly music event digest for Alex.
 
 Scans:
 - Songkick (Vancouver metro) - filtered by venue + genre
@@ -9,13 +9,17 @@ Scans:
 - Brackendale Art Gallery - direct site
 
 Outputs markdown digest for Telegram delivery.
+Optionally publishes refreshed JSON into the GitHub Pages repo.
 """
 
+import argparse
 import html
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
+import time
 from datetime import datetime, timedelta
 from urllib.request import urlopen, Request
 from urllib.error import URLError
@@ -64,9 +68,13 @@ EXCLUDE_ARTISTS = {
 
 WEEKS_AHEAD = 3
 LOCAL_TZ = ZoneInfo("America/Vancouver")
-ROOT_DIR = Path(__file__).resolve().parents[2]
+ROOT_DIR = Path(__file__).resolve().parents[1]
+LOCAL_APP_DATA = ROOT_DIR / "apps/show-scanner/data/events.json"
+PHILBIN_REPO = ROOT_DIR / "philbin"
+PHILBIN_APP_DATA = PHILBIN_REPO / "apps/show-scanner/data/events.json"
 SPOTIFY_PROFILE_PATH = ROOT_DIR / "apps/show-scanner/data/spotify_profile.json"
 SPOTIFY_RELATED_PATH = ROOT_DIR / "apps/show-scanner/data/spotify_related_artists.json"
+LIKELY_SHOW_THRESHOLD = 35
 
 
 # === Utilities ===
@@ -243,6 +251,7 @@ def score_event_interest(event, spotify_profile, related_index=None):
         if len(name_norm) >= 8 and f" {name_norm} " in f" {full_text} ":
             matches.append(profile_artist)
 
+    # Preserve order, remove duplicates
     unique_matches = []
     seen = set()
     for match in sorted(matches, key=lambda item: item["weight"], reverse=True):
@@ -318,12 +327,52 @@ def enrich_events_with_preferences(events, spotify_profile, related_index=None):
 
 # === Scrapers ===
 
-def scrape_songkick():
+def fetch_lineup(concert_url):
+    """Fetch full lineup from a Songkick concert page by parsing the page title."""
+    page_html = fetch_url(concert_url)
+    if not page_html:
+        return []
+    
+    # Songkick puts the full lineup in the page title
+    # Format: "Artist1 and Artist2 and Artist3 [Location] Tickets, Venue, Date – Songkick"
+    # OR: "Artist1, Artist2, and Artist3 [Location] Tickets..."
+    
+    title_match = re.search(r'<title>([^<]+?)\s+(?:Vancouver|Squamish|Coquitlam|BC)?\s*Tickets', page_html, re.IGNORECASE)
+    if not title_match:
+        return []
+    
+    title_artists = title_match.group(1).strip()
+    
+    # Split by common delimiters
+    # Try "and" first, then commas
+    if ' and ' in title_artists:
+        artists = re.split(r'\s+and\s+', title_artists)
+    elif ', ' in title_artists:
+        artists = title_artists.split(', ')
+    else:
+        # Single artist
+        artists = [title_artists]
+    
+    # Clean up each artist name
+    lineup = []
+    for artist in artists:
+        clean = html.unescape(artist.strip())
+        # Remove trailing "and" if present
+        clean = re.sub(r'\s+and$', '', clean, flags=re.IGNORECASE)
+        if clean and len(clean) > 1 and len(clean) < 60:
+            lineup.append(clean)
+    
+    return lineup[:8]  # Cap at 8
+
+
+def scrape_songkick(max_pages=4):
     """Scrape Songkick Vancouver metro for upcoming shows at target venues."""
     events = []
     base_url = "https://www.songkick.com/metro-areas/27398-canada-vancouver"
     
-    for page in range(1, 5):  # First 4 pages
+    concert_links = []  # Collect concert links first
+    
+    for page in range(1, max_pages + 1):
         url = f"{base_url}?page={page}" if page > 1 else base_url
         page_html = fetch_url(url)
         if not page_html:
@@ -335,21 +384,7 @@ def scrape_songkick():
         # Find date headers
         date_pattern = r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(\d+)\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})'
         
-        # Build a map of concert IDs to their full artist names from <strong> tags
-        # Pattern: <a class="event-link" href="/concerts/43062105-avro-at-green-auto">
-        #            <span><strong>Avro, DIELECTRIC, EARS (BC), and Wack</strong></span>
-        artist_map = {}
-        event_link_pattern = r'<a[^>]*href="/concerts/(\d+)-[^"]+at-([^"]+)"[^>]*>\s*(?:<span>)?\s*<strong>([^<]+)</strong>'
-        for match in re.finditer(event_link_pattern, page_html, re.IGNORECASE | re.DOTALL):
-            concert_id = match.group(1)
-            venue_slug = match.group(2).lower()
-            full_lineup = html.unescape(match.group(3).strip())
-            artist_map[concert_id] = {
-                "lineup": full_lineup,
-                "venue_slug": venue_slug
-            }
-        
-        # Process HTML line by line to track dates and match events
+        # Process HTML line by line to track dates
         lines = page_html.split('\n')
         for line in lines:
             # Check for date header
@@ -359,47 +394,56 @@ def scrape_songkick():
                 current_date = f"{month} {day}, {year}"
             
             # Check for concert links on this line
-            link_match = re.search(r'/concerts/(\d+)-[a-z0-9-]+-at-([a-z0-9-]+)', line.lower())
+            link_match = re.search(r'/concerts/(\d+)-([a-z0-9-]+)-at-([a-z0-9-]+)', line.lower())
             if link_match and current_date:
-                concert_id = link_match.group(1)
-                venue_slug = link_match.group(2)
+                concert_id, artist_slug, venue_slug = link_match.groups()
                 
                 # Check if venue matches our list
                 venue_name = venue_matches(venue_slug)
                 if venue_name:
-                    # Get full lineup from artist_map, fallback to URL slug
-                    if concert_id in artist_map:
-                        artist_name = artist_map[concert_id]["lineup"]
-                    else:
-                        # Fallback: extract from URL slug
-                        slug_match = re.search(r'/concerts/\d+-(.+?)-at-', line.lower())
-                        if slug_match:
-                            artist_name = clean_artist_name(slug_match.group(1))
-                        else:
-                            continue
+                    artist_name = clean_artist_name(artist_slug)
                     
                     # Skip if excluded genre/style
                     if should_exclude(artist_name):
                         continue
                     
-                    events.append({
+                    concert_links.append({
+                        "id": concert_id,
                         "date": current_date,
-                        "artist": artist_name,
-                        "venue": venue_name,
-                        "link": f"https://www.songkick.com/concerts/{concert_id}",
-                        "source": "Songkick"
+                        "headliner": artist_name,
+                        "venue": venue_name
                     })
     
-    # Dedupe within Songkick (same concert ID can appear multiple times)
-    seen_ids = set()
-    unique_events = []
-    for e in events:
-        concert_id = e["link"].split("/")[-1]
-        if concert_id not in seen_ids:
-            seen_ids.add(concert_id)
-            unique_events.append(e)
+    # Now fetch lineup for each concert (with rate limiting)
+    print(f"  Fetching lineups for {len(concert_links)} concerts...", file=sys.stderr)
+    for i, concert in enumerate(concert_links):
+        concert_url = f"https://www.songkick.com/concerts/{concert['id']}"
+        lineup = fetch_lineup(concert_url)
+        
+        # Use full lineup if available, otherwise just headliner
+        if lineup:
+            # Filter out excluded artists from lineup
+            lineup = [a for a in lineup if not should_exclude(a)]
+            artist_display = " • ".join(lineup) if lineup else concert['headliner']
+        else:
+            artist_display = concert['headliner']
+        
+        events.append({
+            "date": concert['date'],
+            "artist": artist_display,
+            "venue": concert['venue'],
+            "link": concert_url,
+            "source": "Songkick"
+        })
+        
+        # Progress indicator every 20 shows
+        if (i + 1) % 20 == 0:
+            print(f"    {i + 1}/{len(concert_links)} complete", file=sys.stderr)
+        
+        # Rate limit: ~200ms between requests
+        time.sleep(0.2)
     
-    return unique_events
+    return events
 
 
 def scrape_eventbrite_tricksters():
@@ -585,12 +629,12 @@ def scrape_brackendale():
 
 # === Main ===
 
-def collect_all_events():
+def collect_all_events(max_pages=4):
     """Collect events from all sources."""
     all_events = []
     
     print("Scanning Songkick...", file=sys.stderr)
-    songkick = scrape_songkick()
+    songkick = scrape_songkick(max_pages=max_pages)
     print(f"  Found {len(songkick)} events", file=sys.stderr)
     all_events.extend(songkick)
     
@@ -609,10 +653,6 @@ def collect_all_events():
     print(f"  Found {len(bag)} events", file=sys.stderr)
     all_events.extend(bag)
     
-    spotify_profile = load_spotify_profile()
-    related_index = load_related_artist_index()
-    if spotify_profile:
-        return enrich_events_with_preferences(all_events, spotify_profile, related_index=related_index)
     return all_events
 
 
@@ -646,6 +686,8 @@ def format_digest(events):
     if not events:
         return "🎸 **Weekly Show Digest**\n\nNo shows found matching your criteria. Maybe check venue websites directly?"
     
+    likely = [e for e in events if e.get("interest_score", 0) >= LIKELY_SHOW_THRESHOLD]
+
     # Split into Vancouver and Squamish
     squamish_keywords = ["trickster", "backyard", "brackendale"]
     van_events = []
@@ -663,6 +705,19 @@ def format_digest(events):
     sqm_events.sort(key=lambda x: parse_date_for_sort(x.get("date", "")))
     
     lines = ["🎸 **Weekly Show Digest**\n"]
+
+    if likely:
+        likely = sorted(likely, key=lambda e: (-e.get("interest_score", 0), parse_date_for_sort(e.get("date", ""))))
+        lines.append("**Likely For Alex**")
+        for e in likely[:8]:
+            date = e.get('date', 'TBD')
+            artist = e.get('artist', 'TBD')
+            venue = e.get('venue', 'TBD')
+            score = int(round(e.get("interest_score", 0)))
+            reason = e.get("interest_reason", "")
+            suffix = f" — {reason}" if reason else ""
+            lines.append(f"• {date} — **{artist}** @ {venue} _(score {score})_{suffix}")
+        lines.append("")
     
     if van_events:
         lines.append("**Vancouver**")
@@ -670,7 +725,8 @@ def format_digest(events):
             date = e.get('date', 'TBD')
             artist = e.get('artist', 'TBD')
             venue = e.get('venue', 'TBD')
-            lines.append(f"• {date} — **{artist}** @ {venue}")
+            marker = "⭐ " if e.get("interest_score", 0) >= LIKELY_SHOW_THRESHOLD else ""
+            lines.append(f"• {date} — {marker}**{artist}** @ {venue}")
         lines.append("")
     
     if sqm_events:
@@ -679,7 +735,8 @@ def format_digest(events):
             date = e.get('date', 'TBD')
             artist = e.get('artist', 'TBD')
             venue = e.get('venue', 'TBD')
-            lines.append(f"• {date} — **{artist}** @ {venue}")
+            marker = "⭐ " if e.get("interest_score", 0) >= LIKELY_SHOW_THRESHOLD else ""
+            lines.append(f"• {date} — {marker}**{artist}** @ {venue}")
         lines.append("")
     
     lines.append(f"_Scanned {datetime.now().strftime('%Y-%m-%d %H:%M')}_")
@@ -687,17 +744,86 @@ def format_digest(events):
     return "\n".join(lines)
 
 
+def build_output(events):
+    """Prepare JSON payload for static site data."""
+    return {
+        "generated": datetime.utcnow().isoformat() + "Z",
+        "count": len(events),
+        "spotify_profile_loaded": SPOTIFY_PROFILE_PATH.exists(),
+        "events": events,
+    }
+
+
+def write_events_json(output_path, events):
+    """Write refreshed event JSON to a target path."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output = build_output(events)
+    output_path.write_text(json.dumps(output, indent=2) + "\n")
+    print(f"✓ Wrote {output_path} with {len(events)} events", file=sys.stderr)
+
+
+def publish_events(events):
+    """Refresh published JSON and push it if the data file changed."""
+    write_events_json(LOCAL_APP_DATA, events)
+    write_events_json(PHILBIN_APP_DATA, events)
+
+    status = subprocess.run(
+        ["git", "-C", str(PHILBIN_REPO), "status", "--porcelain", "--", "apps/show-scanner/data/events.json"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    if not status.stdout.strip():
+        print("No published JSON changes to commit.", file=sys.stderr)
+        return
+
+    today = datetime.now(LOCAL_TZ).date().isoformat()
+    commit_message = f"data: weekly show scanner update ({today})"
+
+    subprocess.run(
+        ["git", "-C", str(PHILBIN_REPO), "add", "apps/show-scanner/data/events.json"],
+        check=True,
+    )
+    subprocess.run(
+        ["git", "-C", str(PHILBIN_REPO), "commit", "-m", commit_message],
+        check=True,
+    )
+    subprocess.run(
+        ["git", "-C", str(PHILBIN_REPO), "push", "origin", "main"],
+        check=True,
+    )
+    print(f"✓ Published show scanner JSON with commit: {commit_message}", file=sys.stderr)
+
+
+def parse_args():
+    """Parse CLI arguments."""
+    parser = argparse.ArgumentParser(description="Generate Alex's weekly show digest.")
+    parser.add_argument("pages", nargs="?", type=int, default=4, help="Songkick pages to scan")
+    parser.add_argument("--publish", action="store_true", help="Update and push GitHub Pages JSON if it changed")
+    return parser.parse_args()
+
+
 def main():
     """Main entry point."""
+    args = parse_args()
+
     print("Starting show scan...", file=sys.stderr)
     
-    events = collect_all_events()
+    events = collect_all_events(max_pages=args.pages)
     print(f"Found {len(events)} raw events", file=sys.stderr)
     
     events = deduplicate_events(events)
     print(f"After dedup: {len(events)} events", file=sys.stderr)
     events = filter_events_to_window(events)
     print(f"After date filter: {len(events)} events", file=sys.stderr)
+    spotify_profile = load_spotify_profile()
+    related_index = load_related_artist_index()
+    if spotify_profile:
+        events = enrich_events_with_preferences(events, spotify_profile, related_index=related_index)
+        print(f"Applied Spotify preference profile to {len(events)} events", file=sys.stderr)
+
+    if args.publish:
+        publish_events(events)
     
     digest = format_digest(events)
     print(digest)

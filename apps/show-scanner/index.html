@@ -92,6 +92,44 @@
             font-weight: 600;
         }
 
+        .badge-interest {
+            background: #16a34a;
+        }
+
+        .interest-note {
+            margin-top: 0.45rem;
+            color: #79e2a0;
+            font-size: 0.85rem;
+        }
+
+        .score-breakdown {
+            margin-top: 0.6rem;
+            border-top: 1px solid #2e4236;
+            padding-top: 0.55rem;
+        }
+
+        .score-breakdown summary {
+            cursor: pointer;
+            color: #9cdab2;
+            font-size: 0.82rem;
+            list-style: none;
+        }
+
+        .score-breakdown summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .score-breakdown-list {
+            margin-top: 0.45rem;
+            padding-left: 1rem;
+            color: #b8c7be;
+            font-size: 0.82rem;
+        }
+
+        .score-breakdown-list li {
+            margin-bottom: 0.25rem;
+        }
+
         .event {
             background: #1a1a1a;
             border: 1px solid #333;
@@ -176,18 +214,6 @@
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="vancouver">Vancouver</button>
             <button class="filter-btn" data-filter="squamish">Squamish</button>
-            <div style="position: relative;">
-                <button class="filter-btn" id="venue-filter-btn">Venues ▼</button>
-                <div id="venue-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #1a1a1a; border: 1px solid #555; border-radius: 6px; padding: 0.5rem; margin-top: 0.3rem; min-width: 200px; max-height: 300px; overflow-y: auto; z-index: 100;">
-                    <div style="margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #333;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.3rem;">
-                            <input type="checkbox" id="select-all-venues" style="cursor: pointer;">
-                            <span style="font-weight: 600;">Select All</span>
-                        </label>
-                    </div>
-                    <div id="venue-checkboxes"></div>
-                </div>
-            </div>
         </div>
 
         <div id="content">
@@ -200,23 +226,15 @@
     <script>
         const SQUAMISH_KEYWORDS = ['trickster', 'backyard', 'brackendale'];
         const WEEKS_AHEAD = 3;
+        const LIKELY_SHOW_THRESHOLD = 35;
         let allEvents = [];
         let currentFilter = 'all';
-        let selectedVenues = new Set();
-        let allVenues = [];
 
         async function loadEvents() {
             try {
                 const response = await fetch('data/events.json');
                 const data = await response.json();
                 allEvents = data.events || [];
-                
-                // Extract unique venues
-                allVenues = [...new Set(allEvents.map(e => e.venue))].sort();
-                selectedVenues = new Set(allVenues); // All selected by default
-                
-                // Build venue checkboxes
-                buildVenueFilter();
                 
                 // Update last updated timestamp
                 if (data.generated) {
@@ -231,51 +249,19 @@
             }
         }
 
-        function buildVenueFilter() {
-            const container = document.getElementById('venue-checkboxes');
-            container.innerHTML = allVenues.map(venue => `
-                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.3rem; margin-bottom: 0.2rem;">
-                    <input type="checkbox" class="venue-checkbox" value="${venue}" checked style="cursor: pointer;">
-                    <span style="font-size: 0.9rem;">${venue}</span>
-                </label>
-            `).join('');
-            
-            // Add change listeners
-            document.querySelectorAll('.venue-checkbox').forEach(cb => {
-                cb.addEventListener('change', (e) => {
-                    if (e.target.checked) {
-                        selectedVenues.add(e.target.value);
-                    } else {
-                        selectedVenues.delete(e.target.value);
-                    }
-                    updateSelectAllState();
-                    renderEvents();
-                });
-            });
-        }
-
-        function updateSelectAllState() {
-            const selectAll = document.getElementById('select-all-venues');
-            selectAll.checked = selectedVenues.size === allVenues.length;
-        }
-
         function filterEvents(events) {
-            // First filter by venue selection
-            let filtered = events.filter(e => selectedVenues.has(e.venue));
-            
-            // Then filter by location if not "all"
-            if (currentFilter === 'all') return filtered;
+            if (currentFilter === 'all') return events;
             
             const isSquamish = (event) => 
                 SQUAMISH_KEYWORDS.some(kw => event.venue.toLowerCase().includes(kw));
             
             if (currentFilter === 'squamish') {
-                return filtered.filter(isSquamish);
+                return events.filter(isSquamish);
             } else if (currentFilter === 'vancouver') {
-                return filtered.filter(e => !isSquamish(e));
+                return events.filter(e => !isSquamish(e));
             }
             
-            return filtered;
+            return events;
         }
 
         function groupByLocation(events) {
@@ -334,6 +320,9 @@
 
         function renderEvents() {
             const filtered = filterEvents(allEvents).filter(isWithinDateWindow);
+            const likely = filtered
+                .filter(event => (event.interest_score || 0) >= LIKELY_SHOW_THRESHOLD)
+                .sort((a, b) => (b.interest_score || 0) - (a.interest_score || 0) || (parseDate(a.date) - parseDate(b.date)));
             const { vancouver, squamish } = groupByLocation(filtered);
             
             // Sort by date
@@ -342,6 +331,18 @@
             squamish.sort(sortByDate);
             
             let html = '';
+
+            if (currentFilter === 'all' && likely.length > 0) {
+                html += `
+                    <div class="section">
+                        <div class="section-title">
+                            Likely For You
+                            <span class="badge badge-interest">${likely.length}</span>
+                        </div>
+                        ${likely.slice(0, 8).map(renderEvent).join('')}
+                    </div>
+                `;
+            }
             
             if (vancouver.length > 0 && (currentFilter === 'all' || currentFilter === 'vancouver')) {
                 html += `
@@ -378,13 +379,33 @@
             const link = event.link ? 
                 `<a href="${event.link}" target="_blank" style="color: inherit; text-decoration: none;">` : '';
             const linkClose = event.link ? '</a>' : '';
+            const interestScore = Math.round(event.interest_score || 0);
+            const interestBadge = interestScore >= LIKELY_SHOW_THRESHOLD
+                ? `<span class="badge badge-interest">Likely • ${interestScore}</span>`
+                : '';
+            const interestNote = event.interest_reason
+                ? `<div class="interest-note">${event.interest_reason}</div>`
+                : '';
+            const breakdown = Array.isArray(event.score_breakdown) ? event.score_breakdown : [];
+            const breakdownHtml = breakdown.length
+                ? `
+                    <details class="score-breakdown">
+                        <summary>Why this score?</summary>
+                        <ul class="score-breakdown-list">
+                            ${breakdown.map(item => `<li><strong>${Math.round(item.points || 0)}</strong> pts — ${item.detail}</li>`).join('')}
+                        </ul>
+                    </details>
+                `
+                : '';
             
             return `
                 <div class="event">
                     ${link}
                     <div class="event-date">${event.date}</div>
-                    <div class="event-artist">${event.artist}</div>
+                    <div class="event-artist">${event.artist} ${interestBadge}</div>
                     <div class="event-venue">${event.venue}</div>
+                    ${interestNote}
+                    ${breakdownHtml}
                     ${linkClose}
                 </div>
             `;
@@ -392,46 +413,12 @@
 
         // Filter button handlers
         document.querySelectorAll('.filter-btn').forEach(btn => {
-            if (btn.id === 'venue-filter-btn') return; // Skip venue dropdown button
-            
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => {
-                    if (b.id !== 'venue-filter-btn') b.classList.remove('active');
-                });
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentFilter = btn.dataset.filter;
                 renderEvents();
             });
-        });
-
-        // Venue dropdown toggle
-        const venueBtn = document.getElementById('venue-filter-btn');
-        const venueDropdown = document.getElementById('venue-dropdown');
-        
-        venueBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            venueDropdown.style.display = venueDropdown.style.display === 'none' ? 'block' : 'none';
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!venueDropdown.contains(e.target) && e.target !== venueBtn) {
-                venueDropdown.style.display = 'none';
-            }
-        });
-
-        // Select all handler
-        document.getElementById('select-all-venues').addEventListener('change', (e) => {
-            const checked = e.target.checked;
-            document.querySelectorAll('.venue-checkbox').forEach(cb => {
-                cb.checked = checked;
-                if (checked) {
-                    selectedVenues.add(cb.value);
-                } else {
-                    selectedVenues.delete(cb.value);
-                }
-            });
-            renderEvents();
         });
 
         // Load on page load
