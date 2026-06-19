@@ -18,6 +18,7 @@ import sys
 from datetime import datetime, timedelta
 from urllib.request import urlopen, Request
 from urllib.error import URLError
+from zoneinfo import ZoneInfo
 
 
 # === Configuration ===
@@ -66,6 +67,7 @@ EXCLUDE_ARTISTS = {
 }
 
 WEEKS_AHEAD = 3
+LOCAL_TZ = ZoneInfo("America/Vancouver")
 
 
 # === Utilities ===
@@ -79,7 +81,7 @@ def fetch_url(url, timeout=15):
         })
         with urlopen(req, timeout=timeout) as response:
             return response.read().decode("utf-8", errors="ignore")
-    except URLError as e:
+    except (URLError, TimeoutError) as e:
         print(f"[WARN] Failed to fetch {url}: {e}", file=sys.stderr)
         return None
 
@@ -130,6 +132,30 @@ def venue_matches(venue_slug):
         if slug in venue_lower:
             return SQUAMISH_VENUES[slug]
     return None
+
+
+def parse_event_date(date_str):
+    """Parse supported event date formats to a date object."""
+    for fmt in ("%B %d, %Y", "%Y-%m-%d", "%b %d, %Y"):
+        try:
+            return datetime.strptime(date_str, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def filter_events_to_window(events, today=None, weeks_ahead=WEEKS_AHEAD):
+    """Keep only upcoming dated events inside the scan window; keep undated items."""
+    today = today or datetime.now(LOCAL_TZ).date()
+    window_end = today + timedelta(weeks=weeks_ahead)
+    filtered = []
+
+    for event in events:
+        event_date = parse_event_date(event.get("date", ""))
+        if event_date is None or today <= event_date <= window_end:
+            filtered.append(event)
+
+    return filtered
 
 
 # === Scrapers ===
@@ -483,35 +509,65 @@ def scrape_backyard():
 
 
 def scrape_brackendale():
-    """Scrape Brackendale Art Gallery events."""
+    """Scrape Brackendale Art Gallery music events from Eventbrite organizer page.
+    
+    Uses the embedded __SERVER_DATA__ JSON which has category info.
+    Filters for category_id "103" (Music) only.
+    """
     events = []
-    url = "https://brackendaleartgallery.com/whats-happening-at-the-bag/"
+    url = "https://www.eventbrite.ca/o/brackendale-art-gallery-59178760723"
     page_html = fetch_url(url)
     if not page_html:
         return events
     
-    # Similar approach - look for event data
-    json_ld_pattern = r'<script type="application/ld\+json">([^<]+)</script>'
-    json_matches = re.findall(json_ld_pattern, page_html)
+    # Extract __SERVER_DATA__ JSON blob
+    server_data_match = re.search(r'window\.__SERVER_DATA__\s*=\s*({.*?});\s*<', page_html, re.DOTALL)
+    if not server_data_match:
+        return events
     
-    for json_str in json_matches:
-        try:
-            data = json.loads(json_str)
-            items = data if isinstance(data, list) else [data]
-            for item in items:
-                if item.get("@type") == "Event":
-                    start = item.get("startDate", "")
-                    date_str = start[:10] if start else "TBD"
-                    name = item.get("name", "Unknown Event")
-                    if not should_exclude(name):
-                        events.append({
-                            "date": date_str,
-                            "artist": html.unescape(name),
-                            "venue": "Brackendale Art Gallery",
-                            "source": "BAG"
-                        })
-        except json.JSONDecodeError:
-            pass
+    try:
+        server_data = json.loads(server_data_match.group(1))
+        view_data = server_data.get("view_data", {})
+        events_data = view_data.get("events", {})
+        
+        # Get both future and past events (past may include recently completed)
+        all_events = events_data.get("future_events", [])
+        
+        for event in all_events:
+            # Filter for Music category (category_id "103")
+            category_id = event.get("category_id")
+            if category_id != "103":
+                continue
+            
+            name_obj = event.get("name", {})
+            name = name_obj.get("text", "") if isinstance(name_obj, dict) else str(name_obj)
+            
+            if not name or should_exclude(name):
+                continue
+            
+            # Parse start date
+            start_obj = event.get("start", {})
+            local_time = start_obj.get("local", "")
+            if local_time:
+                try:
+                    dt = datetime.fromisoformat(local_time)
+                    date_str = dt.strftime("%B %d, %Y")
+                except:
+                    date_str = local_time[:10]
+            else:
+                date_str = "TBD"
+            
+            event_url = event.get("url", "")
+            
+            events.append({
+                "date": date_str,
+                "artist": html.unescape(name),
+                "venue": "Brackendale Art Gallery",
+                "link": event_url,
+                "source": "BAG"
+            })
+    except (json.JSONDecodeError, KeyError, TypeError):
+        pass
     
     return events
 
@@ -645,17 +701,10 @@ def deduplicate_events(events):
 
 def parse_date_for_sort(date_str):
     """Parse date string for sorting."""
-    formats = [
-        "%B %d, %Y",  # March 23, 2026
-        "%Y-%m-%d",   # 2026-03-23
-        "%b %d, %Y",  # Mar 23, 2026
-    ]
-    for fmt in formats:
-        try:
-            return datetime.strptime(date_str, fmt)
-        except ValueError:
-            continue
-    return datetime.max  # Put unparseable dates at the end
+    parsed = parse_event_date(date_str)
+    if parsed is None:
+        return datetime.max  # Put unparseable dates at the end
+    return datetime.combine(parsed, datetime.min.time())
 
 
 def format_digest(events):
@@ -713,6 +762,8 @@ def main():
     
     events = deduplicate_events(events)
     print(f"After dedup: {len(events)} events", file=sys.stderr)
+    events = filter_events_to_window(events)
+    print(f"After date filter: {len(events)} events", file=sys.stderr)
     
     digest = format_digest(events)
     print(digest)

@@ -1,881 +1,7 @@
 {
-  "generated": "2026-05-08T01:08:59.415976Z",
-  "count": 359,
+  "generated": "2026-06-19T16:20:29.354515Z",
+  "count": 109,
   "events": [
-    {
-      "date": "May 07, 2026",
-      "artist": "Electric Six with guests Tragedy",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/7/electric-six-with-guests-tragedy-tickets",
-      "source": "Do604",
-      "_id": "16804176"
-    },
-    {
-      "date": "May 07, 2026",
-      "artist": "Zinadelphia and Sophia Bacino",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43023460",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 07, 2026",
-      "artist": "Mechatok",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43073430",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 08, 2026",
-      "artist": "Chet Faker",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/42856779",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 08, 2026",
-      "artist": "Tycho",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43099253",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 08, 2026",
-      "artist": "Fit for a King, Invent, Animate, Ten56, and Acres",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43000276",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 08, 2026",
-      "artist": "Arkells",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43052060",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 08, 2026",
-      "artist": "IT'S MURPH and VNSSA",
-      "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/43026044",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 08, 2026",
-      "artist": "Parabolus",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/42914193",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "Snail Mail",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/42997217",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "The Wood Brothers",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/42985915",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "Arkells",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43052058",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "Just Mustard",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/42853188",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "The Martinez Brothers",
-      "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/42894157",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "MASTER BOOT RECORD with AROTTENBIT and Sleeper Ship",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/9/master-boot-record-tickets",
-      "source": "Do604",
-      "_id": "16748528"
-    },
-    {
-      "date": "May 10, 2026",
-      "artist": "Echo & The Bunnymen",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/42848873",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 10, 2026",
-      "artist": "Powfu",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/42983228",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 10, 2026",
-      "artist": "Good Kid",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/42924524",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 10, 2026",
-      "artist": "The Midnight LA",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/42821450",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 11, 2026",
-      "artist": "City and Colour, City and Colour (solo), and Julianna Riolino",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43118579",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 11, 2026",
-      "artist": "Joyce Manor, Militarie Gun, and Teen Mortgage",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/42829445",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 11, 2026",
-      "artist": "Mariachi El Bronx with Kevin Von Helvete and Brasser",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/11/mariachi-el-bronx-with-kevin-von-helvete-tickets",
-      "source": "Do604",
-      "_id": "17145469"
-    },
-    {
-      "date": "May 12, 2026",
-      "artist": "Lucy Dacus",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/42806532",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 12, 2026",
-      "artist": "Faetooth",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/42972431",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 12, 2026",
-      "artist": "Jared Benjamin",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43054863",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 13, 2026",
-      "artist": "Wild Nothing",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/42984710",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 14, 2026",
-      "artist": "Gatecreeper with Eternal, Dying Remains and Dungeon Serpent",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/14/gatecreeper-tickets",
-      "source": "Do604",
-      "_id": "17015033"
-    },
-    {
-      "date": "May 14, 2026",
-      "artist": "Red Rum Club",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/42936279",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 11, 2026",
-      "artist": "The Charlatans",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43171513",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 12, 2026",
-      "artist": "CANNONS",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43186949",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 17, 2026",
-      "artist": "Ninajirachi and mgna crrrta",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43196159",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 16, 2026",
-      "artist": "Tinlicker",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43167475",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 16, 2026",
-      "artist": "Brother Ali",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43189572",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "Milk Carton Kids",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43173508",
-      "source": "Songkick"
-    },
-    {
-      "date": "November 09, 2026",
-      "artist": "The Black Angels and Ghostwoman",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43158925",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 02, 2026",
-      "artist": "Failure and quannnic",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43171541",
-      "source": "Songkick"
-    },
-    {
-      "date": "April 30, 2027",
-      "artist": "French 79",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43159230",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 03, 2026",
-      "artist": "Slow Magic",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43156526",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 19, 2026",
-      "artist": "ShitKid",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43174262",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 05, 2026",
-      "artist": "Sumac",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43174248",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 13, 2026",
-      "artist": "Fiddlehead and Narrow Head",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43163721",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "Sabai",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43180583",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 20, 2026",
-      "artist": "Wesley Joseph",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43163709",
-      "source": "Songkick"
-    },
-    {
-      "date": "December 13, 2026",
-      "artist": "The Pineapple Thief",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43161073",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 19, 2026",
-      "artist": "The East Pointers",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43173420",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 27, 2026",
-      "artist": "Thaiboy Digital",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43163697",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 26, 2026",
-      "artist": "Kevian Kraemer",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43171464",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 20, 2026",
-      "artist": "Ahmed Saad",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43156717",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 12, 2026",
-      "artist": "Sasha & John Digweed",
-      "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/43161032",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Aaron Rowe",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43156688",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "Spectral Wound",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43035632",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "John FM and Elias R\u00f8nnenfelt",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43066676",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "Jimi",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43055676",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "DJ Jimi",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43075643",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 16, 2026",
-      "artist": "The Afghan Whigs and Mercury Rev",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/42998297",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 16, 2026",
-      "artist": "Bobby Bazini",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/42823657",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 16, 2026",
-      "artist": "Mizmor and Dopethrone",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43059676",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 17, 2026",
-      "artist": "Kevin Morby and Liam Kazar",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43042389",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 17, 2026",
-      "artist": "Foxtide",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43054935",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 18, 2026",
-      "artist": "Danny Brown, midwxst, and chase usa",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43069164",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 18, 2026",
-      "artist": "ichiko aoba",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/42918926",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 18, 2026",
-      "artist": "NewDad",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/42826440",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 19, 2026",
-      "artist": "The Last Dinner Party",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/42844660",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 19, 2026",
-      "artist": "Smerz",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43090420",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 20, 2026",
-      "artist": "POiSON GiRL FRiEND",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43123519",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 21, 2026",
-      "artist": "B\u00e9ton Arm\u00e9 with First Attack, Toy Tiger and Code 22",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/21/beton-arme-tickets",
-      "source": "Do604",
-      "_id": "16922353"
-    },
-    {
-      "date": "May 22, 2026",
-      "artist": "Pedro the Lion",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43011875",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 22, 2026",
-      "artist": "Show Me The Body with Ingrown",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/22/show-me-the-body-with-ingrown-tickets",
-      "source": "Do604",
-      "_id": "17145471"
-    },
-    {
-      "date": "May 22, 2026",
-      "artist": "Old Mervs",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43052102",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 22, 2026",
-      "artist": "Corb Lund",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43054969",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 22, 2026",
-      "artist": "Dug",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43168856",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 22, 2026",
-      "artist": "Sara Carbone",
-      "venue": "Red Gate",
-      "link": "https://www.songkick.com/concerts/43165378",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 23, 2026",
-      "artist": "Inner Wave and Los Mesoneros",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/42985896",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 23, 2026",
-      "artist": "Corb Lund",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43054979",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 23, 2026",
-      "artist": "Skin On Skin",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43134747",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 23, 2026",
-      "artist": "Dead Bob with Aversions and Yep",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/23/dead-bob-tickets",
-      "source": "Do604",
-      "_id": "16962185"
-    },
-    {
-      "date": "May 25, 2026",
-      "artist": "Purity Ring",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43003753",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 25, 2026",
-      "artist": "Dayseeker, Northlane, Wind Walkers, and sace6",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/42894146",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 25, 2026",
-      "artist": "*ShY_GuY**",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43180911",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 26, 2026",
-      "artist": "The Strumbellas",
-      "venue": "Orpheum",
-      "link": "https://www.songkick.com/concerts/43007950",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 26, 2026",
-      "artist": "Ray Bull",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43054992",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 26, 2026",
-      "artist": "Smokedope2016",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43126126",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 27, 2026",
-      "artist": "Joe Jackson",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/42885062",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 27, 2026",
-      "artist": "Mietze Conte",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43106699",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 28, 2026",
-      "artist": "Qveen Herby",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43021278",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 29, 2026",
-      "artist": "Josiah and the Bonnevilles",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43037389",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 29, 2026",
-      "artist": "The Slackers",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/42977973",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 30, 2026",
-      "artist": "Kes",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43083583",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 30, 2026",
-      "artist": "Bob Log III",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43088574",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 30, 2026",
-      "artist": "Ignite",
-      "venue": "Trickster's Hideout",
-      "link": "https://www.songkick.com/concerts/43045416",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 30, 2026",
-      "artist": "Lou-Adriane Cassidy",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43008793",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 30, 2026",
-      "artist": "Jyoty",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43146186",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 30, 2026",
-      "artist": "The Fomites",
-      "venue": "Red Gate",
-      "link": "https://www.songkick.com/concerts/43062299",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 31, 2026",
-      "artist": "Alestorm, Twilight Force, and Greyhawk",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43040144",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 31, 2026",
-      "artist": "Good Riddance with Ignite, The Corps, Meantime & Vargouille",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/31/good-riddance-with-ignite-the-corps-meantime-vargouille-tickets",
-      "source": "Do604",
-      "_id": "16998882"
-    },
-    {
-      "date": "May 31, 2026",
-      "artist": "Die Sexual",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43201119",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 01, 2026",
-      "artist": "Clara La San",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43063072",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 02, 2026",
-      "artist": "Yot Club and Renny Conti",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43012377",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 02, 2026",
-      "artist": "Supersuckers with Scott H. Biram and La Chinga",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/6/2/supersuckers-with-scott-h-biram-tickets",
-      "source": "Do604",
-      "_id": "17089071"
-    },
-    {
-      "date": "June 03, 2026",
-      "artist": "fiN",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43146243",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 05, 2026",
-      "artist": "ROSTAM",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43087487",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 05, 2026",
-      "artist": "Iron Kingdom and W.M.D (When Minds Develop)",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43005948",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 05, 2026",
-      "artist": "The Vidos",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43102109",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 06, 2026",
-      "artist": "Wintersleep",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43011752",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 06, 2026",
-      "artist": "Archspire, Undeath, Crown Magnetar, and Mutilation Barbecue",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/42952324",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 06, 2026",
-      "artist": "Trans-Canada Highwaymen",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43052047",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 06, 2026",
-      "artist": "Orchid Orchestra",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43113513",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 08, 2026",
-      "artist": "By Storm and Injury Reserve",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43023422",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 09, 2026",
-      "artist": "Superheaven, Modern Color, and All Under Heaven",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43145237",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 09, 2026",
-      "artist": "Lou Barlow with guest Himalayan Bear",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/6/9/lou-barlow-tickets",
-      "source": "Do604",
-      "_id": "17179661"
-    },
-    {
-      "date": "June 11, 2026",
-      "artist": "Seedhe Maut",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43003973",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 12, 2026",
-      "artist": "Tigers Jaw with Pool Kids and Bleary Eyed",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/6/12/tigers-jaw-with-pool-kids-tickets",
-      "source": "Do604",
-      "_id": "16804177"
-    },
-    {
-      "date": "June 12, 2026",
-      "artist": "The Cat Empire",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43125849",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 12, 2026",
-      "artist": "Harkirat Sangha",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43105205",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 12, 2026",
-      "artist": "MOONBEAN",
-      "venue": "Trickster's Hideout",
-      "link": "https://www.songkick.com/concerts/43093855",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 12, 2026",
-      "artist": "Chlo",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43172487",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 13, 2026",
-      "artist": "The Cat Empire",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43125850",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 13, 2026",
-      "artist": "Sango",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43066714",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 13, 2026",
-      "artist": "Woolworm, TV Star, N3ster, Demps",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/6/13/woolworm-tv-star-n3ster-demps-tickets",
-      "source": "Do604",
-      "_id": "17271987"
-    },
-    {
-      "date": "June 13, 2026",
-      "artist": "2girls1daw + MOONBEAN",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/6/13/2girls1daw-moonbean-tickets",
-      "source": "Do604",
-      "_id": "17226735"
-    },
-    {
-      "date": "June 13, 2026",
-      "artist": "Joshua Baraka",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43166637",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 14, 2026",
-      "artist": "Burning Spear and Jesse Royal",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43143986",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 18, 2026",
-      "artist": "Agent Orange",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43026559",
-      "source": "Songkick"
-    },
     {
       "date": "June 19, 2026",
       "artist": "Cassian",
@@ -899,9 +25,9 @@
     },
     {
       "date": "June 20, 2026",
-      "artist": "Lenny Pearce",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43077841",
+      "artist": "Ahmed Saad",
+      "venue": "Queen Elizabeth Theatre",
+      "link": "https://www.songkick.com/concerts/43156717",
       "source": "Songkick"
     },
     {
@@ -933,6 +59,13 @@
       "source": "Songkick"
     },
     {
+      "date": "June 23, 2026",
+      "artist": "Jack Botts",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43225506",
+      "source": "Songkick"
+    },
+    {
       "date": "June 24, 2026",
       "artist": "Searows",
       "venue": "Vogue Theatre",
@@ -947,8 +80,15 @@
       "source": "Songkick"
     },
     {
+      "date": "June 24, 2026",
+      "artist": "Jody Glenham, Apacalda, and WACK (CAN)",
+      "venue": "Red Gate",
+      "link": "https://www.songkick.com/concerts/43265942",
+      "source": "Songkick"
+    },
+    {
       "date": "June 25, 2026",
-      "artist": "Holly Humberstone",
+      "artist": "Holly Humberstone and Leyla Ebrahimi",
       "venue": "Commodore Ballroom",
       "link": "https://www.songkick.com/concerts/43037387",
       "source": "Songkick"
@@ -969,23 +109,60 @@
     },
     {
       "date": "June 25, 2026",
-      "artist": "Panic Shack",
+      "artist": "PANIC SHACK with guests WAIT//LESS",
       "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43149465",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/6/25/panic-shack-tickets",
+      "source": "Do604",
+      "_id": "17199056"
     },
     {
       "date": "June 26, 2026",
-      "artist": "The Black Seeds",
+      "artist": "The Black Seeds with Los Furios",
       "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43040106",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/6/26/the-black-seeds-tickets",
+      "source": "Do604",
+      "_id": "17014984"
     },
     {
       "date": "June 26, 2026",
       "artist": "The Tea Party",
       "venue": "Commodore Ballroom",
       "link": "https://www.songkick.com/concerts/43146197",
+      "source": "Songkick"
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Wheeler Walker Jr",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43261968",
+      "source": "Songkick"
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Army The Navy",
+      "venue": "Hollywood Theatre",
+      "link": "https://www.songkick.com/concerts/43269523",
+      "source": "Songkick"
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Author & Punisher",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43263209",
+      "source": "Songkick"
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Five Alarm Funk",
+      "venue": "Hollywood Theatre",
+      "link": "https://www.songkick.com/concerts/43276996",
+      "source": "Songkick"
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Armored Saint",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43242974",
       "source": "Songkick"
     },
     {
@@ -997,23 +174,16 @@
     },
     {
       "date": "June 27, 2026",
-      "artist": "B\u00f4a (UK)",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43146251",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 27, 2026",
-      "artist": "Honeybear, The Band",
-      "venue": "Brackendale Art Gallery",
-      "link": "https://www.songkick.com/concerts/43152874",
-      "source": "Songkick"
-    },
-    {
-      "date": "June 27, 2026",
       "artist": "Kumar Sanu",
       "venue": "Queen Elizabeth Theatre",
       "link": "https://www.songkick.com/concerts/43191361",
+      "source": "Songkick"
+    },
+    {
+      "date": "June 27, 2026",
+      "artist": "B\u00f4a (UK)",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43146251",
       "source": "Songkick"
     },
     {
@@ -1025,10 +195,11 @@
     },
     {
       "date": "June 28, 2026",
-      "artist": "cootie catcher",
+      "artist": "worrywart, Concrete Vehicles, Cootie Catcher",
       "venue": "Green Auto",
-      "link": "https://www.songkick.com/concerts/43168563",
-      "source": "Songkick"
+      "link": "https://do604.com/events/2026/6/28/worrywart-concrete-vehicles-cootie-catcher-tickets",
+      "source": "Do604",
+      "_id": "17424628"
     },
     {
       "date": "June 30, 2026",
@@ -1059,6 +230,27 @@
       "source": "Songkick"
     },
     {
+      "date": "July 02, 2026",
+      "artist": "Yaeji",
+      "venue": "Fortune Sound Club",
+      "link": "https://www.songkick.com/concerts/43219159",
+      "source": "Songkick"
+    },
+    {
+      "date": "July 02, 2026",
+      "artist": "Nora en Pure",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43262008",
+      "source": "Songkick"
+    },
+    {
+      "date": "July 02, 2026",
+      "artist": "Emma Alves",
+      "venue": "Red Gate",
+      "link": "https://www.songkick.com/concerts/43246578",
+      "source": "Songkick"
+    },
+    {
       "date": "July 03, 2026",
       "artist": "Modest Mouse",
       "venue": "Orpheum Theatre",
@@ -1067,9 +259,17 @@
     },
     {
       "date": "July 03, 2026",
-      "artist": "Black Wizard",
+      "artist": "Black Wizard with Ever Age, Franklin and Burnt Lung",
       "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43141163",
+      "link": "https://do604.com/events/2026/7/3/black-wizard-with-ever-age-franklin-and-burnt-lung-tickets",
+      "source": "Do604",
+      "_id": "17179663"
+    },
+    {
+      "date": "July 04, 2026",
+      "artist": "KALEO and Vincent Lima",
+      "venue": "Queen Elizabeth Theatre",
+      "link": "https://www.songkick.com/concerts/42998262",
       "source": "Songkick"
     },
     {
@@ -1081,10 +281,11 @@
     },
     {
       "date": "July 04, 2026",
-      "artist": "KALEO and Vincent Lima",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/42998262",
-      "source": "Songkick"
+      "artist": "Sk\u00e1ld with Wallgrin",
+      "venue": "Rickshaw Theatre",
+      "link": "https://do604.com/events/2026/7/4/skald-tickets",
+      "source": "Do604",
+      "_id": "17211009"
     },
     {
       "date": "July 04, 2026",
@@ -1122,894 +323,51 @@
       "source": "Songkick"
     },
     {
-      "date": "July 11, 2026",
-      "artist": "Aaron Hibell",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43052036",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Moondoggy",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43052008",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Templars",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43161531",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 12, 2026",
-      "artist": "Lucero",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43159180",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 13, 2026",
-      "artist": "Marcus King and Penelope Road",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43091620",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 13, 2026",
-      "artist": "Wic Whitney",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43184130",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 16, 2026",
-      "artist": "Disney and Vancouver Symphony Orchestra",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43150485",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 17, 2026",
-      "artist": "Disney and Vancouver Symphony Orchestra",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43150490",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 17, 2026",
-      "artist": "Margo",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43163703",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 19, 2026",
-      "artist": "Nation of Language",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43107918",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 21, 2026",
-      "artist": "Chance Pe\u00f1a and Hans Williams",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/42919013",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 21, 2026",
-      "artist": "The Body and Big Brave",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43176395",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 22, 2026",
-      "artist": "Vacation Manor",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43156722",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 23, 2026",
-      "artist": "Stuff You Should Know",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43186258",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 24, 2026",
-      "artist": "Chinese American Bear",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43060158",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 24, 2026",
-      "artist": "Disney",
-      "venue": "Orpheum",
-      "link": "https://www.songkick.com/concerts/43191308",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 25, 2026",
-      "artist": "Of Monsters and Men",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43146241",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 25, 2026",
-      "artist": "Disney and Vancouver Symphony Orchestra",
-      "venue": "Orpheum",
-      "link": "https://www.songkick.com/concerts/43191310",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 27, 2026",
-      "artist": "Kim Gordon",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43089931",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 28, 2026",
-      "artist": "Willow Avalon",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43182134",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Queer As Funk",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43060149",
-      "source": "Songkick"
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Dawn Pemberton",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43154318",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 01, 2026",
-      "artist": "Ani DiFranco",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43044206",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 02, 2026",
-      "artist": "Six Feet Under, Kataklysm, and Wormhole",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43100846",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 03, 2026",
-      "artist": "Faouzia",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43168862",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 04, 2026",
-      "artist": "EJEAN",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43168895",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 05, 2026",
-      "artist": "D.K. Harrell",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43083607",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 07, 2026",
-      "artist": "Chiodos, sace6, 156/Silence, and Calva Louise",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43107905",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 10, 2026",
-      "artist": "Cat Power",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43066640",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 14, 2026",
-      "artist": "Corinne Bailey Rae",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43066655",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 14, 2026",
-      "artist": "Kingfishr",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43113890",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 15, 2026",
-      "artist": "Kingfishr",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43121143",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 15, 2026",
-      "artist": "Ella Red and Zoe Ko",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43184393",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 16, 2026",
-      "artist": "Greg Mendez and Maria BC",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43082550",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 18, 2026",
-      "artist": "Bini",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43177898",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 18, 2026",
-      "artist": "Goose (USA)",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43009634",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 19, 2026",
-      "artist": "Fink",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43117743",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 23, 2026",
-      "artist": "Silkworm",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43202078",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 25, 2026",
-      "artist": "Cake",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43018983",
-      "source": "Songkick"
-    },
-    {
-      "date": "August 27, 2026",
-      "artist": "born at midnite",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43186959",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 02, 2026",
-      "artist": "Southern Culture On The Skids",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43051946",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 02, 2026",
-      "artist": "brenn",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43198419",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 02, 2026",
-      "artist": "My New Band Believe",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43107921",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 03, 2026",
-      "artist": "Slayyyter",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43104646",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 04, 2026",
-      "artist": "Peaches and Pixel Grip",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/42840711",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 05, 2026",
-      "artist": "Tiffany Day",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43198481",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 05, 2026",
-      "artist": "Zoh Amba",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43195576",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 08, 2026",
-      "artist": "Artemas",
-      "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/43136288",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 09, 2026",
-      "artist": "Haute & Freddy",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43077378",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 11, 2026",
-      "artist": "3BallMTY",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43148999",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 12, 2026",
-      "artist": "Squeeze, Adam Ant, and Haircut One Hundred",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43198477",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Lyle Lovett",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43155151",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 16, 2026",
-      "artist": "Beck",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43169939",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 16, 2026",
-      "artist": "Ninajirachi and mgna crrrta",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43201571",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 18, 2026",
-      "artist": "Melanie C",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43099116",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 19, 2026",
-      "artist": "Bahamas",
-      "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/43091389",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 19, 2026",
-      "artist": "When Chai Met Toast",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/42788517",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 20, 2026",
-      "artist": "Unsane",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43123812",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 22, 2026",
-      "artist": "Arlo Parks",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43085576",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 22, 2026",
-      "artist": "The Rock Orchestra By Candlelight",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43063936",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 23, 2026",
-      "artist": "jpegmafia",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43188580",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 24, 2026",
-      "artist": "Big Thief",
-      "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/43094132",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 25, 2026",
-      "artist": "Aldous Harding and Sam Burton",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/42988676",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 26, 2026",
-      "artist": "Friko",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43134733",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 27, 2026",
-      "artist": "Peter Hook & The Light, Peter Hook, and Light",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/42753957",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 28, 2026",
-      "artist": "Soda Blonde",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43066692",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 28, 2026",
-      "artist": "Oskar med k",
-      "venue": "Malkin Bowl",
-      "link": "https://www.songkick.com/concerts/43110268",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 29, 2026",
-      "artist": "Kruder & Dorfmeister",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43091665",
-      "source": "Songkick"
-    },
-    {
-      "date": "September 30, 2026",
-      "artist": "Rum Jungle",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43189040",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 01, 2026",
-      "artist": "Dua Saleh",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43105251",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 02, 2026",
-      "artist": "Meltt",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43145391",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 03, 2026",
-      "artist": "Emei",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43181957",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 04, 2026",
-      "artist": "Deer Tick",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43093534",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 05, 2026",
-      "artist": "Sting",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43077856",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 06, 2026",
-      "artist": "Sting",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43077807",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 07, 2026",
-      "artist": "Hammerfall",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43018464",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 09, 2026",
-      "artist": "Actors",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43157233",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 09, 2026",
-      "artist": "The Inspector Cluzo",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43150988",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 11, 2026",
-      "artist": "Fruit Bats",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43121122",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 13, 2026",
-      "artist": "Sammy Rae & the Friends and Melt",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43121174",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 15, 2026",
-      "artist": "Jarlath Regan",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43055517",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 16, 2026",
-      "artist": "Shiloh Lindsey",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43191083",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 17, 2026",
-      "artist": "UB40",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43008965",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 18, 2026",
-      "artist": "UB40",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43008968",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 19, 2026",
-      "artist": "Owen Riegling",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43145245",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 20, 2026",
-      "artist": "Finn Wolfhard",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43197686",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 21, 2026",
-      "artist": "Akeem Ali",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43134742",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 21, 2026",
-      "artist": "Flower Face",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43184092",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 24, 2026",
-      "artist": "Faber Drive",
-      "venue": "Fortune Sound Club",
-      "link": "https://www.songkick.com/concerts/43118616",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 27, 2026",
-      "artist": "Amble",
-      "venue": "Orpheum",
-      "link": "https://www.songkick.com/concerts/43195293",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 28, 2026",
-      "artist": "Begonia",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43063497",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 30, 2026",
-      "artist": "DJ Shadow",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43184390",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 30, 2026",
-      "artist": "Buena Vista Orchestra",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43094143",
-      "source": "Songkick"
-    },
-    {
-      "date": "October 31, 2026",
-      "artist": "Sabbat",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43199252",
-      "source": "Songkick"
-    },
-    {
-      "date": "November 01, 2026",
-      "artist": "Parra for Cuva",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43103539",
-      "source": "Songkick"
-    },
-    {
-      "date": "November 05, 2026",
-      "artist": "SYML",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43176155",
-      "source": "Songkick"
-    },
-    {
-      "date": "November 11, 2026",
-      "artist": "L7",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43203629",
-      "source": "Songkick"
-    },
-    {
-      "date": "November 12, 2026",
-      "artist": "Foy Vance",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43057746",
-      "source": "Songkick"
-    },
-    {
-      "date": "November 14, 2026",
-      "artist": "Raffi",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43055534",
-      "source": "Songkick"
-    },
-    {
-      "date": "November 15, 2026",
-      "artist": "Raffi",
-      "venue": "Queen Elizabeth Theatre",
-      "link": "https://www.songkick.com/concerts/43055537",
-      "source": "Songkick"
-    },
-    {
-      "date": "December 03, 2026",
-      "artist": "Buck Meek",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43065750",
-      "source": "Songkick"
-    },
-    {
-      "date": "January 28, 2027",
-      "artist": "Bonnie 'Prince' Billy",
-      "venue": "Hollywood Theatre",
-      "link": "https://www.songkick.com/concerts/43161047",
-      "source": "Songkick"
-    },
-    {
-      "date": "May 07, 2026",
-      "artist": "Isabella and The Sprouts, Mossing, Callum Ellis-Mennie",
+      "date": "July 10, 2026",
+      "artist": "Racoma, Junaco",
       "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/7/isabella-and-the-sprouts-mossing-callum-ellis-mennie-tickets",
+      "link": "https://do604.com/events/2026/7/10/mean-bikini-berzerk-middle-aged-queers-nelly-olsen-tickets",
       "source": "Do604",
-      "_id": "17263331"
+      "_id": "17315978"
     },
     {
-      "date": "May 08, 2026",
-      "artist": "Devours, 2girls1daw, Reveal Yourself, Haha Laughing",
+      "date": "July 10, 2026",
+      "artist": "Mean Bikini, Middle-Aged Queers, and BERZERK",
       "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/8/devours-2girls1daw-reveal-yourself-haha-laughing-tickets",
-      "source": "Do604",
-      "_id": "17109034"
+      "link": "https://www.songkick.com/concerts/43272895",
+      "source": "Songkick"
     },
     {
-      "date": "May 08, 2026",
-      "artist": "The Magic Triangle, Cyrus Jordan, Dark Arps",
+      "date": "June 19, 2026",
+      "artist": "checkedout, stitch, Blush., Milk",
       "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/8/the-magic-triangle-cyrus-jordan-dark-arps-tickets",
+      "link": "https://do604.com/events/2026/6/19/the-arbuckles-ira-hardly-gord-tickets",
       "source": "Do604",
-      "_id": "17271985"
+      "_id": "17348734"
     },
     {
-      "date": "May 09, 2026",
-      "artist": "Hannah Harlacher, JJ Myers, The Compensator, Andrew Bishop",
+      "date": "June 19, 2026",
+      "artist": "The Arbuckles, Ira Hardly, Gord",
       "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/9/hannah-harlacher-jj-myers-the-compensator-andrew-bishop-tickets",
+      "link": "https://do604.com/events/2026/6/19/the-arbuckles-ira-hardly-gord-tickets-klo5xoj",
       "source": "Do604",
-      "_id": "17248811"
-    },
-    {
-      "date": "May 10, 2026",
-      "artist": "Cyrus Jordan, Goodwife, Amanda Kilburn, Estelle and the Honeydews, Kate Johnson, Union Street",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/10/cyrus-jordan-goodwife-amanda-kilburn-estelle-and-the-honeydews-kate-johnson-union-street-tickets",
-      "source": "Do604",
-      "_id": "17293055"
-    },
-    {
-      "date": "May 11, 2026",
-      "artist": "Death Make Star Dust, Hope Slide, Bry Lovejoy and the Fantomes, Good Morning Saint Romance",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/11/death-make-star-dust-hope-slide-bry-lovejoy-and-the-fantomes-good-morning-saint-romance-tickets",
-      "source": "Do604",
-      "_id": "17271986"
-    },
-    {
-      "date": "May 13, 2026",
-      "artist": "Goodwife, Kers, Gabe Elias & the Many Moons",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/13/gabe-elias-kers-goodwife-tickets",
-      "source": "Do604",
-      "_id": "17227993"
-    },
-    {
-      "date": "May 14, 2026",
-      "artist": "glitterbomb, Lethargy, Spectra, Acid Fountain",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/14/glitterbomb-lethargy-spectra-acid-fountain-tickets",
-      "source": "Do604",
-      "_id": "17240800"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "Hyaenas, Rae Spoon, Pinksnail, Clara Sanchez",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/15/hyaenas-rae-spoon-pinksnail-clara-sanchez-tickets",
-      "source": "Do604",
-      "_id": "17248813"
-    },
-    {
-      "date": "May 16, 2026",
-      "artist": "Francis Baptiste, Numb?Dame?, Dust Cwaine, Cara Batemen",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/16/francis-baptiste-numbdame-dust-cwaine-cara-batemen-tickets",
-      "source": "Do604",
-      "_id": "17275804"
-    },
-    {
-      "date": "May 16, 2026",
-      "artist": "Often Wrong, A Recorded Dawn, Chlorine Time Machine, Taking Tiger Mountain",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/16/francis-baptiste-numb-dame-dust-cwaine-cara-bateman-tickets",
-      "source": "Do604",
-      "_id": "17210324"
-    },
-    {
-      "date": "May 17, 2026",
-      "artist": "Wright, Laylo, Artemis Dara",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/17/wright-laylo-artemis-dara-tickets",
-      "source": "Do604",
-      "_id": "17248815"
-    },
-    {
-      "date": "May 21, 2026",
-      "artist": "tomato trader, Wiles, Tractor Beam, Paisley",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/21/tomato-trader-wiles-tractor-beam-paisley-tickets",
-      "source": "Do604",
-      "_id": "17210325"
-    },
-    {
-      "date": "May 22, 2026",
-      "artist": "Sam Singer and the Beautiful Movers, D.L. Forrest",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/22/sam-singer-and-the-beautiful-movers-d-l-forrest-tickets",
-      "source": "Do604",
-      "_id": "17218453"
-    },
-    {
-      "date": "May 22, 2026",
-      "artist": "Pony Gold, Elliot C Way, Dawson Forsey",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/22/pony-gold-elliot-c-way-dawson-foresy-tickets",
-      "source": "Do604",
-      "_id": "17218454"
-    },
-    {
-      "date": "May 23, 2026",
-      "artist": "Lets Go Girls Volume III",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/23/lets-go-girls-volume-iii-tickets",
-      "source": "Do604",
-      "_id": "17163043"
-    },
-    {
-      "date": "May 28, 2026",
-      "artist": "Cascade, Make It Right, Kama Sutra Murder",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/28/cascade-make-it-right-kama-sutra-murder-tickets",
-      "source": "Do604",
-      "_id": "17315973"
-    },
-    {
-      "date": "May 29, 2026",
-      "artist": "Gigpit Launch Party",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/29/gigpit-launch-party-tickets",
-      "source": "Do604",
-      "_id": "17263334"
-    },
-    {
-      "date": "May 30, 2026",
-      "artist": "G\u00d8\u00d8, Benzonn, checkedout, Exit Strategy",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/5/30/spell-wretched-heart-album-release-party-with-guests-space-queen-and-living-evil-tickets",
-      "source": "Do604",
-      "_id": "17219059"
-    },
-    {
-      "date": "June 04, 2026",
-      "artist": "DOUR, Land Assembly, Semi, stitch",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/6/4/dour-land-assembly-semi-stitch-tickets",
-      "source": "Do604",
-      "_id": "17315974"
-    },
-    {
-      "date": "June 18, 2026",
-      "artist": "Princess Avenue, The Drink Tickets, Phrog, La Haine",
-      "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/6/18/princess-avenue-the-drink-tickets-phrog-la-haine-tickets",
-      "source": "Do604",
-      "_id": "17315975"
+      "_id": "17401492"
     },
     {
       "date": "June 20, 2026",
-      "artist": "The Hausplants, GRDN COLLECTIVE, bloom effect, tomato trader",
+      "artist": "Kara Kata Afrobeat Group",
       "venue": "Green Auto",
-      "link": "https://do604.com/events/2026/6/20/the-hausplants-grdn-collective-bloom-effect-tomato-trader-tickets",
+      "link": "https://do604.com/events/2026/6/20/kara-kata-afrobeat-group-tickets",
       "source": "Do604",
-      "_id": "17248816"
+      "_id": "17413743"
+    },
+    {
+      "date": "June 21, 2026",
+      "artist": "Benzonn, Jian, Trackmeet",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/6/21/benzonn-jian-trackmeet-tickets",
+      "source": "Do604",
+      "_id": "17401493"
     },
     {
       "date": "June 23, 2026",
@@ -2020,6 +378,22 @@
       "_id": "17315976"
     },
     {
+      "date": "June 25, 2026",
+      "artist": "MEGGO, Steph Wall, Nora Kelly Band",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/6/25/the-western-thistles-marin-patenaude-chaya-harvey-ian-badger-tickets",
+      "source": "Do604",
+      "_id": "17329434"
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Hope Slide, Semi, Strawberry Punch, Lovely",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/6/26/hope-slide-semi-strawberry-punch-lovely-tickets",
+      "source": "Do604",
+      "_id": "17381602"
+    },
+    {
       "date": "June 27, 2026",
       "artist": "worrywart, Concrete Vehicles",
       "venue": "Green Auto",
@@ -2028,76 +402,44 @@
       "_id": "17280097"
     },
     {
-      "date": "May 07, 2026",
-      "artist": "Pretty Gay Live!",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/5/7/pretty-gay-live-tickets",
+      "date": "June 27, 2026",
+      "artist": "Early Work, Wayfinder, Arlo Wells, Momentary",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/6/27/early-work-wayfinder-arlo-wells-momentary-tickets",
       "source": "Do604",
-      "_id": "17106667"
+      "_id": "17315977"
     },
     {
-      "date": "May 09, 2026",
-      "artist": "Crystal Marie Denha",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/5/9/crystal-marie-denha-tickets",
+      "date": "June 29, 2026",
+      "artist": "Hannah Harlacher, The Secret Beach, Sam Woy",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/6/29/hannah-harlacher-the-secret-beach-sam-woy-tickets",
       "source": "Do604",
-      "_id": "17040168"
+      "_id": "17401495"
     },
     {
-      "date": "May 13, 2026",
-      "artist": "Your Neighbors",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/5/13/your-neighbors-tickets",
+      "date": "July 02, 2026",
+      "artist": "Chase Coulee, JJ Myers, Neev Doherty & the West Coast Express",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/7/2/chase-coulee-jj-myers-neev-doherty-the-west-coast-express-tickets",
       "source": "Do604",
-      "_id": "16898103"
+      "_id": "17458966"
     },
     {
-      "date": "May 16, 2026",
-      "artist": "Joel Kim Booster",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/5/16/joel-kim-booster-tickets",
+      "date": "July 03, 2026",
+      "artist": "Daysormay, Infidelity, Beach Bown, Cal State Football Stadium",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/7/3/daysormay-infidelity-beach-bown-cal-state-football-stadium-tickets",
       "source": "Do604",
-      "_id": "17105275"
+      "_id": "17413744"
     },
     {
-      "date": "May 20, 2026",
-      "artist": "Shane Todd",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/5/20/shane-todd-tickets",
+      "date": "July 09, 2026",
+      "artist": "Aversions, WACK, Sparkle Blood",
+      "venue": "Green Auto",
+      "link": "https://do604.com/events/2026/7/9/aversions-wack-sparkle-blood-tickets",
       "source": "Do604",
-      "_id": "17018391"
-    },
-    {
-      "date": "May 21, 2026",
-      "artist": "Coleman Hell",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/5/21/coleman-hell-tickets-70jlaej",
-      "source": "Do604",
-      "_id": "17238717"
-    },
-    {
-      "date": "May 27, 2026",
-      "artist": "Reuben Solo",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/5/27/reuben-solo-tickets",
-      "source": "Do604",
-      "_id": "17238719"
-    },
-    {
-      "date": "June 03, 2026",
-      "artist": "Evolution of a Snake",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/6/3/evolution-of-a-snake-tickets",
-      "source": "Do604",
-      "_id": "17105279"
-    },
-    {
-      "date": "June 10, 2026",
-      "artist": "Pete & Bas",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/6/10/pete-bas-tickets",
-      "source": "Do604",
-      "_id": "17142534"
+      "_id": "17401496"
     },
     {
       "date": "June 21, 2026",
@@ -2132,103 +474,23 @@
       "_id": "17290428"
     },
     {
-      "date": "July 11, 2026",
-      "artist": "Omar \u060f",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/7/11/omar-tickets",
-      "source": "Do604",
-      "_id": "17128773"
-    },
-    {
-      "date": "July 18, 2026",
-      "artist": "Alien Hunter",
-      "venue": "Biltmore Cabaret",
-      "link": "https://do604.com/events/2026/7/18/alien-hunter-tickets",
-      "source": "Do604",
-      "_id": "17290429"
-    },
-    {
-      "date": "May 08, 2026",
-      "artist": "Parabolus - Complete Tool Experience",
+      "date": "June 19, 2026",
+      "artist": "Khemmis with Necrofier, Wretched and WORSE",
       "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/8/parabolus-complete-tool-experience-tickets",
+      "link": "https://do604.com/events/2026/6/19/khemmis-with-necrofier-and-wretched-tickets",
       "source": "Do604",
-      "_id": "16650481"
+      "_id": "17211006"
     },
     {
-      "date": "May 10, 2026",
-      "artist": "Cornelia Murr",
+      "date": "June 20, 2026",
+      "artist": "NO DEAD AIR: Sifters, Trip Switch, Exit Strategy, and In Pieces",
       "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/10/cornelia-murr-tickets-wromnwq",
+      "link": "https://do604.com/events/2026/6/20/no-dead-air-sifters-trip-switch-exit-strategy-and-in-pieces-tickets",
       "source": "Do604",
-      "_id": "17014973"
+      "_id": "17272568"
     },
     {
-      "date": "May 17, 2026",
-      "artist": "Midnight",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/17/midnight-satanic-royalty-15th-anniversary-tickets",
-      "source": "Do604",
-      "_id": "16815283"
-    },
-    {
-      "date": "May 18, 2026",
-      "artist": "Smerz with Kaitlin Simotics",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/18/smerz-tickets",
-      "source": "Do604",
-      "_id": "17055784"
-    },
-    {
-      "date": "May 21, 2026",
-      "artist": "The Besnard Lakes",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/21/the-besnard-lakes-tickets",
-      "source": "Do604",
-      "_id": "17014975"
-    },
-    {
-      "date": "May 21, 2026",
-      "artist": "B\u00e9ton Arm\u00e9",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/21/beton-arme-tickets-70odpx1",
-      "source": "Do604",
-      "_id": "17014976"
-    },
-    {
-      "date": "May 30, 2026",
-      "artist": "Soul Music Spectacular - Dawn Pemberton & Krystle Dos Santos",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/5/30/soul-music-spectacular-dawn-pemberton-krystle-dos-santos-tickets",
-      "source": "Do604",
-      "_id": "16991912"
-    },
-    {
-      "date": "June 05, 2026",
-      "artist": "Iron Kingdom - Album Release Party",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/6/5/iron-kingdom-album-release-party-tickets",
-      "source": "Do604",
-      "_id": "17199054"
-    },
-    {
-      "date": "June 11, 2026",
-      "artist": "The Gateway Show",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/6/11/the-gateway-show-tickets",
-      "source": "Do604",
-      "_id": "17199055"
-    },
-    {
-      "date": "June 13, 2026",
-      "artist": "Bleeding Through - 20th Anniversary of 'The Truth'",
-      "venue": "Rickshaw Theatre",
-      "link": "https://do604.com/events/2026/6/13/bleeding-through-20th-anniversary-of-the-truth-tickets",
-      "source": "Do604",
-      "_id": "17179662"
-    },
-    {
-      "date": "May 07, 2026",
+      "date": "June 19, 2026",
       "artist": "Rent Cheque   Amateur Strip Night",
       "venue": "The Cobalt",
       "link": "https://do604.com/events/2026/3/29/rent-cheque-amateur-strip-night-tickets",
@@ -2236,39 +498,23 @@
       "_id": "17152769"
     },
     {
-      "date": "May 07, 2026",
-      "artist": "The Boytles & Mavi",
+      "date": "June 19, 2026",
+      "artist": "Sexy Nerds - COSPLAY DANCE PARTY",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/7/the-boytles-mavi-tickets",
+      "link": "https://do604.com/events/2026/6/19/sexy-nerds-cosplay-dance-party-tickets",
       "source": "Do604",
-      "_id": "17306143"
+      "_id": "17449427"
     },
     {
-      "date": "May 08, 2026",
-      "artist": "OUT FOR KICKS: FREAKY FRIDAY Kick-off Mixer",
+      "date": "June 20, 2026",
+      "artist": "Sexy Nerds - COSPLAY DANCE PARTY",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/8/out-for-kicks-freaky-friday-kick-off-mixer-tickets",
+      "link": "https://do604.com/events/2026/6/20/sexy-nerds-cosplay-dance-party-tickets",
       "source": "Do604",
-      "_id": "17296567"
+      "_id": "17449426"
     },
     {
-      "date": "May 09, 2026",
-      "artist": "Thousand Knives w/ Burn Pattern, The Haunting Party, and Hallucide",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/9/thousand-knives-w-burn-pattern-the-haunting-party-and-hallucide-tickets",
-      "source": "Do604",
-      "_id": "17296566"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "Midnight Altar: Dark Wave, Goth, Synth Pop, Post Punk and more!",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/9/unity-arts-growing-pains-dance-party-tickets",
-      "source": "Do604",
-      "_id": "15908755"
-    },
-    {
-      "date": "May 11, 2026",
+      "date": "June 22, 2026",
       "artist": "ROCK & ROLL BINGO",
       "venue": "The Cobalt",
       "link": "https://do604.com/events/weekly/mon/rock-roll-bingo-tickets",
@@ -2276,7 +522,7 @@
       "_id": "16676737"
     },
     {
-      "date": "May 12, 2026",
+      "date": "June 23, 2026",
       "artist": "GLAM | KARAOKE NIGHT",
       "venue": "The Cobalt",
       "link": "https://do604.com/events/weekly/tue/glam-karaoke-night-tickets",
@@ -2284,332 +530,252 @@
       "_id": "16677166"
     },
     {
-      "date": "May 12, 2026",
+      "date": "June 23, 2026",
       "artist": "Tuesday Karaoke Night",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/12/tuesday-karaoke-night-tickets",
+      "link": "https://do604.com/events/2026/6/23/tuesday-karaoke-night-tickets",
       "source": "Do604",
-      "_id": "17296564"
+      "_id": "17449423"
     },
     {
-      "date": "May 13, 2026",
-      "artist": "2 Girls1 Daw, Boarnana, Cowabummer & Jars",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/13/2-girls1-daw-boarnana-cowabummer-jars-tickets",
-      "source": "Do604",
-      "_id": "17296563"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "Rage Against The Machine, Rush, Primus & KISS Tributes | Live",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/15/rage-against-the-machine-rush-primus-kiss-tributes-live-at-the-cobalt-tickets",
-      "source": "Do604",
-      "_id": "17152771"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "Calm Like a Bomb",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/15/calm-like-a-bomb-tickets",
-      "source": "Do604",
-      "_id": "17306176"
-    },
-    {
-      "date": "May 19, 2026",
-      "artist": "Tuesday Karaoke Night",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/19/tuesday-karaoke-night-tickets",
-      "source": "Do604",
-      "_id": "17296561"
-    },
-    {
-      "date": "May 20, 2026",
-      "artist": "Time Is Money",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/20/time-is-money-tickets",
-      "source": "Do604",
-      "_id": "17271583"
-    },
-    {
-      "date": "May 22, 2026",
+      "date": "June 26, 2026",
       "artist": "Rent Cheque - Amateur Strip Night",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/22/rent-cheque-amateur-strip-night-tickets",
+      "link": "https://do604.com/events/2026/6/26/rent-cheque-amateur-strip-night-tickets",
       "source": "Do604",
-      "_id": "17296558"
+      "_id": "17449421"
     },
     {
-      "date": "May 23, 2026",
-      "artist": "Hot For Teacher with the Student Bodies",
+      "date": "June 27, 2026",
+      "artist": "Mozhgan w/ GUESTS",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/23/hot-for-teacher-with-the-student-bodies-tickets",
+      "link": "https://do604.com/events/2026/6/27/mozhgan-w-guests-tickets",
       "source": "Do604",
-      "_id": "17248052"
+      "_id": "17449420"
     },
     {
-      "date": "May 24, 2026",
-      "artist": "nomu, 2girls1daw, mykissera, alice's corpse",
+      "date": "June 28, 2026",
+      "artist": "THE CONVALESCENCE with SQUID HAMMER",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/24/nomu-2girls1daw-mykissera-alice-s-corpse-tickets",
+      "link": "https://do604.com/events/2026/6/28/the-convalescence-with-squid-hammer-tickets",
       "source": "Do604",
-      "_id": "17296557"
+      "_id": "17365818"
     },
     {
-      "date": "May 29, 2026",
-      "artist": "Verboden Festival   Day One",
+      "date": "June 29, 2026",
+      "artist": "Grocery Bag w/ GUESTS",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/29/verboden-festival-day-one-tickets",
+      "link": "https://do604.com/events/2026/6/29/grocery-bag-w-guests-tickets",
       "source": "Do604",
-      "_id": "17296556"
+      "_id": "17449418"
     },
     {
-      "date": "May 30, 2026",
-      "artist": "Verboden Festival   Day Two",
+      "date": "June 30, 2026",
+      "artist": "Mal Criado Album Release",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/30/verboden-festival-day-two-tickets",
+      "link": "https://do604.com/events/2026/6/30/mal-criado-album-release-tickets",
       "source": "Do604",
-      "_id": "17296555"
+      "_id": "17449417"
     },
     {
-      "date": "May 31, 2026",
-      "artist": "Verboden Festival   Day Three",
+      "date": "July 08, 2026",
+      "artist": "OLGA with TOTAL CHROMA",
       "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/5/31/verboden-festival-day-three-tickets",
+      "link": "https://do604.com/events/2026/7/8/olga-with-total-chroma-tickets",
       "source": "Do604",
-      "_id": "17296554"
+      "_id": "17505116"
     },
     {
-      "date": "June 12, 2026",
-      "artist": "Emotionz (Album Release Party)",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/6/12/emotionz-album-release-party-tickets",
-      "source": "Do604",
-      "_id": "17143359"
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "TEMPLARS w/ guests",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2026/7/11/templars-w-guests-tickets",
-      "source": "Do604",
-      "_id": "17226736"
-    },
-    {
-      "date": "January 05, 2027",
-      "artist": "Sacred Skin w. Wants & Decomme",
-      "venue": "The Cobalt",
-      "link": "https://do604.com/events/2027/1/5/sacred-skin-w-wants-decomme-tickets",
-      "source": "Do604",
-      "_id": "15875696"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "Emo Night Vancouver",
+      "date": "June 19, 2026",
+      "artist": "World Cup Watch Parties at Hollywood Theatre",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/9/emo-night-vancouver-tickets",
+      "link": "https://do604.com/events/2026/6/11/world-cup-watch-party-at-the-hollywood-tickets",
       "source": "Do604",
-      "_id": "17167549"
+      "_id": "17246781"
     },
     {
-      "date": "May 10, 2026",
-      "artist": "Powfu Presents: The Lofi Library Tour",
+      "date": "June 19, 2026",
+      "artist": "Scotland vs Morocco",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/10/powfu-presents-the-lofi-library-tour-tickets",
+      "link": "https://do604.com/events/2026/6/19/scotland-vs-morocco-tickets",
       "source": "Do604",
-      "_id": "16821229"
+      "_id": "17288404"
     },
     {
-      "date": "May 11, 2026",
-      "artist": "Craft Club Cinema: Sense & Sensibility",
+      "date": "June 19, 2026",
+      "artist": "Brazil vs Haiti",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/11/craft-club-cinema-sense-sensibility-tickets",
+      "link": "https://do604.com/events/2026/6/19/brazil-vs-haiti-tickets",
       "source": "Do604",
-      "_id": "17181846"
+      "_id": "17288405"
     },
     {
-      "date": "May 12, 2026",
-      "artist": "The HIP EXPERIENCE",
+      "date": "June 20, 2026",
+      "artist": "Germany vs Ivory Coast",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/12/the-hip-experience-tickets",
+      "link": "https://do604.com/events/2026/6/20/germany-vs-ivory-coast-tickets",
       "source": "Do604",
-      "_id": "16874959"
+      "_id": "17288406"
     },
     {
-      "date": "May 14, 2026",
-      "artist": "Grease Movie and Drag Show with Vajayjay Abrams",
+      "date": "June 20, 2026",
+      "artist": "Ecuador vs Curacao",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/14/grease-movie-and-drag-show-with-vajayjay-abrams-tickets",
+      "link": "https://do604.com/events/2026/6/20/ecuador-vs-curacao-tickets",
       "source": "Do604",
-      "_id": "17147724"
+      "_id": "17288407"
     },
     {
-      "date": "May 15, 2026",
-      "artist": "The Hustle: 70's Disco Party",
+      "date": "June 20, 2026",
+      "artist": "Pitbull Rave",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/15/the-hustle-70-s-disco-party-tickets",
+      "link": "https://do604.com/events/2026/6/20/pitbull-rave-tickets",
       "source": "Do604",
-      "_id": "17206286"
+      "_id": "17288408"
     },
     {
-      "date": "May 16, 2026",
-      "artist": "Dancing Queen: ABBA x Queen Dance Party",
+      "date": "June 21, 2026",
+      "artist": "Spain vs Saudi Arabia",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/16/dancing-queen-abba-x-queen-dance-party-tickets",
+      "link": "https://do604.com/events/2026/6/21/spain-vs-saudi-arabia-tickets",
       "source": "Do604",
-      "_id": "17206287"
+      "_id": "17288409"
     },
     {
-      "date": "May 17, 2026",
-      "artist": "The Living Orchestra - Album Release Show",
+      "date": "June 21, 2026",
+      "artist": "Belgium vs Iran",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/17/the-living-orchestra-album-release-show-tickets",
+      "link": "https://do604.com/events/2026/6/21/belgium-vs-iran-tickets",
       "source": "Do604",
-      "_id": "16802698"
+      "_id": "17288410"
     },
     {
-      "date": "May 20, 2026",
-      "artist": "POiSON GiRLFRiEND",
+      "date": "June 22, 2026",
+      "artist": "Argentina vs Austria",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/20/poison-girlfriend-tickets",
+      "link": "https://do604.com/events/2026/6/22/argentina-vs-austria-tickets",
       "source": "Do604",
-      "_id": "17134695"
+      "_id": "17288411"
     },
     {
-      "date": "May 22, 2026",
-      "artist": "Corb Lund \u2013 Bottom of the Deck Tour",
+      "date": "June 22, 2026",
+      "artist": "France vs Iraq",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/22/corb-lund-bottom-of-the-deck-tour-tickets",
+      "link": "https://do604.com/events/2026/6/22/france-vs-iraq-tickets",
       "source": "Do604",
-      "_id": "16913396"
+      "_id": "17288412"
     },
     {
-      "date": "May 23, 2026",
-      "artist": "Corb Lund \u2013 Bottom of the Deck Tour",
+      "date": "June 23, 2026",
+      "artist": "Portugal vs Uzbekistan",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/23/corb-lund-bottom-of-the-deck-tour-tickets",
+      "link": "https://do604.com/events/2026/6/23/portugal-vs-uzbekistan-tickets",
       "source": "Do604",
-      "_id": "16913397"
+      "_id": "17288413"
     },
     {
-      "date": "May 24, 2026",
-      "artist": "Curiosities & Classics: Alice in Wonderland (Early)",
+      "date": "June 23, 2026",
+      "artist": "England vs Ghana",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/24/curiosities-classics-alice-in-wonderland-early-tickets",
+      "link": "https://do604.com/events/2026/6/23/england-vs-ghana-tickets",
       "source": "Do604",
-      "_id": "17311905"
+      "_id": "17288414"
     },
     {
-      "date": "May 26, 2026",
-      "artist": "Close Your Eyes",
+      "date": "June 23, 2026",
+      "artist": "ASHLEY MACISAAC Live in Vancouver",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/26/close-your-eyes-tickets",
+      "link": "https://do604.com/events/2026/6/23/ashley-macisaac-tickets",
       "source": "Do604",
-      "_id": "16984039"
+      "_id": "17236661"
     },
     {
-      "date": "May 28, 2026",
-      "artist": "Fake Shark",
+      "date": "June 24, 2026",
+      "artist": "Canada vs Switzerland",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/28/fake-shark-tickets",
+      "link": "https://do604.com/events/2026/6/24/canada-vs-switzerland-tickets",
       "source": "Do604",
-      "_id": "17070056"
+      "_id": "17288417"
     },
     {
-      "date": "May 29, 2026",
-      "artist": "Spank Williams",
+      "date": "June 24, 2026",
+      "artist": "Scotland vs Brazil",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/29/spank-williams-tickets",
+      "link": "https://do604.com/events/2026/6/24/scotland-vs-brazil-tickets",
       "source": "Do604",
-      "_id": "17070057"
+      "_id": "17288415"
     },
     {
-      "date": "May 30, 2026",
-      "artist": "SIN CITY - 25 Year Anniversary Fetish Ball",
+      "date": "June 24, 2026",
+      "artist": "Mexico vs Czechia",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/30/sin-city-25-year-anniversary-fetish-ball-tickets",
+      "link": "https://do604.com/events/2026/6/24/mexico-vs-czechia-tickets",
       "source": "Do604",
-      "_id": "17276851"
+      "_id": "17288416"
     },
     {
-      "date": "May 31, 2026",
-      "artist": "Full Circle - Dance Showcase",
+      "date": "June 25, 2026",
+      "artist": "Stewart Copeland: Have I Said Too Much? The Police, Hollywood, and Other Adventures",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/5/31/full-circle-dance-showcase-tickets",
+      "link": "https://do604.com/events/2026/6/25/stewart-copeland-have-i-said-too-much-the-police-hollywood-and-other-adventures-tickets",
       "source": "Do604",
-      "_id": "17288397"
+      "_id": "17121529"
     },
     {
-      "date": "June 03, 2026",
-      "artist": "Battle of the Bands",
+      "date": "June 26, 2026",
+      "artist": "Norway vs France",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/6/3/battle-of-the-bands-tickets",
+      "link": "https://do604.com/events/2026/6/26/norway-vs-france-tickets",
       "source": "Do604",
-      "_id": "17225473"
+      "_id": "17288418"
     },
     {
-      "date": "June 05, 2026",
-      "artist": "Boogie Down Broadway",
+      "date": "June 26, 2026",
+      "artist": "The Ex with Grdina/Lillinger",
       "venue": "Hollywood Theatre",
-      "link": "https://do604.com/events/2026/6/5/boogie-down-broadway-tickets",
+      "link": "https://do604.com/events/2026/6/26/the-ex-with-grdina-lillinger-tickets",
       "source": "Do604",
-      "_id": "17167550"
+      "_id": "17195059"
     },
     {
-      "date": "May 07, 2026",
-      "artist": "Propagate Pres. Mechatok",
+      "date": "June 26, 2026",
+      "artist": "Cazztek & Nicky Genesis",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/6/26/cazztek-nicky-genesis-tickets",
+      "source": "Do604",
+      "_id": "17167551"
+    },
+    {
+      "date": "June 27, 2026",
+      "artist": "Panama vs England",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/6/27/panama-vs-england-tickets",
+      "source": "Do604",
+      "_id": "17288419"
+    },
+    {
+      "date": "June 27, 2026",
+      "artist": "Colombia vs Portugal",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/6/27/colombia-vs-portugal-tickets",
+      "source": "Do604",
+      "_id": "17288420"
+    },
+    {
+      "date": "June 27, 2026",
+      "artist": "Jordan vs Argentina",
+      "venue": "Hollywood Theatre",
+      "link": "https://do604.com/events/2026/6/27/jordan-vs-argentina-tickets",
+      "source": "Do604",
+      "_id": "17288421"
+    },
+    {
+      "date": "June 19, 2026",
+      "artist": "Skyla Tylaa",
       "venue": "Fortune Sound Club",
-      "link": "https://do604.com/events/2026/5/7/propagate-pres-mechatok-tickets",
+      "link": "https://do604.com/events/2026/6/19/skyla-tylaa-tickets",
       "source": "Do604",
-      "_id": "17020511"
-    },
-    {
-      "date": "May 09, 2026",
-      "artist": "Take Me Back To 2016",
-      "venue": "Fortune Sound Club",
-      "link": "https://do604.com/events/2026/5/9/take-me-back-to-2016-tickets",
-      "source": "Do604",
-      "_id": "17244337"
-    },
-    {
-      "date": "May 15, 2026",
-      "artist": "Iceman Listening Party At Happy Ending Fridays",
-      "venue": "Fortune Sound Club",
-      "link": "https://do604.com/events/2026/5/15/2000-y2-k-hits-and-fits-at-happy-ending-fridays-tickets",
-      "source": "Do604",
-      "_id": "17244338"
-    },
-    {
-      "date": "May 16, 2026",
-      "artist": "Best Of 2010\u2019S At Wya? Saturdays",
-      "venue": "Fortune Sound Club",
-      "link": "https://do604.com/events/2026/5/16/best-of-2010-s-at-wya-saturdays-tickets",
-      "source": "Do604",
-      "_id": "17254687"
-    },
-    {
-      "date": "May 25, 2026",
-      "artist": "INJI: this tour is superlame.",
-      "venue": "Fortune Sound Club",
-      "link": "https://do604.com/events/2026/5/25/inji-this-tour-is-superlame-tickets",
-      "source": "Do604",
-      "_id": "16633840"
-    },
-    {
-      "date": "May 26, 2026",
-      "artist": "Smokedope2016",
-      "venue": "Fortune Sound Club",
-      "link": "https://do604.com/events/2026/5/26/smokedope2016-tickets",
-      "source": "Do604",
-      "_id": "17137214"
-    },
-    {
-      "date": "May 27, 2026",
-      "artist": "Thaiboy Digital: Underworld Tour",
-      "venue": "Fortune Sound Club",
-      "link": "https://do604.com/events/2026/5/27/thaiboy-digital-underworld-tour-tickets",
-      "source": "Do604",
-      "_id": "17234180"
+      "_id": "17348377"
     },
     {
       "date": "June 20, 2026",
@@ -2618,6 +784,46 @@
       "link": "https://do604.com/events/2026/6/20/mr-tout-le-monde-tickets",
       "source": "Do604",
       "_id": "17130296"
+    },
+    {
+      "date": "June 20, 2026",
+      "artist": "Cold Drinks At Wya? Saturdays",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/6/20/cold-drinks-at-wya-saturdays-tickets",
+      "source": "Do604",
+      "_id": "17472506"
+    },
+    {
+      "date": "June 22, 2026",
+      "artist": "Soliven Of Manila Grey At Midnight Mondays",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/6/22/soliven-of-manila-grey-at-midnight-mondays-tickets",
+      "source": "Do604",
+      "_id": "17502458"
+    },
+    {
+      "date": "June 25, 2026",
+      "artist": "Black0 Ut",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/6/25/black0-ut-tickets",
+      "source": "Do604",
+      "_id": "17483363"
+    },
+    {
+      "date": "June 26, 2026",
+      "artist": "Club:Obsessed At Happy Ending Fridays",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/6/26/club-obsessed-at-happy-ending-fridays-tickets",
+      "source": "Do604",
+      "_id": "17454457"
+    },
+    {
+      "date": "June 27, 2026",
+      "artist": "Best Of 2010\u2019S At Wya? Saturdays",
+      "venue": "Fortune Sound Club",
+      "link": "https://do604.com/events/2026/6/27/best-of-2010-s-at-wya-saturdays-tickets",
+      "source": "Do604",
+      "_id": "17442961"
     },
     {
       "date": "June 30, 2026",

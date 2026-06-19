@@ -7,7 +7,7 @@ Reads from scanner.py's output and generates events.json
 import json
 import sys
 from datetime import datetime
-from scanner import collect_all_events, deduplicate_events
+from scanner import collect_all_events, deduplicate_events, filter_events_to_window
 
 
 def main():
@@ -18,6 +18,8 @@ def main():
     print(f"Found {len(events)} raw events", file=sys.stderr)
     events = deduplicate_events(events)
     print(f"After dedup: {len(events)} events", file=sys.stderr)
+    events = filter_events_to_window(events)
+    print(f"After date filter: {len(events)} events", file=sys.stderr)
     
     # Prepare output
     output = {

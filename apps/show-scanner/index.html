@@ -199,6 +199,7 @@
 
     <script>
         const SQUAMISH_KEYWORDS = ['trickster', 'backyard', 'brackendale'];
+        const WEEKS_AHEAD = 3;
         let allEvents = [];
         let currentFilter = 'all';
         let selectedVenues = new Set();
@@ -316,8 +317,23 @@
             return new Date('9999-12-31'); // TBD goes to end
         }
 
+        function isWithinDateWindow(event) {
+            const parsed = parseDate(event.date);
+            if (Number.isNaN(parsed.getTime()) || parsed.getFullYear() === 9999) {
+                return true;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const windowEnd = new Date(today);
+            windowEnd.setDate(windowEnd.getDate() + (WEEKS_AHEAD * 7));
+
+            return parsed >= today && parsed <= windowEnd;
+        }
+
         function renderEvents() {
-            const filtered = filterEvents(allEvents);
+            const filtered = filterEvents(allEvents).filter(isWithinDateWindow);
             const { vancouver, squamish } = groupByLocation(filtered);
             
             // Sort by date
