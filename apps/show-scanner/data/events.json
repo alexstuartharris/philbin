@@ -1,94 +1,8 @@
 {
-  "generated": "2026-07-03T16:02:53.769871Z",
-  "count": 48,
+  "generated": "2026-07-10T16:03:10.999374Z",
+  "count": 44,
   "spotify_profile_loaded": true,
   "events": [
-    {
-      "date": "July 03, 2026",
-      "artist": "Modest Mouse",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43089850",
-      "source": "Songkick",
-      "interest_score": 63,
-      "matched_artists": [
-        "Modest Mouse"
-      ],
-      "interest_reason": "Matches your Spotify history: Modest Mouse",
-      "score_breakdown": [
-        {
-          "type": "direct_history_match",
-          "points": 62.52,
-          "artist": "Modest Mouse",
-          "detail": "Direct match from your Spotify history (Modest Mouse)"
-        }
-      ]
-    },
-    {
-      "date": "July 03, 2026",
-      "artist": "Black Wizard",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43141163",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 04, 2026",
-      "artist": "Wolfmother \u2022 Love Gang",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/42871077",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 04, 2026",
-      "artist": "SK\u00c1LD",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43206712",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 04, 2026",
-      "artist": "Waylon Wyatt",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/42982117",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 04, 2026",
-      "artist": "Tape B \u2022 Effin",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43299704",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 08, 2026",
-      "artist": "The Head \u2022 the Heart",
-      "venue": "Orpheum",
-      "link": "https://www.songkick.com/concerts/43090607",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
     {
       "date": "July 10, 2026",
       "artist": "Racoma",
@@ -114,215 +28,6 @@
       "artist": "Mean Bikini, Middle-Aged Queers, \u2022 BERZERK",
       "venue": "Green Auto",
       "link": "https://www.songkick.com/concerts/43272895",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Ryan Beatty",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43270180",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Nekrogoblikon \u2022 Rivers of Nihil",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43289465",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Yaelokre",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43281748",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Amanda Marshall",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43289466",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Paul Cauthen",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43294476",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Allan Rayman",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43258418",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Tape B \u2022 Effin",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43299704",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Beverly Glenn-Copeland",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43277256",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Wheeler Walker \u2022 Jr.",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43261968",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Sawyer Hill",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43261408",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Dwayne Gretzky",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43285832",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Sienna Spiro",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43264125",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Shiner \u2022 Fotocrime",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43277665",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Chris Murphy",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43289523",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Paris Jackson",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43262025",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "truck violence",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43280061",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Slash Need",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43280077",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Janky Bungag",
-      "venue": "Green Auto",
-      "link": "https://www.songkick.com/concerts/43293693",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 11, 2026",
-      "artist": "Shimbashi Station",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43298294",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -364,7 +69,7 @@
     },
     {
       "date": "July 12, 2026",
-      "artist": "CANNONS",
+      "artist": "CANNONS \u2022 Vox Rea",
       "venue": "Commodore Ballroom",
       "link": "https://www.songkick.com/concerts/43186949",
       "source": "Songkick",
@@ -407,6 +112,17 @@
       "score_breakdown": []
     },
     {
+      "date": "July 13, 2026",
+      "artist": "David Lee Roth",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43313177",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
       "date": "July 15, 2026",
       "artist": "Janky Bungag",
       "venue": "Green Auto",
@@ -430,9 +146,9 @@
     },
     {
       "date": "July 16, 2026",
-      "artist": "Slash Need",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43280077",
+      "artist": "Soleil",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/43251386",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -441,9 +157,9 @@
     },
     {
       "date": "July 16, 2026",
-      "artist": "Soleil",
-      "venue": "Green Auto",
-      "link": "https://www.songkick.com/concerts/43251386",
+      "artist": "Slash Need",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43280077",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -466,6 +182,160 @@
       "artist": "Shimbashi Station",
       "venue": "Fox Cabaret",
       "link": "https://www.songkick.com/concerts/43298294",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Brandon Flowers",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43292241",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Turnover \u2022 Trauma Ray",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43289477",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Phillip Phillips \u2022 Elias Hix",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43289436",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Black Mountain",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43296960",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "We Are Scientists",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43274868",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Paul Cauthen",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43294476",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "The Dillinger Escape Plan, XCOMM, \u2022 Squid Pisser",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43277293",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Nekrogoblikon \u2022 Rivers of Nihil",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43289465",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Amanda Marshall",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/43289466",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Dwayne Gretzky",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43285832",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Chris Murphy",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43289523",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Faux Real",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43280074",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Royal Oak \u2022 Dempsey Bolton",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43296952",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 18, 2026",
+      "artist": "Janky Bungag",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/43293693",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -563,6 +433,94 @@
       "artist": "Disney",
       "venue": "Orpheum",
       "link": "https://www.songkick.com/concerts/43191308",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 25, 2026",
+      "artist": "Disney \u2022 Vancouver Symphony Orchestra",
+      "venue": "Orpheum",
+      "link": "https://www.songkick.com/concerts/43191310",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 26, 2026",
+      "artist": "Kevian Kraemer",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43171464",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 27, 2026",
+      "artist": "friendship philly \u2022 Florry",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43244227",
+      "source": "Songkick",
+      "interest_score": 41,
+      "matched_artists": [
+        "Florry"
+      ],
+      "interest_reason": "Related to your Spotify history via Wednesday",
+      "score_breakdown": [
+        {
+          "type": "related_artist",
+          "points": 41.0,
+          "artist": "Florry",
+          "seed_artist": "Wednesday",
+          "rank": 11,
+          "detail": "Florry is similar to Wednesday (rank 11 on cached similar-artists list)"
+        }
+      ]
+    },
+    {
+      "date": "July 31, 2026",
+      "artist": "WU LYF \u2022 bondo",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43205938",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 31, 2026",
+      "artist": "Aaron Rowe",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43156688",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 31, 2026",
+      "artist": "Queer As Funk",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43060149",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "July 31, 2026",
+      "artist": "Ripcordz",
+      "venue": "Lanalou's",
+      "link": "https://www.songkick.com/concerts/43312448",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
