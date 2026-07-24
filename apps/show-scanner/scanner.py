@@ -62,7 +62,7 @@ EXCLUDE_ARTISTS = {
     "uada", "dungeon serpent", "castle"  # metal bands
 }
 
-WEEKS_AHEAD = 3
+WEEKS_AHEAD = 6
 LOCAL_TZ = ZoneInfo("America/Vancouver")
 ROOT_DIR = Path(__file__).resolve().parents[2]
 SPOTIFY_PROFILE_PATH = ROOT_DIR / "apps/show-scanner/data/spotify_profile.json"

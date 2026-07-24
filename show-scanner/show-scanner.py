@@ -66,7 +66,7 @@ EXCLUDE_ARTISTS = {
     "uada", "dungeon serpent", "castle"  # metal bands
 }
 
-WEEKS_AHEAD = 3
+WEEKS_AHEAD = 6
 LOCAL_TZ = ZoneInfo("America/Vancouver")
 ROOT_DIR = Path(__file__).resolve().parents[1]
 LOCAL_APP_DATA = ROOT_DIR / "apps/show-scanner/data/events.json"
@@ -629,7 +629,7 @@ def scrape_brackendale():
 
 # === Main ===
 
-def collect_all_events(max_pages=4):
+def collect_all_events(max_pages=6):
     """Collect events from all sources."""
     all_events = []
     
@@ -686,30 +686,16 @@ def format_digest(events):
     if not events:
         return "🎸 **Weekly Show Digest**\n\nNo shows found matching your criteria. Maybe check venue websites directly?"
     
-    likely = [e for e in events if e.get("interest_score", 0) >= LIKELY_SHOW_THRESHOLD]
-
-    # Split into Vancouver and Squamish
-    squamish_keywords = ["trickster", "backyard", "brackendale"]
-    van_events = []
-    sqm_events = []
-    
-    for e in events:
-        venue_lower = e.get("venue", "").lower()
-        if any(kw in venue_lower for kw in squamish_keywords):
-            sqm_events.append(e)
-        else:
-            van_events.append(e)
-    
-    # Sort by date
-    van_events.sort(key=lambda x: parse_date_for_sort(x.get("date", "")))
-    sqm_events.sort(key=lambda x: parse_date_for_sort(x.get("date", "")))
+    likely = sorted(
+        [e for e in events if e.get("interest_score", 0) >= LIKELY_SHOW_THRESHOLD],
+        key=lambda e: (-e.get("interest_score", 0), parse_date_for_sort(e.get("date", ""))),
+    )
     
     lines = ["🎸 **Weekly Show Digest**\n"]
 
     if likely:
-        likely = sorted(likely, key=lambda e: (-e.get("interest_score", 0), parse_date_for_sort(e.get("date", ""))))
-        lines.append("**Likely For Alex**")
-        for e in likely[:8]:
+        lines.append("**Most Relevant Matches**")
+        for e in likely[:10]:
             date = e.get('date', 'TBD')
             artist = e.get('artist', 'TBD')
             venue = e.get('venue', 'TBD')
@@ -718,25 +704,14 @@ def format_digest(events):
             suffix = f" — {reason}" if reason else ""
             lines.append(f"• {date} — **{artist}** @ {venue} _(score {score})_{suffix}")
         lines.append("")
-    
-    if van_events:
-        lines.append("**Vancouver**")
-        for e in van_events:
-            date = e.get('date', 'TBD')
-            artist = e.get('artist', 'TBD')
-            venue = e.get('venue', 'TBD')
-            marker = "⭐ " if e.get("interest_score", 0) >= LIKELY_SHOW_THRESHOLD else ""
-            lines.append(f"• {date} — {marker}**{artist}** @ {venue}")
+
+        hidden_count = max(0, len(events) - min(len(likely), 10))
+        if hidden_count:
+            lines.append(f"_Skipped {hidden_count} lower-scoring shows from the 6-week scan._")
         lines.append("")
-    
-    if sqm_events:
-        lines.append("**Squamish**")
-        for e in sqm_events:
-            date = e.get('date', 'TBD')
-            artist = e.get('artist', 'TBD')
-            venue = e.get('venue', 'TBD')
-            marker = "⭐ " if e.get("interest_score", 0) >= LIKELY_SHOW_THRESHOLD else ""
-            lines.append(f"• {date} — {marker}**{artist}** @ {venue}")
+    else:
+        lines.append("No high-confidence matches this week.")
+        lines.append(f"_Scanned {len(events)} shows across the 6-week window._")
         lines.append("")
     
     lines.append(f"_Scanned {datetime.now().strftime('%Y-%m-%d %H:%M')}_")
@@ -798,7 +773,7 @@ def publish_events(events):
 def parse_args():
     """Parse CLI arguments."""
     parser = argparse.ArgumentParser(description="Generate Alex's weekly show digest.")
-    parser.add_argument("pages", nargs="?", type=int, default=4, help="Songkick pages to scan")
+    parser.add_argument("pages", nargs="?", type=int, default=6, help="Songkick pages to scan")
     parser.add_argument("--publish", action="store_true", help="Update and push GitHub Pages JSON if it changed")
     return parser.parse_args()
 
