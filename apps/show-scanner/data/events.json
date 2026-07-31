@@ -1,74 +1,8 @@
 {
-  "generated": "2026-07-24T17:40:47.091082Z",
-  "count": 69,
+  "generated": "2026-07-31T16:04:31.310342Z",
+  "count": 70,
   "spotify_profile_loaded": true,
   "events": [
-    {
-      "date": "July 24, 2026",
-      "artist": "Chinese American Bear",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43060158",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 24, 2026",
-      "artist": "Disney",
-      "venue": "Orpheum",
-      "link": "https://www.songkick.com/concerts/43191308",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 25, 2026",
-      "artist": "Disney \u2022 Vancouver Symphony Orchestra",
-      "venue": "Orpheum",
-      "link": "https://www.songkick.com/concerts/43191310",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 26, 2026",
-      "artist": "Kevian Kraemer",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43171464",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 27, 2026",
-      "artist": "friendship philly \u2022 Florry",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43244227",
-      "source": "Songkick",
-      "interest_score": 41,
-      "matched_artists": [
-        "Florry"
-      ],
-      "interest_reason": "Related to your Spotify history via Wednesday",
-      "score_breakdown": [
-        {
-          "type": "related_artist",
-          "points": 41.0,
-          "artist": "Florry",
-          "seed_artist": "Wednesday",
-          "rank": 11,
-          "detail": "Florry is similar to Wednesday (rank 11 on cached similar-artists list)"
-        }
-      ]
-    },
     {
       "date": "July 31, 2026",
       "artist": "WU LYF \u2022 bondo",
@@ -118,226 +52,6 @@
       "artist": "Paige Drobot",
       "venue": "Green Auto",
       "link": "https://www.songkick.com/concerts/43327773",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Lily Allen",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43320787",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Houndmouth \u2022 Dogpark",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43328409",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Hazlett",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43328542",
-      "source": "Songkick",
-      "interest_score": 40,
-      "matched_artists": [
-        "Hazlett"
-      ],
-      "interest_reason": "Related to your Spotify history via Richy Mitch & The Coal Miners",
-      "score_breakdown": [
-        {
-          "type": "related_artist",
-          "points": 39.82,
-          "artist": "Hazlett",
-          "seed_artist": "Richy Mitch & The Coal Miners",
-          "rank": 10,
-          "detail": "Hazlett is similar to Richy Mitch & The Coal Miners (rank 10 on cached similar-artists list)"
-        }
-      ]
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "The Bouncing Souls, The Suicide Machines, \u2022 The Aggrolites",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43333175",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Freak Slug",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43311559",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Demon Hunter, Wolves at the Gate, \u2022 Bloodlines",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43333124",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "The Rasmus, Saint Agnes, \u2022 Death Valley Dreams",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43311532",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "City of the Sun",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43320791",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "The Cactus Blossoms",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43310582",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Nep",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43325008",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Resavoir",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43311551",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Ruby Haunt",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43325010",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Messa",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43333188",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "ARTMS",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43328387",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Polyrhythmics",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43320295",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Playlunch",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43324865",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Kontravoid \u2022 buzz kull",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43313614",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Stick Men",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43314838",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "July 31, 2026",
-      "artist": "Mike D (US)",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43329725",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -467,9 +181,218 @@
     },
     {
       "date": "August 08, 2026",
-      "artist": "Leon's Getting Larger, Worrywart, \u2022 Tall Mary",
-      "venue": "Green Auto",
-      "link": "https://www.songkick.com/concerts/43286775",
+      "artist": "Lily Allen",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/43320787",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Arch Enemy, The Black Dahlia Murder, \u2022 Septicflesh",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43227768",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Houndmouth \u2022 Dogpark",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43328409",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Hazlett",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43328542",
+      "source": "Songkick",
+      "interest_score": 40,
+      "matched_artists": [
+        "Hazlett"
+      ],
+      "interest_reason": "Related to your Spotify history via Richy Mitch & The Coal Miners",
+      "score_breakdown": [
+        {
+          "type": "related_artist",
+          "points": 39.82,
+          "artist": "Hazlett",
+          "seed_artist": "Richy Mitch & The Coal Miners",
+          "rank": 10,
+          "detail": "Hazlett is similar to Richy Mitch & The Coal Miners (rank 10 on cached similar-artists list)"
+        }
+      ]
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Quadeca",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43336632",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "The Bouncing Souls, The Suicide Machines, \u2022 The Aggrolites",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43333175",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Demon Hunter, Wolves at the Gate, \u2022 Bloodlines",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43333124",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Dogstar",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43341435",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Ruby Haunt",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43325010",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Nep",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43325008",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "City of the Sun",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43320791",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Triptides",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43337464",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "ARTMS",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43328387",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Messa",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43333188",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Polyrhythmics",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43320295",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Playlunch",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43324865",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Wax Mannequin",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43339028",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Miesha \u2022 the Spanks",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43316130",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 08, 2026",
+      "artist": "Mike D (US)",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43329725",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -525,6 +448,17 @@
       "artist": "Royal Oak \u2022 Dempsey Bolton",
       "venue": "Fox Cabaret",
       "link": "https://www.songkick.com/concerts/43296952",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "August 14, 2026",
+      "artist": "Wax Mannequin",
+      "venue": "The Cobalt",
+      "link": "https://www.songkick.com/concerts/43339028",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -620,6 +554,17 @@
       "score_breakdown": []
     },
     {
+      "date": "August 22, 2026",
+      "artist": "The Magic Triangle",
+      "venue": "Lanalou's",
+      "link": "https://www.songkick.com/concerts/43342811",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
       "date": "August 23, 2026",
       "artist": "Silkworm",
       "venue": "Rickshaw Theatre",
@@ -708,6 +653,17 @@
       "score_breakdown": []
     },
     {
+      "date": "August 29, 2026",
+      "artist": "Twisted Teens",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43347091",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
       "date": "September 02, 2026",
       "artist": "Southern Culture On The Skids",
       "venue": "Rickshaw Theatre",
@@ -764,9 +720,9 @@
     },
     {
       "date": "September 04, 2026",
-      "artist": "Weekend Nachos",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43314807",
+      "artist": "Emo Night Brooklyn",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43335592",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -774,10 +730,54 @@
       "score_breakdown": []
     },
     {
-      "date": "September 04, 2026",
-      "artist": "Emo Night Brooklyn",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43335592",
+      "date": "September 05, 2026",
+      "artist": "Tiffany Day \u2022 Tommy Fleece",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43198481",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 05, 2026",
+      "artist": "Zoh Amba",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43195576",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 08, 2026",
+      "artist": "Brandon Flowers",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43292241",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 09, 2026",
+      "artist": "Ryan Beatty",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43270180",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 11, 2026",
+      "artist": "The Charlatans",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43171513",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
