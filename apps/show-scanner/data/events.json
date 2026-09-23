@@ -1,382 +1,8 @@
 {
-  "generated": "2026-09-08T00:46:07.971131Z",
-  "count": 103,
+  "generated": "2026-09-23T01:59:53.081232Z",
+  "count": 118,
   "spotify_profile_loaded": true,
   "events": [
-    {
-      "date": "September 08, 2026",
-      "artist": "Brandon Flowers",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43292241",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 09, 2026",
-      "artist": "Ryan Beatty",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43270180",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 11, 2026",
-      "artist": "The Charlatans \u2022 Frankie Rose",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43171513",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 12, 2026",
-      "artist": "Hieroglyphics \u2022 Hiero Day",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43345404",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 13, 2026",
-      "artist": "Stick Men",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43314838",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 14, 2026",
-      "artist": "Seedhe Maut",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43003973",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Jos\u00e9 Gonz\u00e1lez",
-      "venue": "Orpheum Theatre",
-      "link": "https://www.songkick.com/concerts/43209989",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Lyle Lovett",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43155151",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Dark Thoughts",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43353664",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Chrissy Chlapecka",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43251638",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Yung Gravy \u2022 Terror Reid",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43382636",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Amorphis \u2022 Insomnium",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43395296",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Elder",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43376582",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "So Faint \u2022 Hannah Georgas",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43383357",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Tyler Hilton",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43376908",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "The Funk Hunters",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43375536",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Hayden Everett",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43383972",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "WAAX",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43377647",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 15, 2026",
-      "artist": "Gimme Gimme Disco",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43336072",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 16, 2026",
-      "artist": "Ninajirachi \u2022 mgna crrrta",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43201571",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 16, 2026",
-      "artist": "Gordi",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43350973",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 16, 2026",
-      "artist": "Dent May",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43224997",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 16, 2026",
-      "artist": "Dogstar \u2022 The Backfires",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43341435",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 16, 2026",
-      "artist": "Gracie \u2022 Rachel",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43347552",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 17, 2026",
-      "artist": "Ninajirachi \u2022 mgna crrrta",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43196159",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 17, 2026",
-      "artist": "Johnny Manchild \u2022 the Poor Bastards",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43274830",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 18, 2026",
-      "artist": "Melanie C",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43099116",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 18, 2026",
-      "artist": "jigitz",
-      "venue": "Commodore Ballroom",
-      "link": "https://www.songkick.com/concerts/43251592",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 18, 2026",
-      "artist": "Doom Gong",
-      "venue": "The Cobalt",
-      "link": "https://www.songkick.com/concerts/43383947",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 18, 2026",
-      "artist": "Cousin Harley",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43301976",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 19, 2026",
-      "artist": "The Greyboy Allstars",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43263557",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 19, 2026",
-      "artist": "When Chai Met Toast",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/42788517",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 20, 2026",
-      "artist": "Unsane",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43123812",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "September 21, 2026",
-      "artist": "Elder",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43376582",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
     {
       "date": "September 22, 2026",
       "artist": "Arlo Parks",
@@ -536,6 +162,279 @@
       "artist": "Lily Allen",
       "venue": "Orpheum Theatre",
       "link": "https://www.songkick.com/concerts/43320787",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Isaiah Rashad",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43407216",
+      "source": "Songkick",
+      "interest_score": 50,
+      "matched_artists": [
+        "Isaiah Rashad"
+      ],
+      "interest_reason": "Related to your Spotify history via Anderson .Paak",
+      "score_breakdown": [
+        {
+          "type": "related_artist",
+          "points": 50.02,
+          "artist": "Isaiah Rashad",
+          "seed_artist": "Anderson .Paak",
+          "rank": 5,
+          "detail": "Isaiah Rashad is similar to Anderson .Paak (rank 5 on cached similar-artists list)"
+        }
+      ]
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Finger Eleven",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43417289",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Bad Suns",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43419622",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Syd",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43417247",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "The Warning",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43414491",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Jann Arden",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/43398159",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Eluveitie",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43419931",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Jake Xerxes Fussell \u2022 Dougie Poole",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43423030",
+      "source": "Songkick",
+      "interest_score": 61,
+      "matched_artists": [
+        "Jake Xerxes Fussell"
+      ],
+      "interest_reason": "Matches your Spotify history: Jake Xerxes Fussell",
+      "score_breakdown": [
+        {
+          "type": "direct_history_match",
+          "points": 60.93,
+          "artist": "Jake Xerxes Fussell",
+          "detail": "Direct match from your Spotify history (Jake Xerxes Fussell)"
+        }
+      ]
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Kid Francescoli",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43410783",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "3 Inches of Blood \u2022 Unleash The Archers",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43414475",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "The Mary Wallopers",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/43402576",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Prateek Kuhad",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43404868",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Ana Popovic",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43421798",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Kim Mitchell",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43419586",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Jesse Roper",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43414467",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Amorphis \u2022 Insomnium",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43395296",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Guilt Trip",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43396912",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Michael Bernard Fitzgerald",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43417351",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 08, 2026",
+      "artist": "Concrete Vehicles",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43400312",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 15, 2026",
+      "artist": "Post Sex Nachos",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43399862",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Art d'Ecco",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43419930",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Pointed Sticks",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43408224",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "September 28, 2026",
+      "artist": "Janky Bungag",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43416580",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -884,17 +783,6 @@
       "score_breakdown": []
     },
     {
-      "date": "October 08, 2026",
-      "artist": "Concrete Vehicles",
-      "venue": "Rickshaw Theatre",
-      "link": "https://www.songkick.com/concerts/43400312",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
       "date": "October 09, 2026",
       "artist": "54-40 \u2022 Jets Overhead",
       "venue": "Commodore Ballroom",
@@ -1004,6 +892,17 @@
     },
     {
       "date": "October 13, 2026",
+      "artist": "glaive",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43209813",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 13, 2026",
       "artist": "City of the Sun",
       "venue": "Fox Cabaret",
       "link": "https://www.songkick.com/concerts/43320791",
@@ -1015,9 +914,9 @@
     },
     {
       "date": "October 13, 2026",
-      "artist": "glaive",
-      "venue": "Vogue Theatre",
-      "link": "https://www.songkick.com/concerts/43209813",
+      "artist": "FORMING (Toronto)",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/43412497",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -1040,17 +939,6 @@
       "artist": "Jarlath Regan",
       "venue": "Vogue Theatre",
       "link": "https://www.songkick.com/concerts/43055517",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "October 15, 2026",
-      "artist": "Post Sex Nachos",
-      "venue": "Biltmore Cabaret",
-      "link": "https://www.songkick.com/concerts/43399862",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -1081,20 +969,9 @@
     },
     {
       "date": "October 16, 2026",
-      "artist": "Shiloh Lindsey",
-      "venue": "Fox Cabaret",
-      "link": "https://www.songkick.com/concerts/43191083",
-      "source": "Songkick",
-      "interest_score": 0,
-      "matched_artists": [],
-      "interest_reason": "",
-      "score_breakdown": []
-    },
-    {
-      "date": "October 16, 2026",
-      "artist": "Starpainter",
-      "venue": "The Heatley",
-      "link": "https://www.songkick.com/concerts/43339939",
+      "artist": "Sara Carbone",
+      "venue": "Red Gate",
+      "link": "https://www.songkick.com/concerts/43426077",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
@@ -1161,6 +1038,332 @@
       "artist": "Dumb Crush",
       "venue": "The Cobalt",
       "link": "https://www.songkick.com/concerts/43367674",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 20, 2026",
+      "artist": "Demon Hunter, Wolves at the Gate, \u2022 Bloodlines",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43333124",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 20, 2026",
+      "artist": "Finn Wolfhard",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43197686",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 20, 2026",
+      "artist": "Resavoir",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43311551",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 21, 2026",
+      "artist": "Paul Cauthen",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43294476",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 21, 2026",
+      "artist": "Flower Face",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43184092",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 21, 2026",
+      "artist": "Stella Prince",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43390336",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 22, 2026",
+      "artist": "Allan Rayman",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43258418",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 23, 2026",
+      "artist": "Digable Planets \u2022 Mauvey",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43251590",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 23, 2026",
+      "artist": "Freak Slug \u2022 Mamalarky",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43311559",
+      "source": "Songkick",
+      "interest_score": 62,
+      "matched_artists": [
+        "Mamalarky"
+      ],
+      "interest_reason": "Matches your Spotify history: Mamalarky",
+      "score_breakdown": [
+        {
+          "type": "direct_history_match",
+          "points": 62.27,
+          "artist": "Mamalarky",
+          "detail": "Direct match from your Spotify history (Mamalarky)"
+        }
+      ]
+    },
+    {
+      "date": "October 23, 2026",
+      "artist": "Allan Rayman",
+      "venue": "Biltmore Cabaret",
+      "link": "https://www.songkick.com/concerts/43301225",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 24, 2026",
+      "artist": "We Are Scientists",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43274868",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 24, 2026",
+      "artist": "Moontricks, KR3TURE, \u2022 The Frase",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43237384",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 24, 2026",
+      "artist": "Charles Wesley Godwin \u2022 Lily Fitts",
+      "venue": "Orpheum Theatre",
+      "link": "https://www.songkick.com/concerts/43225532",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 25, 2026",
+      "artist": "Imaad Wasif",
+      "venue": "Green Auto",
+      "link": "https://www.songkick.com/concerts/43423471",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 26, 2026",
+      "artist": "The Dillinger Escape Plan, XCOMM, \u2022 Squid Pisser",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43277293",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 27, 2026",
+      "artist": "Julia Jacklin \u2022 Jordan Patterson",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43247317",
+      "source": "Songkick",
+      "interest_score": 63,
+      "matched_artists": [
+        "Julia Jacklin"
+      ],
+      "interest_reason": "Matches your Spotify history: Julia Jacklin",
+      "score_breakdown": [
+        {
+          "type": "direct_history_match",
+          "points": 63.02,
+          "artist": "Julia Jacklin",
+          "detail": "Direct match from your Spotify history (Julia Jacklin)"
+        }
+      ]
+    },
+    {
+      "date": "October 27, 2026",
+      "artist": "Amble",
+      "venue": "Orpheum",
+      "link": "https://www.songkick.com/concerts/43195293",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 27, 2026",
+      "artist": "ARTMS",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43328387",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 27, 2026",
+      "artist": "Faux Real",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43280074",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 28, 2026",
+      "artist": "Chris Murphy",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43289523",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 30, 2026",
+      "artist": "DJ Shadow",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43184390",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 30, 2026",
+      "artist": "Buena Vista Orchestra",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43094143",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 30, 2026",
+      "artist": "Zoe Twist",
+      "venue": "Fox Cabaret",
+      "link": "https://www.songkick.com/concerts/43396501",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 31, 2026",
+      "artist": "Death from Above 1979",
+      "venue": "Vogue Theatre",
+      "link": "https://www.songkick.com/concerts/43231959",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 31, 2026",
+      "artist": "Sabbat",
+      "venue": "Rickshaw Theatre",
+      "link": "https://www.songkick.com/concerts/43199252",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "October 31, 2026",
+      "artist": "Morgan Griffiths",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43385363",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "November 01, 2026",
+      "artist": "Parra for Cuva",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43103539",
+      "source": "Songkick",
+      "interest_score": 0,
+      "matched_artists": [],
+      "interest_reason": "",
+      "score_breakdown": []
+    },
+    {
+      "date": "November 03, 2026",
+      "artist": "Plini, Night Verses, \u2022 Portraits",
+      "venue": "Commodore Ballroom",
+      "link": "https://www.songkick.com/concerts/43251647",
       "source": "Songkick",
       "interest_score": 0,
       "matched_artists": [],
