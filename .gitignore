@@ -1,0 +1,8 @@
+# Generated during the GitHub Pages deployment.
+/apps/manifest.json
+
+# Local and editor artifacts.
+.DS_Store
+*.log
+**/__pycache__/
+*.py[cod]
